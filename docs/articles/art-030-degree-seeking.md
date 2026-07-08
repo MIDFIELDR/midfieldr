@@ -113,6 +113,16 @@ We preserve this data frame as a baseline for examples in the article.
 ``` r
 
 baseline <- copy(DT)
+baseline
+#>                  mcid
+#>                <char>
+#>     1: MCID3111142689
+#>     2: MCID3111142782
+#>     3: MCID3111142881
+#>    ---               
+#> 76873: MCID3112785480
+#> 76874: MCID3112800920
+#> 76875: MCID3112870009
 ```
 
 ## Inner joins

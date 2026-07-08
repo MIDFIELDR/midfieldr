@@ -12,10 +12,10 @@ prep_fye_mice(
 )
 }
 \arguments{
-\item{midfield_student}{Data frame of \emph{\strong{student}} student-level records. Required variables:
+\item{midfield_student}{\code{student} data frame with required variables
 \verb{\{mcid, race, sex\}.}}
 
-\item{midfield_term}{Data frame of \emph{\strong{term}} student-level records. Required variables:
+\item{midfield_term}{\code{term} data frame with required variables
 \verb{\{mcid, term, cip6, institution\}.}}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
@@ -48,8 +48,9 @@ values to be imputed.
 }
 }
 \description{
-Constructs a data frame of student-level records of First-Year Engineering
-(FYE) programs and conditions the data for later use as an input to the mice
+Constructs a data frame of students enrolled in
+First-Year Engineering
+(FYE) programs keyed by student ID. Conditions the data for use as an input to the mice
 R package for multiple imputation. Sets up three variables as predictors
 (institution, race/ethnicity, and sex) and one variable to be imputed
 (program CIP code).

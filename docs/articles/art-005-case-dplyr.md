@@ -69,8 +69,8 @@ opt <- options()
 library(pillar)
 options(
   pillar.width = Inf,
-  pillar.print_max = 15,
-  pillar.print_min = 6
+  pillar.print_max = 10
+  # pillar.print_min = 0
 )
 ```
 
@@ -174,31 +174,43 @@ for lines that start with “14”. The result is an Engineering subset of
 cip |>
   filter_programs("^14")
 #> # A tibble: 54 × 6
-#>   cip6name                                                     cip6  
-#>   <chr>                                                        <chr> 
-#> 1 Engineering, General                                         140101
-#> 2 Pre-Engineering                                              140102
-#> 3 Aerospace, Aeronautical and Astronautical, Space Engineering 140201
-#> 4 Agricultural, Biological Engineering and Bioengineering      140301
-#> 5 Architectural Engineering                                    140401
-#> 6 Biomedical, Medical Engineering                              140501
-#>   cip4name                                                cip4  cip2name   
-#>   <chr>                                                   <chr> <chr>      
-#> 1 Engineering, General                                    1401  Engineering
-#> 2 Engineering, General                                    1401  Engineering
-#> 3 Aerospace, Aeronautical and Astronautical Engineering   1402  Engineering
-#> 4 Agricultural, Biological Engineering and Bioengineering 1403  Engineering
-#> 5 Architectural Engineering                               1404  Engineering
-#> 6 Biomedical, Medical Engineering                         1405  Engineering
-#>   cip2 
-#>   <chr>
-#> 1 14   
-#> 2 14   
-#> 3 14   
-#> 4 14   
-#> 5 14   
-#> 6 14   
-#> # ℹ 48 more rows
+#>    cip6name                                                     cip6  
+#>    <chr>                                                        <chr> 
+#>  1 Engineering, General                                         140101
+#>  2 Pre-Engineering                                              140102
+#>  3 Aerospace, Aeronautical and Astronautical, Space Engineering 140201
+#>  4 Agricultural, Biological Engineering and Bioengineering      140301
+#>  5 Architectural Engineering                                    140401
+#>  6 Biomedical, Medical Engineering                              140501
+#>  7 Ceramic Sciences and Engineering                             140601
+#>  8 Chemical Engineering                                         140701
+#>  9 Chemical and Biomolecular Engineering                        140702
+#> 10 Chemical Engineering, Other                                  140799
+#>    cip4name                                                cip4  cip2name   
+#>    <chr>                                                   <chr> <chr>      
+#>  1 Engineering, General                                    1401  Engineering
+#>  2 Engineering, General                                    1401  Engineering
+#>  3 Aerospace, Aeronautical and Astronautical Engineering   1402  Engineering
+#>  4 Agricultural, Biological Engineering and Bioengineering 1403  Engineering
+#>  5 Architectural Engineering                               1404  Engineering
+#>  6 Biomedical, Medical Engineering                         1405  Engineering
+#>  7 Ceramic Sciences and Engineering                        1406  Engineering
+#>  8 Chemical Engineering                                    1407  Engineering
+#>  9 Chemical Engineering                                    1407  Engineering
+#> 10 Chemical Engineering                                    1407  Engineering
+#>    cip2 
+#>    <chr>
+#>  1 14   
+#>  2 14   
+#>  3 14   
+#>  4 14   
+#>  5 14   
+#>  6 14   
+#>  7 14   
+#>  8 14   
+#>  9 14   
+#> 10 14   
+#> # ℹ 44 more rows
 ```
 
 Next, to search this result for Electrical Engineering, we assign
@@ -259,11 +271,7 @@ programs
 #>  8 Laser and Optical Engineering                                 141003
 #>  9 Telecommunications Engineering                                141004
 #> 10 Electrical, Electronics and Communications Engineering, Other 141099
-#> 11 Mechanical Engineering                                        141901
-#> 12 Systems Engineering                                           142701
-#> 13 Industrial Engineering                                        143501
-#> 14 Manufacturing Engineering                                     143601
-#> 15 Operations Research                                           143701
+#> # ℹ 5 more rows
 ```
 
 The program names in `cip` are usually too long for effective
@@ -298,11 +306,7 @@ programs
 #>  8 Laser and Optical Engng                         141003 EE     
 #>  9 Telecommunications Engng                        141004 EE     
 #> 10 Electrical, Electronics and Commns Engng, Other 141099 EE     
-#> 11 Mechanical Engng                                141901 ME     
-#> 12 Systems Engng                                   142701 ISE    
-#> 13 Industrial Engng                                143501 ISE    
-#> 14 Manufacturing Engng                             143601 ISE    
-#> 15 Operations Research                             143701 ISE
+#> # ℹ 5 more rows
 ```
 
 Our programs data frame is complete: 15 six-digit codes are encoded
@@ -411,15 +415,19 @@ class(y)
 
 y
 #> # A tibble: 97,555 × 3
-#>   mcid           race  sex   
-#>   <chr>          <chr> <chr> 
-#> 1 MCID3111142225 Asian Male  
-#> 2 MCID3111142283 Asian Female
-#> 3 MCID3111142290 Asian Male  
-#> 4 MCID3111142294 Asian Male  
-#> 5 MCID3111142299 Asian Male  
-#> 6 MCID3111142303 Asian Male  
-#> # ℹ 97,549 more rows
+#>    mcid           race     sex   
+#>    <chr>          <chr>    <chr> 
+#>  1 MCID3111142225 Asian    Male  
+#>  2 MCID3111142283 Asian    Female
+#>  3 MCID3111142290 Asian    Male  
+#>  4 MCID3111142294 Asian    Male  
+#>  5 MCID3111142299 Asian    Male  
+#>  6 MCID3111142303 Asian    Male  
+#>  7 MCID3111142633 Black    Male  
+#>  8 MCID3111142689 Hispanic Female
+#>  9 MCID3111142729 Hispanic Male  
+#> 10 MCID3111142775 Hispanic Male  
+#> # ℹ 97,545 more rows
 
 z <- y |> group_by(race)
 class(z)
@@ -546,15 +554,19 @@ DT <- term |>
   unique()
 DT
 #> # A tibble: 97,536 × 1
-#>   mcid          
-#>   <chr>         
-#> 1 MCID3111142225
-#> 2 MCID3111142283
-#> 3 MCID3111142290
-#> 4 MCID3111142294
-#> 5 MCID3111142299
-#> 6 MCID3111142303
-#> # ℹ 97,530 more rows
+#>    mcid          
+#>    <chr>         
+#>  1 MCID3111142225
+#>  2 MCID3111142283
+#>  3 MCID3111142290
+#>  4 MCID3111142294
+#>  5 MCID3111142299
+#>  6 MCID3111142303
+#>  7 MCID3111142633
+#>  8 MCID3111142689
+#>  9 MCID3111142729
+#> 10 MCID3111142775
+#> # ℹ 97,526 more rows
 ```
 
 The data sufficiency criterion limits student records to those for which
@@ -571,15 +583,19 @@ adds a column of timely completion terms, encoded YYYYT.
 DT <- timely_term(DT)
 DT
 #> # A tibble: 97,536 × 5
-#>   mcid           term_i level_i       adj_span timely_term
-#>   <chr>          <chr>  <chr>            <dbl> <chr>      
-#> 1 MCID3111142225 19881  01 First-year        6 19933      
-#> 2 MCID3111142283 19881  01 First-year        6 19933      
-#> 3 MCID3111142290 19881  01 First-year        6 19933      
-#> 4 MCID3111142294 19881  01 First-year        6 19933      
-#> 5 MCID3111142299 19881  01 First-year        6 19933      
-#> 6 MCID3111142303 19881  01 First-year        6 19933      
-#> # ℹ 97,530 more rows
+#>    mcid           term_i level_i       adj_span timely_term
+#>    <chr>          <chr>  <chr>            <dbl> <chr>      
+#>  1 MCID3111142225 19881  01 First-year        6 19933      
+#>  2 MCID3111142283 19881  01 First-year        6 19933      
+#>  3 MCID3111142290 19881  01 First-year        6 19933      
+#>  4 MCID3111142294 19881  01 First-year        6 19933      
+#>  5 MCID3111142299 19881  01 First-year        6 19933      
+#>  6 MCID3111142303 19881  01 First-year        6 19933      
+#>  7 MCID3111142633 19881  01 First-year        6 19933      
+#>  8 MCID3111142689 19883  01 First-year        6 19941      
+#>  9 MCID3111142729 19881  01 First-year        6 19933      
+#> 10 MCID3111142775 19881  01 First-year        6 19933      
+#> # ℹ 97,526 more rows
 ```
 
 [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
@@ -593,23 +609,31 @@ satisfy) the data sufficiency criteria.
 DT <- data_sufficiency(DT)
 DT
 #> # A tibble: 97,536 × 7
-#>   mcid           term_i timely_term institution   lower_limit upper_limit
-#>   <chr>          <chr>  <chr>       <chr>         <chr>       <chr>      
-#> 1 MCID3111142225 19881  19933       Institution B 19881       20181      
-#> 2 MCID3111142283 19881  19933       Institution J 19881       20096      
-#> 3 MCID3111142290 19881  19933       Institution J 19881       20096      
-#> 4 MCID3111142294 19881  19933       Institution J 19881       20096      
-#> 5 MCID3111142299 19881  19933       Institution J 19881       20096      
-#> 6 MCID3111142303 19881  19933       Institution J 19881       20096      
-#>   data_sufficiency
-#>   <chr>           
-#> 1 exclude-lower   
-#> 2 exclude-lower   
-#> 3 exclude-lower   
-#> 4 exclude-lower   
-#> 5 exclude-lower   
-#> 6 exclude-lower   
-#> # ℹ 97,530 more rows
+#>    mcid           term_i timely_term institution   lower_limit upper_limit
+#>    <chr>          <chr>  <chr>       <chr>         <chr>       <chr>      
+#>  1 MCID3111142225 19881  19933       Institution B 19881       20181      
+#>  2 MCID3111142283 19881  19933       Institution J 19881       20096      
+#>  3 MCID3111142290 19881  19933       Institution J 19881       20096      
+#>  4 MCID3111142294 19881  19933       Institution J 19881       20096      
+#>  5 MCID3111142299 19881  19933       Institution J 19881       20096      
+#>  6 MCID3111142303 19881  19933       Institution J 19881       20096      
+#>  7 MCID3111142633 19881  19933       Institution J 19881       20096      
+#>  8 MCID3111142689 19883  19941       Institution B 19881       20181      
+#>  9 MCID3111142729 19881  19933       Institution B 19881       20181      
+#> 10 MCID3111142775 19881  19933       Institution J 19881       20096      
+#>    data_sufficiency
+#>    <chr>           
+#>  1 exclude-lower   
+#>  2 exclude-lower   
+#>  3 exclude-lower   
+#>  4 exclude-lower   
+#>  5 exclude-lower   
+#>  6 exclude-lower   
+#>  7 exclude-lower   
+#>  8 include         
+#>  9 exclude-lower   
+#> 10 exclude-lower   
+#> # ℹ 97,526 more rows
 ```
 
 Again, a quick assessment of the relative size of the three possible
@@ -639,15 +663,19 @@ DT <- DT |>
   select(mcid)
 DT
 #> # A tibble: 76,865 × 1
-#>   mcid          
-#>   <chr>         
-#> 1 MCID3111142689
-#> 2 MCID3111142782
-#> 3 MCID3111142881
-#> 4 MCID3111142884
-#> 5 MCID3111142893
-#> 6 MCID3111142962
-#> # ℹ 76,859 more rows
+#>    mcid          
+#>    <chr>         
+#>  1 MCID3111142689
+#>  2 MCID3111142782
+#>  3 MCID3111142881
+#>  4 MCID3111142884
+#>  5 MCID3111142893
+#>  6 MCID3111142962
+#>  7 MCID3111142965
+#>  8 MCID3111143066
+#>  9 MCID3111143068
+#> 10 MCID3111143078
+#> # ℹ 76,855 more rows
 ```
 
 ### *Filter for degree seeking*
@@ -664,15 +692,19 @@ DT <- inner_join(DT, student, by = join_by(mcid)) |>
   select(mcid)
 DT
 #> # A tibble: 76,865 × 1
-#>   mcid          
-#>   <chr>         
-#> 1 MCID3111142689
-#> 2 MCID3111142782
-#> 3 MCID3111142881
-#> 4 MCID3111142884
-#> 5 MCID3111142893
-#> 6 MCID3111142962
-#> # ℹ 76,859 more rows
+#>    mcid          
+#>    <chr>         
+#>  1 MCID3111142689
+#>  2 MCID3111142782
+#>  3 MCID3111142881
+#>  4 MCID3111142884
+#>  5 MCID3111142893
+#>  6 MCID3111142962
+#>  7 MCID3111142965
+#>  8 MCID3111143066
+#>  9 MCID3111143068
+#> 10 MCID3111143078
+#> # ℹ 76,855 more rows
 ```
 
 It happens that all students in this case are degree-seeking, so this
@@ -688,15 +720,19 @@ The previous column of IDs is our baseline population.
 population <- unique(DT)
 population
 #> # A tibble: 76,865 × 1
-#>   mcid          
-#>   <chr>         
-#> 1 MCID3111142689
-#> 2 MCID3111142782
-#> 3 MCID3111142881
-#> 4 MCID3111142884
-#> 5 MCID3111142893
-#> 6 MCID3111142962
-#> # ℹ 76,859 more rows
+#>    mcid          
+#>    <chr>         
+#>  1 MCID3111142689
+#>  2 MCID3111142782
+#>  3 MCID3111142881
+#>  4 MCID3111142884
+#>  5 MCID3111142893
+#>  6 MCID3111142962
+#>  7 MCID3111142965
+#>  8 MCID3111143066
+#>  9 MCID3111143068
+#> 10 MCID3111143078
+#> # ℹ 76,855 more rows
 ```
 
 We now filter the records to retain only those observations associated
@@ -783,15 +819,19 @@ reference” changes.
 DT <- population
 DT
 #> # A tibble: 76,865 × 1
-#>   mcid          
-#>   <chr>         
-#> 1 MCID3111142689
-#> 2 MCID3111142782
-#> 3 MCID3111142881
-#> 4 MCID3111142884
-#> 5 MCID3111142893
-#> 6 MCID3111142962
-#> # ℹ 76,859 more rows
+#>    mcid          
+#>    <chr>         
+#>  1 MCID3111142689
+#>  2 MCID3111142782
+#>  3 MCID3111142881
+#>  4 MCID3111142884
+#>  5 MCID3111142893
+#>  6 MCID3111142962
+#>  7 MCID3111142965
+#>  8 MCID3111143066
+#>  9 MCID3111143068
+#> 10 MCID3111143078
+#> # ℹ 76,855 more rows
 ```
 
 ### *Filter for timely completion*
@@ -811,15 +851,19 @@ DT <- DT |>
   completion_status()
 DT
 #> # A tibble: 76,865 × 4
-#>   mcid           timely_term term_degree completion_status
-#>   <chr>          <chr>       <chr>       <chr>            
-#> 1 MCID3111142689 19941       19913       timely           
-#> 2 MCID3111142782 19941       19903       timely           
-#> 3 MCID3111142881 19951       19894       timely           
-#> 4 MCID3111142884 19941       NA          NA               
-#> 5 MCID3111142893 19941       NA          NA               
-#> 6 MCID3111142962 19941       NA          NA               
-#> # ℹ 76,859 more rows
+#>    mcid           timely_term term_degree completion_status
+#>    <chr>          <chr>       <chr>       <chr>            
+#>  1 MCID3111142689 19941       19913       timely           
+#>  2 MCID3111142782 19941       19903       timely           
+#>  3 MCID3111142881 19951       19894       timely           
+#>  4 MCID3111142884 19941       NA          NA               
+#>  5 MCID3111142893 19941       NA          NA               
+#>  6 MCID3111142962 19941       NA          NA               
+#>  7 MCID3111142965 19941       19901       timely           
+#>  8 MCID3111143066 19941       19883       timely           
+#>  9 MCID3111143068 19943       19903       timely           
+#> 10 MCID3111143078 19941       19891       timely           
+#> # ℹ 76,855 more rows
 ```
 
 Another brief assessment. Here we compare the relative size of the three
@@ -849,15 +893,19 @@ DT <- DT |>
   select(mcid)
 DT
 #> # A tibble: 40,430 × 1
-#>   mcid          
-#>   <chr>         
-#> 1 MCID3111142689
-#> 2 MCID3111142782
-#> 3 MCID3111142881
-#> 4 MCID3111142965
-#> 5 MCID3111143066
-#> 6 MCID3111143068
-#> # ℹ 40,424 more rows
+#>    mcid          
+#>    <chr>         
+#>  1 MCID3111142689
+#>  2 MCID3111142782
+#>  3 MCID3111142881
+#>  4 MCID3111142965
+#>  5 MCID3111143066
+#>  6 MCID3111143068
+#>  7 MCID3111143078
+#>  8 MCID3111143126
+#>  9 MCID3111143157
+#> 10 MCID3111144047
+#> # ℹ 40,420 more rows
 ```
 
 ### *Filter by program*
@@ -873,15 +921,19 @@ degree_cols <- degree |>
 DT <- left_join(DT, degree_cols, by = join_by(mcid))
 DT
 #> # A tibble: 40,490 × 2
-#>   mcid           cip6  
-#>   <chr>          <chr> 
-#> 1 MCID3111142689 090401
-#> 2 MCID3111142782 260101
-#> 3 MCID3111142881 450601
-#> 4 MCID3111142965 141001
-#> 5 MCID3111143066 090401
-#> 6 MCID3111143068 520201
-#> # ℹ 40,484 more rows
+#>    mcid           cip6  
+#>    <chr>          <chr> 
+#>  1 MCID3111142689 090401
+#>  2 MCID3111142782 260101
+#>  3 MCID3111142881 450601
+#>  4 MCID3111142965 141001
+#>  5 MCID3111143066 090401
+#>  6 MCID3111143068 520201
+#>  7 MCID3111143078 040401
+#>  8 MCID3111143126 090401
+#>  9 MCID3111143157 261399
+#> 10 MCID3111144047 230101
+#> # ℹ 40,480 more rows
 ```
 
 Now we use an inner-join with our `programs` data frame, matching on
@@ -896,15 +948,19 @@ DT <- inner_join(DT, programs_cols, by = join_by(cip6)) |>
   select(-cip6)
 DT
 #> # A tibble: 3,263 × 2
-#>   mcid           program
-#>   <chr>          <chr>  
-#> 1 MCID3111142965 EE     
-#> 2 MCID3111145102 EE     
-#> 3 MCID3111146537 EE     
-#> 4 MCID3111146674 EE     
-#> 5 MCID3111150194 ISE    
-#> 6 MCID3111151029 ME     
-#> # ℹ 3,257 more rows
+#>    mcid           program
+#>    <chr>          <chr>  
+#>  1 MCID3111142965 EE     
+#>  2 MCID3111145102 EE     
+#>  3 MCID3111146537 EE     
+#>  4 MCID3111146674 EE     
+#>  5 MCID3111150194 ISE    
+#>  6 MCID3111151029 ME     
+#>  7 MCID3111156062 CE     
+#>  8 MCID3111156083 EE     
+#>  9 MCID3111156325 EE     
+#> 10 MCID3111158221 ISE    
+#> # ℹ 3,253 more rows
 ```
 
 Another brief assessment. Here we compare the relative numbers of
@@ -937,15 +993,19 @@ student_cols <- student |>
 DT <- left_join(DT, student_cols, by = join_by(mcid))
 DT
 #> # A tibble: 3,263 × 4
-#>   mcid           program race          sex   
-#>   <chr>          <chr>   <chr>         <chr> 
-#> 1 MCID3111142965 EE      International Male  
-#> 2 MCID3111145102 EE      White         Male  
-#> 3 MCID3111146537 EE      Asian         Female
-#> 4 MCID3111146674 EE      Asian         Male  
-#> 5 MCID3111150194 ISE     Black         Male  
-#> 6 MCID3111151029 ME      International Male  
-#> # ℹ 3,257 more rows
+#>    mcid           program race          sex   
+#>    <chr>          <chr>   <chr>         <chr> 
+#>  1 MCID3111142965 EE      International Male  
+#>  2 MCID3111145102 EE      White         Male  
+#>  3 MCID3111146537 EE      Asian         Female
+#>  4 MCID3111146674 EE      Asian         Male  
+#>  5 MCID3111150194 ISE     Black         Male  
+#>  6 MCID3111151029 ME      International Male  
+#>  7 MCID3111156062 CE      White         Male  
+#>  8 MCID3111156083 EE      White         Male  
+#>  9 MCID3111156325 EE      White         Female
+#> 10 MCID3111158221 ISE     White         Female
+#> # ℹ 3,253 more rows
 ```
 
 ### *Bloc of timely graduates*
@@ -961,15 +1021,19 @@ graduates <- DT |>
 
 graduates
 #> # A tibble: 3,263 × 5
-#>   mcid           program race          sex    bloc 
-#>   <chr>          <chr>   <chr>         <chr>  <chr>
-#> 1 MCID3111142965 EE      International Male   grad 
-#> 2 MCID3111145102 EE      White         Male   grad 
-#> 3 MCID3111146537 EE      Asian         Female grad 
-#> 4 MCID3111146674 EE      Asian         Male   grad 
-#> 5 MCID3111150194 ISE     Black         Male   grad 
-#> 6 MCID3111151029 ME      International Male   grad 
-#> # ℹ 3,257 more rows
+#>    mcid           program race          sex    bloc 
+#>    <chr>          <chr>   <chr>         <chr>  <chr>
+#>  1 MCID3111142965 EE      International Male   grad 
+#>  2 MCID3111145102 EE      White         Male   grad 
+#>  3 MCID3111146537 EE      Asian         Female grad 
+#>  4 MCID3111146674 EE      Asian         Male   grad 
+#>  5 MCID3111150194 ISE     Black         Male   grad 
+#>  6 MCID3111151029 ME      International Male   grad 
+#>  7 MCID3111156062 CE      White         Male   grad 
+#>  8 MCID3111156083 EE      White         Male   grad 
+#>  9 MCID3111156325 EE      White         Female grad 
+#> 10 MCID3111158221 ISE     White         Female grad 
+#> # ℹ 3,253 more rows
 ```
 
 ## Ever enrolled
@@ -981,15 +1045,19 @@ Again we start with the baseline population.
 DT <- population
 DT
 #> # A tibble: 76,865 × 1
-#>   mcid          
-#>   <chr>         
-#> 1 MCID3111142689
-#> 2 MCID3111142782
-#> 3 MCID3111142881
-#> 4 MCID3111142884
-#> 5 MCID3111142893
-#> 6 MCID3111142962
-#> # ℹ 76,859 more rows
+#>    mcid          
+#>    <chr>         
+#>  1 MCID3111142689
+#>  2 MCID3111142782
+#>  3 MCID3111142881
+#>  4 MCID3111142884
+#>  5 MCID3111142893
+#>  6 MCID3111142962
+#>  7 MCID3111142965
+#>  8 MCID3111143066
+#>  9 MCID3111143068
+#> 10 MCID3111143078
+#> # ℹ 76,855 more rows
 ```
 
 ### *Filter by program*
@@ -1004,15 +1072,19 @@ term_cols <- term |>
 DT <- left_join(DT, term_cols, by = join_by(mcid))
 DT
 #> # A tibble: 126,168 × 2
-#>   mcid           cip6  
-#>   <chr>          <chr> 
-#> 1 MCID3111142689 090401
-#> 2 MCID3111142782 260101
-#> 3 MCID3111142881 450601
-#> 4 MCID3111142884 260406
-#> 5 MCID3111142893 400801
-#> 6 MCID3111142962 240102
-#> # ℹ 126,162 more rows
+#>    mcid           cip6  
+#>    <chr>          <chr> 
+#>  1 MCID3111142689 090401
+#>  2 MCID3111142782 260101
+#>  3 MCID3111142881 450601
+#>  4 MCID3111142884 260406
+#>  5 MCID3111142893 400801
+#>  6 MCID3111142962 240102
+#>  7 MCID3111142962 520201
+#>  8 MCID3111142965 140102
+#>  9 MCID3111142965 141001
+#> 10 MCID3111143066 090401
+#> # ℹ 126,158 more rows
 ```
 
 We repeat the process we used earlier to inner-join our `programs` data
@@ -1026,15 +1098,19 @@ DT <- inner_join(DT, programs_cols, by = join_by(cip6)) |>
   select(-cip6)
 DT
 #> # A tibble: 5,583 × 2
-#>   mcid           program
-#>   <chr>          <chr>  
-#> 1 MCID3111142965 EE     
-#> 2 MCID3111145102 EE     
-#> 3 MCID3111146537 EE     
-#> 4 MCID3111146674 EE     
-#> 5 MCID3111150194 ISE    
-#> 6 MCID3111151029 ME     
-#> # ℹ 5,577 more rows
+#>    mcid           program
+#>    <chr>          <chr>  
+#>  1 MCID3111142965 EE     
+#>  2 MCID3111145102 EE     
+#>  3 MCID3111146537 EE     
+#>  4 MCID3111146674 EE     
+#>  5 MCID3111150194 ISE    
+#>  6 MCID3111151029 ME     
+#>  7 MCID3111156062 CE     
+#>  8 MCID3111156083 EE     
+#>  9 MCID3111156325 EE     
+#> 10 MCID3111158221 ISE    
+#> # ℹ 5,573 more rows
 ```
 
 With the CIP code removed, we filter for unique rows. This is an
@@ -1047,15 +1123,19 @@ student as ever-enrolled more than once.
 DT <- unique(DT)
 DT
 #> # A tibble: 5,583 × 2
-#>   mcid           program
-#>   <chr>          <chr>  
-#> 1 MCID3111142965 EE     
-#> 2 MCID3111145102 EE     
-#> 3 MCID3111146537 EE     
-#> 4 MCID3111146674 EE     
-#> 5 MCID3111150194 ISE    
-#> 6 MCID3111151029 ME     
-#> # ℹ 5,577 more rows
+#>    mcid           program
+#>    <chr>          <chr>  
+#>  1 MCID3111142965 EE     
+#>  2 MCID3111145102 EE     
+#>  3 MCID3111146537 EE     
+#>  4 MCID3111146674 EE     
+#>  5 MCID3111150194 ISE    
+#>  6 MCID3111151029 ME     
+#>  7 MCID3111156062 CE     
+#>  8 MCID3111156083 EE     
+#>  9 MCID3111156325 EE     
+#> 10 MCID3111158221 ISE    
+#> # ℹ 5,573 more rows
 ```
 
 Another brief assessment. Here we compare the relative numbers of
@@ -1088,15 +1168,19 @@ student_cols <- student |>
 DT <- left_join(DT, student_cols, by = join_by(mcid))
 DT
 #> # A tibble: 5,583 × 4
-#>   mcid           program race          sex   
-#>   <chr>          <chr>   <chr>         <chr> 
-#> 1 MCID3111142965 EE      International Male  
-#> 2 MCID3111145102 EE      White         Male  
-#> 3 MCID3111146537 EE      Asian         Female
-#> 4 MCID3111146674 EE      Asian         Male  
-#> 5 MCID3111150194 ISE     Black         Male  
-#> 6 MCID3111151029 ME      International Male  
-#> # ℹ 5,577 more rows
+#>    mcid           program race          sex   
+#>    <chr>          <chr>   <chr>         <chr> 
+#>  1 MCID3111142965 EE      International Male  
+#>  2 MCID3111145102 EE      White         Male  
+#>  3 MCID3111146537 EE      Asian         Female
+#>  4 MCID3111146674 EE      Asian         Male  
+#>  5 MCID3111150194 ISE     Black         Male  
+#>  6 MCID3111151029 ME      International Male  
+#>  7 MCID3111156062 CE      White         Male  
+#>  8 MCID3111156083 EE      White         Male  
+#>  9 MCID3111156325 EE      White         Female
+#> 10 MCID3111158221 ISE     White         Female
+#> # ℹ 5,573 more rows
 ```
 
 ### *Bloc of ever-enrolled*
@@ -1113,15 +1197,19 @@ ever_enrolled <- DT |>
 
 ever_enrolled
 #> # A tibble: 5,583 × 5
-#>   mcid           program race          sex    bloc 
-#>   <chr>          <chr>   <chr>         <chr>  <chr>
-#> 1 MCID3111142965 EE      International Male   ever 
-#> 2 MCID3111145102 EE      White         Male   ever 
-#> 3 MCID3111146537 EE      Asian         Female ever 
-#> 4 MCID3111146674 EE      Asian         Male   ever 
-#> 5 MCID3111150194 ISE     Black         Male   ever 
-#> 6 MCID3111151029 ME      International Male   ever 
-#> # ℹ 5,577 more rows
+#>    mcid           program race          sex    bloc 
+#>    <chr>          <chr>   <chr>         <chr>  <chr>
+#>  1 MCID3111142965 EE      International Male   ever 
+#>  2 MCID3111145102 EE      White         Male   ever 
+#>  3 MCID3111146537 EE      Asian         Female ever 
+#>  4 MCID3111146674 EE      Asian         Male   ever 
+#>  5 MCID3111150194 ISE     Black         Male   ever 
+#>  6 MCID3111151029 ME      International Male   ever 
+#>  7 MCID3111156062 CE      White         Male   ever 
+#>  8 MCID3111156083 EE      White         Male   ever 
+#>  9 MCID3111156325 EE      White         Female ever 
+#> 10 MCID3111158221 ISE     White         Female ever 
+#> # ℹ 5,573 more rows
 ```
 
 ## Outcomes
@@ -1134,15 +1222,19 @@ structure we need for grouping and summarizing.
 DT <- bind_rows(graduates, ever_enrolled)
 DT
 #> # A tibble: 8,846 × 5
-#>   mcid           program race          sex    bloc 
-#>   <chr>          <chr>   <chr>         <chr>  <chr>
-#> 1 MCID3111142965 EE      International Male   grad 
-#> 2 MCID3111145102 EE      White         Male   grad 
-#> 3 MCID3111146537 EE      Asian         Female grad 
-#> 4 MCID3111146674 EE      Asian         Male   grad 
-#> 5 MCID3111150194 ISE     Black         Male   grad 
-#> 6 MCID3111151029 ME      International Male   grad 
-#> # ℹ 8,840 more rows
+#>    mcid           program race          sex    bloc 
+#>    <chr>          <chr>   <chr>         <chr>  <chr>
+#>  1 MCID3111142965 EE      International Male   grad 
+#>  2 MCID3111145102 EE      White         Male   grad 
+#>  3 MCID3111146537 EE      Asian         Female grad 
+#>  4 MCID3111146674 EE      Asian         Male   grad 
+#>  5 MCID3111150194 ISE     Black         Male   grad 
+#>  6 MCID3111151029 ME      International Male   grad 
+#>  7 MCID3111156062 CE      White         Male   grad 
+#>  8 MCID3111156083 EE      White         Male   grad 
+#>  9 MCID3111156325 EE      White         Female grad 
+#> 10 MCID3111158221 ISE     White         Female grad 
+#> # ℹ 8,836 more rows
 ```
 
 ### *Group and summarize*
@@ -1156,15 +1248,19 @@ DT <- DT %>%
   count(bloc, program, race, sex, name = "N")
 DT
 #> # A tibble: 98 × 5
-#>   bloc  program race     sex        N
-#>   <chr> <chr>   <chr>    <chr>  <int>
-#> 1 ever  CE      Asian    Female    14
-#> 2 ever  CE      Asian    Male      30
-#> 3 ever  CE      Black    Female     4
-#> 4 ever  CE      Black    Male       8
-#> 5 ever  CE      Hispanic Female    13
-#> 6 ever  CE      Hispanic Male      66
-#> # ℹ 92 more rows
+#>    bloc  program race            sex        N
+#>    <chr> <chr>   <chr>           <chr>  <int>
+#>  1 ever  CE      Asian           Female    14
+#>  2 ever  CE      Asian           Male      30
+#>  3 ever  CE      Black           Female     4
+#>  4 ever  CE      Black           Male       8
+#>  5 ever  CE      Hispanic        Female    13
+#>  6 ever  CE      Hispanic        Male      66
+#>  7 ever  CE      International   Female    23
+#>  8 ever  CE      International   Male      97
+#>  9 ever  CE      Native American Female     1
+#> 10 ever  CE      Native American Male       3
+#> # ℹ 88 more rows
 ```
 
 ### *Reshape*
@@ -1190,15 +1286,19 @@ DT <- DT |>
   )
 DT
 #> # A tibble: 50 × 5
-#>   program race     sex     ever  grad
-#>   <chr>   <chr>    <chr>  <int> <int>
-#> 1 CE      Asian    Female    14    10
-#> 2 CE      Asian    Male      30    25
-#> 3 CE      Black    Female     4     1
-#> 4 CE      Black    Male       8     5
-#> 5 CE      Hispanic Female    13     6
-#> 6 CE      Hispanic Male      66    31
-#> # ℹ 44 more rows
+#>    program race            sex     ever  grad
+#>    <chr>   <chr>           <chr>  <int> <int>
+#>  1 CE      Asian           Female    14    10
+#>  2 CE      Asian           Male      30    25
+#>  3 CE      Black           Female     4     1
+#>  4 CE      Black           Male       8     5
+#>  5 CE      Hispanic        Female    13     6
+#>  6 CE      Hispanic        Male      66    31
+#>  7 CE      International   Female    23    13
+#>  8 CE      International   Male      97    55
+#>  9 CE      Native American Female     1     1
+#> 10 CE      Native American Male       3     1
+#> # ℹ 40 more rows
 ```
 
 ### *Calculate the metric*
@@ -1215,15 +1315,19 @@ DT <- DT |>
   mutate(stickiness = round(100 * grad / ever, 1))
 DT
 #> # A tibble: 50 × 6
-#>   program race     sex     ever  grad stickiness
-#>   <chr>   <chr>    <chr>  <int> <int>      <dbl>
-#> 1 CE      Asian    Female    14    10       71.4
-#> 2 CE      Asian    Male      30    25       83.3
-#> 3 CE      Black    Female     4     1       25  
-#> 4 CE      Black    Male       8     5       62.5
-#> 5 CE      Hispanic Female    13     6       46.2
-#> 6 CE      Hispanic Male      66    31       47  
-#> # ℹ 44 more rows
+#>    program race            sex     ever  grad stickiness
+#>    <chr>   <chr>           <chr>  <int> <int>      <dbl>
+#>  1 CE      Asian           Female    14    10       71.4
+#>  2 CE      Asian           Male      30    25       83.3
+#>  3 CE      Black           Female     4     1       25  
+#>  4 CE      Black           Male       8     5       62.5
+#>  5 CE      Hispanic        Female    13     6       46.2
+#>  6 CE      Hispanic        Male      66    31       47  
+#>  7 CE      International   Female    23    13       56.5
+#>  8 CE      International   Male      97    55       56.7
+#>  9 CE      Native American Female     1     1      100  
+#> 10 CE      Native American Male       3     1       33.3
+#> # ℹ 40 more rows
 ```
 
 ## Dissemination
@@ -1241,15 +1345,19 @@ DT <- DT |>
   filter(grad > 3)
 DT
 #> # A tibble: 37 × 6
-#>   program race          sex     ever  grad stickiness
-#>   <chr>   <chr>         <chr>  <int> <int>      <dbl>
-#> 1 CE      Asian         Female    14    10       71.4
-#> 2 CE      Asian         Male      30    25       83.3
-#> 3 CE      Black         Male       8     5       62.5
-#> 4 CE      Hispanic      Female    13     6       46.2
-#> 5 CE      Hispanic      Male      66    31       47  
-#> 6 CE      International Female    23    13       56.5
-#> # ℹ 31 more rows
+#>    program race          sex     ever  grad stickiness
+#>    <chr>   <chr>         <chr>  <int> <int>      <dbl>
+#>  1 CE      Asian         Female    14    10       71.4
+#>  2 CE      Asian         Male      30    25       83.3
+#>  3 CE      Black         Male       8     5       62.5
+#>  4 CE      Hispanic      Female    13     6       46.2
+#>  5 CE      Hispanic      Male      66    31       47  
+#>  6 CE      International Female    23    13       56.5
+#>  7 CE      International Male      97    55       56.7
+#>  8 CE      Other/Unknown Male      27    11       40.7
+#>  9 CE      White         Female   260   162       62.3
+#> 10 CE      White         Male     943   612       64.9
+#> # ℹ 27 more rows
 ```
 
 We have found it useful to report such data with a variable that
@@ -1262,15 +1370,19 @@ DT <- DT |>
   select(program, race, sex, people, everything())
 DT
 #> # A tibble: 37 × 7
-#>   program race          sex    people                ever  grad stickiness
-#>   <chr>   <chr>         <chr>  <chr>                <int> <int>      <dbl>
-#> 1 CE      Asian         Female Asian Female            14    10       71.4
-#> 2 CE      Asian         Male   Asian Male              30    25       83.3
-#> 3 CE      Black         Male   Black Male               8     5       62.5
-#> 4 CE      Hispanic      Female Hispanic Female         13     6       46.2
-#> 5 CE      Hispanic      Male   Hispanic Male           66    31       47  
-#> 6 CE      International Female International Female    23    13       56.5
-#> # ℹ 31 more rows
+#>    program race          sex    people                ever  grad stickiness
+#>    <chr>   <chr>         <chr>  <chr>                <int> <int>      <dbl>
+#>  1 CE      Asian         Female Asian Female            14    10       71.4
+#>  2 CE      Asian         Male   Asian Male              30    25       83.3
+#>  3 CE      Black         Male   Black Male               8     5       62.5
+#>  4 CE      Hispanic      Female Hispanic Female         13     6       46.2
+#>  5 CE      Hispanic      Male   Hispanic Male           66    31       47  
+#>  6 CE      International Female International Female    23    13       56.5
+#>  7 CE      International Male   International Male      97    55       56.7
+#>  8 CE      Other/Unknown Male   Other/Unknown Male      27    11       40.7
+#>  9 CE      White         Female White Female           260   162       62.3
+#> 10 CE      White         Male   White Male             943   612       64.9
+#> # ℹ 27 more rows
 ```
 
 Readers can more readily interpret our charts and tables if the programs
@@ -1287,15 +1399,19 @@ DT <- DT |>
   ))
 DT
 #> # A tibble: 37 × 7
-#>   program race          sex    people                ever  grad stickiness
-#>   <chr>   <chr>         <chr>  <chr>                <int> <int>      <dbl>
-#> 1 Civil   Asian         Female Asian Female            14    10       71.4
-#> 2 Civil   Asian         Male   Asian Male              30    25       83.3
-#> 3 Civil   Black         Male   Black Male               8     5       62.5
-#> 4 Civil   Hispanic      Female Hispanic Female         13     6       46.2
-#> 5 Civil   Hispanic      Male   Hispanic Male           66    31       47  
-#> 6 Civil   International Female International Female    23    13       56.5
-#> # ℹ 31 more rows
+#>    program race          sex    people                ever  grad stickiness
+#>    <chr>   <chr>         <chr>  <chr>                <int> <int>      <dbl>
+#>  1 Civil   Asian         Female Asian Female            14    10       71.4
+#>  2 Civil   Asian         Male   Asian Male              30    25       83.3
+#>  3 Civil   Black         Male   Black Male               8     5       62.5
+#>  4 Civil   Hispanic      Female Hispanic Female         13     6       46.2
+#>  5 Civil   Hispanic      Male   Hispanic Male           66    31       47  
+#>  6 Civil   International Female International Female    23    13       56.5
+#>  7 Civil   International Male   International Male      97    55       56.7
+#>  8 Civil   Other/Unknown Male   Other/Unknown Male      27    11       40.7
+#>  9 Civil   White         Female White Female           260   162       62.3
+#> 10 Civil   White         Male   White Male             943   612       64.9
+#> # ℹ 27 more rows
 ```
 
 ### *Table*
@@ -1308,15 +1424,19 @@ DT_table <- DT |>
   select(program, people, stickiness)
 DT_table
 #> # A tibble: 37 × 3
-#>   program people               stickiness
-#>   <chr>   <chr>                     <dbl>
-#> 1 Civil   Asian Female               71.4
-#> 2 Civil   Asian Male                 83.3
-#> 3 Civil   Black Male                 62.5
-#> 4 Civil   Hispanic Female            46.2
-#> 5 Civil   Hispanic Male              47  
-#> 6 Civil   International Female       56.5
-#> # ℹ 31 more rows
+#>    program people               stickiness
+#>    <chr>   <chr>                     <dbl>
+#>  1 Civil   Asian Female               71.4
+#>  2 Civil   Asian Male                 83.3
+#>  3 Civil   Black Male                 62.5
+#>  4 Civil   Hispanic Female            46.2
+#>  5 Civil   Hispanic Male              47  
+#>  6 Civil   International Female       56.5
+#>  7 Civil   International Male         56.7
+#>  8 Civil   Other/Unknown Male         40.7
+#>  9 Civil   White Female               62.3
+#> 10 Civil   White Male                 64.9
+#> # ℹ 27 more rows
 ```
 
 Transform the data from block-records to row-records with one row per
@@ -1346,8 +1466,7 @@ DT_table
 #>  8 International Male    56.7       46.4       57.1       50.6
 #>  9 Other/Unknown Female  NA         NA         NA         50  
 #> 10 Other/Unknown Male    40.7       40         NA         51.2
-#> 11 White Female          62.3       47.9       74         63.2
-#> 12 White Male            64.9       52         73         60.1
+#> # ℹ 2 more rows
 ```
 
 Format the table for publication.
@@ -1395,15 +1514,19 @@ want the data in its block-record form.
 DT_chart <- DT
 DT_chart
 #> # A tibble: 37 × 7
-#>   program race          sex    people                ever  grad stickiness
-#>   <chr>   <chr>         <chr>  <chr>                <int> <int>      <dbl>
-#> 1 Civil   Asian         Female Asian Female            14    10       71.4
-#> 2 Civil   Asian         Male   Asian Male              30    25       83.3
-#> 3 Civil   Black         Male   Black Male               8     5       62.5
-#> 4 Civil   Hispanic      Female Hispanic Female         13     6       46.2
-#> 5 Civil   Hispanic      Male   Hispanic Male           66    31       47  
-#> 6 Civil   International Female International Female    23    13       56.5
-#> # ℹ 31 more rows
+#>    program race          sex    people                ever  grad stickiness
+#>    <chr>   <chr>         <chr>  <chr>                <int> <int>      <dbl>
+#>  1 Civil   Asian         Female Asian Female            14    10       71.4
+#>  2 Civil   Asian         Male   Asian Male              30    25       83.3
+#>  3 Civil   Black         Male   Black Male               8     5       62.5
+#>  4 Civil   Hispanic      Female Hispanic Female         13     6       46.2
+#>  5 Civil   Hispanic      Male   Hispanic Male           66    31       47  
+#>  6 Civil   International Female International Female    23    13       56.5
+#>  7 Civil   International Male   International Male      97    55       56.7
+#>  8 Civil   Other/Unknown Male   Other/Unknown Male      27    11       40.7
+#>  9 Civil   White         Female White Female           260   162       62.3
+#> 10 Civil   White         Male   White Male             943   612       64.9
+#> # ℹ 27 more rows
 ```
 
 With one quantitative variable (stickiness) for every combination of the
@@ -1426,23 +1549,31 @@ DT_chart <- order_multiway(DT_chart,
 )
 DT_chart
 #> # A tibble: 37 × 9
-#>   program people                grad  ever stickiness race          sex   
-#>   <fct>   <fct>                <dbl> <dbl>      <dbl> <chr>         <chr> 
-#> 1 Civil   Asian Female            10    14       71.4 Asian         Female
-#> 2 Civil   Asian Male              25    30       83.3 Asian         Male  
-#> 3 Civil   Black Male               5     8       62.5 Black         Male  
-#> 4 Civil   Hispanic Female          6    13       46.2 Hispanic      Female
-#> 5 Civil   Hispanic Male           31    66       47   Hispanic      Male  
-#> 6 Civil   International Female    13    23       56.5 International Female
-#>   program_stickiness people_stickiness
-#>                <dbl>             <dbl>
-#> 1               62.8              64  
-#> 2               62.8              63.9
-#> 3               62.8              62.7
-#> 4               62.8              56  
-#> 5               62.8              48.5
-#> 6               62.8              47.8
-#> # ℹ 31 more rows
+#>    program race          sex    people                ever  grad stickiness
+#>    <fct>   <chr>         <chr>  <fct>                <dbl> <dbl>      <dbl>
+#>  1 Civil   Asian         Female Asian Female            14    10       71.4
+#>  2 Civil   Asian         Male   Asian Male              30    25       83.3
+#>  3 Civil   Black         Male   Black Male               8     5       62.5
+#>  4 Civil   Hispanic      Female Hispanic Female         13     6       46.2
+#>  5 Civil   Hispanic      Male   Hispanic Male           66    31       47  
+#>  6 Civil   International Female International Female    23    13       56.5
+#>  7 Civil   International Male   International Male      97    55       56.7
+#>  8 Civil   Other/Unknown Male   Other/Unknown Male      27    11       40.7
+#>  9 Civil   White         Female White Female           260   162       62.3
+#> 10 Civil   White         Male   White Male             943   612       64.9
+#>    program_stickiness people_stickiness
+#>                 <dbl>             <dbl>
+#>  1               62.8              64  
+#>  2               62.8              63.9
+#>  3               62.8              62.7
+#>  4               62.8              56  
+#>  5               62.8              48.5
+#>  6               62.8              47.8
+#>  7               62.8              50.4
+#>  8               62.8              46.3
+#>  9               62.8              61.3
+#> 10               62.8              60.1
+#> # ℹ 27 more rows
 ```
 
 Format the chart for publication.

@@ -2,8 +2,9 @@
 
 #' Prepare FYE data for imputation
 #'
-#' Constructs a data frame of student-level records of First-Year Engineering
-#' (FYE) programs and conditions the data for later use as an input to the mice
+#' Constructs a data frame of students enrolled in
+#' First-Year Engineering
+#' (FYE) programs keyed by student ID. Conditions the data for use as an input to the mice
 #' R package for multiple imputation. Sets up three variables as predictors
 #' (institution, race/ethnicity, and sex) and one variable to be imputed
 #' (program CIP code).
@@ -49,10 +50,10 @@
 #' acceptable value, not missing data. Observations with missing or unknown
 #' values in the ID or institution columns (if any) should be removed.
 #'
-#' @param midfield_student `r midfield_x("***student***")` Required variables:
+#' @param midfield_student `r midfield_x("student")` with required variables
 #'        `{mcid, race, sex}.`
 #'
-#' @param midfield_term `r midfield_x("***term***")` Required variables:
+#' @param midfield_term `r midfield_x("term")` with required variables
 #'        `{mcid, term, cip6, institution}.`
 #'
 #' @param ... `r param_dots`
@@ -63,7 +64,7 @@
 #'   not start with 14---produce an error.
 #'
 #' @returns Data frame with the following properties:
-#' * Data frame class is preserved.
+#' * `r class_presrv`
 #' * Rows: One row for every FYE student from the `term` input data frame.
 #' * Columns: Conditioned for later use as an input to the mice R
 #'   package for multiple imputation as follows:

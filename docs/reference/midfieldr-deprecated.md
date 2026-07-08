@@ -26,15 +26,15 @@ add_timely_term(
 
 - dframe:
 
-  Data frame or data frame extension (e.g., data.table or tibble).
+  Data frame or data frame extension (e.g., data.table or tibble)
 
 - midfield_degree:
 
-  Data frame or data frame extension of a MIDFIELD *degree* table.
+  `*degree*` data frame
 
 - midfield_term:
 
-  Data frame or data frame extension of a MIDFIELD *term* table.
+  `*term*` data frame
 
 - keep_text:
 

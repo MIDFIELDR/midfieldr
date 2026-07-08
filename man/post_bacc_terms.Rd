@@ -7,19 +7,20 @@
 post_bacc_terms(dframe, midfield_table = degree)
 }
 \arguments{
-\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variables: \code{{mcid}} and one of
+\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) with required variables \code{{mcid}} and one of
 \verb{\{term, term_course, term_degree\}.}}
 
-\item{midfield_table}{Data frame of \emph{degree} student-level records. Required variables:
+\item{midfield_table}{\code{degree} data frame with required variables
 \verb{\{mcid, term_degree\}.}}
 }
 \value{
 Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved.
-\item Rows are not modified.
-\item Columns are not modified except a new column replaces an existing
-column if it has the same name. The new columns are:
+\item Rows are not modified except duplicated rows are removed.
+Row order is preserved.
+\item New columns are added or replace existing columns of the same name (if
+any). Other columns are not modified. The following variables are added:
 \itemize{
 \item \code{first_degree_term.}    Character. Term of a student's first
 baccalaureate, encoded \code{YYYYT} or, if no degree recorded, \code{NA}.
@@ -33,10 +34,10 @@ the student’s first degree term.
 }
 }
 \description{
-To a data frame keyed by student ID and containing an academic term
-variable, add a column that clusters terms with respect to a student's
-first degree term. Post-baccalaureate terms are typically excluded from
-the term, course, and degree data tables.
+For each student's term in a data frame, determine its relationship to the
+student's first degree term (pre-degree, first-degree, or post-first-degree)
+and add columns that support the findings. Post-first-baccalaureate terms
+are typically excluded from the \verb{term, course,} and \code{degree} data tables.
 }
 \details{
 In a typical analysis, one is interested in a student's progress up to

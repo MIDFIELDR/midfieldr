@@ -1,9 +1,7 @@
 # Determine completion status
 
-To a data frame keyed by student ID, add a column indicating if a
-student completed their program, and if so, whether their completion was
-timely or late. Columns of supporting information are also added.
-Columns not related to the task are dropped.
+For each student in a data frame, determine their *completion status*
+(timely, late, or NA) and add columns that support the findings.
 
 ## Usage
 
@@ -15,13 +13,13 @@ completion_status(dframe, midfield_table = degree)
 
 - dframe:
 
-  Data frame or data frame extension (e.g., data.table or tibble).
-  Required variables: `{mcid, timely_term}`.
+  Data frame or data frame extension (e.g., data.table or tibble) with
+  required variables `{mcid, timely_term}.` The latter variable is
+  provided by `timely_term().`
 
 - midfield_table:
 
-  Data frame or data frame extension of a MIDFIELD *degree* table.
-  Required variables: `{mcid, term_degree}`.
+  `degree` data frame with required variables `{mcid, term_degree}.`
 
 ## Value
 
@@ -29,38 +27,33 @@ Data frame with the following properties:
 
 - Data frame class is preserved.
 
-- Rows are filtered for unique `mcid` values.
+- Rows are not modified except duplicated rows are removed. Row order is
+  preserved.
 
-- Columns `{mcid, timely_term}` are retained. All other columns are
-  dropped and the following columns are added:
+- Columns `{mcid, timely_term}` are retained. All other columns (if any)
+  are dropped and the following variables are added:
 
   - `term_degree.`   Character. Term in which the first degree(s) are
     completed, encoded `YYYYT`. Joined from `midfield_table.`
 
-  - `completion_status.`   Character. Possible values are "timely" for
-    students completing a degree no later than their timely completion
-    terms; "late" for students completing their program after their
-    timely completion term; and "NA" for non-completers.
+  - `completion_status.`   Character. Possible values are "timely",
+    "late" and "NA".
 
 - Groups and keys are not preserved.
 
 ## Details
 
-In many studies, students must complete their programs in a specified
-time span to be considered "timely", for example 4, 6, or 8 years after
-admission. By "completion" we mean an undergraduate earning their first
-baccalaureate degree (or degrees, for students earning more than one
-degree in the same term).
+By *completing a program* we mean an undergraduate earning their first
+baccalaureate degree or degrees. *Timely* completion is typically 4, 6,
+or 8 years after admission depending on the definition adopted in a
+particular study. The term at the upper limit of that span is the
+*timely completion term.*
 
-The goal of determining timely completion is to refine a population,
-that is, obtain a data frame of IDs that satisfy our constraints. Thus
-`completion_status()` yields a column of completion status values and
-columns of supporting information keyed by ID. All other columns in
-`dframe` (if any) are dropped.
-
-The supporting information in the output is provided so that the user
-can review the findings. After review, we usually delete all columns
-except the IDs, yielding the refined population that was our goal.
+Our heuristic obtains a student's first degree term (if any) from
+`midfield_table`. Completion status is "timely" for students completing
+a degree no later than their timely completion terms; "late" for
+students completing their program after their timely completion term;
+and "NA" for non-completers. These results are documented in the output.
 
 ## Examples
 

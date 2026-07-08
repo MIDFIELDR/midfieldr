@@ -137,13 +137,12 @@ test_timely_term <- function() {
     setorderv(x, c("level", "term"))
     x[, rownum := .I]
     y <- timely_term(x, term)
-    expect_equal(y[["mcid"]], unique(x[["mcid"]]))
+    expect_equal(unique(y[["mcid"]]), unique(x[["mcid"]]))
     
     # correct answers naming and not naming arguments
     x <- timely_term(dframe = dframe, midfield_table = term)
     y <- timely_term(dframe, term)
     expect_equal(x, y)
-    rm(x, y)
     
     # ---------- errors
     

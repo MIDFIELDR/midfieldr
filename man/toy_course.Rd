@@ -20,30 +20,27 @@ e.g. "ENGR", "MATH", "ENGL."}
 the institution the student attended in a given term, e.g.,
 "Institution A", "Institution B", etc.}
 \item{\code{course}}{Character. Course name, e.g., "Astrophysics
-III", "Calculus For Social Science And Business", "Corp
-Financial Rprtng 1", "Environmental Sanitation II", "Fitness
-and Wellness", "Introductory Astronomy 2", "Our Changing
-Environment", etc.}
+III", "Calculus For Social Science And Business", "Corp Financial
+Rprtng 1", "Environmental Sanitation II", "Fitness and Wellness",
+"Introductory Astronomy 2", "Our Changing Environment", etc.}
 \item{\code{section}}{Character. Course section identifier, from
-one to four characters, e.g., "1", "2", "01", "14", "001",
-"040", "785", "H02", "R01", "300E", "888R", etc.}
+one to four characters, e.g., "1", "2", "01", "14", "001", "040", "785",
+"H02", "R01", "300E", "888R", etc.}
 \item{\code{type}}{Character. Predominant delivery method for this
 section, e.g., "Blended", "Distance Education", "Face-to-Face",
 "Online", etc.}
 \item{\code{faculty_rank}}{Character. The academic rank of the
-person teaching the course, e.g., "Assistant Professor",
-"Associate Professor", "Graduate Assistant",
-"Visiting Faculty", etc.}
+person teaching the course, e.g., "Assistant Professor", "Associate
+Professor", "Graduate Assistant", "Visiting Faculty", etc.}
 \item{\code{hours_course}}{Numeric. Number of credit-hours
 for successful course completion.}
-\item{\code{grade}}{Character. Course grade, e.g., "A+", "A", "A-", "B+",
-"I", "NG", etc.}
+\item{\code{grade}}{Character. Course grade, e.g., "A+", "A", "A-",
+"B+", "I", "NG", etc.}
 \item{\code{discipline_midfield}}{Character. A variable
-for grouping courses by academic discipline
-assigned by the pre-2023 MIDFIELD data curator, e.g.,
-"Anthropology", "Business", "Computer Science",
-"Engineering", "Language and Literature",
-"Mathematics", "Visual and Performing Arts", etc.}
+for grouping courses by academic discipline assigned by the pre-2023
+MIDFIELD data curator, e.g., "Anthropology", "Business", "Computer
+Science", "Engineering", "Language and Literature", "Mathematics",
+"Visual and Performing Arts", etc.}
 }
 }
 \usage{

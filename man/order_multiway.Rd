@@ -14,113 +14,133 @@ order_multiway(
 )
 }
 \arguments{
-\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variables: a single quantitative value
-for every combination of levels of two categorical variables.}
+\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) with the following required variables: two
+independent categorical variables, one quantitative response
+variable, and, if \code{method = percent}, its dividend and divisor
+variables.}
 
-\item{quantity}{Character, name of the single multiway quantitative
-variable}
+\item{quantity}{Character. Name of the single multiway quantitative
+variable.}
 
-\item{categories}{Character, vector of names of the two multiway
-categorical variables}
+\item{categories}{Character. Vector of names of the two multiway
+categorical variables.}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
 referable only by name.}
 
-\item{method}{Character, “median” (default) or “percent”, method of
-ordering the levels of the categories. The median method computes the
-medians of the quantitative column grouped by category. The percent
-method computes percentages based on the same ratio underlying the
-quantitative percentage variable except grouped by category.}
+\item{method}{Character. Method of ordering the levels of the categories;
+possible values are “median” (default) or “percent”. The median
+method determines medians of the quantitative column grouped by
+category. The percent method sums dividends and divisors by category
+and calculates their quotients (again, by category).}
 
-\item{ratio_of}{Character vector with the names of the
-numerator and denominator columns that produced the quantitative
-variable, required when \code{method} is "percent". Names can be
-in any order; the algorithm assumes that the parameter with the
-larger column sum is the denominator of the ratio.}
+\item{ratio_of}{Character. Vector of names of the dividend and the divisor
+that produced the quantitative variable. Required when
+\code{method = "percent,"} ignored otherwise. Names can be in any order;
+the algorithm assumes that the parameter with the larger column sum
+is the denominator of the ratio.}
 }
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved. Groups and keys are not preserved.
-\item Rows are preserved.
-\item Column specified by \code{quantity} is converted to type double.
-\item Columns specified by \code{categories} are converted to factors and ordered.
-\item Other columns are preserved with the exception that columns added by
-the function overwrite existing columns of the same name (if any).
-\item Two new columns \code{CATEGORY_median} added when method is "median." Numeric medians of the quantitative variable grouped by the categorical variables. The \code{CATEGORY} placeholder in the column name is replaced by a category name from the \code{categories} argument. For example, suppose \code{categories = c("program", "people")} and \code{method = "median"}. The two new column names would be \code{program_median} and \code{people_median.}
-\item Two new columns \code{CATEGORY_QUANTITY} added when method is "percent." Numeric percentages based on the same ratio that produces the quantitative variable except grouped by the categorical variables. The \code{CATEGORY} placeholder in the column name is replaced by a category name from the \code{categories} argument; the \code{QUANTITY} placeholder is replaced by the quantitative variable name in the \code{quantity} argument. For example, suppose \code{quantity = "grad_rate"}, \code{categories = c("program", "people")}, and \code{method = "percent"}. The two new column names  would be \code{program_grad_rate} and \code{people_grad_rate.}
+\item Data frame class is preserved.
+\item Rows are preserved, though the row order may change.
+\item Numerical variables are converted to type double. Columns
+specified by \code{categories} are converted to factors and ordered.
+\item New columns are added or replace existing columns of the same name (if
+any). Other columns are not modified. New columns are added as described
+below.
+\item With \code{method = median}, two columns are added with names of the form
+\verb{CATEGORY_median,} with \code{CATEGORY} replaced with the values from the
+\code{categories} argument. For example, if \verb{categories = c("program", "people"),}
+the two new column names would be:
+\itemize{
+\item \code{program_median}
+\item \code{people_median}
+}
+\item With \code{method = percent}, two columns are added with names of the form
+\verb{CATEGORY_QUANTITY,} with \code{CATEGORY} replaced with the values from the
+\code{categories} argument and \code{QUANTITY} from the \code{quantity} argument. For
+example, if \code{categories = c("program", "people")}  and
+\verb{quantity = "grad_rate",} the two new column names would be:
+\itemize{
+\item \code{program_grad_rate}
+\item \code{people_grad_rate}
+}
+\item Groups and keys are not preserved.
 }
 }
 \description{
-Transform a data frame such that two independent categorical variables are
-factors with levels ordered for display in a multiway dot plot.
+Condition data for Cleveland multiway charts. Two independent categorical
+variables are converted to factors with their levels ordered by the
+single quantitative response variable.
 }
 \details{
-Multiway data
-comprise a single quantitative value (or response) for every combination of
-levels of two categorical variables. The ordering of the rows and panels is
-crucial to the perception of effects (Cleveland, 1993).
+Multiway data comprise a single quantitative value (or response) for
+every combination of levels of two categorical variables. The ordering of
+the rows and panels, based on the response quantity, is crucial to the
+perception of effects (Cleveland, 1993).
 
-In our context, "multiway" refers to the data structure and graph design
-defined by Cleveland (1993), not to the methods of analysis described by
-Kroonenberg (2008).
-
-Multiway data comprise three variables: a categorical variable of \emph{m} levels;
-a second independent categorical variable of \emph{n} levels; and a quantitative
-variable (or \emph{response}) of length \emph{mn} that cross-classifies the categories,
-that is, there is a value of the response for each combination of levels of
-the two categorical variables.
+Multiway data comprise three variables: a categorical variable of
+\eqn{\small m} levels; a second independent categorical variable of
+\eqn{\small n} levels; and a quantitative variable (or \emph{response}) of
+length \eqn{\small m \times n} that cross-classifies the categories,
+that is, there is a value of the response for each combination of levels
+of the two categorical variables. If a response value is missing, it is
+assumed that a response for every combination is at least feasible.
 
 In a multiway dot plot, one category is encoded by the panels, the second
 category is encoded by the rows of each panel, and the quantitative variable
 is encoded along identical horizontal scales.
 }
 \examples{
-# Subset of built-in data set
-dframe <- study_results[program == "EE" | program == "ME"]
-dframe[, people := paste(race, sex)]
-dframe[, c("race", "sex") := NULL]
-data.table::setcolorder(dframe, c("program", "people"))
+# Reconfigure built-in data set
+DT <- study_results[program == "EE" | program == "ME"]
+DT <- DT[race \%chin\% c("Asian", "Black", "Hispanic", "White")]
+DT[, people := paste(race, sex)]
+DT[, c("race", "sex") := NULL]
+data.table::setnames(DT, 
+         old = c("program", "graduates", "ever_enrolled", "stickiness"), 
+         new = c("prgm", "grad", "ever", "stk"))
+DT[]
 
-# Class before ordering
-class(dframe$program)
-class(dframe$people)
+# Factor levels ordered by median
+mw1 <- order_multiway(DT, 
+                      quantity = "stk", 
+                      categories = c("prgm", "people"))
+data.table::setorderv(mw1, c("prgm_median", "people_median"))
 
-# Class and levels after ordering
-mw1 <- order_multiway(dframe, 
-                      quantity = "stickiness", 
-                      categories = c("program", "people"))
-class(mw1$program)
-levels(mw1$program)
-class(mw1$people)
-levels(mw1$people)
-
-# Display category medians 
+# The unused variables `ever` and `grad` are dropped
 mw1
 
-# Existing factors (if any) are re-ordered
-mw2 <- dframe
-mw2$program <- factor(mw2$program, levels = c("ME", "EE"))
-
-# Levels before conditioning
-levels(mw2$program) 
-
-# Levels after conditioning
-mw2 <- order_multiway(dframe, 
-                      quantity = "stickiness", 
-                      categories = c("program", "people"))
-levels(mw2$program) 
+# Levels in same increasing order as shown above
+levels(mw1$prgm)
+levels(mw1$people)
 
 # Ordering using percent method
-order_multiway(dframe, 
-               quantity = "stickiness", 
-               categories = c("program", "people"), 
+mw2 <-order_multiway(DT, 
+               quantity = "stk", 
+               categories = c("prgm", "people"), 
                method = "percent", 
-               ratio_of = c("graduates", "ever_enrolled"))
+               ratio_of = c("grad", "ever"))
+data.table::setorderv(mw2, c("prgm_stk", "people_stk"))
+
+# The two ratio_of variables `ever` and `grad` are retained
+mw2
+
+# Levels in same increasing order as shown above
+levels(mw2$prgm)
+levels(mw2$people)
+
+# Order of factor levels depends on the method. Here, for example, 
+# program levels are the same for median and percent methods, 
+all.equal(levels(mw1$prgm), levels(mw2$prgm))
+
+# but people levels do not have the same order. 
+all.equal(levels(mw1$people), levels(mw2$people))
+levels(mw1$people)
+levels(mw2$people)
 }
 \references{
 Cleveland WS (1993). \emph{Visualizing Data}. Hobart Press, Summit, NJ.
-
-Kroonenberg PM (2008). \emph{Applied Multiway Data Analysis}. Wiley,
-Hoboken, NJ.
 }

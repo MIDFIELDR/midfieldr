@@ -13,9 +13,8 @@ filter_programs(dframe, pattern, ..., negate = FALSE)
 
 - dframe:
 
-  Data frame or data frame extension (e.g., data.table or tibble).
-  Expected variables (or subset thereof):
-  `{cip6name, cip6, cip4name, cip4, cip2name, cip2}.`
+  Data frame or data frame extension (e.g., data.table or tibble) with
+  CIP program names and codes, e.g., the `cip` dataset.
 
 - pattern:
 
@@ -38,6 +37,7 @@ Data frame with the following properties:
 - Data frame class is preserved.
 
 - Rows are a subset of the input and appear in the same order.
+  Duplicated rows are removed.
 
 - Columns are not modified.
 
@@ -46,9 +46,8 @@ Data frame with the following properties:
 ## Details
 
 Each element of the `pattern` vector is matched row-wise to every value
-in `dframe` using `grepl().` Row values are coerced to character strings
-if possible. If `negate = FALSE` (default), a match retains the full
-row; if `negate = TRUE,` a match removes the full row.
+in `dframe` using `grepl().` If `negate = FALSE` (default), a match
+retains the full row; if `negate = TRUE,` a match removes the full row.
 
 ## Examples
 

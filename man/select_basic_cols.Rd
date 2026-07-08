@@ -7,16 +7,17 @@
 select_basic_cols(dframe, col_pattern = NULL, ..., type = NULL)
 }
 \arguments{
-\item{dframe}{Data frame of \emph{student}, \emph{term}, \emph{course}, or \emph{degree} student-level records.}
+\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) equivalent to or derived from one of the MIDFIELD
+data tables: \verb{\{student, term, course, degree\}.}}
 
 \item{col_pattern}{Character vector containing strings or regular
 expressions to be matched or partially matched to the column
-names of \code{dframe}.}
+names of \code{dframe.}.}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
 referable only by name.}
 
-\item{type}{Character identifying the record type. Possible values are "s",
+\item{type}{Character identifying the table type. Possible values are "s",
 "t", "c", "d", "a", or NULL (default). See Details.}
 }
 \value{
@@ -29,8 +30,8 @@ Data frame with the following properties:
 }
 }
 \description{
-Subset any of the four MIDFIELD data tables \verb{\{student, term, course, degree\}}
-by selecting from that data frame the columns required by other midfieldr
+Subset one of the four MIDFIELD data tables \verb{\{student, term, course, degree\}}
+by selecting the columns required by other midfieldr
 functions.
 }
 \details{

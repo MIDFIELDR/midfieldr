@@ -29,7 +29,7 @@
 - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
   : Choose columns of student records
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
-  : Calculate timely completion terms
+  : Estimate timely completion terms
 
 ## Utility
 

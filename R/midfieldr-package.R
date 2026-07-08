@@ -28,6 +28,7 @@
 #' @importFrom data.table setorderv
 #' @importFrom data.table shift
 #'
+#' @importFrom stats median
 #' @importFrom stats na.omit
 #' @importFrom stats reorder
 #'

@@ -512,15 +512,15 @@ DT <- order_multiway(DT,
   ratio_of   = c("graduates", "ever_enrolled")
 )
 DT
-#>        program               people graduates ever_enrolled stickiness
-#>         <fctr>               <fctr>     <num>         <num>      <num>
-#>  1:      Civil         Asian Female        10            15       66.7
-#>  2:      Civil      Hispanic Female         6            13       46.2
-#>  3:      Civil International Female        13            23       56.5
+#>        program               people ever_enrolled graduates stickiness
+#>         <fctr>               <fctr>         <num>     <num>      <num>
+#>  1:      Civil         Asian Female            15        10       66.7
+#>  2:      Civil      Hispanic Female            13         6       46.2
+#>  3:      Civil International Female            23        13       56.5
 #> ---                                                                   
-#> 33: Mechanical   International Male        89           178       50.0
-#> 34: Mechanical   Other/Unknown Male        41            80       51.2
-#> 35: Mechanical           White Male       955          1596       59.8
+#> 33: Mechanical   International Male           178        89       50.0
+#> 34: Mechanical   Other/Unknown Male            80        41       51.2
+#> 35: Mechanical           White Male          1596       955       59.8
 #>     program_stickiness people_stickiness
 #>                  <num>             <num>
 #>  1:               62.4              62.7

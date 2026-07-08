@@ -7,51 +7,45 @@
 completion_status(dframe, midfield_table = degree)
 }
 \arguments{
-\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variables: \verb{\{mcid, timely_term\}}.}
+\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) with required variables \verb{\{mcid, timely_term\}.}
+The latter variable is provided by \verb{timely_term().}}
 
-\item{midfield_table}{Data frame of \emph{degree} student-level records. Required variables:
-\verb{\{mcid, term_degree\}}.}
+\item{midfield_table}{\code{degree} data frame with required
+variables \verb{\{mcid, term_degree\}.}}
 }
 \value{
 Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved.
-\item Rows are filtered for unique \code{mcid} values.
-\item Columns \verb{\{mcid, timely_term\}} are retained. All other columns are
-dropped and the following columns are added:
+\item Rows are not modified except duplicated rows are removed.
+Row order is preserved.
+\item Columns \verb{\{mcid, timely_term\}} are retained. All other columns (if any)
+are dropped and the following variables are added:
 \itemize{
 \item \code{term_degree.}   Character. Term in which the first degree(s) are
 completed, encoded \code{YYYYT}. Joined from \code{midfield_table.}
-\item \code{completion_status.}   Character. Possible values are "timely"
-for students completing a degree no later than their timely
-completion terms; "late" for students completing their program
-after their timely completion term; and "NA" for non-completers.
+\item \code{completion_status.}   Character. Possible values are "timely",
+"late" and "NA".
 }
 \item Groups and keys are not preserved.
 }
 }
 \description{
-To a data frame keyed by student ID, add a column indicating if a
-student completed their program, and if so, whether their completion
-was timely or late. Columns of supporting information are
-also added. Columns not related to the task are dropped.
+For each student in a data frame, determine their \emph{completion status}
+(timely, late, or NA) and add columns that support the findings.
 }
 \details{
-In many studies, students must complete their programs in a specified time
-span to be considered "timely", for example 4, 6, or 8 years after
-admission. By "completion" we mean an
-undergraduate earning their first baccalaureate degree (or degrees, for
-students earning more than one degree in the same term).
+By \emph{completing a program} we mean an undergraduate earning their first
+baccalaureate degree or degrees. \emph{Timely} completion is typically 4, 6, or
+8 years after admission depending on the definition adopted in a particular
+study. The term at the upper limit of that span is the
+\emph{timely completion term.}
 
-The goal of determining timely completion is to refine a population, that
-is, obtain a data frame of IDs that satisfy our constraints. Thus
-\code{completion_status()} yields a column of completion status values and
-columns of supporting information keyed by ID. All other columns in
-\code{dframe} (if any) are dropped.
-
-The supporting information in the output is provided so that the user
-can review the findings. After review, we usually delete all columns
-except the IDs, yielding the refined population that was our goal.
+Our heuristic obtains a student's first degree term (if any) from
+\code{midfield_table}. Completion status is "timely" for students completing
+a degree no later than their timely completion terms; "late" for
+students completing their program after their timely completion term;
+and "NA" for non-completers. These results are documented in the output.
 }
 \examples{
 term <- toy_term

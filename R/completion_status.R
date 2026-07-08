@@ -1,8 +1,7 @@
 # See R/roxygen.R for documentation below that uses inline R code
-
-
-# ---------- deprecated version ----------
-
+#
+# ---------- deprecated version
+#
 #' midfieldr deprecated functions
 #' @param dframe `r dframe`
 #' @param midfield_degree `r midfield_x("*degree*")`
@@ -20,83 +19,75 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
   completion_status(dframe = dframe, midfield_table = midfield_degree)
 }
 NULL
-
-
-
-# ---------- current version ----------
-
+#
+# ---------- current version
+#
 #' Determine completion status
 #'
-#' To a data frame keyed by student ID, add a column indicating if a
-#' student completed their program, and if so, whether their completion
-#' was timely or late. Columns of supporting information are
-#' also added. Columns not related to the task are dropped.
+#' For each student in a data frame, determine their *completion status*
+#' (timely, late, or NA) and add columns that support the findings.
 #'
-#' In many studies, students must complete their programs in a specified time
-#' span to be considered "timely", for example 4, 6, or 8 years after
-#' admission. By "completion" we mean an
-#' undergraduate earning their first baccalaureate degree (or degrees, for
-#' students earning more than one degree in the same term).
+#' By *completing a program* we mean an undergraduate earning their first
+#' baccalaureate degree or degrees. *Timely* completion is typically 4, 6, or
+#' 8 years after admission depending on the definition adopted in a particular
+#' study. The term at the upper limit of that span is the
+#' *timely completion term.*
 #'
-#' The goal of determining timely completion is to refine a population, that
-#' is, obtain a data frame of IDs that satisfy our constraints. Thus
-#' `completion_status()` yields a column of completion status values and
-#' columns of supporting information keyed by ID. All other columns in
-#' `dframe` (if any) are dropped.
+#' Our heuristic obtains a student's first degree term (if any) from
+#' `midfield_table`. Completion status is "timely" for students completing
+#' a degree no later than their timely completion terms; "late" for
+#' students completing their program after their timely completion term;
+#' and "NA" for non-completers. These results are documented in the output.
 #'
-#' The supporting information in the output is provided so that the user
-#' can review the findings. After review, we usually delete all columns
-#' except the IDs, yielding the refined population that was our goal.
+#' @param dframe `r dframe` with required variables `{mcid, timely_term}.`
+#'        The latter variable is provided by `timely_term().`
 #'
-#' @param dframe `r dframe` Required variables: `{mcid, timely_term}`.
-#'
-#' @param midfield_table `r midfield_x("*degree*")` Required variables:
-#'        `{mcid, term_degree}`.
+#' @param midfield_table `r midfield_x("degree")` with required
+#'        variables `{mcid, term_degree}.`
 #'
 #' @returns Data frame with the following properties:
-#' * Data frame class is preserved.
-#' * Rows are filtered for unique `mcid` values.
-#' * Columns `{mcid, timely_term}` are retained. All other columns are
-#'   dropped and the following columns are added:
+#' * `r class_presrv`
+#' * `r rows_not_mod`
+#' * Columns `{mcid, timely_term}` are retained. All other columns (if any)
+#'   are dropped and the following variables are added:
 #'   - `term_degree.` &nbsp; Character. Term in which the first degree(s) are
 #'      completed, encoded `YYYYT`. Joined from `midfield_table.`
-#'   - `completion_status.` &nbsp; Character. Possible values are "timely"
-#'      for students completing a degree no later than their timely
-#'      completion terms; "late" for students completing their program
-#'      after their timely completion term; and "NA" for non-completers.
-#' * Groups and keys are not preserved.
+#'   - `completion_status.` &nbsp; Character. Possible values are "timely",
+#'      "late" and "NA".
+#' * `r groups_not`
 #'
 #' @example man/examples/exa_completion_status.R
 #' @export
 #'
 completion_status <- function(dframe, midfield_table = degree) {
-  # define required columns and variables to be added
-  dframe_vars <- c("mcid", "timely_term")
-  record_vars <- c("mcid", "term_degree")
+  #
+  # ---------- assign active column names
+  #
+  reqd_dframe_vars <- c("mcid", "timely_term")
+  reqd_table_vars <- c("mcid", "term_degree")
   added_vars <- c("term_degree", "completion_status")
-  return_vars <- c(dframe_vars, added_vars)
-
+  #
   # ---------- base R checks (all data frame classes)
-
+  #
   # data frame assessment
   qassert(dframe, "d+")
   qassert(midfield_table, "d+")
 
   # required columns
-  assert_names(colnames(dframe), must.include = dframe_vars)
-  assert_names(colnames(midfield_table), must.include = record_vars)
+  assert_names(colnames(dframe), must.include = reqd_dframe_vars)
+  assert_names(colnames(midfield_table), must.include = reqd_table_vars)
 
   # class of required columns
-  for (i in seq_along(dframe_vars)) {
-    qassert(dframe[[dframe_vars[i]]], "s+")
+  for (i in seq_along(reqd_dframe_vars)) {
+    qassert(dframe[[reqd_dframe_vars[i]]], "s+")
   }
-  for (i in seq_along(record_vars)) {
-    qassert(midfield_table[[record_vars[i]]], "s+")
+  for (i in seq_along(reqd_table_vars)) {
+    qassert(midfield_table[[reqd_table_vars[i]]], "s+")
   }
-
+  #
   # ---------- preparation
-
-  # to restore class except for groups in tibbles
+  #
+  # to restore class, but not grouped_DF (tibbles)
   prior_class <- setdiff(class(dframe), "grouped_df")
 
   # prevent by-ref changes propagating to global env
@@ -107,33 +98,46 @@ completion_status <- function(dframe, midfield_table = degree) {
 
   # bind names due to NSE notes in R CMD check
   completion_status <- NULL
+  idx <- NULL
   timely_term <- NULL
-
+  #
   # ---------- do the work
-
+  #
   # subset required variables
-  dframe <- dframe[, .SD, .SDcols = dframe_vars]
+  dframe <- dframe[, .SD, .SDcols = reqd_dframe_vars]
   dframe <- unique(dframe, na.rm = TRUE)
-  midf_table <- midf_table[, .SD, .SDcols = record_vars]
+  midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
   midf_table <- unique(midf_table, na.rm = TRUE)
+
+  # add temp col to restore row order
+  dframe[, idx := .I]
 
   # join degree records
   dframe <- midf_table[dframe, on = "mcid"]
-
+  #
   # ---------- timely completion labels
-
+  #
   # completion is timely, late, or NA
-  dframe[, completion_status := fifelse(term_degree <= timely_term,
+  dframe[, completion_status := fifelse(
+    term_degree <= timely_term,
     "timely",
     "late",
     na = NA_character_
   )]
-
+  #
   # ---------- prepare to return
+  #
+  # restore row order
+  setkey(dframe, idx)
 
-  dframe <- dframe[, .SD, .SDcols = return_vars]
-  setkey(dframe, NULL)
+  # drop temp cols, restore col order, ensure unique rows
+  dframe <- dframe[, .SD, .SDcols = c(reqd_dframe_vars, added_vars)]
   dframe <- unique(dframe)
+
+  # restore class
+  setkey(dframe, NULL)
   setattr(dframe, "class", prior_class)
+
+  # done
   dframe[]
 }

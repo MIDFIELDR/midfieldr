@@ -1298,15 +1298,15 @@ DT_chart <- order_multiway(DT_chart,
   ratio_of = c("grad", "ever")
 )
 DT_chart
-#>        program               people  grad  ever stickiness          race    sex
-#>         <fctr>               <fctr> <num> <num>      <num>        <char> <char>
-#>  1:      Civil         Asian Female    10    14       71.4         Asian Female
-#>  2:      Civil      Hispanic Female     6    13       46.2      Hispanic Female
-#>  3:      Civil International Female    13    23       56.5 International Female
+#>        program          race    sex               people  ever  grad stickiness
+#>         <fctr>        <char> <char>               <fctr> <num> <num>      <num>
+#>  1:      Civil         Asian Female         Asian Female    14    10       71.4
+#>  2:      Civil      Hispanic Female      Hispanic Female    13     6       46.2
+#>  3:      Civil International Female International Female    23    13       56.5
 #> ---                                                                            
-#> 35: Mechanical   International Male    89   176       50.6 International   Male
-#> 36: Mechanical   Other/Unknown Male    41    80       51.2 Other/Unknown   Male
-#> 37: Mechanical           White Male   952  1584       60.1         White   Male
+#> 35: Mechanical International   Male   International Male   176    89       50.6
+#> 36: Mechanical Other/Unknown   Male   Other/Unknown Male    80    41       51.2
+#> 37: Mechanical         White   Male           White Male  1584   952       60.1
 #>     program_stickiness people_stickiness
 #>                  <num>             <num>
 #>  1:               62.8              64.0

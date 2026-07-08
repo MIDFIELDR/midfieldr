@@ -7,10 +7,10 @@
 timely_term(dframe, midfield_table = term, ..., sched_span = NULL, span = NULL)
 }
 \arguments{
-\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Required variable: \code{{mcid}}.}
+\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) with required variable \verb{\{mcid\}.}}
 
-\item{midfield_table}{Data frame of \emph{term} student-level records.
-Required variables: \verb{\{mcid, term, level\}}.}
+\item{midfield_table}{\code{term} data frame with required variables
+\verb{\{mcid, term, level\}.}}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
 referable only by name.}
@@ -26,9 +26,10 @@ of \code{sched_span}).}
 Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved.
-\item Rows are filtered for unique student IDs.
-\item Variable \code{{mcid}} is retained. All other columns are dropped and the
-following variables are added:
+\item Rows are not modified except duplicated rows are removed. Row order is
+preserved.
+\item Variable \code{{mcid}} is retained. All other columns (if any) are dropped
+and the following variables are added:
 \itemize{
 \item \code{term_i}   Initial term of a student's longitudinal record,
 encoded \code{YYYYT}. Extracted from \code{midfield_table.}
@@ -44,16 +45,17 @@ would be considered timely for every student. Encoded \code{YYYYT.}
 }
 }
 \description{
-Starting with a data frame of unique student IDs, estimate the term by
-which a student's program completion would be considered timely and add
-columns to the data frame that support the finding.
+For each student in a data frame, estimate their
+\emph{timely completion term}---the term by which their program completion
+would be considered timely---and add columns to the data frame that
+support the findings.
 }
 \details{
-The latest term by which program completion would be considered
-timely is the \emph{timely completion term,} typically 4, 6, or 8 years after
-admission depending on the definition adopted in a particular study. By
-"completion" we mean an undergraduate earning their first baccalaureate
-degree or degrees.
+By \emph{completing a program} we mean an undergraduate earning their first
+baccalaureate degree or degrees. \emph{Timely} completion is typically 4, 6, or
+8 years after admission depending on the definition adopted in a particular
+study. The term at the upper limit of that span is the
+\emph{timely completion term.}
 
 Our heuristic assigns \code{span} number of years (default 6) to every
 student. For students admitted at second-year level or higher, the span is

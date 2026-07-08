@@ -16,8 +16,7 @@ by the student, e.g., "Asian", "Black", "Hispanic", etc.}
 possible values are "Female", "Male", and "Unknown."}
 \item{\code{program}}{Character. Academic program label.}
 \item{\code{bloc}}{Character. A group of student-level data dealt
-with as a unit, e.g., starters, students ever-enrolled,
-graduates, etc.}
+with as a unit, e.g., starters, students ever-enrolled, graduates, etc.}
 }
 }
 \usage{

@@ -7,8 +7,8 @@
 filter_programs(dframe, pattern, ..., negate = FALSE)
 }
 \arguments{
-\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble). Expected variables (or subset thereof):
-\verb{\{cip6name, cip6, cip4name, cip4, cip2name, cip2\}.}}
+\item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) with CIP program names and codes, e.g., the
+\code{cip} dataset.}
 
 \item{pattern}{Character vector of search strings, including regular
 expressions.}
@@ -24,6 +24,7 @@ Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved.
 \item Rows are a subset of the input and appear in the same order.
+Duplicated rows are removed.
 \item Columns are not modified.
 \item Groups and keys are not preserved.
 }
@@ -34,9 +35,8 @@ any string in a vector of character strings.
 }
 \details{
 Each element of the \code{pattern} vector is matched row-wise to every
-value in \code{dframe} using \verb{grepl().} Row values are coerced to character
-strings if possible. If \code{negate = FALSE} (default), a match retains
-the full row; if \verb{negate = TRUE,} a match removes the full row.
+value in \code{dframe} using \verb{grepl().} If \code{negate = FALSE} (default), a
+match retains the full row; if \verb{negate = TRUE,} a match removes the full row.
 }
 \examples{
 # Subset using keywords

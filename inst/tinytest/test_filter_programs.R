@@ -23,19 +23,20 @@ expect_class_preserved <- function(x, text, fnc) {
 }
 
 test_filter_programs <- function() {
-
+    
     # usage
     # filter_programs(dframe,
     #             pattern, 
     #             ..., 
     #             negate = FALSE)
     
+    # library(tinytest)
     # Needed for tinytest::build_install_test()
     suppressPackageStartupMessages(require("data.table"))
-
+    
     # test case
     music_cip <- wrapr::build_frame(
-          "cip4"  , "cip4name", "cip6"  , "cip6name"               |
+        "cip4"  , "cip4name", "cip6"  , "cip6name"               |
             "5009", "Music"   , "500901", "Music, General"         |
             "5009", "Music"   , "500906", "Conducting"             |
             "5009", "Music"   , "500907", "Piano and Organ"        |
@@ -48,7 +49,7 @@ test_filter_programs <- function() {
             "5009", "Music"   , "500916", "Percussion Instruments" |
             "5009", "Music"   , "500999", "Music, Other")
     setDT(music_cip)
-
+    
     # various answers
     music_codes <- music_cip[, cip6]
     ans <- wrapr::build_frame(
@@ -56,37 +57,35 @@ test_filter_programs <- function() {
             "5009",  "Music"
     )
     setDT(ans)
-
     
     # ---------- start tests
     
     # check that class is preserved function
     expect_class_preserved(cip, "^14", filter_programs)
     
-
     # Arguments before ... do not have to be named if ordered correctly
     expect_equal(
         filter_programs(pattern = "500913", dframe = music_cip),
         filter_programs(music_cip, "500913")
     )
-
-    # Error if no pattern
-    expect_error(filter_programs(dframe = music_cip))
-
-
     
-
+    # named arguments in any order
+    x <- filter_programs(dframe = music_cip, pattern = "500901")
+    y <- filter_programs(pattern = "500901", dframe = music_cip)
+    expect_equal(x, y)
+    
     # Non-character columns coerced to text
     DT <- copy(music_cip[, .(cip4name, cip6)])
     DT[, x_dbl  := as.numeric(cip6)/100]
     DT[, x_int  := .I]
     DT[, x_lgcl := TRUE]
-
-    # expect_equal(filter_programs("Music", cip = DT))
-    expect_equal(filter_programs("11", dframe = DT), DT[x_int == 11L])
-    expect_equivalent(filter_programs("TRUE", dframe = DT), DT)
-
     
+    expect_equal(filter_programs(DT, "11"), DT[x_int == 11L])
+    expect_equivalent(filter_programs(DT, "TRUE"), DT)
+    
+    # error if no pattern
+    expect_error(filter_programs(dframe = music_cip))
+
     # function output not printed
     invisible(NULL)
 }

@@ -1,0 +1,69 @@
+---
+title: "Notes on syntax"
+format:
+  gfm:
+    html-table-processing: none
+bibliography: ../../inst/REFERENCES.bib
+link-citations: true
+---
+  
+```{r setup}
+#| include: false
+
+# for any figures generated in the article
+knitr::opts_chunk$set(fig.path = "figures/art-001-")
+
+# for any "child" arguments in r-code-chunks
+library("rprojroot")
+path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
+```
+  
+```{r child = paste0(path_to_rmd, "/common-setup.Rmd")}
+```
+
+
+
+```{r}
+library("midfieldr")
+library("midfielddata")
+library("data.table")
+library("tibble")
+```
+ 
+*On printing data frame:* &nbsp; Set the following data frame printing options to print all columns with the total number of rows set by `print_all_rows_max`.
+
+```{r}
+# set max number of rows to display
+print_all_rows_max <- 6
+
+# data.table syntax
+half_max <- round(print_all_rows_max / 2, 0)
+options(
+  datatable.print.nrows = print_all_rows_max,
+  datatable.print.topn = half_max
+)
+
+# dplyr/tibble syntax
+options(
+  pillar.width = Inf,
+  pillar.print_max = print_all_rows_max,
+  pillar.print_min = print_all_rows_max
+)
+```
+
+For example
+
+```{r}
+# data.table syntax
+x <- copy(toy_student)
+as.data.table(x)
+
+# tibble syntax
+library(tibble)
+as_tibble(x)
+
+# base R syntax
+x <- as.data.frame(x)
+head(x, n = print_all_rows_max)
+```
+

@@ -21,13 +21,7 @@ path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
 ```{r child = paste0(path_to_rmd, "/common-setup.Rmd")}
 ```
 
-When working with student-level records to develop quantitative metrics, we recommend that you:
-  
-- Know the structure of your data.
-- Define your metrics and the blocs of records they require.
-- Plan your process of refining and shaping the data.
-
-midfieldr helps you refine and shape your data in these areas:
+When working with student-level records to develop quantitative metrics, midfieldr helps you refine and shape your data in these areas:
 
 - *Programs.* &nbsp; Collect 6-digit program codes. 
 - *Records.* &nbsp; Credibly subset source data and refine the population to suit your study. 
@@ -36,26 +30,22 @@ midfieldr helps you refine and shape your data in these areas:
 This document introduces you to midfieldr's basic set of tools.
 
 ```{r}
-library(midfieldr)
-library(midfielddata)
-library(data.table)
+library("midfieldr")
+library("midfielddata")
+library("data.table")
 ```
 
 Before you start:
 
-1. *On syntax:* &nbsp; Data manipulation in our sample scripts and internally in functions is coded using data.table syntax. However, midfieldr functions do attempt to preserve data frame attributes such as base R `data.frame` or tibble `tbl_df`. 
+1. *On syntax:* &nbsp; We use data.table syntax for data manipulation throughout midfieldr and all data frames are of the `data.table` class. However, if you happen to prefer tidyverse syntax, midfieldr functions do attempt to preserve data frame attributes such as the `tbl_df` class. 
 
 2. *On functions:* &nbsp; In getting started, we provide a brief introduction only. Details are discussed at length in subsequent articles. You can always access the  documentation, e.g., `?function_name`, for more information.  
 
 
 
-
-
-
-
 ## midfieldr functions
 
-The major midfieldr functions can be organized into three categories based on their contribution to a typical workflow:
+The major functions can be organized into four categories based on their contribution to a typical workflow:
 
 Programs
 
@@ -63,8 +53,11 @@ Programs
 
 Records
 
-- `select_basic_cols()` chooses columns of student records required by midfieldr functions.
 - `post_bacc_terms()` identifies rows of post-baccalaureate terms to exclude. 
+
+Population
+
+- `select_basic_cols()` chooses columns of student records required by midfieldr functions.
 - `timely_term()` estimates a student's timely completion term. 
 - `data_sufficiency()` identifies rows to exclude due to insufficient data.
 - `completion_status()` determines if program completion is timely or late.
@@ -89,11 +82,7 @@ Special conditioning
 *Collecting and labeling 6-digit program codes.*
 
 ```{r}
-# if Nrows equal to or less than this N, print all rows
-options(datatable.print.nrows = 10)
-
-# if Nrows > N above, print this N rows
-options(datatable.print.topn = 5)
+#| echo: false
 ```
 
 
@@ -169,7 +158,7 @@ Which specific programs we select depend on the study, of course, but in all cas
 
 ## Student-level data
 
-*Credibly subset source data and refine the population to suit your study.*
+*Credibly subset the source data and refine the population.*
 
 ```{r}
 #| echo: false
@@ -179,7 +168,7 @@ options(
 )
 ```
 
-For this article we load the `student, term,` and `degree` tables from midfielddata. 
+For this article we load the `student`, `term`, and `degree` tables from midfielddata. 
 
 ```{r}
 data(student, term, degree)
@@ -195,13 +184,52 @@ look_at(term)
 look_at(degree)
 ```
 
-We usually copy the source data, giving them new names (and new locations in memory), to keep them intact while we use the original names  --- `student`, `term`, and `degree` --- to do our work. 
+## `post_bacc_terms()`
+
+*Identify rows of post-baccalaureate terms to exclude.*
+
+In most cases, we are not generally interested in academic terms beyond the first degree term, so we use the results of this function to exclude post-first-degree terms from the source data. 
+
+`post_bacc_terms()` identifies terms later than the first baccalaureate, if any.  
+
+```{r}
+term <- post_bacc_terms(term, midfield_table = degree)
+degree <- post_bacc_terms(degree, midfield_table = degree)
+```
+
+`post_bacc_terms()` adds a column indicating the cluster a term belongs to with respect to the first degree term.
+
+```{r}
+look_at(term)
+```
+
+Using `sort_uniq()`, a midfieldr convenience function to sort unique values of a vector, we find the possible term cluster values to be:
+
+```{r}
+sort_uniq(term$term_cluster)
+```
+
+We filter to exclude all terms labeled "post-first-degree" and drop the temporary columns. 
+
+```{r}
+term <- term[!"post-first-degree", on = "term_cluster"]
+degree <- degree[!"post-first-degree", on = "term_cluster"]
+
+term[, c("term_cluster", "first_degree_term") := NULL]
+degree[, c("term_cluster", "first_degree_term") := NULL]
+
+look_at(term)
+```
+
+We usually copy these data, giving them new names (and new locations in memory), to keep them intact while we use the original *names*  --- `student`, `term`, and `degree` --- to develop our population.  
 
 ```{r}
 student_source <- copy(student)
 term_source <- copy(term)
 degree_source <- copy(degree)
 ```
+
+Any variables we drop in subsequent work can always be recovered from these source data frames. 
 
 
 
@@ -233,46 +261,10 @@ With a smaller number of columns, the printout of the data frame is more readabl
 term
 ```
 
+Any variables we dropped here can always be rejoined as needed from the source data frames, `source_student, source_term,` etc., we set aside earlier---all of which were filtered to remove post-baccalaureate terms. 
 
 
 
-
-
-
-## `post_bacc_terms()`
-
-*Identify rows of post-baccalaureate terms to exclude.*
-
-`post_bacc_terms()` identifies terms later than the first baccalaureate, if any. We are not generally interested in terms beyond the first degree term, so we use the results of this function to exclude post-first-degree terms. 
-
-```{r}
-term <- post_bacc_terms(term)
-degree <- post_bacc_terms(degree)
-```
-
-`post_bacc_terms()` adds a column indicating the cluster a term belongs to with respect to the first degree term.
-
-```{r}
-term
-```
-
-Using `sort_uniq()`, a midfieldr convenience function to sort unique values of a vector, we find the possible term cluster values to be:
-
-```{r}
-sort_uniq(term$term_cluster)
-```
-
-We filter to exclude all terms labeled "post-first-degree" and remove the extra columns. 
-
-```{r}
-term <- term[!"post-first-degree", on = "term_cluster"]
-degree <- degree[!"post-first-degree", on = "term_cluster"]
-
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
-
-term
-```
 
 
 
@@ -293,7 +285,7 @@ DT
 `timely_term()` adds a column indicating the last term by which a student’s degree completion would be considered timely, generally 6 years after admission.  The timely completion term is required to determine data sufficiency as well as assessing timely completion.  
 
 ```{r}
-DT <- timely_term(DT)
+DT <- timely_term(DT, midfield_table = term)
 
 DT
 ```
@@ -307,7 +299,7 @@ The data sufficiency criterion limits student records to those for which availab
 `data_sufficiency()` adds a column that labels each row for inclusion or exclusion based on data sufficiency near the upper and lower bounds of an institution’s data range.
 
 ```{r}
-DT <- data_sufficiency(DT)
+DT <- data_sufficiency(DT, midfield_table = term)
 
 DT
 ```
@@ -352,7 +344,7 @@ DT <- timely_term(DT)
 `completion_status()` adds a column indicating completion status for every student.
 
 ```{r}
-DT <- completion_status(DT)
+DT <- completion_status(DT, midfield_table = degree)
 
 DT
 ```

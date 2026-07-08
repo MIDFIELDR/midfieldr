@@ -17,8 +17,8 @@ ever enrolled in a program.}
 \item{\code{graduates}}{Numerical. Number of students completing
 a program.}
 \item{\code{stickiness}}{Numerical. Program stickiness, the
-ratio of the number of graduates to the number ever
-enrolled, in percent.}
+ratio of the number of graduates to the number ever enrolled, in
+percent.}
 }
 }
 \usage{

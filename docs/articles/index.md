@@ -4,6 +4,8 @@
 
 - [Introduction to
   midfieldr](https://midfieldr.github.io/midfieldr/articles/art-000-getting-started.md):
+- [Notes on
+  syntax](https://midfieldr.github.io/midfieldr/articles/art-001-code-notes.md):
 - [Case
   study](https://midfieldr.github.io/midfieldr/articles/art-004-case-study.md):
 - [Case study using

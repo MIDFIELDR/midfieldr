@@ -108,6 +108,18 @@ test_data_sufficiency <- function() {
     expect_equal(x, y)
     rm(x, y)
     
+    # columns in dframe not involved in function are dropped
+    x <- dframe[, inactive_col := 1:nrow(dframe)]
+    y <- data_sufficiency(dframe, term)
+    expect_equal("inactive_col", setdiff(colnames(x), colnames(y)))
+    
+    # row order is maintained
+    x <- copy(test_DT)
+    setorderv(x, c("term", "mcid"))
+    x[, rownum := .I]
+    y <- data_sufficiency(x, term)
+    expect_equal(unique(y[["mcid"]]), unique(x[["mcid"]]))
+    
     # ---------- errors
     
     # required column missing

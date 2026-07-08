@@ -7,8 +7,7 @@ visually using *multiway dot plots* as described by William Cleveland
 otherwise, are from this source.
 
 Note that “multiway” in our context refers to the data structure and
-chart design defined by Cleveland, not to the methods of analysis
-described by Kroonenberg ([2008](#ref-Kroonenberg:2008)).
+chart design defined by Cleveland.
 
 This article in the MIDFIELD workflow:
 
@@ -82,7 +81,7 @@ library("data.table")
 library("ggplot2")
 ```
 
-*Loads with midfieldr.*   Prepared data. View data dictionary via
+*Loads with* `midfieldr.`   Prepared data. View data dictionary via
 [`?study_results`](https://midfieldr.github.io/midfieldr/reference/study_results.md).
 
 - `study_results` (derived in
@@ -206,20 +205,15 @@ results,
 x <- order_multiway(
   dframe = DT,
   quantity = "stickiness",
-  categories = c("program", "people"),
+  categories = c("program", "people"), 
   method = "median"
 )
 
-# Required arguments in order, but not named
-y <- order_multiway(DT, "stickiness", c("program", "people"), method = "median")
-
-# Using the implicit default for method
-z <- order_multiway(DT, "stickiness", c("program", "people"))
+# Required arguments in order, but not named, method implicit
+y <- order_multiway(DT, "stickiness", c("program", "people"))
 
 # Demonstrate equivalence
 check_equiv_frames(x, y)
-#> [1] TRUE
-check_equiv_frames(x, z)
 #> [1] TRUE
 ```
 
@@ -248,17 +242,26 @@ multiway variables and drop other columns.
 
 # Select multiway variables when quantity is count
 DT_count <- copy(DT)
-DT_count <- DT_count[, .(program, people, graduates)]
+# DT_count <- DT_count[, .(program, people, graduates)]
 DT_count
-#>        program               people graduates
-#>         <char>               <char>     <int>
-#>  1:      Civil         Asian Female        10
-#>  2:      Civil International Female        13
-#>  3:      Civil         White Female       162
-#> ---                                          
-#> 27: Mechanical   International Male        89
-#> 28: Mechanical   Other/Unknown Male        41
-#> 29: Mechanical           White Male       955
+#>        program               people          race    sex ever_enrolled
+#>         <char>               <char>        <char> <char>         <int>
+#>  1:      Civil         Asian Female         Asian Female            15
+#>  2:      Civil International Female International Female            23
+#>  3:      Civil         White Female         White Female           263
+#> ---                                                                   
+#> 27: Mechanical   International Male International   Male           178
+#> 28: Mechanical   Other/Unknown Male Other/Unknown   Male            80
+#> 29: Mechanical           White Male         White   Male          1596
+#>     graduates stickiness
+#>         <int>      <num>
+#>  1:        10       66.7
+#>  2:        13       56.5
+#>  3:       162       61.6
+#> ---                     
+#> 27:        89       50.0
+#> 28:        41       51.2
+#> 29:       955       59.8
 ```
 
 Applying
@@ -276,15 +279,24 @@ DT_count <- order_multiway(DT_count,
   method = "median"
 )
 DT_count
-#>        program               people graduates program_median people_median
-#>         <fctr>               <fctr>     <num>          <num>         <num>
-#>  1:      Civil         Asian Female        10           28.0          10.0
-#>  2:      Civil International Female        13           28.0          12.0
-#>  3:      Civil         White Female       162           28.0          95.0
-#> ---                                                                       
-#> 27: Mechanical   International Male        89           45.5          72.0
-#> 28: Mechanical   Other/Unknown Male        41           45.5          16.0
-#> 29: Mechanical           White Male       955           45.5         525.5
+#>        program               people          race    sex ever_enrolled
+#>         <fctr>               <fctr>        <char> <char>         <int>
+#>  1:      Civil         Asian Female         Asian Female            15
+#>  2:      Civil International Female International Female            23
+#>  3:      Civil         White Female         White Female           263
+#> ---                                                                   
+#> 27: Mechanical   International Male International   Male           178
+#> 28: Mechanical   Other/Unknown Male Other/Unknown   Male            80
+#> 29: Mechanical           White Male         White   Male          1596
+#>     graduates stickiness program_median people_median
+#>         <num>      <num>          <num>         <num>
+#>  1:        10       66.7           28.0          10.0
+#>  2:        13       56.5           28.0          12.0
+#>  3:       162       61.6           28.0          95.0
+#> ---                                                  
+#> 27:        89       50.0           45.5          72.0
+#> 28:        41       51.2           45.5          16.0
+#> 29:       955       59.8           45.5         525.5
 ```
 
 The function adds two columns (`program_median` and `people_median`) to
@@ -507,17 +519,26 @@ quantitative variable and omit unnecessary variables.
 
 # Select multiway variables with a superposed category
 DT_count <- copy(DT)
-DT_count <- DT_count[, .(program, race, sex, graduates)]
+# DT_count <- DT_count[, .(program, race, sex, graduates)]
 DT_count
-#>        program          race    sex graduates
-#>         <char>        <char> <char>     <int>
-#>  1:      Civil         Asian Female        10
-#>  2:      Civil International Female        13
-#>  3:      Civil         White Female       162
-#> ---                                          
-#> 27: Mechanical International   Male        89
-#> 28: Mechanical Other/Unknown   Male        41
-#> 29: Mechanical         White   Male       955
+#>        program               people          race    sex ever_enrolled
+#>         <char>               <char>        <char> <char>         <int>
+#>  1:      Civil         Asian Female         Asian Female            15
+#>  2:      Civil International Female International Female            23
+#>  3:      Civil         White Female         White Female           263
+#> ---                                                                   
+#> 27: Mechanical   International Male International   Male           178
+#> 28: Mechanical   Other/Unknown Male Other/Unknown   Male            80
+#> 29: Mechanical           White Male         White   Male          1596
+#>     graduates stickiness
+#>         <int>      <num>
+#>  1:        10       66.7
+#>  2:        13       56.5
+#>  3:       162       61.6
+#> ---                     
+#> 27:        89       50.0
+#> 28:        41       51.2
+#> 29:       955       59.8
 ```
 
 The superposed category is `sex`. The multiway data to be conditioned
@@ -532,15 +553,24 @@ DT_count <- order_multiway(DT_count,
   categories = c("program", "race")
 )
 DT_count
-#>        program          race graduates    sex program_median race_median
-#>         <fctr>        <fctr>     <num> <char>          <num>       <num>
-#>  1:      Civil         Asian        10 Female           28.0          14
-#>  2:      Civil International        13 Female           28.0          34
-#>  3:      Civil         White       162 Female           28.0         148
-#> ---                                                                     
-#> 27: Mechanical International        89   Male           45.5          34
-#> 28: Mechanical Other/Unknown        41   Male           45.5          16
-#> 29: Mechanical         White       955   Male           45.5         148
+#>        program               people          race    sex ever_enrolled
+#>         <fctr>               <char>        <fctr> <char>         <int>
+#>  1:      Civil         Asian Female         Asian Female            15
+#>  2:      Civil International Female International Female            23
+#>  3:      Civil         White Female         White Female           263
+#> ---                                                                   
+#> 27: Mechanical   International Male International   Male           178
+#> 28: Mechanical   Other/Unknown Male Other/Unknown   Male            80
+#> 29: Mechanical           White Male         White   Male          1596
+#>     graduates stickiness program_median race_median
+#>         <num>      <num>          <num>       <num>
+#>  1:        10       66.7           28.0          14
+#>  2:        13       56.5           28.0          34
+#>  3:       162       61.6           28.0         148
+#> ---                                                
+#> 27:        89       50.0           45.5          34
+#> 28:        41       51.2           45.5          16
+#> 29:       955       59.8           45.5         148
 ```
 
 In this example, `program` and `race` are factors, ordered by median
@@ -606,17 +636,26 @@ quantitative variable.
 
 # Select multiway variables when quantity is a percentage
 DT_ratio <- copy(DT)
-DT_ratio[, c("race", "sex") := NULL]
+# DT_ratio[, c("race", "sex") := NULL]
 DT_ratio
-#>        program               people ever_enrolled graduates stickiness
-#>         <char>               <char>         <int>     <int>      <num>
-#>  1:      Civil         Asian Female            15        10       66.7
-#>  2:      Civil International Female            23        13       56.5
-#>  3:      Civil         White Female           263       162       61.6
+#>        program               people          race    sex ever_enrolled
+#>         <char>               <char>        <char> <char>         <int>
+#>  1:      Civil         Asian Female         Asian Female            15
+#>  2:      Civil International Female International Female            23
+#>  3:      Civil         White Female         White Female           263
 #> ---                                                                   
-#> 27: Mechanical   International Male           178        89       50.0
-#> 28: Mechanical   Other/Unknown Male            80        41       51.2
-#> 29: Mechanical           White Male          1596       955       59.8
+#> 27: Mechanical   International Male International   Male           178
+#> 28: Mechanical   Other/Unknown Male Other/Unknown   Male            80
+#> 29: Mechanical           White Male         White   Male          1596
+#>     graduates stickiness
+#>         <int>      <num>
+#>  1:        10       66.7
+#>  2:        13       56.5
+#>  3:       162       61.6
+#> ---                     
+#> 27:        89       50.0
+#> 28:        41       51.2
+#> 29:       955       59.8
 ```
 
 Because stickiness is a ratio, we set `method` to “percent” and assign
@@ -635,24 +674,24 @@ DT_ratio <- order_multiway(DT_ratio,
   ratio_of = c("graduates", "ever_enrolled")
 )
 DT_ratio
-#>        program               people graduates ever_enrolled stickiness
-#>         <fctr>               <fctr>     <num>         <num>      <num>
-#>  1:      Civil         Asian Female        10            15       66.7
-#>  2:      Civil International Female        13            23       56.5
-#>  3:      Civil         White Female       162           263       61.6
+#>        program               people          race    sex ever_enrolled
+#>         <fctr>               <fctr>        <char> <char>         <num>
+#>  1:      Civil         Asian Female         Asian Female            15
+#>  2:      Civil International Female International Female            23
+#>  3:      Civil         White Female         White Female           263
 #> ---                                                                   
-#> 27: Mechanical   International Male        89           178       50.0
-#> 28: Mechanical   Other/Unknown Male        41            80       51.2
-#> 29: Mechanical           White Male       955          1596       59.8
-#>     program_stickiness people_stickiness
-#>                  <num>             <num>
-#>  1:               62.5              62.7
-#>  2:               62.5              57.1
-#>  3:               62.5              60.5
-#> ---                                     
-#> 27:               59.0              50.0
-#> 28:               59.0              45.6
-#> 29:               59.0              59.4
+#> 27: Mechanical   International Male International   Male           178
+#> 28: Mechanical   Other/Unknown Male Other/Unknown   Male            80
+#> 29: Mechanical           White Male         White   Male          1596
+#>     graduates stickiness program_stickiness people_stickiness
+#>         <num>      <num>              <num>             <num>
+#>  1:        10       66.7               62.5              62.7
+#>  2:        13       56.5               62.5              57.1
+#>  3:       162       61.6               62.5              60.5
+#> ---                                                          
+#> 27:        89       50.0               59.0              50.0
+#> 28:        41       51.2               59.0              45.6
+#> 29:       955       59.8               59.0              59.4
 ```
 
 The function again converts the categories to factors and adds two
@@ -937,5 +976,3 @@ Table 2: Four programs (N ever enrolled) percent stickiness {.table
 ## References
 
 Cleveland, William S. 1993. *Visualizing Data*. Hobart Press.
-
-Kroonenberg, Pieter M. 2008. *Applied Multiway Data Analysis*. Wiley.

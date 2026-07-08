@@ -1,9 +1,10 @@
 # Identify post-baccalaureate terms
 
-To a data frame keyed by student ID and containing an academic term
-variable, add a column that clusters terms with respect to a student's
-first degree term. Post-baccalaureate terms are typically excluded from
-the term, course, and degree data tables.
+For each student's term in a data frame, determine its relationship to
+the student's first degree term (pre-degree, first-degree, or
+post-first-degree) and add columns that support the findings.
+Post-first-baccalaureate terms are typically excluded from the
+`term, course,` and `degree` data tables.
 
 ## Usage
 
@@ -15,14 +16,13 @@ post_bacc_terms(dframe, midfield_table = degree)
 
 - dframe:
 
-  Data frame or data frame extension (e.g., data.table or tibble).
-  Required variables: `{mcid}` and one of
+  Data frame or data frame extension (e.g., data.table or tibble) with
+  required variables `{mcid}` and one of
   `{term, term_course, term_degree}.`
 
 - midfield_table:
 
-  Data frame or data frame extension of a MIDFIELD *degree* table.
-  Required variables: `{mcid, term_degree}.`
+  `degree` data frame with required variables `{mcid, term_degree}.`
 
 ## Value
 
@@ -30,10 +30,12 @@ Data frame with the following properties:
 
 - Data frame class is preserved.
 
-- Rows are not modified.
+- Rows are not modified except duplicated rows are removed. Row order is
+  preserved.
 
-- Columns are not modified except a new column replaces an existing
-  column if it has the same name. The new columns are:
+- New columns are added or replace existing columns of the same name (if
+  any). Other columns are not modified. The following variables are
+  added:
 
   - `first_degree_term.`   Character. Term of a student's first
     baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA`.

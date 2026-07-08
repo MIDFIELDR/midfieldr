@@ -11,16 +11,14 @@ Composite key: \verb{\{mcid, term_degree, cip6\}.}
 \item{\code{mcid}}{Character. Anonymized student identifier
 that connects the four data tables, e.g., "MCID3111142897."}
 \item{\code{term_degree}}{Character. Academic year and term
-in which a student completes their program, encoded
-\code{YYYYT.}}
+in which a student completes their program, encoded \code{YYYYT.}}
 \item{\code{cip6}}{Character. The 6-digit CIP code of the program
 that the student completes in this term.}
 \item{\code{institution}}{Character. The anonymized name of
 the institution the student attended in a given term, e.g.,
 "Institution A", "Institution B", etc.}
 \item{\code{degree}}{Character. Type of degree awarded, e.g.,
-"Bachelor of Arts in Geography", "Bachelor of Science
-in Finance," etc.}
+"Bachelor of Arts in Geography", "Bachelor of Science in Finance," etc.}
 }
 }
 \usage{

@@ -1,41 +1,46 @@
-# Subset of built-in data set
-dframe <- study_results[program == "EE" | program == "ME"]
-dframe[, people := paste(race, sex)]
-dframe[, c("race", "sex") := NULL]
-data.table::setcolorder(dframe, c("program", "people"))
+# Reconfigure built-in data set
+DT <- study_results[program == "EE" | program == "ME"]
+DT <- DT[race %chin% c("Asian", "Black", "Hispanic", "White")]
+DT[, people := paste(race, sex)]
+DT[, c("race", "sex") := NULL]
+data.table::setnames(DT, 
+         old = c("program", "graduates", "ever_enrolled", "stickiness"), 
+         new = c("prgm", "grad", "ever", "stk"))
+DT[]
 
-# Class before ordering
-class(dframe$program)
-class(dframe$people)
+# Factor levels ordered by median
+mw1 <- order_multiway(DT, 
+                      quantity = "stk", 
+                      categories = c("prgm", "people"))
+data.table::setorderv(mw1, c("prgm_median", "people_median"))
 
-# Class and levels after ordering
-mw1 <- order_multiway(dframe, 
-                      quantity = "stickiness", 
-                      categories = c("program", "people"))
-class(mw1$program)
-levels(mw1$program)
-class(mw1$people)
-levels(mw1$people)
-
-# Display category medians 
+# The unused variables `ever` and `grad` are dropped
 mw1
 
-# Existing factors (if any) are re-ordered
-mw2 <- dframe
-mw2$program <- factor(mw2$program, levels = c("ME", "EE"))
-
-# Levels before conditioning
-levels(mw2$program) 
-
-# Levels after conditioning
-mw2 <- order_multiway(dframe, 
-                      quantity = "stickiness", 
-                      categories = c("program", "people"))
-levels(mw2$program) 
+# Levels in same increasing order as shown above
+levels(mw1$prgm)
+levels(mw1$people)
 
 # Ordering using percent method
-order_multiway(dframe, 
-               quantity = "stickiness", 
-               categories = c("program", "people"), 
+mw2 <-order_multiway(DT, 
+               quantity = "stk", 
+               categories = c("prgm", "people"), 
                method = "percent", 
-               ratio_of = c("graduates", "ever_enrolled"))
+               ratio_of = c("grad", "ever"))
+data.table::setorderv(mw2, c("prgm_stk", "people_stk"))
+
+# The two ratio_of variables `ever` and `grad` are retained
+mw2
+
+# Levels in same increasing order as shown above
+levels(mw2$prgm)
+levels(mw2$people)
+
+# Order of factor levels depends on the method. Here, for example, 
+# program levels are the same for median and percent methods, 
+all.equal(levels(mw1$prgm), levels(mw2$prgm))
+
+# but people levels do not have the same order. 
+all.equal(levels(mw1$people), levels(mw2$people))
+levels(mw1$people)
+levels(mw2$people)

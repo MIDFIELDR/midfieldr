@@ -1,8 +1,8 @@
 # Choose columns of student records
 
-Subset any of the four MIDFIELD data tables
-`{student, term, course, degree}` by selecting from that data frame the
-columns required by other midfieldr functions.
+Subset one of the four MIDFIELD data tables
+`{student, term, course, degree}` by selecting the columns required by
+other midfieldr functions.
 
 ## Usage
 
@@ -14,14 +14,14 @@ select_basic_cols(dframe, col_pattern = NULL, ..., type = NULL)
 
 - dframe:
 
-  Data frame of student records from which columns are selected.
-  Expected choices are `student`, `term`, `course`, `degree` or their
-  equivalent.
+  Data frame or data frame extension (e.g., data.table or tibble)
+  equivalent to or derived from one of the MIDFIELD data tables:
+  `{student, term, course, degree}.`
 
 - col_pattern:
 
   Character vector containing strings or regular expressions to be
-  matched or partially matched to the column names of `dframe`.
+  matched or partially matched to the column names of `dframe.`.
 
 - ...:
 
@@ -30,7 +30,7 @@ select_basic_cols(dframe, col_pattern = NULL, ..., type = NULL)
 
 - type:
 
-  Character identifying the record type. Possible values are "s", "t",
+  Character identifying the table type. Possible values are "s", "t",
   "c", "d", "a", or NULL (default). See Details.
 
 ## Value

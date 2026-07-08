@@ -28,8 +28,8 @@ values are "No", "Yes."}
 \item{\code{home_zip}}{Character. Home ZIP code (or NA),
 e.g., "02056", "20170", "51301", "80129", etc.}
 \item{\code{high_school}}{Character. Code for the last high
-school attended before admission (or NA), e.g., "060075",
-"210512", "431800", "502195", etc.}
+school attended before admission (or NA), e.g., "060075", "210512",
+"431800", "502195", etc.}
 \item{\code{sat_math}}{Numeric. SAT mathematics test score
 (or NA).}
 \item{\code{sat_verbal}}{Numeric. SAT reading test score

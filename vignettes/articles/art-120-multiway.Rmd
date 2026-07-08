@@ -23,7 +23,7 @@ path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
 
 In working with longitudinal student-level records, we regularly encounter data structured as *multiway data*. We explore that data visually using *multiway dot plots* as described by William Cleveland [-@Cleveland:1993, 302--306]. Quotations, unless noted otherwise, are from this source.
 
-Note that "multiway" in our context refers to the data structure and chart  design defined by Cleveland, not to the methods of analysis described by Kroonenberg [-@Kroonenberg:2008].
+Note that "multiway" in our context refers to the data structure and chart  design defined by Cleveland.
 
 This article in the MIDFIELD workflow:
 
@@ -81,7 +81,7 @@ library("data.table")
 library("ggplot2")
 ```
 
-*Loads with midfieldr.* &nbsp; Prepared data. View data dictionary via `?study_results`. 
+*Loads with* `midfieldr.` &nbsp; Prepared data. View data dictionary via `?study_results`. 
 
 - `study_results` (derived in [Stickiness](art-110-stickiness.html)). 
 
@@ -170,19 +170,15 @@ Converts the categorical variables to factors ordered by the quantitative variab
 x <- order_multiway(
   dframe = DT,
   quantity = "stickiness",
-  categories = c("program", "people"),
+  categories = c("program", "people"), 
   method = "median"
 )
 
-# Required arguments in order, but not named
-y <- order_multiway(DT, "stickiness", c("program", "people"), method = "median")
-
-# Using the implicit default for method
-z <- order_multiway(DT, "stickiness", c("program", "people"))
+# Required arguments in order, but not named, method implicit
+y <- order_multiway(DT, "stickiness", c("program", "people"))
 
 # Demonstrate equivalence
 check_equiv_frames(x, y)
-check_equiv_frames(x, z)
 ```
 
 
@@ -208,7 +204,7 @@ To minimize the number of columns in the printout, we select the three multiway 
 ```{r}
 # Select multiway variables when quantity is count
 DT_count <- copy(DT)
-DT_count <- DT_count[, .(program, people, graduates)]
+# DT_count <- DT_count[, .(program, people, graduates)]
 DT_count
 ```
 
@@ -388,7 +384,7 @@ To illustrate superposing data, we return to the data set with separate columns 
 ```{r}
 # Select multiway variables with a superposed category
 DT_count <- copy(DT)
-DT_count <- DT_count[, .(program, race, sex, graduates)]
+# DT_count <- DT_count[, .(program, race, sex, graduates)]
 DT_count
 ```
 
@@ -458,7 +454,7 @@ For persistence metrics such as stickiness or graduation rate, the quantitative 
 ```{r}
 # Select multiway variables when quantity is a percentage
 DT_ratio <- copy(DT)
-DT_ratio[, c("race", "sex") := NULL]
+# DT_ratio[, c("race", "sex") := NULL]
 DT_ratio
 ```
 

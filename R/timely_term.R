@@ -41,34 +41,35 @@ NULL
 
 #' Estimate timely completion terms
 #'
-#' Starting with a data frame of unique student IDs, estimate the term by 
-#' which a student's program completion would be considered timely and add 
-#' columns to the data frame that support the finding. 
+#' For each student in a data frame, estimate their
+#' *timely completion term*---the term by which their program completion
+#' would be considered timely---and add columns to the data frame that
+#' support the findings.
 #'
-#' The latest term by which program completion would be considered
-#' timely is the *timely completion term,* typically 4, 6, or 8 years after 
-#' admission depending on the definition adopted in a particular study. By 
-#' "completion" we mean an undergraduate earning their first baccalaureate 
-#' degree or degrees.
+#' By *completing a program* we mean an undergraduate earning their first
+#' baccalaureate degree or degrees. *Timely* completion is typically 4, 6, or
+#' 8 years after admission depending on the definition adopted in a particular
+#' study. The term at the upper limit of that span is the
+#' *timely completion term.*
 #'
 #' Our heuristic assigns `span` number of years (default 6) to every
 #' student. For students admitted at second-year level or higher, the span is
 #' reduced by one year for each full year the student is assumed to have
 #' completed. The adjusted span is added to their initial term to create the
-#' `timely_term` values. These results are documented in the output. 
-#' 
-#' Determining completion status requires output variable `{timely_term}`; 
-#' determining data sufficiency requires output variables 
+#' `timely_term` values. These results are documented in the output.
+#'
+#' Determining completion status requires output variable `{timely_term}`;
+#' determining data sufficiency requires output variables
 #' `{term_i, timely_term}.`
 #'
-#' @param dframe `r dframe` Required variable: `{mcid}`.
+#' @param dframe `r dframe` with required variable `{mcid}.`
 #'
-#' @param midfield_table Data frame of *term* student-level records.     
-#'        Required variables: `{mcid, term, level}`.
+#' @param midfield_table `r midfield_x("term")` with required variables
+#'        `{mcid, term, level}.`
 #'
 #' @param ... `r param_dots`
 #'
-#' @param sched_span Integer scalar (default 4), the number of years an 
+#' @param sched_span Integer scalar (default 4), the number of years an
 #'        institution officially schedules for completing a program.
 #'
 #' @param span Integer scalar (default 6), number of years to define timely
@@ -77,9 +78,10 @@ NULL
 #'
 #' @returns Data frame with the following properties:
 #' * Data frame class is preserved.
-#' * Rows are filtered for unique student IDs. 
-#' * Variable `{mcid}` is retained. All other columns are dropped and the 
-#'   following variables are added: 
+#' * Rows are not modified except duplicated rows are removed. Row order is
+#'   preserved.
+#' * Variable `{mcid}` is retained. All other columns (if any) are dropped
+#'   and the following variables are added:
 #'   - `term_i` &nbsp; Initial term of a student's longitudinal record,
 #'      encoded `YYYYT`. Extracted from `midfield_table.`
 #'   - `level_i` &nbsp; Character. Student level (01 Freshman, 02 Sophomore,
@@ -89,7 +91,7 @@ NULL
 #'   - `timely_term` &nbsp; Character. Latest term by which
 #'      program completion
 #'      would be considered timely for every student. Encoded `YYYYT.`
-#' * Groups and keys are not preserved.
+#' * `r groups_not`
 #'
 #' @example man/examples/exa_timely_term.R
 #' @export
@@ -100,7 +102,7 @@ timely_term <- function(dframe,
                         sched_span = NULL,
                         span = NULL) {
   # ---------- assign active column names
-  
+
   reqd_dframe_vars <- c("mcid")
   reqd_table_vars <- c("mcid", "term", "level")
   added_vars <- c("term_i", "level_i", "adj_span", "timely_term")
@@ -155,19 +157,19 @@ timely_term <- function(dframe,
   term_i <- NULL
   timely_term <- NULL
   yyyy <- NULL
-  
+
   # ---------- do the work
 
   # subset required variables
   dframe <- dframe[, .SD, .SDcols = reqd_dframe_vars]
   dframe <- unique(dframe, na.rm = TRUE)
-  
+
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
   midf_table <- unique(midf_table, na.rm = TRUE)
 
   # add temp col to restore row order
   dframe[, idx := .I]
-  
+
   # inner-join dframe ID-only with required table vars
   x <- unique(dframe[, .(mcid)])
   x <- midf_table[x, on = "mcid", nomatch = NULL]
@@ -216,19 +218,19 @@ timely_term <- function(dframe,
   dframe[t > 1, timely_term := paste0(yyyy + adj_span, 1)]
 
   # ---------- prepare to return
-  
+
   # restore row order
   setkey(dframe, idx)
-  
+
   # restore col order, drop temporary cols
   dframe <- dframe[, .SD, .SDcols = c(reqd_dframe_vars, added_vars)]
-  
+
   # ensure unique rows
   dframe <- unique(dframe)
-  
+
   # restore class
   setattr(dframe, "class", prior_class)
-  
+
   # done
   dframe[]
 }

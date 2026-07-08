@@ -1,7 +1,7 @@
 # Prepare FYE data for imputation
 
-Constructs a data frame of student-level records of First-Year
-Engineering (FYE) programs and conditions the data for later use as an
+Constructs a data frame of students enrolled in First-Year Engineering
+(FYE) programs keyed by student ID. Conditions the data for use as an
 input to the mice R package for multiple imputation. Sets up three
 variables as predictors (institution, race/ethnicity, and sex) and one
 variable to be imputed (program CIP code).
@@ -21,13 +21,12 @@ prep_fye_mice(
 
 - midfield_student:
 
-  Data frame or data frame extension of a MIDFIELD *student* table.
-  Required variables: `{mcid, race, sex}.`
+  `student` data frame with required variables `{mcid, race, sex}.`
 
 - midfield_term:
 
-  Data frame or data frame extension of a MIDFIELD *term* table.
-  Required variables: `{mcid, term, cip6, institution}.`
+  `term` data frame with required variables
+  `{mcid, term, cip6, institution}.`
 
 - ...:
 

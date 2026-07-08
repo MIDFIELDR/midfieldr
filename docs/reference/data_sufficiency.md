@@ -1,9 +1,10 @@
 # Determine data sufficiency
 
-To a data frame keyed by student ID, add a column indicating that an
-institution's data range is sufficient to reliably assess a student's
-program completion. Columns of supporting information are also added.
-Columns not related to the task are dropped.
+For each student in a data frame, determine whether or not their record
+lies sufficiently within their institution's data range to unambiguously
+assess their completion status and if so include them in the study
+population. Label each row with this *data sufficiency* result (include
+or exclude) and add columns that support the findings.
 
 ## Usage
 
@@ -15,13 +16,13 @@ data_sufficiency(dframe, midfield_table = term)
 
 - dframe:
 
-  Data frame or data frame extension (e.g., data.table or tibble).
-  Required variables: `{mcid, term_i, timely_term}`.
+  Data frame or data frame extension (e.g., data.table or tibble) with
+  required variables `{mcid, term_i, timely_term}.` The latter two
+  variables are provided by `timely_term().`
 
 - midfield_table:
 
-  Data frame or data frame extension of a MIDFIELD *term* table.
-  Required variables: `{mcid, term, institution}`.
+  `term` data frame with required variables `{mcid, term, institution}.`
 
 ## Value
 
@@ -29,10 +30,11 @@ Data frame with the following properties:
 
 - Data frame class is preserved.
 
-- Rows are filtered for unique `mcid` values.
+- Rows are not modified except duplicated rows are removed. Row order is
+  preserved.
 
-- Columns `{mcid, term_i, timely_term}` are retained. All other columns
-  are dropped and the following columns are added:
+- Variables `{mcid, term_i, timely_term}` are retained. All other
+  columns (if any) are dropped and the following variables are added:
 
   - `institution.`   Character. Institution in which the student is
     enrolled in the given term. Extracted from `midfield_table.` The
@@ -56,30 +58,20 @@ Data frame with the following properties:
 
 ## Details
 
-Because the time span of MIDFIELD term data varies by institution, each
-has their own lower and upper bounds. When assessing a student's program
-completion, an unavoidable ambiguity arises for student records at or
-near these bounds. Such records must be identified and in most cases
+*Timely completion* means completing a program no later than a specified
+interval—typical values are 4, 6, or 8 years after admission. The *data
+sufficiency* criterion states that student records must be limited to
+those for which available data from an institution are sufficient to
+assess timely completion without biased counts of completers or
+non-completers. Such biases occur at the lower and upper bounds of an
+institution's data range. Affected students must be identified and
 excluded to prevent false summary counts.
 
-The *data sufficiency* criterion states that student records are limited
-to those for which available data are sufficient to assess timely
-completion without biased counts of completers or non-completers. In
-practice, the criteria is implemented via two filters. Rows are labeled
-for exclusion when: 1) a student ID is extant in the non-summer lower
-limit of an institution's data range; or 2) a student ID has a timely
-completion term that exceeds the upper limit of the institution's data
-range.
-
-The goal of determining data sufficiency is to refine a population, that
-is, obtain a data frame of IDs that satisfy our constraints. Thus
-`data_sufficiency()` yields a column of data sufficiency values and
-columns of supporting information keyed by ID. All other columns in
-`dframe` (if any) are dropped.
-
-The supporting information in the output is provided so that the user
-can review the findings. After review, we usually delete all columns
-except the IDs, yielding the refined population that was our goal.
+In our heuristic, the criteria is implemented via two filters. Rows are
+labeled for exclusion when: 1) a student ID is extant in the non-summer
+lower limit of an institution's data range; or 2) a student ID has a
+timely completion term that exceeds the upper limit of the institution's
+data range. The results are documented in the output.
 
 ## Examples
 

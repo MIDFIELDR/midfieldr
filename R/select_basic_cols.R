@@ -26,8 +26,8 @@ NULL
 
 #' Choose columns of student records
 #'
-#' Subset any of the four MIDFIELD data tables `{student, term, course, degree}`
-#' by selecting from that data frame the columns required by other midfieldr
+#' Subset one of the four MIDFIELD data tables `{student, term, course, degree}`
+#' by selecting the columns required by other midfieldr
 #' functions.
 #'
 #' A convenience function to reduce the dimensions of a MIDFIELD
@@ -53,22 +53,23 @@ NULL
 #' the `col_pattern` argument. In all cases, unmatched search strings are
 #' silently ignored.
 #'
-#' @param dframe 
-#'       `r midfield_x("*student*, *term*, *course*, or *degree*")` 
-#' 
+#' @param dframe `r dframe` equivalent to or derived from one of the MIDFIELD
+#'        data tables: `{student, term, course, degree}.`
+#'
 #' @param col_pattern Character vector containing strings or regular
 #'        expressions to be matched or partially matched to the column
-#'        names of `dframe`.
+#'        names of `dframe.`.
+#'
 #' @param ... `r param_dots`
-#' @param type Character identifying the record type. Possible values are "s",
+#'
+#' @param type Character identifying the table type. Possible values are "s",
 #'        "t", "c", "d", "a", or NULL (default). See Details.
 #'
 #' @returns Data frame with the following properties:
-#' * Data frame class is preserved.
+#' * `r class_presrv`
 #' * Rows are not modified.
 #' * Columns are a subset of the input, appearing in the same order.
-#' * Groups and keys are not preserved.
-#'
+#' * `r groups_not`
 #'
 #' @example man/examples/exa_select_basic_cols.R
 #' @export
