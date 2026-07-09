@@ -47,25 +47,26 @@ Before you start:
 
 The major functions can be organized into four categories based on their contribution to a typical workflow:
 
-Programs
+Refining primary data
 
-- `filter_programs()` chooses rows of CIP data based on search terms. 
+- `filter_programs()` helps you find program names and CIP codes.  
+- `post_bacc_terms()` identifies post-baccalaureate terms to exclude.  
 
-Records
+Refining a population
 
-- `post_bacc_terms()` identifies rows of post-baccalaureate terms to exclude. 
-
-Population
-
-- `select_basic_cols()` chooses columns of student records required by midfieldr functions.
-- `timely_term()` estimates a student's timely completion term. 
-- `data_sufficiency()` identifies rows to exclude due to insufficient data.
-- `completion_status()` determines if program completion is timely or late.
+- `timely_term()` estimates timely completion terms.  
+- `data_sufficiency()` identifies IDs to exclude due to insufficient data.  
+- `completion_status()` labels program completion as timely, late, or NA.  
 
 Special conditioning
 
-- `prep_fye_mice()` conditions data for imputing starting majors of FYE students. 
-- `order_multiway()` conditions data for Cleveland multiway charts. 
+- `prep_fye_mice()` conditions data for imputing starting majors of FYE students.  
+- `order_multiway()` conditions data for Cleveland multiway charts.  
+
+Convenience
+
+- `select_basic_cols()` chooses those columns required by other midfieldr functions.  
+ 
 
 
 
@@ -174,7 +175,7 @@ For this article we load the `student`, `term`, and `degree` tables from midfiel
 data(student, term, degree)
 ```
 
-`look_at()` is a midfieldr convenience function that wraps `base::str()`. The data tables are linked by `mcid`, the anonymized student ID. 
+`look_at()` is a midfieldr convenience function that wraps `base::str()` using our preferred arguments. The data tables are linked by `mcid`, the anonymized student ID. 
 
 ```{r}
 look_at(student)
@@ -183,6 +184,20 @@ look_at(term)
 
 look_at(degree)
 ```
+
+As we prepare the data, we copy our "source" material under separate names (and locations in memory) at a couple of key points.   
+
+```{r}
+student_source <- copy(student)
+term_source <- copy(term)
+degree_source <- copy(degree)
+```
+
+Then we can use the shorter names such as `term` and `degree` as we work. The shorter names are also the default values for arguments in several midfieldr functions. 
+
+
+
+
 
 ## `post_bacc_terms()`
 
@@ -193,8 +208,8 @@ In most cases, we are not generally interested in academic terms beyond the firs
 `post_bacc_terms()` identifies terms later than the first baccalaureate, if any.  
 
 ```{r}
-term <- post_bacc_terms(term, midfield_table = degree)
-degree <- post_bacc_terms(degree, midfield_table = degree)
+term <- post_bacc_terms(term_source, midfield_table = degree)
+degree <- post_bacc_terms(degree_source, midfield_table = degree)
 ```
 
 `post_bacc_terms()` adds a column indicating the cluster a term belongs to with respect to the first degree term.
@@ -203,7 +218,7 @@ degree <- post_bacc_terms(degree, midfield_table = degree)
 look_at(term)
 ```
 
-Using `sort_uniq()`, a midfieldr convenience function to sort unique values of a vector, we find the possible term cluster values to be:
+`sort_uniq()` is a convenience function that wraps `base::sort(unique())` using our preferred arguments. The possible term cluster values are given by, 
 
 ```{r}
 sort_uniq(term$term_cluster)
@@ -221,47 +236,18 @@ degree[, c("term_cluster", "first_degree_term") := NULL]
 look_at(term)
 ```
 
-We usually copy these data, giving them new names (and new locations in memory), to keep them intact while we use the original *names*  --- `student`, `term`, and `degree` --- to develop our population.  
+We redefine our source material to incorporate the exclusion of post-baccalaureate terms. 
 
 ```{r}
-student_source <- copy(student)
 term_source <- copy(term)
 degree_source <- copy(degree)
 ```
 
-Any variables we drop in subsequent work can always be recovered from these source data frames. 
 
 
 
 
 
-
-
-## `select_basic_cols()` 
-
-*Choose columns required by midfieldr functions.* 
-
-`select_basic_cols()` operates on student records to reduce the number of columns to those required by other midfieldr functions plus the key or composite key variables of the four data tables. Shown below, the records have been reduced to no more than 5 columns required by other midfieldr functions. 
-
-```{r}
-student <- select_basic_cols(student)
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
-
-look_at(student)
-
-look_at(term)
-
-look_at(degree)
-```
-
-With a smaller number of columns, the printout of the data frame is more readable, a benefit when working with the data interactively. 
-
-```{r}
-term
-```
-
-Any variables we dropped here can always be rejoined as needed from the source data frames, `source_student, source_term,` etc., we set aside earlier---all of which were filtered to remove post-baccalaureate terms. 
 
 
 
@@ -282,7 +268,7 @@ DT <- unique(DT)
 DT
 ```
 
-`timely_term()` adds a column indicating the last term by which a student’s degree completion would be considered timely, generally 6 years after admission.  The timely completion term is required to determine data sufficiency as well as assessing timely completion.  
+`timely_term()` builds a data frame with one row per student, a column for the timely completion term, and columns of supporting information. This data frame contains the required inputs for both `data_sufficiency()` and `timely_completion()`. 
 
 ```{r}
 DT <- timely_term(DT, midfield_table = term)
@@ -294,9 +280,9 @@ DT
 
 *Identify members of the population to exclude due to insufficient data.*
 
-The data sufficiency criterion limits student records to those for which available data are sufficient to assess timely completion.
+*Data sufficiency* is an assessment whether a student record lies sufficiently within their institution's data range to unambiguously assess their completion status and if so include them in the study population. 
 
-`data_sufficiency()` adds a column that labels each row for inclusion or exclusion based on data sufficiency near the upper and lower bounds of an institution’s data range.
+`data_sufficiency()` builds on the output from `timely_term()`, labels rows to be included or excluded based on the data sufficiency finding, and generates additional columns of supporting information. 
 
 ```{r}
 DT <- data_sufficiency(DT, midfield_table = term)
@@ -319,13 +305,62 @@ population <- unique(population)
 population
 ```
 
-This population is then used to further refine the student records. An inner-join filters `student, term,` and `degree` to retain these IDs only, finalizing our records for the remainder of the study. 
+We use this population to filter our source material one last time. We use an inner join to return records for this population only.
 
 ```{r}
-student <- population[student, on = "mcid", nomatch = NULL]
-term <- population[term, on = "mcid", nomatch = NULL]
-degree <- population[degree, on = "mcid", nomatch = NULL]
+student_source <- population[student_source, on = "mcid", nomatch = NULL]
+term_source <- population[term_source, on = "mcid", nomatch = NULL]
+degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
+
+look_at(term_source)
 ```
+
+In subsequent analysis, any variables we need from the source data has already been filtered to satisfy the data sufficiency constraint and to exclude post-baccalaureate terms. 
+
+From this point forward, anytime we need a fresh copy of any of the data tables, we copy the "source" version. Anytime we need a starting population, we use `population` or unique IDs from `student_source` or `term_source.`
+
+```{r}
+student <- copy(student_source)
+term <- copy(term_source)
+degree <- copy(degree_source)
+
+all.equal(population$mcid, student_source$mcid)
+all.equal(population$mcid, unique(term_source$mcid))
+```
+
+
+
+
+
+
+## `select_basic_cols()` 
+
+*Choose columns required by midfieldr functions.* 
+
+`select_basic_cols()` operates on student records to reduce the number of columns to those required by other midfieldr functions plus the key or composite key variables of the four data tables. With a smaller number of columns, the printout of the data frame is more readable, a benefit when working with the data interactively. 
+
+```{r}
+student <- select_basic_cols(student)
+term <- select_basic_cols(term)
+degree <- select_basic_cols(degree)
+
+student
+
+term
+
+degree
+```
+
+Any variables you might need that have been dropped can always be recovered from the source tables we saved earlier. For example, if we needed GPA in our working `term` table, we can use a left join, knowing that student ID and term are the composite keys in this case.
+
+```{r}
+x <- copy(term)
+source_cols <- term_source[, .(mcid, term, gpa_term, gpa_cumul)]
+x <- source_cols[x, on = c("mcid", "term")]
+x
+```
+
+Keys and composite keys to the four data tables are described in the midfielddata [Data structure](https://midfieldr.github.io/midfielddata/articles/data-structure.html) article. 
 
 
 
@@ -334,16 +369,16 @@ degree <- population[degree, on = "mcid", nomatch = NULL]
 
 *Determines if program completion is timely or late.*
 
-This section often pertains to constructing a bloc of graduates, starting with the baseline population we obtained above. Completion status indicates whether or not a student completes a degree, and if they do, labeling it timely or late compared to their timely completion term. Thus we run `timely_term()` again. 
-
-```{r} 
-DT <- copy(population)
-DT <- timely_term(DT)
-```
-
-`completion_status()` adds a column indicating completion status for every student.
+This section often pertains to constructing a bloc of graduates, starting with the baseline population we obtained above. 
 
 ```{r}
+DT <- copy(population)
+```
+
+`completion_status()` builds on the output from `timely_term()`, labels rows to indicate whether a student completes a degree timely or late compared to their timely completion term (or NA for no completion), and includes columns for the timely term and degree term as supporting information. 
+
+```{r} 
+DT <- timely_term(DT, midfield_table = term)
 DT <- completion_status(DT, midfield_table = degree)
 
 DT
@@ -376,8 +411,8 @@ graduates
 
 Utilities 
 
-- `look_at()` wraps base `str()`.  
-- `sort_uniq()` wraps base `sort()` and `unique()`.  
+- `look_at()` wraps base `str()` with our preferred arguments.
+- `sort_uniq()` wraps base `sort(unique())` with our preferred arguments. 
 - `catch_error()` wraps base `tryCatch()` for errors.  
 - `check_equiv_frames()` re-exported from the wrapr package  
 
