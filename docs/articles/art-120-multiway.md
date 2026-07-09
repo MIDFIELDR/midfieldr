@@ -205,7 +205,7 @@ results,
 x <- order_multiway(
   dframe = DT,
   quantity = "stickiness",
-  categories = c("program", "people"), 
+  categories = c("program", "people"),
   method = "median"
 )
 

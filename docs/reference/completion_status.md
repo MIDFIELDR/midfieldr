@@ -1,7 +1,10 @@
-# Determine completion status
+# Build a completion status data frame
 
-For each student in a data frame, determine their *completion status*
-(timely, late, or NA) and add columns that support the findings.
+Assembles a data frame with one row per student and with columns for
+student ID, timely completion term, first degree term (if any), and
+*completion status*—timely, late, or NA. Depends on
+[`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
+being run beforehand.
 
 ## Usage
 
@@ -14,8 +17,7 @@ completion_status(dframe, midfield_table = degree)
 - dframe:
 
   Data frame or data frame extension (e.g., data.table or tibble) with
-  required variables `{mcid, timely_term}.` The latter variable is
-  provided by `timely_term().`
+  required variables `{mcid, timely_term}.`
 
 - midfield_table:
 
@@ -27,33 +29,31 @@ Data frame with the following properties:
 
 - Data frame class is preserved.
 
-- Rows are not modified except duplicated rows are removed. Row order is
-  preserved.
+- One row per student.
 
-- Columns `{mcid, timely_term}` are retained. All other columns (if any)
-  are dropped and the following variables are added:
+- Columns returned:
 
-  - `term_degree.`   Character. Term in which the first degree(s) are
-    completed, encoded `YYYYT`. Joined from `midfield_table.`
+  - `mcid`   Pulled from `dframe.`
 
-  - `completion_status.`   Character. Possible values are "timely",
-    "late" and "NA".
+  - `timely_term`   Pulled from `dframe.`
 
-- Groups and keys are not preserved.
+  - `term_degree`   Joined from `midfield_table.`
+
+  - `completion_status`   Character. Possible values of "timely", "late"
+    and "NA".
 
 ## Details
 
-By *completing a program* we mean an undergraduate earning their first
-baccalaureate degree or degrees. *Timely* completion is typically 4, 6,
-or 8 years after admission depending on the definition adopted in a
-particular study. The term at the upper limit of that span is the
-*timely completion term.*
+Program *completion* means graduating with a first baccalaureate degree.
+Completion is *timely* if it occurs within a specified span, typically
+4, 6, or 8 years after admission. The term at the end of that span is
+the *timely completion term.*
 
-Our heuristic obtains a student's first degree term (if any) from
-`midfield_table`. Completion status is "timely" for students completing
-a degree no later than their timely completion terms; "late" for
-students completing their program after their timely completion term;
-and "NA" for non-completers. These results are documented in the output.
+The student ID and timely completion term are pulled from `dframe`; all
+other columns are dropped. The first degree term is joined from
+`midfield_table.` For students with a degree, completion no later than
+the timely term is "timely"; completion after the timely term is "late."
+For students with no degree, completion status is NA.
 
 ## Examples
 
@@ -61,7 +61,7 @@ and "NA" for non-completers. These results are documented in the output.
 term <- toy_term
 degree <- toy_degree
 
-# Start with a small population 
+# Start with a selected population 
 x <- toy_student[21:36, .(mcid)]
 x
 #>               mcid
@@ -84,7 +84,7 @@ x
 #> 16: MCID3111311799
 
 # Timely term column is required
-x <- timely_term(x, term)
+x <- timely_term(x, midfield_table = term)
 x
 #>               mcid term_i       level_i adj_span timely_term
 #>             <char> <char>        <char>    <num>      <char>
@@ -105,49 +105,8 @@ x
 #> 15: MCID3111310842  19911 01 First-year        6       19963
 #> 16: MCID3111311799  19911 01 First-year        6       19963
 
-# Add completion status column, columns not used are dropped
-x <- completion_status(x, degree)
-x
-#>               mcid timely_term term_degree completion_status
-#>             <char>      <char>      <char>            <char>
-#>  1: MCID3111257807       19953       19964              late
-#>  2: MCID3111258275       19953       19921            timely
-#>  3: MCID3111258347       19953       19923            timely
-#>  4: MCID3111259642       19953       19934            timely
-#>  5: MCID3111262210       19953       19951            timely
-#>  6: MCID3111265287       19953       19904            timely
-#>  7: MCID3111269576       19953       19943            timely
-#>  8: MCID3111272691       19953       19914            timely
-#>  9: MCID3111272880       19953       19934            timely
-#> 10: MCID3111277081       19961       19963              late
-#> 11: MCID3111278815       19961        <NA>              <NA>
-#> 12: MCID3111282337       19963       19924            timely
-#> 13: MCID3111296595       19963        <NA>              <NA>
-#> 14: MCID3111301718       19963        <NA>              <NA>
-#> 15: MCID3111310842       19963        <NA>              <NA>
-#> 16: MCID3111311799       19963        <NA>              <NA>
-
-# Existing completion status column (if any) is replaced
-x[, completion_status := NA_character_][]
-#>               mcid timely_term term_degree completion_status
-#>             <char>      <char>      <char>            <char>
-#>  1: MCID3111257807       19953       19964              <NA>
-#>  2: MCID3111258275       19953       19921              <NA>
-#>  3: MCID3111258347       19953       19923              <NA>
-#>  4: MCID3111259642       19953       19934              <NA>
-#>  5: MCID3111262210       19953       19951              <NA>
-#>  6: MCID3111265287       19953       19904              <NA>
-#>  7: MCID3111269576       19953       19943              <NA>
-#>  8: MCID3111272691       19953       19914              <NA>
-#>  9: MCID3111272880       19953       19934              <NA>
-#> 10: MCID3111277081       19961       19963              <NA>
-#> 11: MCID3111278815       19961        <NA>              <NA>
-#> 12: MCID3111282337       19963       19924              <NA>
-#> 13: MCID3111296595       19963        <NA>              <NA>
-#> 14: MCID3111301718       19963        <NA>              <NA>
-#> 15: MCID3111310842       19963        <NA>              <NA>
-#> 16: MCID3111311799       19963        <NA>              <NA>
-completion_status(x, degree)
+# Build completion status data frame
+completion_status(x, midfield_table = degree)
 #>               mcid timely_term term_degree completion_status
 #>             <char>      <char>      <char>            <char>
 #>  1: MCID3111257807       19953       19964              late

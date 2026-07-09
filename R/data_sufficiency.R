@@ -22,55 +22,53 @@ NULL
 #
 # ---------- current version
 #
-#' Determine data sufficiency
+#' Build a data sufficiency data frame
 #'
-#' For each student in a data frame, determine whether or not their record
-#' lies sufficiently within their institution's data range to unambiguously
+#' Assembles a data frame with one row per student per institution with
+#' columns for student ID, their initial term and timely completion term,
+#' the institution and its data range limits, and the *data sufficiency*
+#' assessment to include (or not) the student in the study population.
+#' Depends on `timely_term()` being run beforehand.
+#'
+#' *Data sufficiency* is an assessment whether a student record lies
+#' sufficiently within their institution's data range to unambiguously
 #' assess their completion status and if so include them in the study
-#' population. Label  each row with this *data sufficiency* result (include
-#' or exclude) and add columns that support the findings.
+#' population. Not performing the necessary exclusions produces biased
+#' counts of completers and non-completers. Such biases occur at the lower
+#' and upper bounds of an institution's data range.
 #'
-#' *Timely completion* means completing a program no later than a specified
-#' interval---typical values are 4, 6, or 8 years after admission. The
-#' *data sufficiency* criterion states that student records must be limited
-#' to those for which available data from an institution are sufficient to
-#' assess timely completion without biased counts of completers or
-#' non-completers. Such biases occur at the lower and upper bounds of an
-#' institution's data range. Affected students must be identified and
-#' excluded to prevent false summary counts.
+#' The student ID, initial term, and timely completion term are pulled
+#' from `dframe`; all other columns are dropped. Institutions and their
+#' data range limits (upper and lower) are extracted and joined from
+#' `midfield_table.` Rows are labeled with data sufficiency values as
+#' follows: "exclude-lower" when the initial term matches the data range
+#' lower limit; "exclude-upper" when the timely completion term exceeds
+#' the data range upper limit; and "include" otherwise.
 #'
-#' In our heuristic, the criteria is implemented via two filters. Rows are
-#' labeled for exclusion when: 1) a student ID is extant in the non-summer
-#' lower limit of an institution's data range; or 2) a student ID has a
-#' timely completion term that exceeds the upper limit of the institution's
-#' data range. The results are documented in the output.
+#' If a student is enrolled in more than one institution in the database, an
+#' exclusion at any institution is applied to all rows with that ID.
 #'
 #' @param dframe `r dframe` with required variables
-#'        `{mcid, term_i, timely_term}.` The latter two variables are
-#'        provided by `timely_term().`
+#'        `{mcid, term_i, timely_term}.`
 #'
 #' @param midfield_table `r midfield_x("term")` with required variables
 #'        `{mcid, term, institution}.`
 #'
 #' @returns Data frame with the following properties:
 #' * `r df_class_preserved`
-#' * `r rows_not_modified`
-#' * Variables `{mcid, term_i, timely_term}` are retained. All other
-#'   columns (if any) are dropped and the following variables are added:
-#'   - `institution.` &nbsp; Character. Institution in which the student is
-#'      enrolled in the given term. Extracted from `midfield_table.` The
-#'      limits given in the next two columns are specific to the institution.
+#' * One row per student per institution (accounts for the possibility of
+#'   a student enrolled in more than one institution in the database).
+#' * Columns returned:
+#'   - `mcid` &nbsp; Pulled from `dframe.`
+#'   - `term_i` &nbsp; Pulled from `dframe.`
+#'   - `timely_term` &nbsp; Pulled from `dframe.`
+#'   - `institution.` &nbsp; Joined from `midfield_table.`
 #'   - `lower_limit.` &nbsp; Character. Initial term of an institution's
 #'      data range, encoded `YYYYT`. Extracted from `midfield_table.`
-#'      Compared to `term_i` to determine the lower-limit exclusion.
 #'   - `upper_limit.` &nbsp; Character. Final term of an institution's
 #'      data range, encoded `YYYYT`. Extracted from `midfield_table.`
-#'      Compared to `timely_term` to determine upper-limit exclusion.
 #'   - `data_sufficiency.` &nbsp; Character. Possible values are "include",
-#'      if the data are sufficient; and "exclude-lower" or "exclude-upper"
-#'      if not, indicating at which boundary of the data range the ambiguity
-#'      occurs.
-#' * `r not_preserved`
+#'      "exclude-lower," and "exclude-upper."
 #'
 #' @example man/examples/exa_data_sufficiency.R
 #' @export
@@ -78,13 +76,13 @@ NULL
 data_sufficiency <- function(dframe, midfield_table = term) {
   #
   # ---------- assign active column names
-  
+
   reqd_dframe_vars <- c("mcid", "term_i", "timely_term")
   reqd_table_vars <- c("mcid", "term", "institution")
   added_vars <- c("institution", "lower_limit", "upper_limit", "data_sufficiency")
-  
+
   # ---------- base R checks (all data frame classes)
-  
+
   # data frame assessment
   qassert(dframe, "d+")
   qassert(midfield_table, "d+")
@@ -100,9 +98,9 @@ data_sufficiency <- function(dframe, midfield_table = term) {
   for (i in seq_along(reqd_table_vars)) {
     qassert(midfield_table[[reqd_table_vars[i]]], "s+")
   }
-  
+
   # ---------- preparation
-  
+
   # to restore class except for groups in tibbles
   prior_class <- setdiff(class(dframe), "grouped_df")
 
@@ -119,9 +117,9 @@ data_sufficiency <- function(dframe, midfield_table = term) {
   term_i <- NULL
   timely_term <- NULL
   upper_limit <- NULL
-  
+
   # ---------- do the work
-  
+
   # subset required variables
   dframe <- dframe[, .SD, .SDcols = reqd_dframe_vars]
   dframe <- unique(dframe, na.rm = TRUE)
@@ -131,8 +129,10 @@ data_sufficiency <- function(dframe, midfield_table = term) {
   # add temp col to restore row order
   dframe[, idx := .I]
 
-  # join institutions
-  dframe <- midf_table[dframe, on = "mcid"]
+  # join institutions, allows for student enrolled in more than one institution
+  x <- midf_table[, .(mcid, institution)]
+  x <- unique(x)
+  dframe <- x[dframe, on = "mcid"]
 
   # find lower and upper limits by institution
   x <- midf_table[, .(term, institution)]
@@ -142,18 +142,29 @@ data_sufficiency <- function(dframe, midfield_table = term) {
   ]
   # join institution limits
   dframe <- x[dframe, on = "institution"]
-  
+
   # ---------- data sufficiency labels
-  
+
   # one row per ID
   dframe[, data_sufficiency := fcase(
     timely_term > upper_limit, "exclude-upper",
     term_i == lower_limit, "exclude-lower",
     default = "include"
   )]
-  
+
+  # for rare case of student enrolled in two institutions  ##### have to add test
+  # may be "include" at one but "exclude" at the other
+  incl <- dframe[data_sufficiency %ilike% "include"]
+  excl <- dframe[data_sufficiency %ilike% "exclude"]
+  common_ids <- intersect(incl[["mcid"]], excl[["mcid"]])
+  for (j in seq_along(common_ids)) {
+    excl_value <- excl[mcid == common_ids[j], (data_sufficiency)]
+    # all rows with this ID get the exclusion
+    dframe[mcid == common_ids[j], data_sufficiency := excl_value]
+  }
+
   # ---------- prepare to return
-  
+
   # restore row order
   setkey(dframe, idx)
 

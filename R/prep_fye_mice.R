@@ -167,7 +167,7 @@ prep_fye_mice <- function(midfield_student = student,
   qassert(midfield_term[["cip6"]], "s+")
 
   # ---------- preparation
-  
+
   # to restore class, but not grouped_DF (tibbles)
   prior_class <- setdiff(class(midfield_student), "grouped_df")
 
@@ -232,22 +232,22 @@ prep_fye_mice <- function(midfield_student = student,
   # Add race and sex (left-outer join)
   fye <- midfield_student[fye, .(mcid, race, sex, institution, proxy), on = c("mcid")]
   fye <- unique(fye)
-  
+
   # Convert to factors to prepare for mice()
   fye[, race := as.factor(race)]
   fye[, sex := as.factor(sex)]
   fye[, institution := as.factor(institution)]
   fye[, proxy := as.factor(proxy)]
-  
+
   # ---------- prepare to return
-  
+
   # set row order
   setorderv(fye, c("institution", "proxy", "sex", "race"))
-  
+
   # restore class
   setkey(fye, NULL)
   setattr(fye, "class", prior_class)
-  
+
   # done
   fye[]
 }

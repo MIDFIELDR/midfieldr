@@ -43,8 +43,7 @@ Data frame with the following properties:
 
 - Data frame class is preserved.
 
-- Rows are not modified except duplicated rows are removed. Row order is
-  preserved.
+- Row order is preserved. Duplicated rows are removed.
 
 - Variable `{mcid}` is retained. All other columns (if any) are dropped
   and the following variables are added:

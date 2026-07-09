@@ -2,14 +2,13 @@
 % Please edit documentation in R/data_sufficiency.R
 \name{data_sufficiency}
 \alias{data_sufficiency}
-\title{Determine data sufficiency}
+\title{Build a data sufficiency data frame}
 \usage{
 data_sufficiency(dframe, midfield_table = term)
 }
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) with required variables
-\verb{\{mcid, term_i, timely_term\}.} The latter two variables are
-provided by \verb{timely_term().}}
+\verb{\{mcid, term_i, timely_term\}.}}
 
 \item{midfield_table}{\code{term} data frame with required variables
 \verb{\{mcid, term, institution\}.}}
@@ -18,49 +17,48 @@ provided by \verb{timely_term().}}
 Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved.
-\item Row order is preserved. Duplicated rows are removed.
-\item Variables \verb{\{mcid, term_i, timely_term\}} are retained. All other
-columns (if any) are dropped and the following variables are added:
+\item One row per student per institution (accounts for the possibility of
+a student enrolled in more than one institution in the database).
+\item Columns returned:
 \itemize{
-\item \code{institution.}   Character. Institution in which the student is
-enrolled in the given term. Extracted from \code{midfield_table.} The
-limits given in the next two columns are specific to the institution.
+\item \code{mcid}   Pulled from \code{dframe.}
+\item \code{term_i}   Pulled from \code{dframe.}
+\item \code{timely_term}   Pulled from \code{dframe.}
+\item \code{institution.}   Joined from \code{midfield_table.}
 \item \code{lower_limit.}   Character. Initial term of an institution's
 data range, encoded \code{YYYYT}. Extracted from \code{midfield_table.}
-Compared to \code{term_i} to determine the lower-limit exclusion.
 \item \code{upper_limit.}   Character. Final term of an institution's
 data range, encoded \code{YYYYT}. Extracted from \code{midfield_table.}
-Compared to \code{timely_term} to determine upper-limit exclusion.
 \item \code{data_sufficiency.}   Character. Possible values are "include",
-if the data are sufficient; and "exclude-lower" or "exclude-upper"
-if not, indicating at which boundary of the data range the ambiguity
-occurs.
+"exclude-lower," and "exclude-upper."
 }
-\item Groups and keys are not preserved.
 }
 }
 \description{
-For each student in a data frame, determine whether or not their record
-lies sufficiently within their institution's data range to unambiguously
-assess their completion status and if so include them in the study
-population. Label  each row with this \emph{data sufficiency} result (include
-or exclude) and add columns that support the findings.
+Assembles a data frame with one row per student per institution with
+columns for student ID, their initial term and timely completion term,
+the institution and its data range limits, and the \emph{data sufficiency}
+assessment to include (or not) the student in the study population.
+Depends on \code{timely_term()} being run beforehand.
 }
 \details{
-\emph{Timely completion} means completing a program no later than a specified
-interval---typical values are 4, 6, or 8 years after admission. The
-\emph{data sufficiency} criterion states that student records must be limited
-to those for which available data from an institution are sufficient to
-assess timely completion without biased counts of completers or
-non-completers. Such biases occur at the lower and upper bounds of an
-institution's data range. Affected students must be identified and
-excluded to prevent false summary counts.
+\emph{Data sufficiency} is an assessment whether a student record lies
+sufficiently within their institution's data range to unambiguously
+assess their completion status and if so include them in the study
+population. Not performing the necessary exclusions produces biased
+counts of completers and non-completers. Such biases occur at the lower
+and upper bounds of an institution's data range.
 
-In our heuristic, the criteria is implemented via two filters. Rows are
-labeled for exclusion when: 1) a student ID is extant in the non-summer
-lower limit of an institution's data range; or 2) a student ID has a
-timely completion term that exceeds the upper limit of the institution's
-data range. The results are documented in the output.
+The student ID, initial term, and timely completion term are pulled
+from \code{dframe}; all other columns are dropped. Institutions and their
+data range limits (upper and lower) are extracted and joined from
+\code{midfield_table.} Rows are labeled with data sufficiency values as
+follows: "exclude-lower" when the initial term matches the data range
+lower limit; "exclude-upper" when the timely completion term exceeds
+the data range upper limit; and "include" otherwise.
+
+If a student is enrolled in more than one institution in the database, an
+exclusion at any institution is applied to all rows with that ID.
 }
 \examples{
 term <- toy_term
@@ -70,14 +68,9 @@ x <- toy_student[c(9:15, 342:344), .(mcid)]
 x
 
 # Timely term column is required
-x <- timely_term(x, term)
+x <- timely_term(x, midfield_table = term)
 x
 
-# Add data sufficiency column, columns not used are dropped
-x <- data_sufficiency(x, term)
-x
-
-# Existing data sufficiency column (if any) is replaced
-x[, data_sufficiency := NA_character_][]
-data_sufficiency(x, term)
+# Build data sufficiency data frame
+data_sufficiency(x, midfield_table = term)
 }

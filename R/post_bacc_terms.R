@@ -38,7 +38,7 @@
 post_bacc_terms <- function(dframe, midfield_table = degree) {
   #
   # ---------- assign active column names
-  
+
   reqd_table_vars <- c("mcid", "term_degree")
   added_vars <- c("first_degree_term", "term_cluster")
   term_var_choices <- c("term", "term_course", "term_degree")
@@ -64,9 +64,9 @@ post_bacc_terms <- function(dframe, midfield_table = degree) {
   for (i in seq_along(reqd_table_vars)) {
     qassert(midfield_table[[reqd_table_vars[i]]], "s+")
   }
-  
+
   # ---------- preparation
-  
+
   # to restore class, but not grouped_DF (tibbles)
   prior_class <- setdiff(class(dframe), "grouped_df")
 
@@ -82,9 +82,9 @@ post_bacc_terms <- function(dframe, midfield_table = degree) {
   TERM_VAR <- NULL
   term_cluster <- NULL
   first_degree_term <- NULL
-  
+
   # ---------- do the work
-  
+
   # subset of required variables
   reqd_dframe_vars <- setdiff(colnames(dframe), added_vars)
   dframe <- dframe[, .SD, .SDcols = reqd_dframe_vars]
@@ -114,9 +114,9 @@ post_bacc_terms <- function(dframe, midfield_table = degree) {
 
   # left-join two columns to dframe, introduce NAs in first_degree_term col
   dframe <- x[dframe, on = "mcid"]
-  
+
   # ---------- term cluster labels
-  
+
   # assign term status labels
   dframe[, term_cluster := fcase(TERM_VAR == first_degree_term, "first-degree",
     TERM_VAR > first_degree_term, "post-first-degree",
@@ -124,9 +124,9 @@ post_bacc_terms <- function(dframe, midfield_table = degree) {
   ),
   env = list(TERM_VAR = term_var)
   ]
-  
+
   # ---------- prepare to return
-  
+
   # restore row order
   setkey(dframe, idx)
 

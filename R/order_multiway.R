@@ -54,7 +54,7 @@
 #' * Numerical variables are converted to type double. Columns
 #'   specified by `categories` are converted to factors and ordered.
 #' * New columns are added or replace existing columns of the same name (if
-#'   any). Other columns are not modified. New columns are added as described 
+#'   any). Other columns are not modified. New columns are added as described
 #'   below.
 #' * With `method = median`, two columns are added with names of the form
 #'   `CATEGORY_median,` with `CATEGORY` replaced with the values from the
@@ -84,24 +84,24 @@ order_multiway <- function(dframe,
                            ratio_of = NULL) {
   #
   # ---------- base R checks (all data frame classes)
-  
+
   # arguments after ... must be named
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     "Arguments after ... must be named, as in arg = val."
   )
-  
+
   # required data frame(s) and required columns
   qassert(dframe, "d+") # data frame, missing values OK, length 1 or more
   assert_names(colnames(dframe), must.include = c(quantity, categories))
-  
+
   # required arguments
   qassert(quantity, "S1") # string, missing values prohibited, length 1
   qassert(categories, "S2") # string, missing values prohibited, length 2
-  
+
   # class of required columns
   qassert(dframe[[quantity]], "n+") # numeric, length 1 or more
-  
+
   # categories class factor or character
   x <- copy(dframe)
   one_row_df <- as.data.frame(x)[1, categories, drop = FALSE]
@@ -112,7 +112,7 @@ order_multiway <- function(dframe,
     empty.ok = FALSE,
     .var.name = "categories"
   )
-  
+
   # optional arguments
   method <- method %?% "median"
   qassert(method, "S1")
@@ -122,7 +122,7 @@ order_multiway <- function(dframe,
     empty.ok = FALSE,
     .var.name = "method"
   )
-  
+
   if (method == "percent") {
     qassert(ratio_of, "S2")
     assert_subset(
@@ -146,27 +146,27 @@ order_multiway <- function(dframe,
       warning("Argument 'ratio_of' is not used when `method = median.`")
     }
   }
-  
+
   # ---------- preparation
-  
+
   # to restore class except for groups in tibbles
   prior_class <- setdiff(class(dframe), "grouped_df")
-  
+
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
-  
+
   # bind names due to NSE notes in R CMD check
   # NA
-  
+
   # ---------- do the work
-  
+
   # dframe is not subset
-  
+
   # treatment the same both methods
   dframe[, (categories) := lapply(.SD, as.factor), .SDcols = categories]
   dframe[, (quantity) := lapply(.SD, as.double), .SDcols = quantity]
-  
+
   # call subroutine for percent or median method
   if (method == "percent") {
     dframe <- order_by_percent(
@@ -181,31 +181,28 @@ order_multiway <- function(dframe,
   } else { # method = "median"
     dframe <- order_by_median(
       dframe,
-      categories, 
-      quantity, 
+      categories,
+      quantity,
       method
     )
     # organize the return column order
     # setcolorder(dframe, c(categories, quantity))
     # return_vars <- colnames(dframe)
   }
-  
+
   # ---------- prepare to return
-  
+
   # drop temp cols, restore col order, ensure unique rows
   # dframe <- dframe[, .SD, .SDcols = return_vars]
   dframe <- unique(dframe)
-  
+
   # restore class
   setkey(dframe, NULL)
   setattr(dframe, "class", prior_class)
-  
+
   # done
   dframe[]
 }
-
-
-
 
 
 # --------------------------------------------------------------------------
@@ -221,30 +218,30 @@ order_by_percent <- function(dframe,
   CATEG_I <- NULL
   COUNT_I <- NULL
   NEW_COL <- NULL
-  
+
   # minimum set of cols
   # dframe <- dframe[, .SD, .SDcols = c(categories, quantity, ratio_of)]
-  
+
   # replace NA in count columns with zero
   dframe[, (ratio_of) := lapply(.SD, function(quantity) {
     fifelse(is.na(quantity), 0, quantity)
   }), .SDcols = ratio_of]
-  
+
   # ensure dividend and divisor are double, not integer
   dframe[, (ratio_of) := lapply(.SD, as.double), .SDcols = ratio_of]
-  
+
   # sum the two counts by the individual categories
   # provides columns needed to determine row and panel order
   for (categ_i in categories) {
     for (count_i in ratio_of) {
       new_col <- paste(categ_i, count_i, sep = "_")
       dframe[, (new_col) := sum(COUNT_I),
-             by = categ_i,
-             env = list(COUNT_I = count_i)
+        by = categ_i,
+        env = list(COUNT_I = count_i)
       ]
     }
   }
-  
+
   # Determine the names of the columns used as the numerator and
   # denominator of the ratio. Assumes the smaller number is the numerator,
   # e.g., grad / ever or grad / start. Always more starters or ever-enrolled
@@ -252,7 +249,7 @@ order_by_percent <- function(dframe,
   count_col_totals <- colSums(dframe[, ratio_of, with = FALSE])
   count_col_min <- names(which.min(count_col_totals))
   count_col_max <- names(which.max(count_col_totals))
-  
+
   # computing the metric for individual categories
   # used for ordering rows and panels
   for (categ_i in categories) {
@@ -261,30 +258,30 @@ order_by_percent <- function(dframe,
     a <- paste(categ_i, count_col_min, sep = "_")
     b <- paste(categ_i, count_col_max, sep = "_")
     new_col <- paste(categ_i, quantity, sep = "_")
-    
+
     # drop existing columns with same name as new if any
     # keep_cols <- setdiff(colnames(dframe), new_col)
     # dframe <- dframe[, .SD, .SDcols = keep_cols]
-    
+
     # percent-based metric by individual category
     dframe[, NEW_COL := round(100 * A / B, 1),
-           env = list(
-             A = a,
-             B = b,
-             NEW_COL = new_col
-           )
+      env = list(
+        A = a,
+        B = b,
+        NEW_COL = new_col
+      )
     ]
-    
+
     # order factor levels by values in new column
     dframe[, CATEG_I := reorder(CATEG_I, NEW_COL),
-           env = list(
-             CATEG_I = categ_i,
-             NEW_COL = new_col
-           )
+      env = list(
+        CATEG_I = categ_i,
+        NEW_COL = new_col
+      )
     ]
-    
+
     dframe[, `:=`(A = NULL, B = NULL),
-           env = list(A = a, B = b)
+      env = list(A = a, B = b)
     ]
   }
   dframe[]
@@ -292,14 +289,14 @@ order_by_percent <- function(dframe,
 
 # --------------------------------------------------------------------------
 order_by_median <- function(dframe,
-                            categories, 
-                            quantity, 
+                            categories,
+                            quantity,
                             method) {
   # bind names due to NSE notes in R CMD check
-  CATEG_1 <- NULL  # e.g., program
-  CATEG_2 <- NULL  # e.g., people
-  ORDER_1 <- NULL  # e.g., program_median
-  ORDER_2 <- NULL  # e.g., people_median
+  CATEG_1 <- NULL # e.g., program
+  CATEG_2 <- NULL # e.g., people
+  ORDER_1 <- NULL # e.g., program_median
+  ORDER_2 <- NULL # e.g., people_median
   QUANTITY <- NULL # e.g., grad_rate or stickiness
 
   # create names for value variables
@@ -310,33 +307,33 @@ order_by_median <- function(dframe,
 
   # add new columns
   dframe[, ORDER_1 := median(QUANTITY, na.rm = TRUE),
-         by = CATEG_1,
-         env = list(
-           ORDER_1 = order_1,
-           QUANTITY = quantity,
-           CATEG_1 = categ_1
-         )
+    by = CATEG_1,
+    env = list(
+      ORDER_1 = order_1,
+      QUANTITY = quantity,
+      CATEG_1 = categ_1
+    )
   ]
   dframe[, ORDER_2 := median(QUANTITY, na.rm = TRUE),
-         by = CATEG_2,
-         env = list(
-           ORDER_2 = order_2,
-           QUANTITY = quantity,
-           CATEG_2 = categ_2
-         )
+    by = CATEG_2,
+    env = list(
+      ORDER_2 = order_2,
+      QUANTITY = quantity,
+      CATEG_2 = categ_2
+    )
   ]
   dframe[, CATEG_1 := reorder(CATEG_1, ORDER_1),
-         env = list(
-           CATEG_1 = categ_1,
-           ORDER_1 = order_1
-         )
+    env = list(
+      CATEG_1 = categ_1,
+      ORDER_1 = order_1
+    )
   ]
   dframe[, CATEG_2 := reorder(CATEG_2, ORDER_2),
-         env = list(
-           CATEG_2 = categ_2,
-           ORDER_2 = order_2
-         )
+    env = list(
+      CATEG_2 = categ_2,
+      ORDER_2 = order_2
+    )
   ]
-  
+
   dframe[]
 }

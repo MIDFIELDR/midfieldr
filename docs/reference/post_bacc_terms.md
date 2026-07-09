@@ -30,8 +30,7 @@ Data frame with the following properties:
 
 - Data frame class is preserved.
 
-- Rows are not modified except duplicated rows are removed. Row order is
-  preserved.
+- Row order is preserved. Duplicated rows are removed.
 
 - New columns are added or replace existing columns of the same name (if
   any). Other columns are not modified. The following variables are

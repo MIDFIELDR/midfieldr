@@ -159,6 +159,8 @@ timely_term <- function(dframe,
   yyyy <- NULL
 
   # ---------- do the work
+  #
+  # CONSIDER timely term at two intitutions if a student enrolls in more than one, then their timely term would be at the later inctitution?? thn institution would have to be part of the required vars
 
   # subset required variables
   dframe <- dframe[, .SD, .SDcols = reqd_dframe_vars]

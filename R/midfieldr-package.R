@@ -12,6 +12,7 @@
 #' @importFrom data.table .N
 #' @importFrom data.table .SD
 #' @importFrom data.table %chin%
+#' @importFrom data.table %ilike%
 #' @importFrom data.table %like%
 #' @importFrom data.table as.data.table
 #' @importFrom data.table copy

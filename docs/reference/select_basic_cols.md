@@ -39,7 +39,7 @@ Data frame with the following properties:
 
 - Data frame class is preserved.
 
-- Rows are not modified.
+- Row order is preserved. Duplicated rows are removed.
 
 - Columns are a subset of the input, appearing in the same order.
 

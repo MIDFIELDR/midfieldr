@@ -1,10 +1,12 @@
-# Determine data sufficiency
+# Build a data sufficiency data frame
 
-For each student in a data frame, determine whether or not their record
-lies sufficiently within their institution's data range to unambiguously
-assess their completion status and if so include them in the study
-population. Label each row with this *data sufficiency* result (include
-or exclude) and add columns that support the findings.
+Assembles a data frame with one row per student per institution with
+columns for student ID, their initial term and timely completion term,
+the institution and its data range limits, and the *data sufficiency*
+assessment to include (or not) the student in the study population.
+Depends on
+[`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
+being run beforehand.
 
 ## Usage
 
@@ -17,8 +19,7 @@ data_sufficiency(dframe, midfield_table = term)
 - dframe:
 
   Data frame or data frame extension (e.g., data.table or tibble) with
-  required variables `{mcid, term_i, timely_term}.` The latter two
-  variables are provided by `timely_term().`
+  required variables `{mcid, term_i, timely_term}.`
 
 - midfield_table:
 
@@ -30,48 +31,47 @@ Data frame with the following properties:
 
 - Data frame class is preserved.
 
-- Rows are not modified except duplicated rows are removed. Row order is
-  preserved.
+- One row per student per institution (accounts for the possibility of a
+  student enrolled in more than one institution in the database).
 
-- Variables `{mcid, term_i, timely_term}` are retained. All other
-  columns (if any) are dropped and the following variables are added:
+- Columns returned:
 
-  - `institution.`   Character. Institution in which the student is
-    enrolled in the given term. Extracted from `midfield_table.` The
-    limits given in the next two columns are specific to the
-    institution.
+  - `mcid`   Pulled from `dframe.`
+
+  - `term_i`   Pulled from `dframe.`
+
+  - `timely_term`   Pulled from `dframe.`
+
+  - `institution.`   Joined from `midfield_table.`
 
   - `lower_limit.`   Character. Initial term of an institution's data
-    range, encoded `YYYYT`. Extracted from `midfield_table.` Compared to
-    `term_i` to determine the lower-limit exclusion.
+    range, encoded `YYYYT`. Extracted from `midfield_table.`
 
   - `upper_limit.`   Character. Final term of an institution's data
-    range, encoded `YYYYT`. Extracted from `midfield_table.` Compared to
-    `timely_term` to determine upper-limit exclusion.
+    range, encoded `YYYYT`. Extracted from `midfield_table.`
 
-  - `data_sufficiency.`   Character. Possible values are "include", if
-    the data are sufficient; and "exclude-lower" or "exclude-upper" if
-    not, indicating at which boundary of the data range the ambiguity
-    occurs.
-
-- Groups and keys are not preserved.
+  - `data_sufficiency.`   Character. Possible values are "include",
+    "exclude-lower," and "exclude-upper."
 
 ## Details
 
-*Timely completion* means completing a program no later than a specified
-interval—typical values are 4, 6, or 8 years after admission. The *data
-sufficiency* criterion states that student records must be limited to
-those for which available data from an institution are sufficient to
-assess timely completion without biased counts of completers or
-non-completers. Such biases occur at the lower and upper bounds of an
-institution's data range. Affected students must be identified and
-excluded to prevent false summary counts.
+*Data sufficiency* is an assessment whether a student record lies
+sufficiently within their institution's data range to unambiguously
+assess their completion status and if so include them in the study
+population. Not performing the necessary exclusions produces biased
+counts of completers and non-completers. Such biases occur at the lower
+and upper bounds of an institution's data range.
 
-In our heuristic, the criteria is implemented via two filters. Rows are
-labeled for exclusion when: 1) a student ID is extant in the non-summer
-lower limit of an institution's data range; or 2) a student ID has a
-timely completion term that exceeds the upper limit of the institution's
-data range. The results are documented in the output.
+The student ID, initial term, and timely completion term are pulled from
+`dframe`; all other columns are dropped. Institutions and their data
+range limits (upper and lower) are extracted and joined from
+`midfield_table.` Rows are labeled with data sufficiency values as
+follows: "exclude-lower" when the initial term matches the data range
+lower limit; "exclude-upper" when the timely completion term exceeds the
+data range upper limit; and "include" otherwise.
+
+If a student is enrolled in more than one institution in the database,
+an exclusion at any institution is applied to all rows with that ID.
 
 ## Examples
 
@@ -95,7 +95,7 @@ x
 #> 10: MCID3112751130
 
 # Timely term column is required
-x <- timely_term(x, term)
+x <- timely_term(x, midfield_table = term)
 x
 #>               mcid term_i       level_i adj_span timely_term
 #>             <char> <char>        <char>    <num>      <char>
@@ -110,61 +110,8 @@ x
 #>  9: MCID3112749981  20151 01 First-year        6       20203
 #> 10: MCID3112751130  20151 01 First-year        6       20203
 
-# Add data sufficiency column, columns not used are dropped
-x <- data_sufficiency(x, term)
-x
-#>               mcid term_i timely_term   institution lower_limit upper_limit
-#>             <char> <char>      <char>        <char>      <char>      <char>
-#>  1: MCID3111169729  19881       19933 Institution B       19881       20181
-#>  2: MCID3111170852  19881       19933 Institution B       19881       20181
-#>  3: MCID3111173999  19881       19933 Institution B       19881       20181
-#>  4: MCID3111198701  19891       19943 Institution J       19881       20096
-#>  5: MCID3111208924  19891       19943 Institution J       19881       20096
-#>  6: MCID3111213539  19891       19943 Institution B       19881       20181
-#>  7: MCID3111213856  19891       19943 Institution B       19881       20181
-#>  8: MCID3112727716  20143       20201 Institution B       19881       20181
-#>  9: MCID3112749981  20151       20203 Institution B       19881       20181
-#> 10: MCID3112751130  20151       20203 Institution B       19881       20181
-#>     data_sufficiency
-#>               <char>
-#>  1:    exclude-lower
-#>  2:    exclude-lower
-#>  3:    exclude-lower
-#>  4:          include
-#>  5:          include
-#>  6:          include
-#>  7:          include
-#>  8:    exclude-upper
-#>  9:    exclude-upper
-#> 10:    exclude-upper
-
-# Existing data sufficiency column (if any) is replaced
-x[, data_sufficiency := NA_character_][]
-#>               mcid term_i timely_term   institution lower_limit upper_limit
-#>             <char> <char>      <char>        <char>      <char>      <char>
-#>  1: MCID3111169729  19881       19933 Institution B       19881       20181
-#>  2: MCID3111170852  19881       19933 Institution B       19881       20181
-#>  3: MCID3111173999  19881       19933 Institution B       19881       20181
-#>  4: MCID3111198701  19891       19943 Institution J       19881       20096
-#>  5: MCID3111208924  19891       19943 Institution J       19881       20096
-#>  6: MCID3111213539  19891       19943 Institution B       19881       20181
-#>  7: MCID3111213856  19891       19943 Institution B       19881       20181
-#>  8: MCID3112727716  20143       20201 Institution B       19881       20181
-#>  9: MCID3112749981  20151       20203 Institution B       19881       20181
-#> 10: MCID3112751130  20151       20203 Institution B       19881       20181
-#>     data_sufficiency
-#>               <char>
-#>  1:             <NA>
-#>  2:             <NA>
-#>  3:             <NA>
-#>  4:             <NA>
-#>  5:             <NA>
-#>  6:             <NA>
-#>  7:             <NA>
-#>  8:             <NA>
-#>  9:             <NA>
-#> 10:             <NA>
-data_sufficiency(x, term)
+# Build data sufficiency data frame
+data_sufficiency(x, midfield_table = term)
 #>               mcid term_i timely_term   institution lower_limit upper_limit
 #>             <char> <char>      <char>        <char>      <char>      <char>
 #>  1: MCID3111169729  19881       19933 Institution B       19881       20181

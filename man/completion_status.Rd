@@ -40,7 +40,7 @@ span, typically 4, 6, or 8 years after admission. The term at the end of
 that span is the \emph{timely completion term.}
 
 The student ID and timely completion term are pulled from \code{dframe}; all other
-columns are dropped. The first degree term is joined from \code{midfield_table}.
+columns are dropped. The first degree term is joined from \code{midfield_table.}
 For students with a degree, completion no later than the timely term is
 "timely"; completion after the timely term is "late." For students with no
 degree, completion status is NA.
@@ -58,12 +58,6 @@ x <- timely_term(x, midfield_table = term)
 x
 
 # Build completion status data frame
-x <- completion_status(x, midfield_table = degree)
-x
-
-# Only ID and timely term are pulled from x, all other columns drop
-x[, term_degree := "17761"]
-x[, completion_status := "unknown"][]
-completion_status(x, degree)
+completion_status(x, midfield_table = degree)
 
 }
