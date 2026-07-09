@@ -28,16 +28,30 @@ knitr::opts_chunk$set(fig.path = "man/figures/README-")
 
 ## Overview
 
-Provides tools in R for working with undergraduate, longitudinal, student-level records modeled on the MIDFIELD database. 
+An R package that supplies tools for working with longitudinal undergraduate records from the MIDFIELD database---or similarly structured data tables---in the following areas. 
 
-- `filter_programs()` chooses rows of program data based on search terms.
-- `select_basic_cols()` chooses columns required by midfieldr functions.  
-- `post_bacc_terms()` identifies rows of post-baccalaureate terms to exclude. 
-- `timely_term()` estimates a student's timely graduation term. 
-- `data_sufficiency()` identifies rows to exclude due to insufficient data. 
-- `completion_status()` determines if a graduation is timely or late.
-- `prep_fye_mice()` conditions data for imputing starting majors of FYE students.   
+Refining primary data    
+- `filter_programs()` helps you find program names and CIP codes.  
+- `post_bacc_terms()` identifies post-baccalaureate terms to exclude.  
+
+Refining a population    
+- `timely_term()` estimates timely completion terms.  
+- `data_sufficiency()` identifies IDs to exclude due to insufficient data.  
+- `completion_status()` labels program completion as timely, late, or NA.  
+
+Special conditioning    
+- `prep_fye_mice()` conditions data for imputing starting majors of FYE students.  
 - `order_multiway()` conditions data for Cleveland multiway charts.  
+
+Convenience  
+- `select_basic_cols()` chooses those columns required by other midfieldr functions.  
+- `look_at()` wraps `base::str()` with our preferred arguments.  
+
+```{r}
+library("midfieldr")
+packageVersion("midfieldr")
+Sys.Date()
+```
 
 
 
@@ -52,7 +66,7 @@ Install from CRAN with:
 install.packages("midfieldr")
 ```
 
-To get a bug fix or use a new feature, you can install the development version from GitHub.
+To get a bug fix or preview a new feature, you can install the development version from GitHub.
 
 ```{r}
 #| eval: false
@@ -60,7 +74,7 @@ To get a bug fix or use a new feature, you can install the development version f
 pak::pak("MIDFIELDR/midfieldr")
 ```
 
-midfieldr is designed to work with data from MIDFIELD [@ohland:midfield:2023] or any other database with a similar structure. A sample of these data (with 98,000 students) is provided in [midfielddata](https://midfieldr.github.io/midfielddata/), an R data package you can install from GitHub. 
+midfieldr is designed to operate on the MIDFIELD database [@ohland:midfield:2023] or similarly structured data such as the MIDFIELD sample in [midfielddata](https://midfieldr.github.io/midfielddata/), an R data package you can download from GitHub. 
 
 ```{r}
 #| eval: false
@@ -85,46 +99,43 @@ options(
 )
 ```
 
-We illustrate usage with a `r nrow(midfieldr::toy_student)`-student sample that loads with midfieldr. These "toy" data frames---`toy_student, toy_term,` and `toy_degree`---have the same structure as the data frames `student, term,` and `degree` in midfielddata that we use in package articles. 
+We illustrate usage with a small sample that loads with midfieldr for use in such examples. These data frames `(toy_student, toy_term, toy_course, toy_degree)` have the same structure as the tables in midfielddata. 
 
 ```{r}
-library(midfieldr)
-library(data.table)
+library("midfieldr")
+library("data.table")
 
-# Choose a minimum set of columns
-student <- select_basic_cols(toy_student)
-term <- select_basic_cols(toy_term)
-degree <- select_basic_cols(toy_degree)
+# Assign data tables to the expected names
+student <- copy(toy_student)
+term <- copy(toy_term)
+course <- copy(toy_course)
+degree <- copy(toy_degree)
 
-term
+look_at(term)
 
 # Identify post-baccalaureate terms
-term <- post_bacc_terms(term)
-degree <- post_bacc_terms(degree)
+term <- post_bacc_terms(term, midfield_table = degree)
+course <- post_bacc_terms(course, midfield_table = degree)
+degree <- post_bacc_terms(degree, midfield_table = degree)
 
-term
+look_at(term)
 
 # Exclude rows after the first degree term
 term <- term[term_cluster != "post-first-degree"]
+course <- course[term_cluster != "post-first-degree"]
 degree <- degree[term_cluster != "post-first-degree"]
 
-term
+look_at(term)
 
-# Drop temporary columns
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
-
-term
-
-# Data frame of IDs for refining the population
+# Begin refining the population
 DT <- term[, .(mcid)]
 DT <- unique(DT)
 
 DT
 
-# Determine data sufficiency
-DT <- timely_term(DT)
-DT <- data_sufficiency(DT)
+# Build data sufficiency data frame
+DT <- timely_term(DT, midfield_table = term)
+DT <- data_sufficiency(DT, midfield_table = term)
 
 DT
 
@@ -134,19 +145,27 @@ population <- unique(population)
 
 population
 
-# Inner join to retain IDs in the population
+# Inner join to filter data tables to match population
 student <- population[student, on = "mcid", nomatch = NULL]
 term <- population[term, on = "mcid", nomatch = NULL]
+course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-term
+look_at(term)
 
-# Drop temporary columns
+# Choose a minimum set of columns
 student <- select_basic_cols(student)
 term <- select_basic_cols(term)
+course <- select_basic_cols(course)
 degree <- select_basic_cols(degree)
 
+student
+
 term
+
+course
+
+degree
 ```
 
 ## Acknowledgments
