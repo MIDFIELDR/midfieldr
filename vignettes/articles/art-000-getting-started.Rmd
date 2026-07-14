@@ -45,17 +45,21 @@ Before you start:
 
 ## midfieldr functions
 
-The major functions can be organized into four categories based on their contribution to a typical workflow:
+The major functions can be categorized based on their contribution to a typical workflow:
 
-Refining primary data
+Programs
 
 - `filter_programs()` helps you find program names and CIP codes.  
-- `post_bacc_terms()` identifies post-baccalaureate terms to exclude.  
 
-Refining a population
+Records and population 
 
 - `timely_term()` estimates timely completion terms.  
 - `data_sufficiency()` identifies IDs to exclude due to insufficient data.  
+- `post_bacc_terms()` identifies post-baccalaureate terms to exclude.  
+
+Blocs
+
+- `select_basic_cols()` chooses those columns required by other midfieldr functions. 
 - `completion_status()` labels program completion as timely, late, or NA.  
 
 Special conditioning
@@ -63,10 +67,7 @@ Special conditioning
 - `prep_fye_mice()` conditions data for imputing starting majors of FYE students.  
 - `order_multiway()` conditions data for Cleveland multiway charts.  
 
-Convenience
 
-- `select_basic_cols()` chooses those columns required by other midfieldr functions.  
- 
 
 
 
@@ -218,10 +219,10 @@ degree <- post_bacc_terms(degree_source, midfield_table = degree)
 look_at(term)
 ```
 
-`sort_uniq()` is a convenience function that wraps `base::sort(unique())` using our preferred arguments. The possible term cluster values are given by, 
+The possible term cluster values are given by, 
 
 ```{r}
-sort_uniq(term$term_cluster)
+term[, sort(unique(term_cluster), na.last = FALSE)]
 ```
 
 We filter to exclude all terms labeled "post-first-degree" and drop the temporary columns. 
@@ -293,7 +294,7 @@ DT
 The possible values for data sufficiency are:
 
 ```{r}
-sort_uniq(DT$data_sufficiency)
+DT[, sort(unique(data_sufficiency), na.last = FALSE)]
 ```
 
 We filter to retain rows labeled "include". The resulting IDs define our baseline population. 
@@ -387,7 +388,7 @@ DT
 The possible values for completion status are:
 
 ```{r}
-sort_uniq(DT$completion_status)
+DT[, sort(unique(completion_status), na.last = FALSE)]
 ```
 
 If we were constructing a bloc of timely graduates, we would filter to retain rows labeled "timely". The resulting IDs would define our graduates bloc.
@@ -411,9 +412,9 @@ graduates
 
 Utilities 
 
-- `look_at()` wraps base `str()` with our preferred arguments.
-- `sort_uniq()` wraps base `sort(unique())` with our preferred arguments. 
-- `catch_error()` wraps base `tryCatch()` for errors.  
+- `look_at()` for data frames, wraps base `str()` with preset arguments.
+- `sort_uniq()` for vectors, wraps base `sort(unique())` with preset arguments.
+- `catch_error()` wraps base `tryCatch()` for errors with preset arguments. 
 - `check_equiv_frames()` re-exported from the wrapr package  
 
 

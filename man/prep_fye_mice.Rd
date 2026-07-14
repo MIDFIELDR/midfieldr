@@ -29,7 +29,8 @@ not start with 14---produce an error.}
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved.
+\item Data frame class is preserved. Groups and keys are
+not preserved.
 \item Rows: One row for every FYE student from the \code{term} input data frame.
 \item Columns: Conditioned for later use as an input to the mice R
 package for multiple imputation as follows:

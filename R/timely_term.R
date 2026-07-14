@@ -1,66 +1,22 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
-
-# ---------- deprecated version ----------
-
-#' midfieldr deprecated functions
-#' @param dframe `r dframe`
-#' @param midfield_term `r midfield_x("*term*")`
-#' @param ... `r param_dots`
-#' @param sched_span Integer scalar
-#' @param span Integer scalar
-#' @rdname midfieldr-deprecated
-#' @export
-add_timely_term <- function(dframe,
-                            midfield_term = term,
-                            ...,
-                            sched_span = NULL,
-                            span = NULL) {
-  .Deprecated(
-    new = "timely_term",
-    package = "midfieldr",
-    msg = "This function was deprecated as part of an update to all
-    midfieldr functions. Please use `timely_term()` instead."
-  )
-
-  # original function calls the new function
-  timely_term(
-    dframe = dframe,
-    midfield_table = midfield_term,
-    ...,
-    sched_span = sched_span,
-    span = span
-  )
-}
-NULL
-
-
-
-# ---------- current version ----------
-
-
-#' Estimate timely completion terms
+#' Determine timely completion terms
 #'
-#' For each student in a data frame, estimate their
-#' *timely completion term*---the term by which their program completion
-#' would be considered timely---and add columns to the data frame that
-#' support the findings.
+#' Determine the *timely completion term* for each student in a data frame
+#' and add columns that support the findings.
 #'
-#' By *completing a program* we mean an undergraduate earning their first
-#' baccalaureate degree or degrees. *Timely* completion is typically 4, 6, or
-#' 8 years after admission depending on the definition adopted in a particular
-#' study. The term at the upper limit of that span is the
+#' Completing an academic program in a timely manner means that a student
+#' completes the requirements for a degree within a set time span, typically
+#' 4, 6, or 8 years after admission depending on the definition adopted in a
+#' particular study. The term at the end of that span is the
 #' *timely completion term.*
 #'
-#' Our heuristic assigns `span` number of years (default 6) to every
-#' student. For students admitted at second-year level or higher, the span is
-#' reduced by one year for each full year the student is assumed to have
-#' completed. The adjusted span is added to their initial term to create the
-#' `timely_term` values. These results are documented in the output.
-#'
-#' Determining completion status requires output variable `{timely_term}`;
-#' determining data sufficiency requires output variables
-#' `{term_i, timely_term}.`
+#' Our heuristic assigns a time span for timely completion to every student
+#' (default is 6 academic years). For students admitted at second-year level
+#' or higher, the span is reduced by one academic year for each full year the
+#' student is assumed to have completed. The adjusted span is added to their
+#' initial term at an institution to create the `timely_term` value for each
+#' observation.
 #'
 #' @param dframe `r dframe` with required variable `{mcid}.`
 #'
@@ -79,18 +35,15 @@ NULL
 #' @returns Data frame with the following properties:
 #' * `r df_class_preserved`
 #' * `r rows_not_modified`
-#' * Variable `{mcid}` is retained. All other columns (if any) are dropped
-#'   and the following variables are added:
-#'   - `term_i` &nbsp; Initial term of a student's longitudinal record,
-#'      encoded `YYYYT`. Extracted from `midfield_table.`
+#' * `r new_cols_added`
+#'   - `term_i` &nbsp; Character. Initial term of a student's longitudinal
+#'      record, encoded `YYYYT`. Extracted from `midfield_table.`
 #'   - `level_i` &nbsp; Character. Student level (01 Freshman, 02 Sophomore,
 #'      etc.) in their initial term. Extracted from `midfield_table.`
 #'   - `adj_span` &nbsp; Numeric. Integer span of years for timely
 #'      completion adjusted for a student's initial level.
-#'   - `timely_term` &nbsp; Character. Latest term by which
-#'      program completion
-#'      would be considered timely for every student. Encoded `YYYYT.`
-#' * `r not_preserved`
+#'   - `timely_term` &nbsp; Character. Latest term by which program completion
+#'      would be considered timely. Encoded `YYYYT.`
 #'
 #' @example man/examples/exa_timely_term.R
 #' @export
@@ -159,27 +112,32 @@ timely_term <- function(dframe,
   yyyy <- NULL
 
   # ---------- do the work
-  #
-  # CONSIDER timely term at two intitutions if a student enrolls in more than one, then their timely term would be at the later inctitution?? thn institution would have to be part of the required vars
 
-  # subset required variables
-  dframe <- dframe[, .SD, .SDcols = reqd_dframe_vars]
-  dframe <- unique(dframe, na.rm = TRUE)
+  # save columns except those being added
+  saved_vars <- setdiff(colnames(dframe), added_vars)
+  return_vars <- c(saved_vars, added_vars)
 
+  # drop added vars, omit NA in required vars
+  dframe <- dframe[, .SD, .SDcols = saved_vars]
+  dframe <- na.omit(dframe, cols = reqd_dframe_vars)
+  dframe <- unique(dframe)
+
+  # keep required vars and omit NAs
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
-  midf_table <- unique(midf_table, na.rm = TRUE)
+  midf_table <- na.omit(midf_table, cols = reqd_table_vars)
+  midf_table <- unique(midf_table)
 
   # add temp col to restore row order
   dframe[, idx := .I]
 
-  # inner-join dframe ID-only with required table vars
+  # inner-join dframe ID and required table vars
   x <- unique(dframe[, .(mcid)])
   x <- midf_table[x, on = "mcid", nomatch = NULL]
   x <- unique(x)
 
-  # keep the row of the first term, lowest level
+  # keep the row of the first term, lowest level, by ID and institution
   setorderv(x, c("mcid", "term"))
-  x <- x[, .SD[1], by = "mcid"]
+  x <- x[, .SD[1], by = c("mcid")]
 
   # rename term and level
   x <- x[, .(mcid, term_i = term, level_i = level)]
@@ -198,10 +156,7 @@ timely_term <- function(dframe,
   dframe <- dframe[t %chin% LETTERS | t %chin% letters, t := "0"]
 
   # make year and term numeric
-  dframe[, `:=`(
-    yyyy = as.numeric(yyyy),
-    t    = as.numeric(t)
-  )]
+  dframe[, names(.SD) := lapply(.SD, as.numeric), .SDcols = c("yyyy", "t")]
 
   # if first term is in summer, delay to the subsequent Fall
   dframe[t > 3, `:=`(yyyy = yyyy + 1, t = 1)]
@@ -224,8 +179,8 @@ timely_term <- function(dframe,
   # restore row order
   setkey(dframe, idx)
 
-  # restore col order, drop temporary cols
-  dframe <- dframe[, .SD, .SDcols = c(reqd_dframe_vars, added_vars)]
+  # drop temporary cols, restore original col order
+  dframe <- dframe[, .SD, .SDcols = return_vars]
 
   # ensure unique rows
   dframe <- unique(dframe)
@@ -235,4 +190,36 @@ timely_term <- function(dframe,
 
   # done
   dframe[]
+}
+
+# ---------- deprecated version ----------
+
+#' midfieldr deprecated functions
+#' @param dframe `r dframe`
+#' @param midfield_term `r midfield_x("*term*")`
+#' @param ... `r param_dots`
+#' @param sched_span Integer scalar
+#' @param span Integer scalar
+#' @rdname midfieldr-deprecated
+#' @export
+add_timely_term <- function(dframe,
+                            midfield_term = term,
+                            ...,
+                            sched_span = NULL,
+                            span = NULL) {
+  .Deprecated(
+    new = "timely_term",
+    package = "midfieldr",
+    msg = "This function was deprecated as part of an update to all
+    midfieldr functions. Please use `timely_term()` instead."
+  )
+
+  # original function calls the new function
+  timely_term(
+    dframe = dframe,
+    midfield_table = midfield_term,
+    ...,
+    sched_span = sched_span,
+    span = span
+  )
 }

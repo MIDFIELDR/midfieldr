@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9020</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9021</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,25 +92,26 @@
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>An R package that supplies tools for working with longitudinal undergraduate records from the MIDFIELD database—or similarly structured data tables—in the following areas.</p>
-<p>Refining primary data<br>
-- <code><a href="reference/filter_programs.html">filter_programs()</a></code> helps you find program names and CIP codes.<br>
-- <code><a href="reference/post_bacc_terms.html">post_bacc_terms()</a></code> identifies post-baccalaureate terms to exclude.</p>
-<p>Refining a population<br>
+<p>Programs<br>
+- <code><a href="reference/filter_programs.html">filter_programs()</a></code> helps you find program names and CIP codes.</p>
+<p>Records and population<br>
 - <code><a href="reference/timely_term.html">timely_term()</a></code> estimates timely completion terms.<br>
 - <code><a href="reference/data_sufficiency.html">data_sufficiency()</a></code> identifies IDs to exclude due to insufficient data.<br>
+- <code><a href="reference/post_bacc_terms.html">post_bacc_terms()</a></code> identifies rows with post-baccalaureate terms to exclude.</p>
+<p>Blocs<br>
 - <code><a href="reference/completion_status.html">completion_status()</a></code> labels program completion as timely, late, or NA.</p>
 <p>Special conditioning<br>
 - <code><a href="reference/prep_fye_mice.html">prep_fye_mice()</a></code> conditions data for imputing starting majors of FYE students.<br>
 - <code><a href="reference/order_multiway.html">order_multiway()</a></code> conditions data for Cleveland multiway charts.</p>
 <p>Convenience<br>
-- <code><a href="reference/select_basic_cols.html">select_basic_cols()</a></code> chooses those columns required by other midfieldr functions.<br>
+- <code><a href="reference/select_basic_cols.html">select_basic_cols()</a></code> minimizes the number of columns viewed for interactive sessions.<br>
 - <code><a href="reference/look_at.html">look_at()</a></code> wraps <code>base::str()</code> with our preferred arguments.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfieldr/">"midfieldr"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"midfieldr"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] '1.0.3.9019'</span></span>
+<span><span class="co">#&gt; [1] '1.0.3.9021'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "2026-07-09"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "2026-07-13"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -226,24 +227,24 @@
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/data_sufficiency.html">data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, midfield_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">DT</span></span>
-<span><span class="co">#&gt;                mcid term_i timely_term   institution lower_limit upper_limit</span></span>
-<span><span class="co">#&gt;              &lt;char&gt; &lt;char&gt;      &lt;char&gt;        &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt;   1: MCID3111142897  19881       19933 Institution B       19881       20181</span></span>
-<span><span class="co">#&gt;   2: MCID3111157634  19881       19933 Institution J       19881       20096</span></span>
-<span><span class="co">#&gt;   3: MCID3111158724  19881       19933 Institution J       19881       20096</span></span>
-<span><span class="co">#&gt;  ---                                                                        </span></span>
-<span><span class="co">#&gt; 349: MCID3112868072  20171       20223 Institution B       19881       20181</span></span>
-<span><span class="co">#&gt; 350: MCID3112869843  20173       20231 Institution B       19881       20181</span></span>
-<span><span class="co">#&gt; 351: MCID3112885339  20181       20233 Institution B       19881       20181</span></span>
-<span><span class="co">#&gt;      data_sufficiency</span></span>
-<span><span class="co">#&gt;                &lt;char&gt;</span></span>
-<span><span class="co">#&gt;   1:    exclude-lower</span></span>
-<span><span class="co">#&gt;   2:    exclude-lower</span></span>
-<span><span class="co">#&gt;   3:    exclude-lower</span></span>
-<span><span class="co">#&gt;  ---                 </span></span>
-<span><span class="co">#&gt; 349:    exclude-upper</span></span>
-<span><span class="co">#&gt; 350:    exclude-upper</span></span>
-<span><span class="co">#&gt; 351:    exclude-upper</span></span>
+<span><span class="co">#&gt;                mcid term_i       level_i adj_span timely_term   institution</span></span>
+<span><span class="co">#&gt;              &lt;char&gt; &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt;        &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1: MCID3111142897  19881 01 First-year        6       19933 Institution B</span></span>
+<span><span class="co">#&gt;   2: MCID3111157634  19881 01 First-year        6       19933 Institution J</span></span>
+<span><span class="co">#&gt;   3: MCID3111158724  19881 01 First-year        6       19933 Institution J</span></span>
+<span><span class="co">#&gt;  ---                                                                       </span></span>
+<span><span class="co">#&gt; 349: MCID3112868072  20171 01 First-year        6       20223 Institution B</span></span>
+<span><span class="co">#&gt; 350: MCID3112869843  20173 01 First-year        6       20231 Institution B</span></span>
+<span><span class="co">#&gt; 351: MCID3112885339  20181 01 First-year        6       20233 Institution B</span></span>
+<span><span class="co">#&gt;      lower_limit upper_limit data_sufficiency</span></span>
+<span><span class="co">#&gt;           &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1:       19881       20181    exclude-lower</span></span>
+<span><span class="co">#&gt;   2:       19881       20096    exclude-lower</span></span>
+<span><span class="co">#&gt;   3:       19881       20096    exclude-lower</span></span>
+<span><span class="co">#&gt;  ---                                         </span></span>
+<span><span class="co">#&gt; 349:       19881       20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 350:       19881       20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 351:       19881       20181    exclude-upper</span></span>
 <span></span>
 <span><span class="co"># Retain rows with sufficient institutional data</span></span>
 <span><span class="va">population</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>

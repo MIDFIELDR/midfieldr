@@ -2,7 +2,7 @@
 % Please edit documentation in R/timely_term.R
 \name{timely_term}
 \alias{timely_term}
-\title{Estimate timely completion terms}
+\title{Determine timely completion terms}
 \usage{
 timely_term(dframe, midfield_table = term, ..., sched_span = NULL, span = NULL)
 }
@@ -25,59 +25,55 @@ of \code{sched_span}).}
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved.
-\item Row order is preserved. Duplicated rows are removed.
-\item Variable \code{{mcid}} is retained. All other columns (if any) are dropped
-and the following variables are added:
+\item Data frame class is preserved. Groups and keys are
+not preserved.
+\item Row order is preserved. Rows with \code{NA} values in any
+of the required variables are removed. Duplicated rows are removed.
+\item Columns with names different from the new columns (named
+below) are not modified; columns with matching names are replaced.
+The new columns added are:
 \itemize{
-\item \code{term_i}   Initial term of a student's longitudinal record,
-encoded \code{YYYYT}. Extracted from \code{midfield_table.}
+\item \code{term_i}   Character. Initial term of a student's longitudinal
+record, encoded \code{YYYYT}. Extracted from \code{midfield_table.}
 \item \code{level_i}   Character. Student level (01 Freshman, 02 Sophomore,
 etc.) in their initial term. Extracted from \code{midfield_table.}
 \item \code{adj_span}   Numeric. Integer span of years for timely
 completion adjusted for a student's initial level.
-\item \code{timely_term}   Character. Latest term by which
-program completion
-would be considered timely for every student. Encoded \code{YYYYT.}
+\item \code{timely_term}   Character. Latest term by which program completion
+would be considered timely. Encoded \code{YYYYT.}
 }
-\item Groups and keys are not preserved.
 }
 }
 \description{
-For each student in a data frame, estimate their
-\emph{timely completion term}---the term by which their program completion
-would be considered timely---and add columns to the data frame that
-support the findings.
+Determine the \emph{timely completion term} for each student in a data frame
+and add columns that support the findings.
 }
 \details{
-By \emph{completing a program} we mean an undergraduate earning their first
-baccalaureate degree or degrees. \emph{Timely} completion is typically 4, 6, or
-8 years after admission depending on the definition adopted in a particular
-study. The term at the upper limit of that span is the
+Completing an academic program in a timely manner means that a student
+completes the requirements for a degree within a set time span, typically
+4, 6, or 8 years after admission depending on the definition adopted in a
+particular study. The term at the end of that span is the
 \emph{timely completion term.}
 
-Our heuristic assigns \code{span} number of years (default 6) to every
-student. For students admitted at second-year level or higher, the span is
-reduced by one year for each full year the student is assumed to have
-completed. The adjusted span is added to their initial term to create the
-\code{timely_term} values. These results are documented in the output.
-
-Determining completion status requires output variable \code{{timely_term}};
-determining data sufficiency requires output variables
-\verb{\{term_i, timely_term\}.}
+Our heuristic assigns a time span for timely completion to every student
+(default is 6 academic years). For students admitted at second-year level
+or higher, the span is reduced by one academic year for each full year the
+student is assumed to have completed. The adjusted span is added to their
+initial term at an institution to create the \code{timely_term} value for each
+observation.
 }
 \examples{
 term <- toy_term
 
-# Start with a small population 
+# Start with a selected population. 
 x <- toy_student[c(51:55, 346:350), .(mcid, sex)]
 x
 
-# Add timely term, unrelated variables (sex) are dropped
+# Add timely term columns. Unrelated columns (sex) are unaffected.
 x <- timely_term(x, midfield_table = term)
 x
 
-# Existing column with same name as added column is replaced
-x[, adj_span := 0L][]
-timely_term(x, midfield_table = term)
+# Repeat. New columns silently replace existing columns of the same name.
+y <- timely_term(x, midfield_table = term)
+y
 }

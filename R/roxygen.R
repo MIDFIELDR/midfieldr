@@ -9,11 +9,21 @@ midfield_x <- function(x) {
   paste("`", x, "`", "data frame")
 }
 
-df_class_preserved <- "Data frame class is preserved."
+df_class_preserved <- "Data frame class is preserved. Groups and keys are
+        not preserved."
 
-rows_not_modified <- "Row order is preserved. Duplicated rows are removed."
+rows_not_modified <- "Row order is preserved. Rows with `NA` values in any
+        of the required variables are removed. Duplicated rows are removed."
 
 not_preserved <- "Groups and keys are not preserved."
+
+new_cols_added <- "Columns with names different from the new columns (named
+        below) are not modified; columns with matching names are replaced.
+        The new columns added are:"
+
+# new_cols_added <- "New columns are added as listed below. The new columns
+#         silently replace existing columns of the same name. Other columns are
+#         not modified."
 
 
 # ---------- Variable names used in data.R

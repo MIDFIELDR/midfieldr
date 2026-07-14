@@ -15,9 +15,9 @@
 ## Functions
 
 - [`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
-  : Build a completion status data frame
+  : Determine completion status
 - [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
-  : Build a data sufficiency data frame
+  : Determine data sufficiency
 - [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
   : Choose rows of CIP data
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
@@ -29,7 +29,7 @@
 - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
   : Choose columns of student records
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
-  : Estimate timely completion terms
+  : Determine timely completion terms
 
 ## Utility
 

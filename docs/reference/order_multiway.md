@@ -59,7 +59,7 @@ order_multiway(
 
 Data frame with the following properties:
 
-- Data frame class is preserved.
+- Data frame class is preserved. Groups and keys are not preserved.
 
 - Rows are preserved, though the row order may change.
 

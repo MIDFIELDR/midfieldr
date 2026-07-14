@@ -1,44 +1,20 @@
 # See R/roxygen.R for documentation below that uses inline R code
-#
-# ---------- deprecated version
-#
-#' midfieldr deprecated functions
-#' @param dframe `r dframe`
-#' @param midfield_degree `r midfield_x("*degree*")`
-#' @rdname midfieldr-deprecated
-#' @export
-add_completion_status <- function(dframe, midfield_degree = degree) {
-  .Deprecated(
-    new = "completion_status",
-    package = "midfieldr",
-    msg = "This function was deprecated as part of an update to all
-    midfieldr functions. Please use `completion_status()` instead."
-  )
 
-  # original function calls the new function
-  completion_status(dframe = dframe, midfield_table = midfield_degree)
-}
-NULL
-#
-# ---------- current version
-#
-#' Build a completion status data frame
+#' Determine completion status
 #'
-#' Assembles a data frame with one row per student and with columns for
-#' student ID, timely completion term, first degree term (if any), and
-#' *completion status*---timely, late, or NA. Depends on `timely_term()`
-#' being run beforehand.
+#' Determine the *completion status* for each student in a data frame and
+#' add columns that support the findings.
 #'
-#' Program *completion* means graduating with a first baccalaureate
-#' degree. Completion is *timely* if it occurs within a specified
-#' span, typically 4, 6, or 8 years after admission. The term at the end of
-#' that span is the *timely completion term.*
+#' If a population has been filtered for data sufficiency, then determining
+#' every student's *completion status* is feasible. Completing an academic
+#' program in a timely manner means that a student completes the requirements
+#' for a degree within a set time span, typically 4, 6, or 8 years after
+#' admission depending on the definition adopted in a particular study. The
+#' term at the end of that span is the *timely completion term.*
 #'
-#' The student ID and timely completion term are pulled from `dframe`; all other
-#' columns are dropped. The first degree term is joined from `midfield_table.`
-#' For students with a degree, completion no later than the timely term is
-#' "timely"; completion after the timely term is "late." For students with no
-#' degree, completion status is NA.
+#' If the student's degree term is no later than their timely completion term,
+#' then their completion status is "timely"; if later, their status is "late".
+#' For students with no degree, completion status is NA.
 #'
 #' @param dframe `r dframe` with required variables `{mcid, timely_term}.`
 #'
@@ -47,10 +23,8 @@ NULL
 #'
 #' @returns Data frame with the following properties:
 #' * `r df_class_preserved`
-#' * One row per student.
-#' * Columns returned:
-#'   - `mcid` &nbsp; Pulled from `dframe.`
-#'   - `timely_term` &nbsp; Pulled from `dframe.`
+#' * `r rows_not_modified`
+#' * `r new_cols_added`
 #'   - `term_degree` &nbsp; Joined from `midfield_table.`
 #'   - `completion_status` &nbsp; Character. Possible values of "timely",
 #'      "late" and "NA".
@@ -102,11 +76,19 @@ completion_status <- function(dframe, midfield_table = degree) {
 
   # ---------- do the work
 
-  # subset required variables
-  dframe <- dframe[, .SD, .SDcols = reqd_dframe_vars]
-  dframe <- unique(dframe, na.rm = TRUE)
+  # save columns except those being added
+  saved_vars <- setdiff(colnames(dframe), added_vars)
+  return_vars <- c(saved_vars, added_vars)
+
+  # drop added vars, omit NA in required vars
+  dframe <- dframe[, .SD, .SDcols = saved_vars]
+  dframe <- na.omit(dframe, cols = reqd_dframe_vars)
+  dframe <- unique(dframe)
+
+  # keep required vars and omit NAs
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
-  midf_table <- unique(midf_table, na.rm = TRUE)
+  midf_table <- na.omit(midf_table, cols = reqd_table_vars)
+  midf_table <- unique(midf_table)
 
   # add temp col to restore row order
   dframe[, idx := .I]
@@ -129,14 +111,35 @@ completion_status <- function(dframe, midfield_table = degree) {
   # restore row order
   setkey(dframe, idx)
 
-  # drop temp cols, restore col order, ensure unique rows
-  dframe <- dframe[, .SD, .SDcols = c(reqd_dframe_vars, added_vars)]
+  # drop temporary cols, restore original col order
+  dframe <- dframe[, .SD, .SDcols = return_vars]
+
+  # ensure unique rows
   dframe <- unique(dframe)
 
   # restore class
-  setkey(dframe, NULL)
   setattr(dframe, "class", prior_class)
 
   # done
   dframe[]
+}
+
+
+# ---------- deprecated version
+#
+#' midfieldr deprecated functions
+#' @param dframe `r dframe`
+#' @param midfield_degree `r midfield_x("*degree*")`
+#' @rdname midfieldr-deprecated
+#' @export
+add_completion_status <- function(dframe, midfield_degree = degree) {
+  .Deprecated(
+    new = "completion_status",
+    package = "midfieldr",
+    msg = "This function was deprecated as part of an update to all
+    midfieldr functions. Please use `completion_status()` instead."
+  )
+
+  # original function calls the new function
+  completion_status(dframe = dframe, midfield_table = midfield_degree)
 }

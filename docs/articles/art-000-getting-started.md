@@ -32,22 +32,27 @@ Before you start:
 
 ## midfieldr functions
 
-The major functions can be organized into four categories based on their
-contribution to a typical workflow:
+The major functions can be categorized based on their contribution to a
+typical workflow:
 
-Refining primary data
+Programs
 
 - [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
-  helps you find program names and CIP codes.  
-- [`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
-  identifies post-baccalaureate terms to exclude.
+  helps you find program names and CIP codes.
 
-Refining a population
+Records and population
 
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
   estimates timely completion terms.  
 - [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
   identifies IDs to exclude due to insufficient data.  
+- [`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
+  identifies post-baccalaureate terms to exclude.
+
+Blocs
+
+- [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
+  chooses those columns required by other midfieldr functions.
 - [`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
   labels program completion as timely, late, or NA.
 
@@ -57,11 +62,6 @@ Special conditioning
   conditions data for imputing starting majors of FYE students.  
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   conditions data for Cleveland multiway charts.
-
-Convenience
-
-- [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
-  chooses those columns required by other midfieldr functions.
 
 ## Program data
 
@@ -385,13 +385,11 @@ look_at(term)
 #>  $ term_cluster       : chr  "first-degree" "pre-degree" "pre-degree" "pre-de"..
 ```
 
-[`sort_uniq()`](https://midfieldr.github.io/midfieldr/reference/sort_uniq.md)
-is a convenience function that wraps `base::sort(unique())` using our
-preferred arguments. The possible term cluster values are given by,
+The possible term cluster values are given by,
 
 ``` r
 
-sort_uniq(term$term_cluster)
+term[, sort(unique(term_cluster), na.last = FALSE)]
 #> [1] "first-degree"      "post-first-degree" "pre-degree"
 ```
 
@@ -501,31 +499,31 @@ finding, and generates additional columns of supporting information.
 DT <- data_sufficiency(DT, midfield_table = term)
 
 DT
-#>                  mcid term_i timely_term   institution lower_limit upper_limit
-#>                <char> <char>      <char>        <char>      <char>      <char>
-#>     1: MCID3111142225  19881       19933 Institution B       19881       20181
-#>     2: MCID3111142283  19881       19933 Institution J       19881       20096
-#>     3: MCID3111142290  19881       19933 Institution J       19881       20096
-#>    ---                                                                        
-#> 97534: MCID3112898894  20181       20233 Institution B       19881       20181
-#> 97535: MCID3112898895  20181       20233 Institution B       19881       20181
-#> 97536: MCID3112898940  20181       20233 Institution B       19881       20181
-#>        data_sufficiency
-#>                  <char>
-#>     1:    exclude-lower
-#>     2:    exclude-lower
-#>     3:    exclude-lower
-#>    ---                 
-#> 97534:    exclude-upper
-#> 97535:    exclude-upper
-#> 97536:    exclude-upper
+#>                  mcid term_i       level_i adj_span timely_term   institution
+#>                <char> <char>        <char>    <num>      <char>        <char>
+#>     1: MCID3111142225  19881 01 First-year        6       19933 Institution B
+#>     2: MCID3111142283  19881 01 First-year        6       19933 Institution J
+#>     3: MCID3111142290  19881 01 First-year        6       19933 Institution J
+#>    ---                                                                       
+#> 97534: MCID3112898894  20181 01 First-year        6       20233 Institution B
+#> 97535: MCID3112898895  20181 01 First-year        6       20233 Institution B
+#> 97536: MCID3112898940  20181 01 First-year        6       20233 Institution B
+#>        lower_limit upper_limit data_sufficiency
+#>             <char>      <char>           <char>
+#>     1:       19881       20181    exclude-lower
+#>     2:       19881       20096    exclude-lower
+#>     3:       19881       20096    exclude-lower
+#>    ---                                         
+#> 97534:       19881       20181    exclude-upper
+#> 97535:       19881       20181    exclude-upper
+#> 97536:       19881       20181    exclude-upper
 ```
 
 The possible values for data sufficiency are:
 
 ``` r
 
-sort_uniq(DT$data_sufficiency)
+DT[, sort(unique(data_sufficiency), na.last = FALSE)]
 #> [1] "exclude-lower" "exclude-upper" "include"
 ```
 
@@ -709,22 +707,31 @@ DT <- timely_term(DT, midfield_table = term)
 DT <- completion_status(DT, midfield_table = degree)
 
 DT
-#>                  mcid timely_term term_degree completion_status
-#>                <char>      <char>      <char>            <char>
-#>     1: MCID3111142689       19941       19913            timely
-#>     2: MCID3111142782       19941       19903            timely
-#>     3: MCID3111142881       19951       19894            timely
-#>    ---                                                         
-#> 76863: MCID3112785480       20123        <NA>              <NA>
-#> 76864: MCID3112800920       20153        <NA>              <NA>
-#> 76865: MCID3112870009       20003        <NA>              <NA>
+#>                  mcid term_i       level_i adj_span timely_term term_degree
+#>                <char> <char>        <char>    <num>      <char>      <char>
+#>     1: MCID3111142689  19883 01 First-year        6       19941       19913
+#>     2: MCID3111142782  19883 01 First-year        6       19941       19903
+#>     3: MCID3111142881  19893 01 First-year        6       19951       19894
+#>    ---                                                                     
+#> 76863: MCID3112785480  20071 01 First-year        6       20123        <NA>
+#> 76864: MCID3112800920  20101 01 First-year        6       20153        <NA>
+#> 76865: MCID3112870009  19951 01 First-year        6       20003        <NA>
+#>        completion_status
+#>                   <char>
+#>     1:            timely
+#>     2:            timely
+#>     3:            timely
+#>    ---                  
+#> 76863:              <NA>
+#> 76864:              <NA>
+#> 76865:              <NA>
 ```
 
 The possible values for completion status are:
 
 ``` r
 
-sort_uniq(DT$completion_status)
+DT[, sort(unique(completion_status), na.last = FALSE)]
 #> [1] NA       "late"   "timely"
 ```
 
@@ -766,13 +773,13 @@ charts](https://midfieldr.github.io/midfieldr/articles/art-120-multiway.md).
 Utilities
 
 - [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
-  wraps base [`str()`](https://rdrr.io/r/utils/str.html) with our
-  preferred arguments.
+  for data frames, wraps base
+  [`str()`](https://rdrr.io/r/utils/str.html) with preset arguments.
 - [`sort_uniq()`](https://midfieldr.github.io/midfieldr/reference/sort_uniq.md)
-  wraps base `sort(unique())` with our preferred arguments.
+  for vectors, wraps base `sort(unique())` with preset arguments.
 - [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md)
   wraps base [`tryCatch()`](https://rdrr.io/r/base/conditions.html) for
-  errors.  
+  errors with preset arguments.
 - [`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
   re-exported from the wrapr package
 

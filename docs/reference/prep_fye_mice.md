@@ -44,7 +44,7 @@ prep_fye_mice(
 
 Data frame with the following properties:
 
-- Data frame class is preserved.
+- Data frame class is preserved. Groups and keys are not preserved.
 
 - Rows: One row for every FYE student from the `term` input data frame.
 

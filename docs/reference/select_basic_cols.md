@@ -37,9 +37,10 @@ select_basic_cols(dframe, col_pattern = NULL, ..., type = NULL)
 
 Data frame with the following properties:
 
-- Data frame class is preserved.
+- Data frame class is preserved. Groups and keys are not preserved.
 
-- Row order is preserved. Duplicated rows are removed.
+- Row order is preserved. Rows with `NA` values in any of the required
+  variables are removed. Duplicated rows are removed.
 
 - Columns are a subset of the input, appearing in the same order.
 

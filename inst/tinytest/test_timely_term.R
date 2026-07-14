@@ -40,6 +40,7 @@ test_timely_term <- function() {
     #     span = NULL
     # )
     
+    # library(tinytest)
     # for tinytest::build_install_test()
     suppressPackageStartupMessages(require("data.table"))
     
@@ -88,28 +89,32 @@ test_timely_term <- function() {
     
     # correct answers manually set up
     DT <- timely_term(dframe, term)
+    setnames(DT, 
+             old = c("timely_term"), 
+             new = c("tt"))
     
-    expect_equal("19933", DT[mcid == "A1_OK", (timely_term)])
-    expect_equal("19923", DT[mcid == "A2_OK_tfr", (timely_term)])
-    expect_equal("19923", DT[mcid == "A3_OK_tfr", (timely_term)])
-    expect_equal("19943", DT[mcid == "A4_OK_late", (timely_term)])
-    expect_equal("19983", DT[mcid == "B1_exclude", (timely_term)])
-    expect_equal("19983", DT[mcid == "B2_exclude", (timely_term)])
-    expect_equal("19993", DT[mcid == "B3_exclude", (timely_term)])
-    expect_equal("19893", DT[mcid == "C1_exclude", (timely_term)])
-    expect_equal("19913", DT[mcid == "C2_exclude", (timely_term)])
-    
+    expect_equal("19933", DT[mcid %like% "A1", (tt)])
+    expect_equal("19923", DT[mcid %like% "A2", (tt)])
+    expect_equal("19923", DT[mcid %like% "A3", (tt)])
+    expect_equal("19943", DT[mcid %like% "A4", (tt)])
+    expect_equal("19983", DT[mcid %like% "B1", (tt)])
+    expect_equal("19983", DT[mcid %like% "B2", (tt)])
+    expect_equal("19993", DT[mcid %like% "B3", (tt)])
+    expect_equal("19893", DT[mcid %like% "C1", (tt)])
+    expect_equal("19913", DT[mcid %like% "C2", (tt)])
+
     # correct answers with different span
     DT <- timely_term(dframe, term, span = 5)
+    setnames(DT, old = c("timely_term"), new = c("tt"))
     
-    expect_equal("19923", DT[mcid == "A1_OK", (timely_term)])
-    expect_equal("19913", DT[mcid == "A2_OK_tfr", (timely_term)])
-    expect_equal("19913", DT[mcid == "A3_OK_tfr", (timely_term)])
-    expect_equal("19973", DT[mcid == "B1_exclude", (timely_term)])
-    expect_equal("19973", DT[mcid == "B2_exclude", (timely_term)])
-    expect_equal("19983", DT[mcid == "B3_exclude", (timely_term)])
-    expect_equal("19883", DT[mcid == "C1_exclude", (timely_term)])
-    expect_equal("19903", DT[mcid == "C2_exclude", (timely_term)])
+    expect_equal("19923", DT[mcid %like% "A1", (tt)])
+    expect_equal("19913", DT[mcid %like% "A2", (tt)])
+    expect_equal("19913", DT[mcid %like% "A3", (tt)])
+    expect_equal("19973", DT[mcid %like% "B1", (tt)])
+    expect_equal("19973", DT[mcid %like% "B2", (tt)])
+    expect_equal("19983", DT[mcid %like% "B3", (tt)])
+    expect_equal("19883", DT[mcid %like% "C1", (tt)])
+    expect_equal("19903", DT[mcid %like% "C2", (tt)])
     
     # optional arguments, NA same as NULL
     expect_equal(
@@ -125,13 +130,20 @@ test_timely_term <- function() {
     dframe_vars <- c("mcid")
     added_vars  <- c("term_i", "level_i", "adj_span", "timely_term")
     return_vars <- c(dframe_vars, added_vars)
+    DT <- timely_term(dframe, term)
     expect_equal(return_vars, colnames(DT))
     
-    # columns in dframe not involved in function are dropped
-    x <- dframe[, inactive_col := 1:nrow(dframe)]
+    # columns in dframe not involved in function NOT dropped
+    x <- dframe[, inactive_col := .I]
     y <- timely_term(x, term)
-    expect_equal("inactive_col", setdiff(colnames(x), colnames(y)))
-
+    expect_equal(colnames(x), setdiff(colnames(y), added_vars))
+    
+    # existing columns same name as new columns are replaced
+    x <- copy(dframe)
+    y <- timely_term(x, term)
+    z <- timely_term(y, term)
+    expect_equal(y, z)
+    
     # row order is maintained
     x <- copy(test_DT)
     setorderv(x, c("level", "term"))

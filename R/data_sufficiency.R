@@ -1,52 +1,25 @@
 # See R/roxygen.R for documentation below that uses inline R code
-#
-# ---------- deprecated version
-#
-#' midfieldr deprecated functions
-#' @param dframe `r dframe`
-#' @param midfield_term `r midfield_x("\\[term\\]")`
-#' @rdname midfieldr-deprecated
-#' @export
-add_data_sufficiency <- function(dframe, midfield_term = term) {
-  .Deprecated(
-    new = "data_sufficiency",
-    package = "midfieldr",
-    msg = "This function was deprecated as part of an update to all
-    midfieldr functions. Please use `data_sufficiency()` instead."
-  )
 
-  # original function calls the new function
-  data_sufficiency(dframe = dframe, midfield_table = midfield_term)
-}
-NULL
-#
-# ---------- current version
-#
-#' Build a data sufficiency data frame
+#' Determine data sufficiency
 #'
-#' Assembles a data frame with one row per student per institution with
-#' columns for student ID, their initial term and timely completion term,
-#' the institution and its data range limits, and the *data sufficiency*
-#' assessment to include (or not) the student in the study population.
-#' Depends on `timely_term()` being run beforehand.
+#' Determine *data sufficiency* for each student in a data frame and add
+#' columns that support the findings.
 #'
-#' *Data sufficiency* is an assessment whether a student record lies
-#' sufficiently within their institution's data range to unambiguously
-#' assess their completion status and if so include them in the study
-#' population. Not performing the necessary exclusions produces biased
-#' counts of completers and non-completers. Such biases occur at the lower
-#' and upper bounds of an institution's data range.
+#' *Data sufficiency* is a criterion for including or excluding a student
+#' record based on the feasibility of determining their completion status given
+#' the range of data available from their institution. If determining
+#' completion status is feasible, the student record is included in the
+#' study population; if not, they must be excluded to avoid biased counts
+#' of completers and non-completers. Such biases occur at the upper and lower
+#' bounds of an institution's data range.
 #'
-#' The student ID, initial term, and timely completion term are pulled
-#' from `dframe`; all other columns are dropped. Institutions and their
-#' data range limits (upper and lower) are extracted and joined from
-#' `midfield_table.` Rows are labeled with data sufficiency values as
-#' follows: "exclude-lower" when the initial term matches the data range
-#' lower limit; "exclude-upper" when the timely completion term exceeds
-#' the data range upper limit; and "include" otherwise.
-#'
-#' If a student is enrolled in more than one institution in the database, an
-#' exclusion at any institution is applied to all rows with that ID.
+#' To apply this criterion, our heuristic labels a row
+#' "exclude-upper" when a student's timely completion term exceeds the upper
+#' limit of their institution's data range;  "exclude-lower" when their initial
+#' term matches the lowest non-summer limit of the data range; and "include"
+#' otherwise. The rationale for these specific filters is
+#' explained in our data sufficiency article (see references). In most
+#' studies, the population must satisfy the data sufficiency requirement.
 #'
 #' @param dframe `r dframe` with required variables
 #'        `{mcid, term_i, timely_term}.`
@@ -56,21 +29,19 @@ NULL
 #'
 #' @returns Data frame with the following properties:
 #' * `r df_class_preserved`
-#' * One row per student per institution (accounts for the possibility of
-#'   a student enrolled in more than one institution in the database).
-#' * Columns returned:
-#'   - `mcid` &nbsp; Pulled from `dframe.`
-#'   - `term_i` &nbsp; Pulled from `dframe.`
-#'   - `timely_term` &nbsp; Pulled from `dframe.`
-#'   - `institution.` &nbsp; Joined from `midfield_table.`
-#'   - `lower_limit.` &nbsp; Character. Initial term of an institution's
+#' * `r rows_not_modified`
+#' * `r new_cols_added`
+#'   - `institution` &nbsp; Character. Name of the institution at which a
+#'      student is enrolled in a term.
+#'   - `lower_limit` &nbsp; Character. Initial term of an institution's
 #'      data range, encoded `YYYYT`. Extracted from `midfield_table.`
-#'   - `upper_limit.` &nbsp; Character. Final term of an institution's
+#'   - `upper_limit` &nbsp; Character. Final term of an institution's
 #'      data range, encoded `YYYYT`. Extracted from `midfield_table.`
-#'   - `data_sufficiency.` &nbsp; Character. Possible values are "include",
+#'   - `data_sufficiency` &nbsp; Character. Possible values are "include",
 #'      "exclude-lower," and "exclude-upper."
 #'
 #' @example man/examples/exa_data_sufficiency.R
+#' @references Richard Layton, Russell Long, Matthew Ohland, Marisa Orr, and Susan Lord (2026) Data sufficiency, https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.html
 #' @export
 #'
 data_sufficiency <- function(dframe, midfield_table = term) {
@@ -120,27 +91,32 @@ data_sufficiency <- function(dframe, midfield_table = term) {
 
   # ---------- do the work
 
-  # subset required variables
-  dframe <- dframe[, .SD, .SDcols = reqd_dframe_vars]
-  dframe <- unique(dframe, na.rm = TRUE)
+  # save columns except those being added
+  saved_vars <- setdiff(colnames(dframe), added_vars)
+  return_vars <- c(saved_vars, added_vars)
+
+  # drop added vars, omit NA in required vars
+  dframe <- dframe[, .SD, .SDcols = saved_vars]
+  dframe <- na.omit(dframe, cols = reqd_dframe_vars)
+  dframe <- unique(dframe)
+
+  # keep required vars and omit NAs
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
-  midf_table <- unique(midf_table, na.rm = TRUE)
+  midf_table <- na.omit(midf_table, cols = reqd_table_vars)
+  midf_table <- unique(midf_table)
 
   # add temp col to restore row order
   dframe[, idx := .I]
 
-  # join institutions, allows for student enrolled in more than one institution
+  # join institutions
   x <- midf_table[, .(mcid, institution)]
   x <- unique(x)
   dframe <- x[dframe, on = "mcid"]
 
-  # find lower and upper limits by institution
-  x <- midf_table[, .(term, institution)]
-  x <- unique(x)
-  x <- x[, .(lower_limit = min(term), upper_limit = max(term)),
+  # join lower and upper limits by institution
+  x <- midf_table[, .(lower_limit = min(term), upper_limit = max(term)),
     by = "institution"
   ]
-  # join institution limits
   dframe <- x[dframe, on = "institution"]
 
   # ---------- data sufficiency labels
@@ -152,24 +128,13 @@ data_sufficiency <- function(dframe, midfield_table = term) {
     default = "include"
   )]
 
-  # for rare case of student enrolled in two institutions  ##### have to add test
-  # may be "include" at one but "exclude" at the other
-  incl <- dframe[data_sufficiency %ilike% "include"]
-  excl <- dframe[data_sufficiency %ilike% "exclude"]
-  common_ids <- intersect(incl[["mcid"]], excl[["mcid"]])
-  for (j in seq_along(common_ids)) {
-    excl_value <- excl[mcid == common_ids[j], (data_sufficiency)]
-    # all rows with this ID get the exclusion
-    dframe[mcid == common_ids[j], data_sufficiency := excl_value]
-  }
-
   # ---------- prepare to return
 
   # restore row order
   setkey(dframe, idx)
 
   # drop temp cols, restore col order, ensure unique rows
-  dframe <- dframe[, .SD, .SDcols = c(reqd_dframe_vars, added_vars)]
+  dframe <- dframe[, .SD, .SDcols = return_vars]
   dframe <- unique(dframe)
 
   # restore class
@@ -179,3 +144,24 @@ data_sufficiency <- function(dframe, midfield_table = term) {
   # done
   dframe[]
 }
+
+
+# ---------- deprecated version
+#
+#' midfieldr deprecated functions
+#' @param dframe `r dframe`
+#' @param midfield_term `r midfield_x("\\[term\\]")`
+#' @rdname midfieldr-deprecated
+#' @export
+add_data_sufficiency <- function(dframe, midfield_term = term) {
+  .Deprecated(
+    new = "data_sufficiency",
+    package = "midfieldr",
+    msg = "This function was deprecated as part of an update to all
+    midfieldr functions. Please use `data_sufficiency()` instead."
+  )
+
+  # original function calls the new function
+  data_sufficiency(dframe = dframe, midfield_table = midfield_term)
+}
+NULL

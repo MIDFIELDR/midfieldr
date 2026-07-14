@@ -23,8 +23,10 @@ referable only by name.}
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved.
-\item Row order is preserved. Duplicated rows are removed.
+\item Data frame class is preserved. Groups and keys are
+not preserved.
+\item Row order is preserved. Rows with \code{NA} values in any
+of the required variables are removed. Duplicated rows are removed.
 \item Columns are a subset of the input, appearing in the same order.
 \item Groups and keys are not preserved.
 }

@@ -16,8 +16,10 @@ post_bacc_terms(dframe, midfield_table = degree)
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved.
-\item Row order is preserved. Duplicated rows are removed.
+\item Data frame class is preserved. Groups and keys are
+not preserved.
+\item Row order is preserved. Rows with \code{NA} values in any
+of the required variables are removed. Duplicated rows are removed.
 \item New columns are added or replace existing columns of the same name (if
 any). Other columns are not modified. The following variables are added:
 \itemize{

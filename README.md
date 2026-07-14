@@ -17,14 +17,17 @@ An R package that supplies tools for working with longitudinal
 undergraduate records from the MIDFIELD database—or similarly structured
 data tables—in the following areas.
 
-Refining primary data  
-- `filter_programs()` helps you find program names and CIP codes.  
-- `post_bacc_terms()` identifies post-baccalaureate terms to exclude.
+Programs  
+- `filter_programs()` helps you find program names and CIP codes.
 
-Refining a population  
+Records and population  
 - `timely_term()` estimates timely completion terms.  
 - `data_sufficiency()` identifies IDs to exclude due to insufficient
 data.  
+- `post_bacc_terms()` identifies rows with post-baccalaureate terms to
+exclude.
+
+Blocs  
 - `completion_status()` labels program completion as timely, late, or
 NA.
 
@@ -34,16 +37,16 @@ students.
 - `order_multiway()` conditions data for Cleveland multiway charts.
 
 Convenience  
-- `select_basic_cols()` chooses those columns required by other
-midfieldr functions.  
+- `select_basic_cols()` minimizes the number of columns viewed for
+interactive sessions.  
 - `look_at()` wraps `base::str()` with our preferred arguments.
 
 ``` r
 library("midfieldr")
 packageVersion("midfieldr")
-#> [1] '1.0.3.9019'
+#> [1] '1.0.3.9021'
 Sys.Date()
-#> [1] "2026-07-09"
+#> [1] "2026-07-13"
 ```
 
 ## Installation
@@ -177,24 +180,24 @@ DT <- timely_term(DT, midfield_table = term)
 DT <- data_sufficiency(DT, midfield_table = term)
 
 DT
-#>                mcid term_i timely_term   institution lower_limit upper_limit
-#>              <char> <char>      <char>        <char>      <char>      <char>
-#>   1: MCID3111142897  19881       19933 Institution B       19881       20181
-#>   2: MCID3111157634  19881       19933 Institution J       19881       20096
-#>   3: MCID3111158724  19881       19933 Institution J       19881       20096
-#>  ---                                                                        
-#> 349: MCID3112868072  20171       20223 Institution B       19881       20181
-#> 350: MCID3112869843  20173       20231 Institution B       19881       20181
-#> 351: MCID3112885339  20181       20233 Institution B       19881       20181
-#>      data_sufficiency
-#>                <char>
-#>   1:    exclude-lower
-#>   2:    exclude-lower
-#>   3:    exclude-lower
-#>  ---                 
-#> 349:    exclude-upper
-#> 350:    exclude-upper
-#> 351:    exclude-upper
+#>                mcid term_i       level_i adj_span timely_term   institution
+#>              <char> <char>        <char>    <num>      <char>        <char>
+#>   1: MCID3111142897  19881 01 First-year        6       19933 Institution B
+#>   2: MCID3111157634  19881 01 First-year        6       19933 Institution J
+#>   3: MCID3111158724  19881 01 First-year        6       19933 Institution J
+#>  ---                                                                       
+#> 349: MCID3112868072  20171 01 First-year        6       20223 Institution B
+#> 350: MCID3112869843  20173 01 First-year        6       20231 Institution B
+#> 351: MCID3112885339  20181 01 First-year        6       20233 Institution B
+#>      lower_limit upper_limit data_sufficiency
+#>           <char>      <char>           <char>
+#>   1:       19881       20181    exclude-lower
+#>   2:       19881       20096    exclude-lower
+#>   3:       19881       20096    exclude-lower
+#>  ---                                         
+#> 349:       19881       20181    exclude-upper
+#> 350:       19881       20181    exclude-upper
+#> 351:       19881       20181    exclude-upper
 
 # Retain rows with sufficient institutional data
 population <- DT[data_sufficiency == "include", .(mcid)]

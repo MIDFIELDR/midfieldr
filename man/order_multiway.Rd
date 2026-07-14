@@ -43,7 +43,8 @@ is the denominator of the ratio.}
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved.
+\item Data frame class is preserved. Groups and keys are
+not preserved.
 \item Rows are preserved, though the row order may change.
 \item Numerical variables are converted to type double. Columns
 specified by \code{categories} are converted to factors and ordered.

@@ -84,10 +84,10 @@ test_completion_status <- function() {
     y <- completion_status(dframe, degree)
     expect_equal(x, y)
     
-    # columns in dframe not involved in function are dropped
-    x <- dframe[, inactive_col := 1:nrow(dframe)]
+    # columns in dframe not involved in function are NOT dropped
+    x <- dframe[, inactive_col := 1:.N]
     y <- completion_status(dframe, degree)
-    expect_equal("inactive_col", setdiff(colnames(x), colnames(y)))
+    expect_equal(colnames(x), setdiff(colnames(y), added_vars))
     
     # row order is maintained
     x <- copy(test_DT)

@@ -28,9 +28,10 @@ post_bacc_terms(dframe, midfield_table = degree)
 
 Data frame with the following properties:
 
-- Data frame class is preserved.
+- Data frame class is preserved. Groups and keys are not preserved.
 
-- Row order is preserved. Duplicated rows are removed.
+- Row order is preserved. Rows with `NA` values in any of the required
+  variables are removed. Duplicated rows are removed.
 
 - New columns are added or replace existing columns of the same name (if
   any). Other columns are not modified. The following variables are

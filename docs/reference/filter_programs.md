@@ -34,7 +34,7 @@ filter_programs(dframe, pattern, ..., negate = FALSE)
 
 Data frame with the following properties:
 
-- Data frame class is preserved.
+- Data frame class is preserved. Groups and keys are not preserved.
 
 - Rows are a subset of the input and appear in the same order.
   Duplicated rows are removed.

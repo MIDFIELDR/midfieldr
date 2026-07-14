@@ -1,13 +1,13 @@
 term <- toy_term
 
-# Start with a small population 
+# Start with a selected population. 
 x <- toy_student[c(51:55, 346:350), .(mcid, sex)]
 x
 
-# Add timely term, unrelated variables (sex) are dropped
+# Add timely term columns. Unrelated columns (sex) are unaffected.
 x <- timely_term(x, midfield_table = term)
 x
 
-# Existing column with same name as added column is replaced
-x[, adj_span := 0L][]
-timely_term(x, midfield_table = term)
+# Repeat. New columns silently replace existing columns of the same name.
+y <- timely_term(x, midfield_table = term)
+y

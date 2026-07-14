@@ -1,29 +1,28 @@
 
 # function used in the test
 expect_class_preserved <- function(df1, df2, fnc) {
-    
     run_check <- function(x, y, fnc) {
         z <- fnc(x, y)
         expect_equal(class(x), class(z))
         expect_equal(class(y), class(z))
     }
     
-    # runs 3 checks: data.frame, tibble, data.table
-    x <- copy(df1)
-    y <- copy(df2)
-    
-    x <- as.data.frame(x)
-    y <- as.data.frame(y)
+    # check data.frame preserved
+    x <- as.data.frame(copy(df1))
+    y <- as.data.frame(copy(df2))
     run_check(x, y, fnc)
     
+    # check tibble preserved
     setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
     setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
     run_check(x, y, fnc)
     
+    # check data.table preserved
     x <- as.data.table(x)
     y <- as.data.table(y)
     run_check(x, y, fnc)
     
+    # done
     rm(x, y)
 }
 
@@ -33,6 +32,7 @@ test_data_sufficiency <- function() {
     # 
     # data_sufficiency(dframe, midfield_table = term)
     
+    # library(tinytest)
     # Needed for build_install_test()
     suppressPackageStartupMessages(require("data.table"))
     
@@ -84,22 +84,25 @@ test_data_sufficiency <- function() {
     # correct answers manually set up
     DT <- data_sufficiency(dframe, term)
     DT <- unique(DT)
+    setnames(DT, 
+             old = c("data_sufficiency", "institution"), 
+             new = c("ds", "inst"))
     
-    expect_equal("include", DT[mcid == "A1_OK", (data_sufficiency)])
-    expect_equal("include", DT[mcid == "A2_OK_tfr", (data_sufficiency)])
-    expect_equal("include", DT[mcid == "A3_OK_tfr", (data_sufficiency)])
-    expect_equal("include", DT[mcid == "A4_OK_late", (data_sufficiency)])
-    expect_equal("exclude-upper", DT[mcid == "B1_exclude", (data_sufficiency)])
-    expect_equal("exclude-upper", DT[mcid == "B2_exclude", (data_sufficiency)])
-    expect_equal("exclude-upper", DT[mcid == "B3_exclude", (data_sufficiency)])
-    expect_equal("exclude-lower", DT[mcid == "C1_exclude", (data_sufficiency)])
-    expect_equal("exclude-lower", DT[mcid == "C2_exclude", (data_sufficiency)])
+    expect_equal("include", DT[mcid %like% "A1", (ds)])
+    expect_equal("include", DT[mcid %like% "A2", (ds)])
+    expect_equal("include", DT[mcid %like% "A3", (ds)])
+    expect_equal("include", DT[mcid %like% "A4", (ds)])
+    expect_equal("exclude-upper", DT[mcid %like% "B1", (ds)])
+    expect_equal("exclude-upper", DT[mcid %like% "B2", (ds)])
+    expect_equal("exclude-upper", DT[mcid %like% "B3", (ds)])
+    expect_equal("exclude-lower", DT[mcid %like% "C1", (ds)])
+    expect_equal("exclude-lower", DT[mcid %like% "C2", (ds)])
     
     # correct columns in place
     dframe_vars <- c("mcid", "term_i", "timely_term")
-    added_vars  <- c("institution", "lower_limit", 
-                     "upper_limit", "data_sufficiency")
+    added_vars  <- c("institution", "lower_limit", "upper_limit", "data_sufficiency")
     return_vars <- c(dframe_vars, added_vars)
+    DT <- data_sufficiency(dframe, term)
     expect_equal(return_vars, colnames(DT))
     
     # correct answers naming and not naming arguments
@@ -108,10 +111,16 @@ test_data_sufficiency <- function() {
     expect_equal(x, y)
     rm(x, y)
     
-    # columns in dframe not involved in function are dropped
-    x <- dframe[, inactive_col := 1:nrow(dframe)]
+    # columns in dframe not involved in function NOT dropped
+    x <- dframe[, inactive_col := 1:.N]
     y <- data_sufficiency(dframe, term)
-    expect_equal("inactive_col", setdiff(colnames(x), colnames(y)))
+    expect_equal(colnames(x), setdiff(colnames(y), added_vars))
+    
+    # existing columns same name as new columns are replaced
+    x <- copy(dframe)
+    y <- data_sufficiency(x, term)
+    z <- data_sufficiency(y, term)
+    expect_equal(y, z)
     
     # row order is maintained
     x <- copy(test_DT)

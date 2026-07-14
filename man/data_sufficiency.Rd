@@ -2,7 +2,7 @@
 % Please edit documentation in R/data_sufficiency.R
 \name{data_sufficiency}
 \alias{data_sufficiency}
-\title{Build a data sufficiency data frame}
+\title{Determine data sufficiency}
 \usage{
 data_sufficiency(dframe, midfield_table = term)
 }
@@ -16,61 +16,66 @@ data_sufficiency(dframe, midfield_table = term)
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved.
-\item One row per student per institution (accounts for the possibility of
-a student enrolled in more than one institution in the database).
-\item Columns returned:
+\item Data frame class is preserved. Groups and keys are
+not preserved.
+\item Row order is preserved. Rows with \code{NA} values in any
+of the required variables are removed. Duplicated rows are removed.
+\item Columns with names different from the new columns (named
+below) are not modified; columns with matching names are replaced.
+The new columns added are:
 \itemize{
-\item \code{mcid}   Pulled from \code{dframe.}
-\item \code{term_i}   Pulled from \code{dframe.}
-\item \code{timely_term}   Pulled from \code{dframe.}
-\item \code{institution.}   Joined from \code{midfield_table.}
-\item \code{lower_limit.}   Character. Initial term of an institution's
+\item \code{institution}   Character. Name of the institution at which a
+student is enrolled in a term.
+\item \code{lower_limit}   Character. Initial term of an institution's
 data range, encoded \code{YYYYT}. Extracted from \code{midfield_table.}
-\item \code{upper_limit.}   Character. Final term of an institution's
+\item \code{upper_limit}   Character. Final term of an institution's
 data range, encoded \code{YYYYT}. Extracted from \code{midfield_table.}
-\item \code{data_sufficiency.}   Character. Possible values are "include",
+\item \code{data_sufficiency}   Character. Possible values are "include",
 "exclude-lower," and "exclude-upper."
 }
 }
 }
 \description{
-Assembles a data frame with one row per student per institution with
-columns for student ID, their initial term and timely completion term,
-the institution and its data range limits, and the \emph{data sufficiency}
-assessment to include (or not) the student in the study population.
-Depends on \code{timely_term()} being run beforehand.
+Determine \emph{data sufficiency} for each student in a data frame and add
+columns that support the findings.
 }
 \details{
-\emph{Data sufficiency} is an assessment whether a student record lies
-sufficiently within their institution's data range to unambiguously
-assess their completion status and if so include them in the study
-population. Not performing the necessary exclusions produces biased
-counts of completers and non-completers. Such biases occur at the lower
-and upper bounds of an institution's data range.
+\emph{Data sufficiency} is a criterion for including or excluding a student
+record based on the feasibility of determining their completion status given
+the range of data available from their institution. If determining
+completion status is feasible, the student record is included in the
+study population; if not, they must be excluded to avoid biased counts
+of completers and non-completers. Such biases occur at the upper and lower
+bounds of an institution's data range.
 
-The student ID, initial term, and timely completion term are pulled
-from \code{dframe}; all other columns are dropped. Institutions and their
-data range limits (upper and lower) are extracted and joined from
-\code{midfield_table.} Rows are labeled with data sufficiency values as
-follows: "exclude-lower" when the initial term matches the data range
-lower limit; "exclude-upper" when the timely completion term exceeds
-the data range upper limit; and "include" otherwise.
-
-If a student is enrolled in more than one institution in the database, an
-exclusion at any institution is applied to all rows with that ID.
+To apply this criterion, our heuristic labels a row
+"exclude-upper" when a student's timely completion term exceeds the upper
+limit of their institution's data range;  "exclude-lower" when their initial
+term matches the lowest non-summer limit of the data range; and "include"
+otherwise. The rationale for these specific filters is
+explained in our data sufficiency article (see references). In most
+studies, the population must satisfy the data sufficiency requirement.
 }
 \examples{
 term <- toy_term
 
-# Start with a small population 
-x <- toy_student[c(9:15, 342:344), .(mcid)]
+# Start with a selected population.
+x <- toy_student[c(9:15, 342:344), .(mcid, sex)]
 x
 
-# Timely term column is required
+# Add the required columns from timely_term().
 x <- timely_term(x, midfield_table = term)
+x <- x[, .(mcid, sex, term_i, timely_term)]
 x
 
-# Build data sufficiency data frame
-data_sufficiency(x, midfield_table = term)
+# Add data sufficiency columns. Unrelated columns (sex) are unaffected.
+x <- data_sufficiency(x, midfield_table = term)
+x
+
+# Repeat. New columns silently replace existing columns of the same name.
+y <- data_sufficiency(x, midfield_table = term)
+y
+}
+\references{
+Richard Layton, Russell Long, Matthew Ohland, Marisa Orr, and Susan Lord (2026) Data sufficiency, https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.html
 }

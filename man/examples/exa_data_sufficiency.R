@@ -1,12 +1,18 @@
 term <- toy_term
 
-# Start with a small population 
-x <- toy_student[c(9:15, 342:344), .(mcid)]
+# Start with a selected population.
+x <- toy_student[c(9:15, 342:344), .(mcid, sex)]
 x
 
-# Timely term column is required
+# Add the required columns from timely_term().
 x <- timely_term(x, midfield_table = term)
+x <- x[, .(mcid, sex, term_i, timely_term)]
 x
 
-# Build data sufficiency data frame
-data_sufficiency(x, midfield_table = term)
+# Add data sufficiency columns. Unrelated columns (sex) are unaffected.
+x <- data_sufficiency(x, midfield_table = term)
+x
+
+# Repeat. New columns silently replace existing columns of the same name.
+y <- data_sufficiency(x, midfield_table = term)
+y

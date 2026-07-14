@@ -2,7 +2,7 @@
 % Please edit documentation in R/completion_status.R
 \name{completion_status}
 \alias{completion_status}
-\title{Build a completion status data frame}
+\title{Determine completion status}
 \usage{
 completion_status(dframe, midfield_table = degree)
 }
@@ -15,12 +15,14 @@ variables \verb{\{mcid, term_degree\}.}}
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved.
-\item One row per student.
-\item Columns returned:
+\item Data frame class is preserved. Groups and keys are
+not preserved.
+\item Row order is preserved. Rows with \code{NA} values in any
+of the required variables are removed. Duplicated rows are removed.
+\item Columns with names different from the new columns (named
+below) are not modified; columns with matching names are replaced.
+The new columns added are:
 \itemize{
-\item \code{mcid}   Pulled from \code{dframe.}
-\item \code{timely_term}   Pulled from \code{dframe.}
 \item \code{term_degree}   Joined from \code{midfield_table.}
 \item \code{completion_status}   Character. Possible values of "timely",
 "late" and "NA".
@@ -28,36 +30,39 @@ Data frame with the following properties:
 }
 }
 \description{
-Assembles a data frame with one row per student and with columns for
-student ID, timely completion term, first degree term (if any), and
-\emph{completion status}---timely, late, or NA. Depends on \code{timely_term()}
-being run beforehand.
+Determine the \emph{completion status} for each student in a data frame and
+add columns that support the findings.
 }
 \details{
-Program \emph{completion} means graduating with a first baccalaureate
-degree. Completion is \emph{timely} if it occurs within a specified
-span, typically 4, 6, or 8 years after admission. The term at the end of
-that span is the \emph{timely completion term.}
+If a population has been filtered for data sufficiency, then determining
+every student's \emph{completion status} is feasible. Completing an academic
+program in a timely manner means that a student completes the requirements
+for a degree within a set time span, typically 4, 6, or 8 years after
+admission depending on the definition adopted in a particular study. The
+term at the end of that span is the \emph{timely completion term.}
 
-The student ID and timely completion term are pulled from \code{dframe}; all other
-columns are dropped. The first degree term is joined from \code{midfield_table.}
-For students with a degree, completion no later than the timely term is
-"timely"; completion after the timely term is "late." For students with no
-degree, completion status is NA.
+If the student's degree term is no later than their timely completion term,
+then their completion status is "timely"; if later, their status is "late".
+For students with no degree, completion status is NA.
 }
 \examples{
 term <- toy_term
 degree <- toy_degree
 
-# Start with a selected population 
-x <- toy_student[21:36, .(mcid)]
+# Start with a selected population. 
+x <- toy_student[21:36, .(mcid, sex)]
 x
 
-# Timely term column is required
+# Add the required columns from timely_term().
 x <- timely_term(x, midfield_table = term)
+x <- x[, .(mcid, sex, timely_term)]
 x
 
-# Build completion status data frame
-completion_status(x, midfield_table = degree)
+# Add completion status columns. Unrelated columns (sex) are unaffected.
+x <- completion_status(x, midfield_table = degree)
+x
 
+# Repeat. New columns silently replace existing columns of the same name.
+y <- completion_status(x, midfield_table = degree)
+y
 }

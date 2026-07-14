@@ -36,16 +36,16 @@ part-time status, transfer status, admission term, or starting program.
 
 *Population.*   The set of unique IDs from the above records.
 
-*Blocs.*   Students ever enrolled in the programs and timely graduates
-of the programs are required by the metric.
+*Blocs.*   The metric requires two blocs: students ever enrolled in the
+programs; and timely graduates of the programs.
 
-*Groupings.*   We select program, race/ethnicity, and sex for grouping
-and summarizing.
+*Groupings.*   The metric will be grouped by program, race/ethnicity,
+and sex.
 
 *Outcome.*   To calculate the metric, we construct a data frame with
 columns for each grouping variable (program, race/ethnicity, and sex)
-and the counts by group \small N\_\textrm{grad} and \small
-N\_\textrm{ever}.
+and bloc summary counts \small N\_\textrm{grad} and \small
+N\_\textrm{ever} by group.
 
 *Dissemination.*   Exclude groupings too small to preserve anonymity.
 Edit column names to suit the audience. Condition/transform data as
@@ -56,9 +56,12 @@ packages in this article:
 
 ``` r
 
-library(midfieldr)
-library(midfielddata)
-library(data.table)
+library("midfieldr")
+library("midfielddata")
+library("data.table")
+library("cdata")
+library("gt")
+library("ggplot2")
 ```
 
 ## Programs
@@ -318,159 +321,27 @@ term_source <- copy(term)
 degree_source <- copy(degree)
 ```
 
-The working data frames `student, term,` and `degree` should always be
-present in our computing environment so we can take advantage of
-midfieldr default argument values. For example, the function
-[`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
-accesses the `degree` table to do its work. If `degree` is in the
-environment, the following lines yield identical results:
+For reference, these data frames have the following number of rows.
 
-``` r
+- student: 97,555 rows
+- term: 639,915 rows
+- degree: 49,665 rows
 
-# not run
-post_bacc_terms(term, midfield_table = degree)
-post_bacc_terms(term, degree)
-post_bacc_terms(term)
-```
+Our approach is to apply the data sufficiency and degree-seeking
+criteria to refine the population, then exclude any post-baccalaureate
+terms. The resulting set of “source” data tables is a suitable
+foundation for most studies.
 
-In this article, we use the latter form.
+### *Data sufficiency*
 
-### *Select basic columns*
+*Data sufficiency* assesses whether an institution’s data range is
+sufficient to determine a student’s completion status—timely, late, or
+NA—without ambiguity. Students for whom the data range is insufficient
+must be excluded from the population to avoid biased counts of both
+completers and non-completers. For details, see the discussion in [Data
+sufficiency](https://midfieldr.github.io/midfieldr/articles/articles/art-020-data-sufficiency.md).
 
-Convenient for viewing data frames at intermediate stages. We reduce the
-number of columns to those required by other midfieldr functions plus
-the key or composite key variables of the data tables.
-
-``` r
-
-student <- select_basic_cols(student)
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
-```
-
-[`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
-is a midfieldr convenience function that wraps `base::str()`.
-
-``` r
-
-look_at(student)
-#> Classes 'data.table' and 'data.frame':   97555 obs. of  3 variables:
-#>  $ mcid: chr  "MCID3111142225" "MCID3111142283" "MCID3111142290" "MCID3111142"..
-#>  $ race: chr  "Asian" "Asian" "Asian" "Asian" ...
-#>  $ sex : chr  "Male" "Female" "Male" "Male" ...
-
-look_at(term)
-#> Classes 'data.table' and 'data.frame':   639915 obs. of  5 variables:
-#>  $ mcid       : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283" "MCID"..
-#>  $ term       : chr  "19881" "19881" "19883" "19885" ...
-#>  $ cip6       : chr  "140901" "240102" "240102" "190601" ...
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
-#>  $ level      : chr  "01 First-year" "01 First-year" "01 First-year" "01 Firs"..
-
-look_at(degree)
-#> Classes 'data.table' and 'data.frame':   49665 obs. of  3 variables:
-#>  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..
-#>  $ term_degree: chr  "19881" "19921" "19903" "19921" ...
-#>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
-```
-
-### *Exclude post-baccalaureate terms*
-
-We are not generally interested in terms beyond the first degree term,
-so we identify and exclude terms later than the first degree term.
-Multiple degrees earned in the first degree term are retained, but any
-courses, terms, or degrees after the first baccalaureate are excluded.
-
-[`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
-adds a column of labels indicating that a term belongs to one of three
-clusters: terms that are prior to, equal to, or subsequent to the
-student’s first degree term.
-
-``` r
-
-term <- post_bacc_terms(term)
-degree <- post_bacc_terms(degree)
-
-look_at(term)
-#> Classes 'data.table' and 'data.frame':   639915 obs. of  7 variables:
-#>  $ mcid             : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283""..
-#>  $ term             : chr  "19881" "19881" "19883" "19885" ...
-#>  $ cip6             : chr  "140901" "240102" "240102" "190601" ...
-#>  $ institution      : chr  "Institution B" "Institution J" "Institution J" "I"..
-#>  $ level            : chr  "01 First-year" "01 First-year" "01 First-year" "0"..
-#>  $ first_degree_term: chr  "19881" NA NA NA ...
-#>  $ term_cluster     : chr  "first-degree" "pre-degree" "pre-degree" "pre-degr"..
-
-look_at(degree)
-#> Classes 'data.table' and 'data.frame':   49665 obs. of  5 variables:
-#>  $ mcid             : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294""..
-#>  $ term_degree      : chr  "19881" "19921" "19903" "19921" ...
-#>  $ cip6             : chr  "141001" "141001" "141001" "141001" ...
-#>  $ first_degree_term: chr  "19881" "19921" "19903" "19921" ...
-#>  $ term_cluster     : chr  "first-degree" "first-degree" "first-degree" "firs"..
-```
-
-To quickly assess the relative size of the three clusters, we count
-observations by the `term_cluster` variable.
-
-``` r
-
-term[, .N, by = c("term_cluster")][order(-N)]
-#>         term_cluster      N
-#>               <char>  <int>
-#> 1:        pre-degree 598477
-#> 2:      first-degree  34440
-#> 3: post-first-degree   6998
-
-degree[, .N, by = c("term_cluster")][order(-N)]
-#>         term_cluster     N
-#>               <char> <int>
-#> 1:      first-degree 49618
-#> 2: post-first-degree    47
-```
-
-We exclude the rows labeled “post-first-degree.” This step does not
-apply to the `student` table because it contains no term information.
-
-``` r
-
-term <- term[!"post-first-degree", on = "term_cluster"]
-degree <- degree[!"post-first-degree", on = "term_cluster"]
-```
-
-We can drop the added columns by applying
-[`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
-again.
-
-``` r
-
-term <- select_basic_cols(term, "t")
-degree <- select_basic_cols(degree, "d")
-
-look_at(term)
-#> Classes 'data.table' and 'data.frame':   632917 obs. of  7 variables:
-#>  $ mcid             : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283""..
-#>  $ term             : chr  "19881" "19881" "19883" "19885" ...
-#>  $ cip6             : chr  "140901" "240102" "240102" "190601" ...
-#>  $ institution      : chr  "Institution B" "Institution J" "Institution J" "I"..
-#>  $ level            : chr  "01 First-year" "01 First-year" "01 First-year" "0"..
-#>  $ first_degree_term: chr  "19881" NA NA NA ...
-#>  $ term_cluster     : chr  "first-degree" "pre-degree" "pre-degree" "pre-degr"..
-
-look_at(degree)
-#> Classes 'data.table' and 'data.frame':   49618 obs. of  4 variables:
-#>  $ mcid             : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294""..
-#>  $ term_degree      : chr  "19881" "19921" "19903" "19921" ...
-#>  $ cip6             : chr  "141001" "141001" "141001" "141001" ...
-#>  $ first_degree_term: chr  "19881" "19921" "19903" "19921" ...
-```
-
-### *Filter for data sufficiency*
-
-The next few steps are easier to follow if we start with the unique IDs
-from our current term table as our draft population. We filter these IDs
-for data sufficiency and degree-seeking, then filter the records to
-retain those IDs only.
+We start with the full set of unique student IDs in the source data.
 
 ``` r
 
@@ -483,23 +354,19 @@ DT
 #>     2: MCID3111142283
 #>     3: MCID3111142290
 #>    ---               
-#> 97534: MCID3112898894
-#> 97535: MCID3112898895
-#> 97536: MCID3112898940
+#> 97553: MCID3112898894
+#> 97554: MCID3112898895
+#> 97555: MCID3112898940
 ```
 
-The data sufficiency criterion limits student records to those for which
-available data are sufficient to credibly assess timely completion. To
-make that assessment, we need the last term in which a student’s degree
-completion would be considered timely—in many cases, 6 years after
-admission.
-
-[`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
-adds a column of timely completion terms, encoded YYYYT.
+Our usual definition of *timely* program completion is 6 years after
+admission (4 or 8 years are also commonly encountered). The term at the
+upper limit of that span is the *timely completion term,* obtained using
+`timely_term().` Output variables are documented in `?timely_term.`
 
 ``` r
 
-DT <- timely_term(DT)
+DT <- timely_term(DT, midfield_table = term)
 DT
 #>                  mcid term_i       level_i adj_span timely_term
 #>                <char> <char>        <char>    <num>      <char>
@@ -507,76 +374,60 @@ DT
 #>     2: MCID3111142283  19881 01 First-year        6       19933
 #>     3: MCID3111142290  19881 01 First-year        6       19933
 #>    ---                                                         
-#> 97534: MCID3112898894  20181 01 First-year        6       20233
-#> 97535: MCID3112898895  20181 01 First-year        6       20233
-#> 97536: MCID3112898940  20181 01 First-year        6       20233
+#> 97553: MCID3112898894  20181 01 First-year        6       20233
+#> 97554: MCID3112898895  20181 01 First-year        6       20233
+#> 97555: MCID3112898940  20181 01 First-year        6       20233
 ```
 
-Retain the minimum number of columns we need for data sufficiency.
-
-``` r
-
-DT <- DT[, .(mcid, term_i, timely_term)]
-DT
-#>                  mcid term_i timely_term
-#>                <char> <char>      <char>
-#>     1: MCID3111142225  19881       19933
-#>     2: MCID3111142283  19881       19933
-#>     3: MCID3111142290  19881       19933
-#>    ---                                  
-#> 97534: MCID3112898894  20181       20233
-#> 97535: MCID3112898895  20181       20233
-#> 97536: MCID3112898940  20181       20233
-```
-
+Operating on this output,
 [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
-adds a column of labels indicating that a student ID should be included
-(or excluded) because for that student, the institution’s data range
-satisfies (or does not satisfy) the data sufficiency criteria.
+identifies records at the upper and lower bounds of an institution’s
+data range that must be excluded. Output variables are documented in
+`?data_sufficiency.`
 
 ``` r
 
-DT <- data_sufficiency(DT)
+DT <- data_sufficiency(DT, midfield_table = term)
 DT
-#>                  mcid term_i timely_term   institution lower_limit upper_limit
-#>                <char> <char>      <char>        <char>      <char>      <char>
-#>     1: MCID3111142225  19881       19933 Institution B       19881       20181
-#>     2: MCID3111142283  19881       19933 Institution J       19881       20096
-#>     3: MCID3111142290  19881       19933 Institution J       19881       20096
-#>    ---                                                                        
-#> 97534: MCID3112898894  20181       20233 Institution B       19881       20181
-#> 97535: MCID3112898895  20181       20233 Institution B       19881       20181
-#> 97536: MCID3112898940  20181       20233 Institution B       19881       20181
-#>        data_sufficiency
-#>                  <char>
-#>     1:    exclude-lower
-#>     2:    exclude-lower
-#>     3:    exclude-lower
-#>    ---                 
-#> 97534:    exclude-upper
-#> 97535:    exclude-upper
-#> 97536:    exclude-upper
+#>                  mcid term_i       level_i adj_span timely_term   institution
+#>                <char> <char>        <char>    <num>      <char>        <char>
+#>     1: MCID3111142225  19881 01 First-year        6       19933 Institution B
+#>     2: MCID3111142283  19881 01 First-year        6       19933 Institution J
+#>     3: MCID3111142290  19881 01 First-year        6       19933 Institution J
+#>    ---                                                                       
+#> 97553: MCID3112898894  20181 01 First-year        6       20233 Institution B
+#> 97554: MCID3112898895  20181 01 First-year        6       20233 Institution B
+#> 97555: MCID3112898940  20181 01 First-year        6       20233 Institution B
+#>        lower_limit upper_limit data_sufficiency
+#>             <char>      <char>           <char>
+#>     1:       19881       20181    exclude-lower
+#>     2:       19881       20096    exclude-lower
+#>     3:       19881       20096    exclude-lower
+#>    ---                                         
+#> 97553:       19881       20181    exclude-upper
+#> 97554:       19881       20181    exclude-upper
+#> 97555:       19881       20181    exclude-upper
 ```
 
-Again, a quick assessment of the relative size of the three possible
-labels.
+To assess the relative number of records to include or exclude, we count
+observations by the `data_sufficiency` variable.
 
 ``` r
 
 DT[, .N, by = c("data_sufficiency")][order(-N)]
 #>    data_sufficiency     N
 #>              <char> <int>
-#> 1:          include 76865
-#> 2:    exclude-upper 17925
+#> 1:          include 76875
+#> 2:    exclude-upper 17934
 #> 3:    exclude-lower  2746
 ```
 
-We retain the rows labeled “include” for which we have sufficient data
-from the institution and retain the ID column only.
+We filter to retain rows labeled “include” and drop all but the ID
+column.
 
 ``` r
 
-DT <- DT["include", on = "data_sufficiency", .(mcid)]
+DT <- DT[data_sufficiency == "include", .(mcid)]
 DT
 #>                  mcid
 #>                <char>
@@ -584,18 +435,19 @@ DT
 #>     2: MCID3111142782
 #>     3: MCID3111142881
 #>    ---               
-#> 76863: MCID3112785480
-#> 76864: MCID3112800920
-#> 76865: MCID3112870009
+#> 76873: MCID3112785480
+#> 76874: MCID3112800920
+#> 76875: MCID3112870009
 ```
 
-### *Filter for degree seeking*
+### *Degree seeking*
 
 We require all students in our study to be degree-seeking. By design,
 the `student` table contains only degree-seeking students. We inner-join
-the ID column from the `student` table, matching on `mcid`. In effect,
-the inner join filters our population to remove any non-degree-seeking
-students.
+the ID column from the `student` table, matching on `mcid`.
+
+In effect, the inner join filters our population to remove any
+non-degree-seeking students.
 
 ``` r
 
@@ -608,86 +460,203 @@ DT
 #>     2: MCID3111142782
 #>     3: MCID3111142881
 #>    ---               
-#> 76863: MCID3112785480
-#> 76864: MCID3112800920
-#> 76865: MCID3112870009
+#> 76873: MCID3112785480
+#> 76874: MCID3112800920
+#> 76875: MCID3112870009
 ```
 
 It happens that all students in this case are degree-seeking, so this
-step did not reduce the size of our population. (We include the step to
-illustrate our complete process.)
+step did not reduce the size of our population. Still, we include the
+step to illustrate our complete process.
 
-### *Finalize the records*
+### *Population*
 
-The previous column of IDs is our baseline population.
+Filtering for data sufficiency and degree-seeking gives us the starting
+population for most of our studies.
 
 ``` r
 
 population <- copy(DT)
-population <- unique(population)
-population
-#>                  mcid
-#>                <char>
-#>     1: MCID3111142689
-#>     2: MCID3111142782
-#>     3: MCID3111142881
-#>    ---               
-#> 76863: MCID3112785480
-#> 76864: MCID3112800920
-#> 76865: MCID3112870009
 ```
 
-We now filter the records to retain only those observations associated
-with the IDs in our population data frame. We use inner joins between
-`population` and `student, term,` and `degree` to do so.
+We use this population to filter the source records using an inner join,
+matching on ID.
 
 ``` r
 
-student <- population[student, on = "mcid", nomatch = NULL]
-term <- population[term, on = "mcid", nomatch = NULL]
-degree <- population[degree, on = "mcid", nomatch = NULL]
+student_source <- population[student_source, on = "mcid", nomatch = NULL]
+term_source <- population[term_source, on = "mcid", nomatch = NULL]
+degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
 ```
 
-Ensuring rows are unique yields the baseline records in their final
-configuration.
+The number of rows is now
+
+- student: 76,875 rows
+- term: 531,419 rows
+- degree: 43,903 rows
+
+### *Post-baccalaureate terms*
+
+We are not generally interested in terms beyond the first degree term,
+so we identify and exclude terms later than the first degree term in all
+the source data frames.
 
 ``` r
 
-student <- unique(student)
-term <- unique(term)
-degree <- unique(degree)
+term <- copy(term_source)
+degree <- copy(degree_source)
 ```
 
-These three data frames are our final set of records on which all
-further analysis is based. We’ve reduced the number of unique students
-from 97,555 in the original source data to 76,865 that have met our
-several constraints.
+For each student and term in a data frame,
+[`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
+assigns every row a label indicating that a term belongs to one of three
+clusters: terms that are prior to the first degree term (“pre-degree”),
+equal to it (“first-degree”), or subsequent to it (“post-first-degree”).
+Output variables are documented in `?post_bacc_terms.` We don’t apply
+the function to `student` because it has no term column.
 
 ``` r
 
-look_at(student)
-#> Classes 'data.table' and 'data.frame':   76865 obs. of  3 variables:
+term <- post_bacc_terms(term, midfield_table = degree)
+degree <- post_bacc_terms(degree, midfield_table = degree)
+
+term
+#>                   mcid   term   cip6   institution          level      standing
+#>                 <char> <char> <char>        <char>         <char>        <char>
+#>      1: MCID3111142689  19883 090401 Institution B  01 First-year Good Standing
+#>      2: MCID3111142782  19883 260101 Institution J  01 First-year Good Standing
+#>      3: MCID3111142782  19885 260101 Institution J 02 Second-year Good Standing
+#>     ---                                                                        
+#> 531417: MCID3112870009  19953 240102 Institution B  01 First-year Good Standing
+#> 531418: MCID3112870009  19954 240102 Institution B  01 First-year Good Standing
+#> 531419: MCID3112870009  19983 240102 Institution B 02 Second-year Good Standing
+#>           coop hours_term hours_term_attempt hours_cumul hours_cumul_attempt
+#>         <char>      <num>              <num>       <num>               <num>
+#>      1:     No          9                  9          18                  18
+#>      2:     No         16                 16          26                  26
+#>      3:     No          4                  4          30                  30
+#>     ---                                                                     
+#> 531417:     No         12                 12          24                  24
+#> 531418:     No          1                  1          25                  25
+#> 531419:     No          7                  7          53                  53
+#>         gpa_term gpa_cumul first_degree_term term_cluster
+#>            <num>     <num>            <char>       <char>
+#>      1:     3.33      3.05             19913   pre-degree
+#>      2:     2.80      2.57             19903   pre-degree
+#>      3:     3.00      2.63             19903   pre-degree
+#>     ---                                                  
+#> 531417:     3.57      3.71              <NA>   pre-degree
+#> 531418:     4.00      3.72              <NA>   pre-degree
+#> 531419:     4.00      3.87              <NA>   pre-degree
+```
+
+To assess the relative size of the three clusters, we count observations
+by the `term_cluster` variable.
+
+``` r
+
+term[, .N, by = c("term_cluster")][order(-N)]
+#>         term_cluster      N
+#>               <char>  <int>
+#> 1:        pre-degree 495563
+#> 2:      first-degree  29883
+#> 3: post-first-degree   5973
+
+degree[, .N, by = c("term_cluster")][order(-N)]
+#>         term_cluster     N
+#>               <char> <int>
+#> 1:      first-degree 43857
+#> 2: post-first-degree    46
+```
+
+We exclude the rows labeled “post-first-degree.” Note that we are
+dropping terms but not reducing the population of student IDs.
+
+``` r
+
+term <- term[term_cluster != "post-first-degree"]
+degree <- degree[term_cluster != "post-first-degree"]
+```
+
+We drop the temporary columns.
+
+``` r
+
+term[, c("term_cluster", "first_degree_term") := NULL]
+degree[, c("term_cluster", "first_degree_term") := NULL]
+```
+
+We redefine our source material to incorporate the exclusion of
+post-baccalaureate terms.
+
+``` r
+
+term_source <- copy(term)
+degree_source <- copy(degree)
+```
+
+The number of rows is now
+
+- student: 76,875 rows
+- term: 525,446 rows
+- degree: 43,857 rows
+
+We’ve reduced the number of unique students from 97,555 in the original
+source data to 76,875 that have satisfied our several constraints.
+
+Review the results.
+
+``` r
+
+look_at(student_source)
+#> Classes 'data.table' and 'data.frame':   76875 obs. of  13 variables:
+#>  $ mcid          : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "M"..
+#>  $ race          : chr  "Hispanic" "Hispanic" "International" "International" ..
+#>  $ sex           : chr  "Female" "Female" "Male" "Male" ...
+#>  $ institution   : chr  "Institution B" "Institution J" "Institution B" "Inst"..
+#>  $ transfer      : chr  "First-Time Transfer" "First-Time Transfer" "First-Ti"..
+#>  $ hours_transfer: num  NA NA NA NA NA NA NA NA NA NA ...
+#>  $ age_desc      : chr  "Under 25" "Under 25" "25 and Older" "Under 25" ...
+#>  $ us_citizen    : chr  "Yes" "Yes" "Yes" "No" ...
+#>  $ home_zip      : chr  NA "22101" NA NA ...
+#>  $ high_school   : chr  NA "471395" NA NA ...
+#>  $ sat_math      : num  NA 520 NA NA NA NA NA NA NA NA ...
+#>  $ sat_verbal    : num  NA 490 NA NA NA NA NA NA NA NA ...
+#>  $ act_comp      : num  NA NA NA NA NA NA NA NA NA NA ...
+
+look_at(term_source)
+#> Classes 'data.table' and 'data.frame':   525446 obs. of  13 variables:
+#>  $ mcid               : chr  "MCID3111142689" "MCID3111142782" "MCID311114278"..
+#>  $ term               : chr  "19883" "19883" "19885" "19893" ...
+#>  $ cip6               : chr  "090401" "260101" "260101" "260101" ...
+#>  $ institution        : chr  "Institution B" "Institution J" "Institution J" "..
+#>  $ level              : chr  "01 First-year" "01 First-year" "02 Second-year""..
+#>  $ standing           : chr  "Good Standing" "Good Standing" "Good Standing" "..
+#>  $ coop               : chr  "No" "No" "No" "No" ...
+#>  $ hours_term         : num  9 16 4 13 4 4 10 9 18 6 ...
+#>  $ hours_term_attempt : num  9 16 4 13 4 4 10 9 18 6 ...
+#>  $ hours_cumul        : num  18 26 30 56 60 64 74 83 21 27 ...
+#>  $ hours_cumul_attempt: num  18 26 30 56 60 64 74 83 21 27 ...
+#>  $ gpa_term           : num  3.33 2.8 3 2.84 4 3.25 2.26 2.43 2.55 2.15 ...
+#>  $ gpa_cumul          : num  3.05 2.57 2.63 2.53 2.63 2.67 2.61 2.59 2.76 2.62..
+
+look_at(degree_source)
+#> Classes 'data.table' and 'data.frame':   43857 obs. of  5 variables:
+#>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID"..
+#>  $ term_degree: chr  "19913" "19903" "19894" "19901" ...
+#>  $ cip6       : chr  "090401" "260101" "450601" "141001" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution B" "Institu"..
+#>  $ degree     : chr  "Bachelor of Arts in Journalism" "Bachelor of Science in"..
+
+look_at(population)
+#> Classes 'data.table' and 'data.frame':   76875 obs. of  1 variable:
 #>  $ mcid: chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID3111142"..
-#>  $ race: chr  "Hispanic" "Hispanic" "International" "International" ...
-#>  $ sex : chr  "Female" "Female" "Male" "Male" ...
-
-look_at(term)
-#> Classes 'data.table' and 'data.frame':   525446 obs. of  7 variables:
-#>  $ mcid             : chr  "MCID3111142689" "MCID3111142782" "MCID3111142782""..
-#>  $ term             : chr  "19883" "19883" "19885" "19893" ...
-#>  $ cip6             : chr  "090401" "260101" "260101" "260101" ...
-#>  $ institution      : chr  "Institution B" "Institution J" "Institution J" "I"..
-#>  $ level            : chr  "01 First-year" "01 First-year" "02 Second-year" ""..
-#>  $ first_degree_term: chr  "19913" "19903" "19903" "19903" ...
-#>  $ term_cluster     : chr  "pre-degree" "pre-degree" "pre-degree" "pre-degree"..
-
-look_at(degree)
-#> Classes 'data.table' and 'data.frame':   43847 obs. of  4 variables:
-#>  $ mcid             : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881""..
-#>  $ term_degree      : chr  "19913" "19903" "19894" "19901" ...
-#>  $ cip6             : chr  "090401" "260101" "450601" "141001" ...
-#>  $ first_degree_term: chr  "19913" "19903" "19894" "19901" ...
 ```
+
+From this point forward, anytime we need a fresh copy of any of the data
+tables, we copy the “source” version. Anytime we need a starting
+population, we copy `population` or the unique IDs from
+`student_source.`
 
 ## Blocs and groupings
 
@@ -716,11 +685,67 @@ blocs and groupings, so what follows is only one of several effective
 solutions. Our approach here is to construct a bloc, filter by program,
 join the demographics, and repeat for the next bloc.
 
+First, we copy the source data tables so our work will not affect the
+source material by reference.
+
+``` r
+
+student <- copy(student_source)
+term <- copy(term_source)
+degree <- copy(degree_source)
+```
+
+### *Select basic columns*
+
+Convenient for viewing data frames at intermediate stages. We reduce the
+number of columns to those required by other midfieldr functions plus
+the key or composite key variables of the data tables.
+
+``` r
+
+student <- select_basic_cols(student)
+term <- select_basic_cols(term)
+degree <- select_basic_cols(degree)
+
+student
+#>                  mcid          race    sex
+#>                <char>        <char> <char>
+#>     1: MCID3111142689      Hispanic Female
+#>     2: MCID3111142782      Hispanic Female
+#>     3: MCID3111142881 International   Male
+#>    ---                                    
+#> 76873: MCID3112785480         White   Male
+#> 76874: MCID3112800920         White Female
+#> 76875: MCID3112870009         White   Male
+
+term
+#>                   mcid   term   cip6   institution          level
+#>                 <char> <char> <char>        <char>         <char>
+#>      1: MCID3111142689  19883 090401 Institution B  01 First-year
+#>      2: MCID3111142782  19883 260101 Institution J  01 First-year
+#>      3: MCID3111142782  19885 260101 Institution J 02 Second-year
+#>     ---                                                          
+#> 525444: MCID3112870009  19953 240102 Institution B  01 First-year
+#> 525445: MCID3112870009  19954 240102 Institution B  01 First-year
+#> 525446: MCID3112870009  19983 240102 Institution B 02 Second-year
+
+degree
+#>                  mcid term_degree   cip6
+#>                <char>      <char> <char>
+#>     1: MCID3111142689       19913 090401
+#>     2: MCID3111142782       19903 260101
+#>     3: MCID3111142881       19894 450601
+#>    ---                                  
+#> 43855: MCID3112694738       20143 230101
+#> 43856: MCID3112698681       20181 110701
+#> 43857: MCID3112730841       20164 040401
+```
+
 ## Timely graduates
 
 We start with the baseline population. Like we did with the original
-source data files, we copy it to protect `population` from “by
-reference” changes.
+source data files, we copy it to protect `population` from changes by
+reference.
 
 ``` r
 
@@ -732,66 +757,9 @@ DT
 #>     2: MCID3111142782
 #>     3: MCID3111142881
 #>    ---               
-#> 76863: MCID3112785480
-#> 76864: MCID3112800920
-#> 76865: MCID3112870009
-```
-
-### *Filter for timely completion*
-
-We want to retain timely graduates, so first we add the timely
-completion term (the same term we used for determining data sufficiency)
-to our population then apply the completion status function.
-
-[`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
-adds a column of labels indicating that program completion was timely,
-late, or NA (for non-completers).
-
-``` r
-
-DT <- timely_term(DT)
-DT <- completion_status(DT)
-DT
-#>                  mcid timely_term term_degree completion_status
-#>                <char>      <char>      <char>            <char>
-#>     1: MCID3111142689       19941       19913            timely
-#>     2: MCID3111142782       19941       19903            timely
-#>     3: MCID3111142881       19951       19894            timely
-#>    ---                                                         
-#> 76863: MCID3112785480       20123        <NA>              <NA>
-#> 76864: MCID3112800920       20153        <NA>              <NA>
-#> 76865: MCID3112870009       20003        <NA>              <NA>
-```
-
-Another brief assessment. Here we compare the relative size of the three
-possible status labels.
-
-``` r
-
-DT[, .N, by = c("completion_status")][order(-N)]
-#>    completion_status     N
-#>               <char> <int>
-#> 1:            timely 40430
-#> 2:              <NA> 33089
-#> 3:              late  3346
-```
-
-We retain the rows labeled “timely” and the drop all the columns except
-the ID column.
-
-``` r
-
-DT <- DT["timely", on = "completion_status", .(mcid)]
-DT
-#>                  mcid
-#>                <char>
-#>     1: MCID3111142689
-#>     2: MCID3111142782
-#>     3: MCID3111142881
-#>    ---               
-#> 40428: MCID3112692944
-#> 40429: MCID3112694738
-#> 40430: MCID3112730841
+#> 76873: MCID3112785480
+#> 76874: MCID3112800920
+#> 76875: MCID3112870009
 ```
 
 ### *Filter by program*
@@ -811,9 +779,9 @@ DT
 #>     2: MCID3111142782 260101
 #>     3: MCID3111142881 450601
 #>    ---                      
-#> 40488: MCID3112692944 090101
-#> 40489: MCID3112694738 230101
-#> 40490: MCID3112730841 040401
+#> 76944: MCID3112785480   <NA>
+#> 76945: MCID3112800920   <NA>
+#> 76946: MCID3112870009   <NA>
 ```
 
 Now we use an inner-join with our `programs` data frame, matching on
@@ -825,6 +793,7 @@ programs. We retain the `program` column and drop the `cip6` column.
 programs_cols <- programs[, .(cip6, program)]
 DT <- programs_cols[DT, on = "cip6", nomatch = NULL]
 DT[, cip6 := NULL]
+DT <- unique(DT)
 DT
 #>       program           mcid
 #>        <char>         <char>
@@ -832,23 +801,76 @@ DT
 #>    2:      EE MCID3111145102
 #>    3:      EE MCID3111146537
 #>   ---                       
-#> 3261:      ME MCID3112618976
-#> 3262:      EE MCID3112619484
-#> 3263:      ME MCID3112641535
+#> 3429:      ME MCID3112618976
+#> 3430:      EE MCID3112619484
+#> 3431:      ME MCID3112641535
 ```
 
-Another brief assessment. Here we compare the relative numbers of
-program graduates.
+### *Filter for timely completion*
+
+We want to retain timely graduates.
+
+[`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
+builds on the output from
+[`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
+to label rows to indicate whether a student completes a degree timely or
+late compared to their timely completion term (or NA for no completion).
+Output variables are documented in `?completion_status.`
 
 ``` r
 
-DT[, .N, by = c("program")][order(-N)]
-#>    program     N
-#>     <char> <int>
-#> 1:      ME  1353
-#> 2:      CE   936
-#> 3:      EE   736
-#> 4:     ISE   238
+DT <- timely_term(DT)
+DT <- completion_status(DT)
+DT
+#>       program           mcid term_i        level_i adj_span timely_term
+#>        <char>         <char> <char>         <char>    <num>      <char>
+#>    1:      EE MCID3111142965  19883  01 First-year        6       19941
+#>    2:      EE MCID3111145102  19883  01 First-year        6       19941
+#>    3:      EE MCID3111146537  19883 02 Second-year        5       19931
+#>   ---                                                                  
+#> 3429:      ME MCID3112618976  20123  01 First-year        6       20181
+#> 3430:      EE MCID3112619484  20123  01 First-year        6       20181
+#> 3431:      ME MCID3112641535  20121  01 First-year        6       20173
+#>       term_degree completion_status
+#>            <char>            <char>
+#>    1:       19901            timely
+#>    2:       19893            timely
+#>    3:       19913            timely
+#>   ---                              
+#> 3429:       20153            timely
+#> 3430:       20133            timely
+#> 3431:       20143            timely
+```
+
+Another brief assessment. Here we compare the relative size of the three
+possible status labels.
+
+``` r
+
+DT[, .N, by = c("completion_status")][order(-N)]
+#>    completion_status     N
+#>               <char> <int>
+#> 1:            timely  3263
+#> 2:              late   168
+```
+
+We retain the rows labeled “timely” and the drop all the columns except
+the ID and program columns.
+
+``` r
+
+cols_we_want <- c("mcid", "program")
+DT <- DT[completion_status == "timely", ..cols_we_want]
+DT
+#>                 mcid program
+#>               <char>  <char>
+#>    1: MCID3111142965      EE
+#>    2: MCID3111145102      EE
+#>    3: MCID3111146537      EE
+#>   ---                       
+#> 3261: MCID3112618976      ME
+#> 3262: MCID3112619484      EE
+#> 3263: MCID3112641535      ME
 ```
 
 ### *Join demographics*
@@ -907,9 +929,9 @@ DT
 #>     2: MCID3111142782
 #>     3: MCID3111142881
 #>    ---               
-#> 76863: MCID3112785480
-#> 76864: MCID3112800920
-#> 76865: MCID3112870009
+#> 76873: MCID3112785480
+#> 76874: MCID3112800920
+#> 76875: MCID3112870009
 ```
 
 ### *Filter by program*
@@ -928,9 +950,36 @@ DT
 #>      2: MCID3111142782 260101
 #>      3: MCID3111142881 450601
 #>     ---                      
-#> 126166: MCID3112800920 240102
-#> 126167: MCID3112800920 240199
-#> 126168: MCID3112870009 240102
+#> 126176: MCID3112800920 240102
+#> 126177: MCID3112800920 240199
+#> 126178: MCID3112870009 240102
+```
+
+CIP codes are also present in the `degree` table. Students working in a
+multidisciplinary program may have CIP codes at graduation that do not
+appear in the `term` data, where only their primary major is recorded.
+We assume that if a student earns a degree in such a program we can
+consider them “ever enrolled” in the program.
+
+From `degree,` we extract the CIP codes by ID and join them by rows to
+the previous data frame.
+
+``` r
+
+extra_cip <- copy(population)
+degree_cols <- unique(degree[, .(mcid, cip6)])
+extra_cip <- degree_cols[extra_cip, on = "mcid", nomatch = NULL]
+DT <- unique(rbindlist(list(DT, extra_cip)))
+DT
+#>                   mcid   cip6
+#>                 <char> <char>
+#>      1: MCID3111142689 090401
+#>      2: MCID3111142782 260101
+#>      3: MCID3111142881 450601
+#>     ---                      
+#> 128460: MCID3112603386 030103
+#> 128461: MCID3112610194 270301
+#> 128462: MCID3112616507 302001
 ```
 
 We repeat the process we used earlier to inner-join our `programs` data
@@ -943,10 +992,10 @@ DT <- programs_cols[DT, on = "cip6", nomatch = NULL]
 DT[, cip6 := NULL]
 ```
 
-With the CIP code removed, we filter for unique rows. This is an
-important step because a student may switch CIP codes yet stay within a
-program as defined by our custom labels. We want to avoid counting that
-student as ever-enrolled more than once.
+With the CIP code removed, we filter for unique rows. A student may
+switch CIP codes yet stay within a program as defined by our custom
+labels. We want to avoid counting that student as ever-enrolled in the
+same program more than once.
 
 ``` r
 
@@ -958,9 +1007,9 @@ DT
 #>    2:      EE MCID3111145102
 #>    3:      EE MCID3111146537
 #>   ---                       
-#> 5581:      ME MCID3112641399
-#> 5582:      ME MCID3112641535
-#> 5583:      ME MCID3112698681
+#> 5603:      ME MCID3112414647
+#> 5604:      ME MCID3112415453
+#> 5605:      ME MCID3112475209
 ```
 
 Another brief assessment. Here we compare the relative numbers of
@@ -971,9 +1020,9 @@ students ever enrolled in our programs.
 DT[, .N, by = c("program")][order(-N)]
 #>    program     N
 #>     <char> <int>
-#> 1:      ME  2289
-#> 2:      CE  1494
-#> 3:      EE  1464
+#> 1:      ME  2296
+#> 2:      CE  1504
+#> 3:      EE  1469
 #> 4:     ISE   336
 ```
 
@@ -992,9 +1041,9 @@ DT
 #>    2: MCID3111145102         White   Male      EE
 #>    3: MCID3111146537         Asian Female      EE
 #>   ---                                            
-#> 5581: MCID3112641399         White   Male      ME
-#> 5582: MCID3112641535         White   Male      ME
-#> 5583: MCID3112698681         White   Male      ME
+#> 5603: MCID3112414647         White   Male      ME
+#> 5604: MCID3112415453         White   Male      ME
+#> 5605: MCID3112475209         White Female      ME
 ```
 
 ### *Bloc of ever-enrolled*
@@ -1015,9 +1064,9 @@ ever_enrolled
 #>    2: MCID3111145102         White   Male      EE   ever
 #>    3: MCID3111146537         Asian Female      EE   ever
 #>   ---                                                   
-#> 5581: MCID3112641399         White   Male      ME   ever
-#> 5582: MCID3112641535         White   Male      ME   ever
-#> 5583: MCID3112698681         White   Male      ME   ever
+#> 5603: MCID3112414647         White   Male      ME   ever
+#> 5604: MCID3112415453         White   Male      ME   ever
+#> 5605: MCID3112475209         White Female      ME   ever
 ```
 
 ## Outcomes
@@ -1035,15 +1084,16 @@ DT
 #>    2: MCID3111145102         White   Male      EE   grad
 #>    3: MCID3111146537         Asian Female      EE   grad
 #>   ---                                                   
-#> 8844: MCID3112641399         White   Male      ME   ever
-#> 8845: MCID3112641535         White   Male      ME   ever
-#> 8846: MCID3112698681         White   Male      ME   ever
+#> 8866: MCID3112414647         White   Male      ME   ever
+#> 8867: MCID3112415453         White   Male      ME   ever
+#> 8868: MCID3112475209         White Female      ME   ever
 ```
 
 ### *Group and summarize*
 
 Count the numbers of observations for each combination of the grouping
-variables.
+variables. This data frame is our initial block-records form with four
+keys and one measurement *N*.
 
 ``` r
 
@@ -1064,14 +1114,16 @@ DT
 
 *Reshaping the data frame to calculate the metric.*
 
-Transform from block-record form to row-record form. The `N` column
-values are moved to two new columns, `ever` and `grad`, one for each
-bloc, leaving the grouping variables (program, race/ethnicity, and sex)
-in place. This operation is known by a number of different names, e.g.,
-pivot, crosstab, unstack, spread, or widen ([Mount and Zumel
-2019](#ref-Mount+Zumel:2019:fluid-data)). The result has the data
-structure we called out in our project description for calculating the
-metric.
+Transform from block-record form to row-record form. This operation is
+known by a number of different names, e.g., pivot, crosstab, unstack,
+spread, or widen ([Mount and Zumel
+2019](#ref-Mount+Zumel:2019:fluid-data)).
+
+The data.table package uses
+[`dcast()`](https://rdrr.io/pkg/data.table/man/dcast.data.table.html)
+for this operation. The key columns `{program, race, sex}` remain in
+place, the `bloc` column yields the new key columns `{grad, ever}`, and
+the values in the new columns are taken from the `{N}` column.
 
 ``` r
 
@@ -1085,9 +1137,33 @@ DT
 #>  3:      CE Female        Hispanic    13     6
 #> ---                                           
 #> 48:      ME   Male Native American     5     1
-#> 49:      ME   Male   Other/Unknown    80    41
-#> 50:      ME   Male           White  1584   952
+#> 49:      ME   Male   Other/Unknown    81    41
+#> 50:      ME   Male           White  1587   952
 ```
+
+Any missing values in `grad` can be set to zero because it is the
+numerator in the stickiness metric. Missing values in `ever` (the
+denominator) are removed.
+
+``` r
+
+DT[is.na(grad), grad := 0]
+DT <- na.omit(DT)
+setorderv(DT, c("program", "sex", "race"))
+DT
+#>     program    sex            race  ever  grad
+#>      <char> <char>          <char> <int> <int>
+#>  1:      CE Female           Asian    14    10
+#>  2:      CE Female           Black     4     1
+#>  3:      CE Female        Hispanic    13     6
+#> ---                                           
+#> 48:      ME   Male Native American     5     1
+#> 49:      ME   Male   Other/Unknown    81    41
+#> 50:      ME   Male           White  1587   952
+```
+
+The result has the data structure we called out in our project
+description for calculating the metric.
 
 ### *Calculate the metric*
 
@@ -1104,9 +1180,9 @@ setkey(DT, NULL)
 DT[order(-grad, -ever)]
 #>     program    sex            race  ever  grad stickiness
 #>      <char> <char>          <char> <int> <int>      <num>
-#>  1:      ME   Male           White  1584   952       60.1
-#>  2:      CE   Male           White   943   612       64.9
-#>  3:      EE   Male           White   845   439       52.0
+#>  1:      ME   Male           White  1587   952       60.0
+#>  2:      CE   Male           White   948   612       64.6
+#>  3:      EE   Male           White   848   439       51.8
 #> ---                                                      
 #> 48:      CE Female Native American     1     1      100.0
 #> 49:      EE   Male Native American     3     0        0.0
@@ -1133,8 +1209,8 @@ DT
 #>  3:      CE Female International    23    13       56.5
 #> ---                                                    
 #> 35:      ME   Male International   176    89       50.6
-#> 36:      ME   Male Other/Unknown    80    41       51.2
-#> 37:      ME   Male         White  1584   952       60.1
+#> 36:      ME   Male Other/Unknown    81    41       50.6
+#> 37:      ME   Male         White  1587   952       60.0
 ```
 
 We have found it useful to report such data with a variable that
@@ -1143,17 +1219,17 @@ combines race/ethnicity and sex.
 ``` r
 
 DT[, people := paste(race, sex)]
-setcolorder(DT, c("program", "race", "sex", "people"))
+setcolorder(DT)
 DT
-#>     program          race    sex               people  ever  grad stickiness
-#>      <char>        <char> <char>               <char> <int> <int>      <num>
-#>  1:      CE         Asian Female         Asian Female    14    10       71.4
-#>  2:      CE      Hispanic Female      Hispanic Female    13     6       46.2
-#>  3:      CE International Female International Female    23    13       56.5
+#>     program    sex          race  ever  grad stickiness               people
+#>      <char> <char>        <char> <int> <int>      <num>               <char>
+#>  1:      CE Female         Asian    14    10       71.4         Asian Female
+#>  2:      CE Female      Hispanic    13     6       46.2      Hispanic Female
+#>  3:      CE Female International    23    13       56.5 International Female
 #> ---                                                                         
-#> 35:      ME International   Male   International Male   176    89       50.6
-#> 36:      ME Other/Unknown   Male   Other/Unknown Male    80    41       51.2
-#> 37:      ME         White   Male           White Male  1584   952       60.1
+#> 35:      ME   Male International   176    89       50.6   International Male
+#> 36:      ME   Male Other/Unknown    81    41       50.6   Other/Unknown Male
+#> 37:      ME   Male         White  1587   952       60.0           White Male
 ```
 
 Readers can more readily interpret our charts and tables if the programs
@@ -1168,15 +1244,15 @@ DT[, program := fcase(
   program %like% "ISE", "Industrial/Systems"
 )]
 DT
-#>        program          race    sex               people  ever  grad stickiness
-#>         <char>        <char> <char>               <char> <int> <int>      <num>
-#>  1:      Civil         Asian Female         Asian Female    14    10       71.4
-#>  2:      Civil      Hispanic Female      Hispanic Female    13     6       46.2
-#>  3:      Civil International Female International Female    23    13       56.5
+#>        program    sex          race  ever  grad stickiness               people
+#>         <char> <char>        <char> <int> <int>      <num>               <char>
+#>  1:      Civil Female         Asian    14    10       71.4         Asian Female
+#>  2:      Civil Female      Hispanic    13     6       46.2      Hispanic Female
+#>  3:      Civil Female International    23    13       56.5 International Female
 #> ---                                                                            
-#> 35: Mechanical International   Male   International Male   176    89       50.6
-#> 36: Mechanical Other/Unknown   Male   Other/Unknown Male    80    41       51.2
-#> 37: Mechanical         White   Male           White Male  1584   952       60.1
+#> 35: Mechanical   Male International   176    89       50.6   International Male
+#> 36: Mechanical   Male Other/Unknown    81    41       50.6   Other/Unknown Male
+#> 37: Mechanical   Male         White  1587   952       60.0           White Male
 ```
 
 ### *Table*
@@ -1188,15 +1264,15 @@ Omit columns that won’t appear in the table.
 DT_table <- copy(DT)
 DT_table[, c("race", "sex", "ever", "grad") := NULL]
 DT_table
-#>        program               people stickiness
-#>         <char>               <char>      <num>
-#>  1:      Civil         Asian Female       71.4
-#>  2:      Civil      Hispanic Female       46.2
-#>  3:      Civil International Female       56.5
+#>        program stickiness               people
+#>         <char>      <num>               <char>
+#>  1:      Civil       71.4         Asian Female
+#>  2:      Civil       46.2      Hispanic Female
+#>  3:      Civil       56.5 International Female
 #> ---                                           
-#> 35: Mechanical   International Male       50.6
-#> 36: Mechanical   Other/Unknown Male       51.2
-#> 37: Mechanical           White Male       60.1
+#> 35: Mechanical       50.6   International Male
+#> 36: Mechanical       50.6   Other/Unknown Male
+#> 37: Mechanical       60.0           White Male
 ```
 
 Transform the data from block-records to row-records with one row per
@@ -1211,24 +1287,23 @@ DT_table
 #>                   People Civil Electrical Industrial/Systems Mechanical
 #>                   <char> <num>      <num>              <num>      <num>
 #>  1:         Asian Female  71.4       57.1               66.7         NA
-#>  2:           Asian Male  83.3       58.2               66.7       64.5
+#>  2:           Asian Male  75.8       58.2               66.7       63.6
 #>  3:         Black Female    NA         NA               85.7         NA
 #>  4:           Black Male  62.5       58.6               66.7       65.5
 #>  5:      Hispanic Female  46.2         NA                 NA       66.7
 #>  6:        Hispanic Male  47.0       38.6               66.7       53.8
-#>  7: International Female  56.5       33.3                 NA       57.9
-#>  8:   International Male  56.7       46.4               57.1       50.6
+#>  7: International Female  56.5       33.3                 NA       55.0
+#>  8:   International Male  56.1       46.2               57.1       50.6
 #>  9: Other/Unknown Female    NA         NA                 NA       50.0
-#> 10:   Other/Unknown Male  40.7       40.0                 NA       51.2
-#> 11:         White Female  62.3       47.9               74.0       63.2
-#> 12:           White Male  64.9       52.0               73.0       60.1
+#> 10:   Other/Unknown Male  40.7       39.0                 NA       50.6
+#> 11:         White Female  62.1       47.9               74.0       62.9
+#> 12:           White Male  64.6       51.8               73.0       60.0
 ```
 
 Format the table for publication.
 
 ``` r
 
-library(gt)
 DT_table |>
   gt() |>
   tab_caption("Table 1. Engineering program stickiness (%)") |>
@@ -1243,17 +1318,17 @@ DT_table |>
 | People               | Civil | Electrical | Industrial/Systems | Mechanical |
 |----------------------|-------|------------|--------------------|------------|
 | Asian Female         | 71.4  | 57.1       | 66.7               | NA         |
-| Asian Male           | 83.3  | 58.2       | 66.7               | 64.5       |
+| Asian Male           | 75.8  | 58.2       | 66.7               | 63.6       |
 | Black Female         | NA    | NA         | 85.7               | NA         |
 | Black Male           | 62.5  | 58.6       | 66.7               | 65.5       |
 | Hispanic Female      | 46.2  | NA         | NA                 | 66.7       |
 | Hispanic Male        | 47.0  | 38.6       | 66.7               | 53.8       |
-| International Female | 56.5  | 33.3       | NA                 | 57.9       |
-| International Male   | 56.7  | 46.4       | 57.1               | 50.6       |
+| International Female | 56.5  | 33.3       | NA                 | 55.0       |
+| International Male   | 56.1  | 46.2       | 57.1               | 50.6       |
 | Other/Unknown Female | NA    | NA         | NA                 | 50.0       |
-| Other/Unknown Male   | 40.7  | 40.0       | NA                 | 51.2       |
-| White Female         | 62.3  | 47.9       | 74.0               | 63.2       |
-| White Male           | 64.9  | 52.0       | 73.0               | 60.1       |
+| Other/Unknown Male   | 40.7  | 39.0       | NA                 | 50.6       |
+| White Female         | 62.1  | 47.9       | 74.0               | 62.9       |
+| White Male           | 64.6  | 51.8       | 73.0               | 60.0       |
 
 Table 1. Engineering program stickiness (%) {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
@@ -1268,15 +1343,15 @@ want the data in its block-record form.
 
 DT_chart <- copy(DT)
 DT_chart
-#>        program          race    sex               people  ever  grad stickiness
-#>         <char>        <char> <char>               <char> <int> <int>      <num>
-#>  1:      Civil         Asian Female         Asian Female    14    10       71.4
-#>  2:      Civil      Hispanic Female      Hispanic Female    13     6       46.2
-#>  3:      Civil International Female International Female    23    13       56.5
+#>        program    sex          race  ever  grad stickiness               people
+#>         <char> <char>        <char> <int> <int>      <num>               <char>
+#>  1:      Civil Female         Asian    14    10       71.4         Asian Female
+#>  2:      Civil Female      Hispanic    13     6       46.2      Hispanic Female
+#>  3:      Civil Female International    23    13       56.5 International Female
 #> ---                                                                            
-#> 35: Mechanical International   Male   International Male   176    89       50.6
-#> 36: Mechanical Other/Unknown   Male   Other/Unknown Male    80    41       51.2
-#> 37: Mechanical         White   Male           White Male  1584   952       60.1
+#> 35: Mechanical   Male International   176    89       50.6   International Male
+#> 36: Mechanical   Male Other/Unknown    81    41       50.6   Other/Unknown Male
+#> 37: Mechanical   Male         White  1587   952       60.0           White Male
 ```
 
 With one quantitative variable (stickiness) for every combination of the
@@ -1298,31 +1373,30 @@ DT_chart <- order_multiway(DT_chart,
   ratio_of = c("grad", "ever")
 )
 DT_chart
-#>        program          race    sex               people  ever  grad stickiness
-#>         <fctr>        <char> <char>               <fctr> <num> <num>      <num>
-#>  1:      Civil         Asian Female         Asian Female    14    10       71.4
-#>  2:      Civil      Hispanic Female      Hispanic Female    13     6       46.2
-#>  3:      Civil International Female International Female    23    13       56.5
+#>        program    sex          race  ever  grad stickiness               people
+#>         <fctr> <char>        <char> <num> <num>      <num>               <fctr>
+#>  1:      Civil Female         Asian    14    10       71.4         Asian Female
+#>  2:      Civil Female      Hispanic    13     6       46.2      Hispanic Female
+#>  3:      Civil Female International    23    13       56.5 International Female
 #> ---                                                                            
-#> 35: Mechanical International   Male   International Male   176    89       50.6
-#> 36: Mechanical Other/Unknown   Male   Other/Unknown Male    80    41       51.2
-#> 37: Mechanical         White   Male           White Male  1584   952       60.1
+#> 35: Mechanical   Male International   176    89       50.6   International Male
+#> 36: Mechanical   Male Other/Unknown    81    41       50.6   Other/Unknown Male
+#> 37: Mechanical   Male         White  1587   952       60.0           White Male
 #>     program_stickiness people_stickiness
 #>                  <num>             <num>
-#>  1:               62.8              64.0
-#>  2:               62.8              56.0
-#>  3:               62.8              47.8
+#>  1:               62.4              64.0
+#>  2:               62.4              56.0
+#>  3:               62.4              47.1
 #> ---                                     
-#> 35:               59.3              50.4
-#> 36:               59.3              46.3
-#> 37:               59.3              60.1
+#> 35:               59.1              50.2
+#> 36:               59.1              45.6
+#> 37:               59.1              59.9
 ```
 
 Format the chart for publication.
 
 ``` r
 
-library(ggplot2)
 ggplot(DT_chart, aes(x = stickiness, y = people)) +
   facet_wrap(vars(program),
     ncol = 1,
