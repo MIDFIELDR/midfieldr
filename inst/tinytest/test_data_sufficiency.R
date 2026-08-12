@@ -30,7 +30,7 @@ test_data_sufficiency <- function() {
     
     # ---------- usage
     # 
-    # data_sufficiency(dframe, midfield_table = term)
+    # data_sufficiency(dframe, midf_table = term)
     
     # library(tinytest)
     # Needed for build_install_test()
@@ -106,7 +106,7 @@ test_data_sufficiency <- function() {
     expect_equal(return_vars, colnames(DT))
     
     # correct answers naming and not naming arguments
-    x <- data_sufficiency(dframe = dframe, midfield_table = term)
+    x <- data_sufficiency(dframe = dframe, midf_table = term)
     y <- data_sufficiency(dframe, term)
     expect_equal(x, y)
     rm(x, y)
@@ -116,7 +116,7 @@ test_data_sufficiency <- function() {
     y <- data_sufficiency(dframe, term)
     expect_equal(colnames(x), setdiff(colnames(y), added_vars))
     
-    # existing columns same name as new columns are replaced
+    # existing columns same name as new resultant columns are replaced
     x <- copy(dframe)
     y <- data_sufficiency(x, term)
     z <- data_sufficiency(y, term)
@@ -128,6 +128,17 @@ test_data_sufficiency <- function() {
     x[, rownum := .I]
     y <- data_sufficiency(x, term)
     expect_equal(unique(y[["mcid"]]), unique(x[["mcid"]]))
+
+    # ---------- ensuring unique names of internal columns
+    
+    # correct answers obtained
+    x <- copy(dframe)
+    x[, idx := as.character(.I)]
+    y <- data_sufficiency(x, term)
+    expect_equal("include", DT[mcid %like% "A1", (data_sufficiency)])
+    
+    # existing names that match internals protected
+    expect_equal(x[["idx"]], y[["idx"]])
     
     # ---------- errors
     

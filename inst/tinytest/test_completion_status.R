@@ -31,7 +31,7 @@ test_completion_status <- function() {
     
     # ---------- usage
     #
-    # completion_status(dframe, midfield_table = degree)
+    # completion_status(dframe, midf_table = degree)
     
     # Needed for tinytest::build_install_test()
     suppressPackageStartupMessages(require("data.table"))
@@ -80,12 +80,12 @@ test_completion_status <- function() {
     expect_equal(return_vars, colnames(DT))
     
     # correct answers naming and not naming arguments
-    x <- completion_status(dframe = dframe, midfield_table = degree)
+    x <- completion_status(dframe = dframe, midf_table = degree)
     y <- completion_status(dframe, degree)
     expect_equal(x, y)
     
     # columns in dframe not involved in function are NOT dropped
-    x <- dframe[, inactive_col := 1:.N]
+    x <- dframe[, inactive_col := .I]
     y <- completion_status(dframe, degree)
     expect_equal(colnames(x), setdiff(colnames(y), added_vars))
     
@@ -95,6 +95,17 @@ test_completion_status <- function() {
     x[, rownum := .I]
     y <- completion_status(x, degree)
     expect_equal(unique(y[["mcid"]]), unique(x[["mcid"]]))
+    
+    # ---------- ensuring unique names of internal columns
+    
+    # correct answers obtained
+    x <- copy(dframe)
+    x[, idx := as.character(.I)]
+    y <- completion_status(x, degree)
+    expect_equal("timely", y[mcid == "A1_OK", (completion_status)])
+    
+    # existing names that match internals protected
+    expect_equal(x[["idx"]], y[["idx"]])
     
     # ---------- errors
     

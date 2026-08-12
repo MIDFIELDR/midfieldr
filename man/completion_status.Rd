@@ -4,12 +4,12 @@
 \alias{completion_status}
 \title{Determine completion status}
 \usage{
-completion_status(dframe, midfield_table = degree)
+completion_status(dframe, midf_table = degree)
 }
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) with required variables \verb{\{mcid, timely_term\}.}}
 
-\item{midfield_table}{\code{degree} data frame with required
+\item{midf_table}{\code{degree} data frame with required
 variables \verb{\{mcid, term_degree\}.}}
 }
 \value{
@@ -23,7 +23,7 @@ of the required variables are removed. Duplicated rows are removed.
 below) are not modified; columns with matching names are replaced.
 The new columns added are:
 \itemize{
-\item \code{term_degree}   Joined from \code{midfield_table.}
+\item \code{term_degree}   Joined from \code{midf_table.}
 \item \code{completion_status}   Character. Possible values of "timely",
 "late" and "NA".
 }
@@ -54,15 +54,15 @@ x <- toy_student[21:36, .(mcid, sex)]
 x
 
 # Add the required columns from timely_term().
-x <- timely_term(x, midfield_table = term)
+x <- timely_term(x, midf_table = term)
 x <- x[, .(mcid, sex, timely_term)]
 x
 
 # Add completion status columns. Unrelated columns (sex) are unaffected.
-x <- completion_status(x, midfield_table = degree)
+x <- completion_status(x, midf_table = degree)
 x
 
 # Repeat. New columns silently replace existing columns of the same name.
-y <- completion_status(x, midfield_table = degree)
+y <- completion_status(x, midf_table = degree)
 y
 }

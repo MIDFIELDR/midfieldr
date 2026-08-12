@@ -48,6 +48,15 @@ test_order_multiway <- function() {
     #                    method = "median")
     # )
     
+    # overwrite prevention works
+    x <- copy(DT)
+    x[, idx := as.character(.I)]
+    y <- order_multiway(x, 
+                        quantity = "a", 
+                        categories = c("catg1", "catg2"), 
+                        method = "median")
+    expect_equal(x[["idx"]], y[["idx"]])
+    
     # categories can be characters or factors
     expect_equivalent(
         order_multiway(DT[, .(catg1, catg2, a)],

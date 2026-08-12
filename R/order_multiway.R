@@ -50,26 +50,18 @@
 #'
 #' @returns Data frame with the following properties:
 #' * `r df_class_preserved`
-#' * Rows are preserved, though the row order may change.
-#' * Numerical variables are converted to type double. Columns
-#'   specified by `categories` are converted to factors and ordered.
-#' * New columns are added or replace existing columns of the same name (if
-#'   any). Other columns are not modified. New columns are added as described
-#'   below.
-#' * With `method = median`, two columns are added with names of the form
-#'   `CATEGORY_median,` with `CATEGORY` replaced with the values from the
-#'   `categories` argument. For example, if `categories = c("program", "people"),`
-#'   the two new column names would be:
-#'   - `program_median`
-#'   - `people_median`
-#' * With `method = percent`, two columns are added with names of the form
-#'   `CATEGORY_QUANTITY,` with `CATEGORY` replaced with the values from the
-#'   `categories` argument and `QUANTITY` from the `quantity` argument. For
-#'   example, if `categories = c("program", "people")`  and
-#'   `quantity = "grad_rate",` the two new column names would be:
-#'   - `program_grad_rate`
-#'   - `people_grad_rate`
-#' * `r not_preserved`
+#' * Row order is preserved. Duplicated rows are removed.
+#' * Column specified by `quantity` is converted to type double.
+#'   Columns specified by `categories` are converted to factors and ordered.
+#' * Columns with names different from the two new columns (named below) are not
+#'   modified; columns with matching names are replaced. The new column names,
+#'   depending on the method, have the following forms:
+#'   - `CATEGORY_median` for the "median" method. For example, if
+#'     `categories = c("program", "people"),` the new column names would be
+#'     `program_median` and `people_median.`
+#'   - `CATEGORY_QUANTITY` for the "percent" method. For example, using the
+#'      same categories as above with `quantity = "grad_rate",`  new column
+#'      names would be `program_grad_rate` and `people_grad_rate.`
 #'
 #' @references
 #'   Cleveland WS (1993). \emph{Visualizing Data}. Hobart Press, Summit, NJ.
@@ -149,19 +141,27 @@ order_multiway <- function(dframe,
 
   # ---------- preparation
 
-  # to restore class except for groups in tibbles
+  # to restore class except grouped tibbles
   prior_class <- setdiff(class(dframe), "grouped_df")
 
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
 
+  # avoid overwriting columns that match names of temporary columns
+  init_temp_vars <- c("idx")
+  temp_vars <- edit_new_col_names(dframe, init_temp_vars)
+  idx_chr <- temp_vars[1]
+
   # bind names due to NSE notes in R CMD check
-  # NA
+  IDX <- NULL
 
   # ---------- do the work
 
-  # dframe is not subset
+  # add temp col to restore row order
+  dframe[, IDX := .I,
+    env = list(IDX = idx_chr)
+  ]
 
   # treatment the same both methods
   dframe[, (categories) := lapply(.SD, as.factor), .SDcols = categories]
@@ -175,9 +175,6 @@ order_multiway <- function(dframe,
       quantity,
       ratio_of
     )
-    # organize the return column order
-    # setcolorder(dframe, c(categories, ratio_of, quantity))
-    # return_vars <- colnames(dframe)
   } else { # method = "median"
     dframe <- order_by_median(
       dframe,
@@ -185,19 +182,22 @@ order_multiway <- function(dframe,
       quantity,
       method
     )
-    # organize the return column order
-    # setcolorder(dframe, c(categories, quantity))
-    # return_vars <- colnames(dframe)
   }
 
   # ---------- prepare to return
 
-  # drop temp cols, restore col order, ensure unique rows
-  # dframe <- dframe[, .SD, .SDcols = return_vars]
+  # restore row order
+  setkeyv(dframe, idx_chr)
+
+  # drop temporary cols
+  dframe[, IDX := NULL,
+    env = list(IDX = idx_chr)
+  ]
+
+  # ensure unique rows
   dframe <- unique(dframe)
 
   # restore class
-  setkey(dframe, NULL)
   setattr(dframe, "class", prior_class)
 
   # done
@@ -218,9 +218,6 @@ order_by_percent <- function(dframe,
   CATEG_I <- NULL
   COUNT_I <- NULL
   NEW_COL <- NULL
-
-  # minimum set of cols
-  # dframe <- dframe[, .SD, .SDcols = c(categories, quantity, ratio_of)]
 
   # replace NA in count columns with zero
   dframe[, (ratio_of) := lapply(.SD, function(quantity) {
@@ -253,16 +250,13 @@ order_by_percent <- function(dframe,
   # computing the metric for individual categories
   # used for ordering rows and panels
   for (categ_i in categories) {
+    #
     # names of new columns, numerator and denominator of
     # category summary metric
     a <- paste(categ_i, count_col_min, sep = "_")
     b <- paste(categ_i, count_col_max, sep = "_")
     new_col <- paste(categ_i, quantity, sep = "_")
-
-    # drop existing columns with same name as new if any
-    # keep_cols <- setdiff(colnames(dframe), new_col)
-    # dframe <- dframe[, .SD, .SDcols = keep_cols]
-
+    
     # percent-based metric by individual category
     dframe[, NEW_COL := round(100 * A / B, 1),
       env = list(
@@ -280,6 +274,7 @@ order_by_percent <- function(dframe,
       )
     ]
 
+    # drop temp columns
     dframe[, `:=`(A = NULL, B = NULL),
       env = list(A = a, B = b)
     ]
@@ -292,6 +287,7 @@ order_by_median <- function(dframe,
                             categories,
                             quantity,
                             method) {
+  #
   # bind names due to NSE notes in R CMD check
   CATEG_1 <- NULL # e.g., program
   CATEG_2 <- NULL # e.g., people

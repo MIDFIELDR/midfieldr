@@ -2,29 +2,34 @@
 
 #' Determine data sufficiency
 #'
-#' Determine *data sufficiency* for each student in a data frame and add
-#' columns that support the findings.
+#' Determine institutional *data sufficiency* for each student in a data frame
+#' and add columns that support the findings.
 #'
-#' *Data sufficiency* is a criterion for including or excluding a student
-#' record based on the feasibility of determining their completion status given
-#' the range of data available from their institution. If determining
-#' completion status is feasible, the student record is included in the
-#' study population; if not, they must be excluded to avoid biased counts
-#' of completers and non-completers. Such biases occur at the upper and lower
-#' bounds of an institution's data range.
+#' In most studies, the population must satisfy the *data sufficiency*
+#' criterion, developed as follows:
+#' - Program *completion* means satisfying the requirements for a first
+#' baccalaureate degree.
+#' - Completion *status* is "timely" if accomplished within a set time
+#' span, typically 4, 6, or 8 years after admission depending on the
+#' definition one adopts. The *timely-completion term* is the term at the
+#' end of that span.
+#' - The *data sufficiency* test identifies students whose actual admission
+#' term and projected timely completion term both lie within their
+#' institution's data range. These are the students for whom completion
+#' status---timely or otherwise---can be positively asserted, and are
+#' therefore the only students included a population.
 #'
-#' To apply this criterion, our heuristic labels a row
+#' To apply this criterion, our heuristic labels a row (keyed by student ID)
 #' "exclude-upper" when a student's timely completion term exceeds the upper
 #' limit of their institution's data range;  "exclude-lower" when their initial
-#' term matches the lowest non-summer limit of the data range; and "include"
-#' otherwise. The rationale for these specific filters is
-#' explained in our data sufficiency article (see references). In most
-#' studies, the population must satisfy the data sufficiency requirement.
+#' term matches the non-summer, lower limit of the data range; and "include"
+#' otherwise. The rationale for these specific filters is explained in our
+#' data sufficiency article (see references).
 #'
 #' @param dframe `r dframe` with required variables
 #'        `{mcid, term_i, timely_term}.`
 #'
-#' @param midfield_table `r midfield_x("term")` with required variables
+#' @param midf_table `r midfield_x("term")` with required variables
 #'        `{mcid, term, institution}.`
 #'
 #' @returns Data frame with the following properties:
@@ -34,17 +39,18 @@
 #'   - `institution` &nbsp; Character. Name of the institution at which a
 #'      student is enrolled in a term.
 #'   - `lower_limit` &nbsp; Character. Initial term of an institution's
-#'      data range, encoded `YYYYT`. Extracted from `midfield_table.`
+#'      data range, encoded `YYYYT`. Extracted from `midf_table.`
 #'   - `upper_limit` &nbsp; Character. Final term of an institution's
-#'      data range, encoded `YYYYT`. Extracted from `midfield_table.`
+#'      data range, encoded `YYYYT`. Extracted from `midf_table.`
 #'   - `data_sufficiency` &nbsp; Character. Possible values are "include",
 #'      "exclude-lower," and "exclude-upper."
 #'
+#' @references R. Layton, R. Long, M. Ohland, M. Orr, and S. Lord (2026), "Data sufficiency,"  \url{https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.html}
+#'
 #' @example man/examples/exa_data_sufficiency.R
-#' @references Richard Layton, Russell Long, Matthew Ohland, Marisa Orr, and Susan Lord (2026) Data sufficiency, https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.html
 #' @export
 #'
-data_sufficiency <- function(dframe, midfield_table = term) {
+data_sufficiency <- function(dframe, midf_table = term) {
   #
   # ---------- assign active column names
 
@@ -56,38 +62,45 @@ data_sufficiency <- function(dframe, midfield_table = term) {
 
   # data frame assessment
   qassert(dframe, "d+")
-  qassert(midfield_table, "d+")
+  qassert(midf_table, "d+")
 
   # required columns
   assert_names(colnames(dframe), must.include = reqd_dframe_vars)
-  assert_names(colnames(midfield_table), must.include = reqd_table_vars)
+  assert_names(colnames(midf_table), must.include = reqd_table_vars)
 
   # class of required columns
-  for (i in seq_along(reqd_dframe_vars)) {
-    qassert(dframe[[reqd_dframe_vars[i]]], "s+")
-  }
-  for (i in seq_along(reqd_table_vars)) {
-    qassert(midfield_table[[reqd_table_vars[i]]], "s+")
-  }
+  for (var in reqd_dframe_vars) qassert(dframe[[var]], "s+")
+  for (var in reqd_table_vars) qassert(midf_table[[var]], "s+")
 
   # ---------- preparation
 
-  # to restore class except for groups in tibbles
+  # to restore class except grouped tibbles
   prior_class <- setdiff(class(dframe), "grouped_df")
 
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
-  midf_table <- copy(midfield_table)
+  midf_table <- copy(midf_table)
   setDT(midf_table)
+
+  # avoid overwriting columns that match names of temporary columns
+  init_temp_vars <- c("idx")
+  temp_vars <- edit_new_col_names(dframe, init_temp_vars)
+  idx_chr <- temp_vars[1]
+  
+  # avoid overwriting these variables
+  potential_overwrite_vars <- c("institution")
+  non_overwrite_vars <- edit_new_col_names(dframe, potential_overwrite_vars)
+  inst_chr <- non_overwrite_vars[1]
 
   # bind names due to NSE notes in R CMD check
   data_sufficiency <- NULL
-  idx <- NULL
   lower_limit <- NULL
   term_i <- NULL
   timely_term <- NULL
   upper_limit <- NULL
+  IDX <- NULL
+  INST <- NULL
 
   # ---------- do the work
 
@@ -106,7 +119,9 @@ data_sufficiency <- function(dframe, midfield_table = term) {
   midf_table <- unique(midf_table)
 
   # add temp col to restore row order
-  dframe[, idx := .I]
+  dframe[, IDX := .I,
+    env = list(IDX = idx_chr)
+  ]
 
   # join institutions
   x <- midf_table[, .(mcid, institution)]
@@ -131,7 +146,7 @@ data_sufficiency <- function(dframe, midfield_table = term) {
   # ---------- prepare to return
 
   # restore row order
-  setkey(dframe, idx)
+  setkeyv(dframe, idx_chr)
 
   # drop temp cols, restore col order, ensure unique rows
   dframe <- dframe[, .SD, .SDcols = return_vars]
@@ -162,6 +177,6 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
   )
 
   # original function calls the new function
-  data_sufficiency(dframe = dframe, midfield_table = midfield_term)
+  data_sufficiency(dframe = dframe, midf_table = midfield_term)
 }
 NULL

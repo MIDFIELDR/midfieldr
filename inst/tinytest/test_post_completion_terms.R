@@ -27,10 +27,10 @@ expect_class_preserved <- function(df1, df2, fnc) {
   rm(x, y)
 }
 
-test_post_bacc_terms <- function() {
+test_post_completion_terms <- function() {
   
   # usage
-  # post_bacc_terms(dframe, midfield_table = degree)
+  # post_completion_terms(dframe, midf_table = degree)
   
   # ---------- setup
   
@@ -43,37 +43,43 @@ test_post_bacc_terms <- function() {
   # ---------- start tests
   
   # check that class is preserved function
-  expect_class_preserved(toy_term, toy_degree, post_bacc_terms)
+  expect_class_preserved(toy_term, toy_degree, post_completion_terms)
   
   # check for incorrect input class / required variables
-  expect_error(post_bacc_terms(1))
-  expect_error(post_bacc_terms(toy_term, "sat"))
-  expect_error(post_bacc_terms(toy_student, toy_degree))
-  expect_error(post_bacc_terms(toy_degree, toy_student))
+  expect_error(post_completion_terms(1))
+  expect_error(post_completion_terms(toy_term, "sat"))
+  expect_error(post_completion_terms(toy_student, toy_degree))
+  expect_error(post_completion_terms(toy_degree, toy_student))
   
   # term added columns correct
   x <- copy(toy_term)
   y <- copy(toy_degree)
-  z <- post_bacc_terms(x, y)
+  z <- post_completion_terms(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
   
   # course added columns correct
   x <- copy(toy_course)
-  z <- post_bacc_terms(x, y)
+  z <- post_completion_terms(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
   
   # degree added columns correct
   x <- copy(toy_degree)
-  z <- post_bacc_terms(x, y)
+  z <- post_completion_terms(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
   
   # confirm NO changes by reference
   term <- copy(toy_term)
   degr <- copy(toy_degree)
-  z <- post_bacc_terms(term, degr)
+  z <- post_completion_terms(term, degr)
   expect_true(check_equiv_frames(term, toy_term))
   expect_true(check_equiv_frames(degr, toy_degree))
   
+  # overwrite prevention works
+  x <- copy(toy_term)
+  x[, idx := as.character(.I)]
+  y <- post_completion_terms(x, toy_degree)
+  expect_equal(x[["idx"]], y[["idx"]])
+  expect_equal(new_cols, setdiff(colnames(y), colnames(x)))
   
   # check term-cluster labels are correct
   # dframe required variables: mcid, term (or term_course or term_degree)
@@ -109,7 +115,7 @@ test_post_bacc_terms <- function() {
       "4", "20053"
   )
   setDT(x_degr)
-  ans <- post_bacc_terms(x_term, x_degr)[["term_cluster"]]
+  ans <- post_completion_terms(x_term, x_degr)[["term_cluster"]]
   expected_ans <- c("pre-degree", "first-degree", "post-first-degree", 
                     "pre-degree", "first-degree", 
                     "pre-degree", "first-degree",  
@@ -126,7 +132,7 @@ test_post_bacc_terms <- function() {
   invisible(NULL)
 }
 
-test_post_bacc_terms()
+test_post_completion_terms()
 
 
 

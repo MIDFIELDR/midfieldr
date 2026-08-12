@@ -45,30 +45,20 @@ Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved. Groups and keys are
 not preserved.
-\item Rows are preserved, though the row order may change.
-\item Numerical variables are converted to type double. Columns
-specified by \code{categories} are converted to factors and ordered.
-\item New columns are added or replace existing columns of the same name (if
-any). Other columns are not modified. New columns are added as described
-below.
-\item With \code{method = median}, two columns are added with names of the form
-\verb{CATEGORY_median,} with \code{CATEGORY} replaced with the values from the
-\code{categories} argument. For example, if \verb{categories = c("program", "people"),}
-the two new column names would be:
+\item Row order is preserved. Duplicated rows are removed.
+\item Column specified by \code{quantity} is converted to type double.
+Columns specified by \code{categories} are converted to factors and ordered.
+\item Columns with names different from the two new columns (named below) are not
+modified; columns with matching names are replaced. The new column names,
+depending on the method, have the following forms:
 \itemize{
-\item \code{program_median}
-\item \code{people_median}
+\item \code{CATEGORY_median} for the "median" method. For example, if
+\verb{categories = c("program", "people"),} the new column names would be
+\code{program_median} and \code{people_median.}
+\item \code{CATEGORY_QUANTITY} for the "percent" method. For example, using the
+same categories as above with \verb{quantity = "grad_rate",}  new column
+names would be \code{program_grad_rate} and \code{people_grad_rate.}
 }
-\item With \code{method = percent}, two columns are added with names of the form
-\verb{CATEGORY_QUANTITY,} with \code{CATEGORY} replaced with the values from the
-\code{categories} argument and \code{QUANTITY} from the \code{quantity} argument. For
-example, if \code{categories = c("program", "people")}  and
-\verb{quantity = "grad_rate",} the two new column names would be:
-\itemize{
-\item \code{program_grad_rate}
-\item \code{people_grad_rate}
-}
-\item Groups and keys are not preserved.
 }
 }
 \description{

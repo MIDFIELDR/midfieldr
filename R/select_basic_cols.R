@@ -103,7 +103,7 @@ select_basic_cols <- function(dframe, col_pattern = NULL, ..., type = NULL) {
 
   # ---------- preparation
 
-  # to restore class except for groups in tibbles
+  # to restore class except grouped tibbles
   prior_class <- setdiff(class(dframe), "grouped_df")
 
   # prevent by-ref changes propagating to global env
@@ -181,9 +181,14 @@ select_basic_cols <- function(dframe, col_pattern = NULL, ..., type = NULL) {
 
   # ---------- prepare to return
 
+  # drop temp cols, restore col order, ensure unique rows
   dframe <- dframe[, .SD, .SDcols = return_vars]
-  setkey(dframe, NULL)
   dframe <- unique(dframe)
+  
+  # restore class
+  setkey(dframe, NULL)
   setattr(dframe, "class", prior_class)
+  
+  # done
   dframe[]
 }

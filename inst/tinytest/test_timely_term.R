@@ -34,7 +34,7 @@ test_timely_term <- function() {
     # 
     # timely_term(
     #     dframe,
-    #     midfield_table = term,
+    #     midf_table = term,
     #     ...,
     #     sched_span = NULL, 
     #     span = NULL
@@ -102,7 +102,7 @@ test_timely_term <- function() {
     expect_equal("19993", DT[mcid %like% "B3", (tt)])
     expect_equal("19893", DT[mcid %like% "C1", (tt)])
     expect_equal("19913", DT[mcid %like% "C2", (tt)])
-
+    
     # correct answers with different span
     DT <- timely_term(dframe, term, span = 5)
     setnames(DT, old = c("timely_term"), new = c("tt"))
@@ -152,9 +152,27 @@ test_timely_term <- function() {
     expect_equal(unique(y[["mcid"]]), unique(x[["mcid"]]))
     
     # correct answers naming and not naming arguments
-    x <- timely_term(dframe = dframe, midfield_table = term)
+    x <- timely_term(dframe = dframe, midf_table = term)
     y <- timely_term(dframe, term)
     expect_equal(x, y)
+    
+    # ---------- ensuring unique names of internal columns
+    
+    # correct answers obtained
+    x <- copy(dframe)
+    x[, c("idx", "yyyy", "t", "delta") := as.character(.I)]
+    
+    y <- timely_term(x, term)
+    expect_equal("19933", y[mcid %like% "A1", (timely_term)])
+    
+    y <- timely_term(x, term, span = 5)
+    expect_equal("19923", y[mcid %like% "A1", (timely_term)])
+    
+    # existing names that match internals protected
+    expect_equal(x[["idx"]], y[["idx"]])
+    expect_equal(x[["yyyy"]], y[["yyyy"]])
+    expect_equal(x[["t"]], y[["t"]])
+    expect_equal(x[["delta"]], y[["delta"]])
     
     # ---------- errors
     

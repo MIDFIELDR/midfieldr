@@ -50,10 +50,10 @@
 #' acceptable value, not missing data. Observations with missing or unknown
 #' values in the ID or institution columns (if any) should be removed.
 #'
-#' @param midfield_student `r midfield_x("student")` with required variables
+#' @param midf_student `r midfield_x("student")` with required variables
 #'        `{mcid, race, sex}.`
 #'
-#' @param midfield_term `r midfield_x("term")` with required variables
+#' @param midf_term `r midfield_x("term")` with required variables
 #'        `{mcid, term, cip6, institution}.`
 #'
 #' @param ... `r param_dots`
@@ -109,8 +109,8 @@
 #' @example man/examples/exa_prep_fye_mice.R
 #' @export
 #'
-prep_fye_mice <- function(midfield_student = student,
-                          midfield_term = term,
+prep_fye_mice <- function(midf_student = student,
+                          midf_term = term,
                           ...,
                           fye_codes = NULL) {
   #
@@ -126,8 +126,8 @@ prep_fye_mice <- function(midfield_student = student,
   fye_codes <- fye_codes %?% c("140102")
 
   # required arguments
-  qassert(midfield_student, "d+")
-  qassert(midfield_term, "d+")
+  qassert(midf_student, "d+")
+  qassert(midf_term, "d+")
   qassert(unique(nchar(fye_codes)), "I1[6,6]")
 
   # fye_codes: number strings only, no regular expressions
@@ -146,36 +146,36 @@ prep_fye_mice <- function(midfield_student = student,
   )
 
   # inputs modified (or not) by reference
-  setDT(midfield_student) # immediately subset, so side-effect OK
-  setDT(midfield_term) # immediately subset, so side-effect OK
+  setDT(midf_student) # immediately subset, so side-effect OK
+  setDT(midf_term) # immediately subset, so side-effect OK
 
   # required columns
-  assert_names(colnames(midfield_student),
+  assert_names(colnames(midf_student),
     must.include = c("mcid", "race", "sex")
   )
-  assert_names(colnames(midfield_term),
+  assert_names(colnames(midf_term),
     must.include = c("mcid", "institution", "term", "cip6")
   )
 
   # class of required columns
-  qassert(midfield_student[["mcid"]], "s+")
-  qassert(midfield_student[["race"]], "s+")
-  qassert(midfield_student[["sex"]], "s+")
-  qassert(midfield_term[["mcid"]], "s+")
-  qassert(midfield_term[["institution"]], "s+")
-  qassert(midfield_term[["term"]], "s+")
-  qassert(midfield_term[["cip6"]], "s+")
+  qassert(midf_student[["mcid"]], "s+")
+  qassert(midf_student[["race"]], "s+")
+  qassert(midf_student[["sex"]], "s+")
+  qassert(midf_term[["mcid"]], "s+")
+  qassert(midf_term[["institution"]], "s+")
+  qassert(midf_term[["term"]], "s+")
+  qassert(midf_term[["cip6"]], "s+")
 
   # ---------- preparation
 
-  # to restore class, but not grouped_DF (tibbles)
-  prior_class <- setdiff(class(midfield_student), "grouped_df")
+  # to restore class except grouped tibbles
+  prior_class <- setdiff(class(midf_student), "grouped_df")
 
   # prevent by-ref changes propagating to global env
-  midfield_student <- copy(midfield_student)
-  setDT(midfield_student)
-  midfield_term <- copy(midfield_term)
-  setDT(midfield_term)
+  midf_student <- copy(midf_student)
+  setDT(midf_student)
+  midf_term <- copy(midf_term)
+  setDT(midf_term)
 
   # bind names due to NSE notes in R CMD check
   proxy <- NULL
@@ -183,18 +183,16 @@ prep_fye_mice <- function(midfield_student = student,
   # ---------- do the work
 
   # All FYE students, all terms
-  fye <- midfield_term[cip6 %chin% fye_codes, .(mcid, institution)]
-  on.exit(setkey(fye, NULL), add = TRUE)
+  fye <- midf_term[cip6 %chin% fye_codes, .(mcid, institution)]
 
   # Limit to degree-seeking IDs (inner join)
   # The fye data frame is the function output after we add
   # the FYE proxy CIP variable, institution, race, and sex
-  fye <- midfield_student[fye, .(mcid, institution), on = c("mcid"), nomatch = NULL]
+  fye <- midf_student[fye, .(mcid, institution), on = c("mcid"), nomatch = NULL]
   fye <- unique(fye)
 
   # Working data frame to gather proxies (left-outer join)
-  DT <- midfield_term[fye, .(mcid, institution, term, cip6), on = c("mcid")]
-  on.exit(setkey(DT, NULL), add = TRUE)
+  DT <- midf_term[fye, .(mcid, institution, term, cip6), on = c("mcid")]
   DT <- unique(DT)
 
   # Order rows and create proxy variable as CIP in following term
@@ -217,7 +215,7 @@ prep_fye_mice <- function(midfield_student = student,
   # Ensure row order, keep the first instance by ID, thereby
   # omitting rows for students entering FYE twice
   setkeyv(DT, c("mcid", "term"))
-  DT <- DT[, .SD[1], by = c("mcid")]
+  DT <- DT[, .SD[1L], by = c("mcid")]
 
   # subset to retain those who transition to engr major after FYE
   DT <- DT[proxy %like% "^14"]
@@ -230,14 +228,12 @@ prep_fye_mice <- function(midfield_student = student,
   fye <- DT[fye, on = c("mcid")]
 
   # Add race and sex (left-outer join)
-  fye <- midfield_student[fye, .(mcid, race, sex, institution, proxy), on = c("mcid")]
+  fye <- midf_student[fye, .(mcid, race, sex, institution, proxy), on = c("mcid")]
   fye <- unique(fye)
 
   # Convert to factors to prepare for mice()
-  fye[, race := as.factor(race)]
-  fye[, sex := as.factor(sex)]
-  fye[, institution := as.factor(institution)]
-  fye[, proxy := as.factor(proxy)]
+  factor_cols <- c("race", "sex", "institution", "proxy")
+  fye[ , names(.SD) := lapply(.SD, factor), .SDcols = factor_cols]
 
   # ---------- prepare to return
 

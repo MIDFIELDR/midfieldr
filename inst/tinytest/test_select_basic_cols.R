@@ -49,42 +49,29 @@ test_select_basic_cols <- function() {
     
     expect_class_preserved(toy_student, select_basic_cols)
     
-    # # data.table preserved
-    # x <- copy(toy_student)
-    # y <- select_basic_cols(x)
-    # expect_equal(class(x), class(y))
-    # 
-    # # tibble preserved
-    # x <- copy(toy_student)
-    # setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
-    # y <- select_basic_cols(x)
-    # expect_equal(class(x), class(y))
-    # 
-    # # base R data.frame preserved
-    # x <- copy(toy_student)
-    # setattr(x, "class", c("data.frame"))
-    # y <- select_basic_cols(x)
-    # expect_equal(class(x), class(y))
-    # 
-    # # grouped tibble yields data.frame
-    # x <- copy(toy_student)
-    # setattr(x, "class", c("grouped_df", "tbl_df", "tbl", "data.frame"))
-    # y <- select_basic_cols(x)
-    # expect_true(class(y) == "data.frame")
-    
-    
-    
-    
-    # keys preserved?
-    # x <- copy(toy_student)
-    # setkeyv(x, "mcid")
-    # y <- select_basic_cols(x)
-    # expect_equal(key(x), key(y))
-    
-    # setkeyv(x, NULL)
-    # y <- select_basic_cols(x)
-    # expect_equal(key(x), key(y))
-    
+    # data.table preserved
+    x <- copy(toy_student)
+    y <- select_basic_cols(x)
+    expect_equal(class(x), class(y))
+
+    # tibble preserved
+    x <- copy(toy_student)
+    setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
+    y <- select_basic_cols(x)
+    expect_equal(class(x), class(y))
+
+    # base R data.frame preserved
+    x <- copy(toy_student)
+    setattr(x, "class", c("data.frame"))
+    y <- select_basic_cols(x)
+    expect_equal(class(x), class(y))
+
+    # grouped tibble yields tibble
+    x <- copy(toy_student)
+    setattr(x, "class", c("grouped_df", "tbl_df", "tbl", "data.frame"))
+    y <- select_basic_cols(x)
+    expect_equal(class(y), c("tbl_df", "tbl", "data.frame"))
+
     # ---------- basic columns correct
     
     expect_equal(sort(colnames(select_basic_cols(toy_student))),

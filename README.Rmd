@@ -31,23 +31,29 @@ knitr::opts_chunk$set(fig.path = "man/figures/README-")
 An R package that supplies tools for working with longitudinal undergraduate records from the MIDFIELD database---or similarly structured data tables---in the following areas. 
 
 Programs  
+
 - `filter_programs()` helps you find program names and CIP codes.  
 
 Records and population  
+
 - `timely_term()` estimates timely completion terms.  
 - `data_sufficiency()` identifies IDs to exclude due to insufficient data.  
-- `post_bacc_terms()` identifies rows with post-baccalaureate terms to exclude.  
+- `post_completion_terms()` identifies rows with post-baccalaureate terms to exclude.  
 
 Blocs  
+
 - `completion_status()` labels program completion as timely, late, or NA.  
 
 Special conditioning  
+
 - `prep_fye_mice()` conditions data for imputing starting majors of FYE students.  
 - `order_multiway()` conditions data for Cleveland multiway charts.  
 
 Convenience  
+
 - `select_basic_cols()` minimizes the number of columns viewed for interactive sessions.  
-- `look_at()` wraps `base::str()` with our preferred arguments.  
+- `look_at()` for data frames, wraps base `str()` with preset arguments.
+
 
 ```{r}
 library("midfieldr")
@@ -115,10 +121,41 @@ degree <- copy(toy_degree)
 
 look_at(term)
 
+# Begin with the population
+DT <- term[, .(mcid)]
+DT <- unique(DT)
+
+DT
+
+# Add timely-completion term columns
+DT <- timely_term(DT, midf_table = term)
+
+DT
+
+# Add data sufficiency columns
+DT <- DT[, .(mcid, term_i, timely_term)]
+DT <- data_sufficiency(DT, midf_table = term)
+
+DT
+
+# Initial population is set of IDs labeled "include"
+population <- DT[data_sufficiency == "include", .(mcid)]
+population <- unique(population)
+
+population
+
+# Inner join to restrict source data to this population
+student <- population[student, on = "mcid", nomatch = NULL]
+term <- population[term, on = "mcid", nomatch = NULL]
+course <- population[course, on = "mcid", nomatch = NULL]
+degree <- population[degree, on = "mcid", nomatch = NULL]
+
+look_at(term)
+
 # Identify post-baccalaureate terms
-term <- post_bacc_terms(term, midfield_table = degree)
-course <- post_bacc_terms(course, midfield_table = degree)
-degree <- post_bacc_terms(degree, midfield_table = degree)
+term <- post_completion_terms(term, midf_table = degree)
+course <- post_completion_terms(course, midf_table = degree)
+degree <- post_completion_terms(degree, midf_table = degree)
 
 look_at(term)
 
@@ -129,33 +166,7 @@ degree <- degree[term_cluster != "post-first-degree"]
 
 look_at(term)
 
-# Begin refining the population
-DT <- term[, .(mcid)]
-DT <- unique(DT)
-
-DT
-
-# Build data sufficiency data frame
-DT <- timely_term(DT, midfield_table = term)
-DT <- data_sufficiency(DT, midfield_table = term)
-
-DT
-
-# Retain rows with sufficient institutional data
-population <- DT[data_sufficiency == "include", .(mcid)]
-population <- unique(population)
-
-population
-
-# Inner join to filter data tables to match population
-student <- population[student, on = "mcid", nomatch = NULL]
-term <- population[term, on = "mcid", nomatch = NULL]
-course <- population[course, on = "mcid", nomatch = NULL]
-degree <- population[degree, on = "mcid", nomatch = NULL]
-
-look_at(term)
-
-# Choose a minimum set of columns
+# Choose a minimum set of columns to proceed
 student <- select_basic_cols(student)
 term <- select_basic_cols(term)
 course <- select_basic_cols(course)

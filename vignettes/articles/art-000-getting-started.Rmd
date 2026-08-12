@@ -24,7 +24,7 @@ path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
 When working with student-level records to develop quantitative metrics, midfieldr helps you refine and shape your data in these areas:
 
 - *Programs.* &nbsp; Collect 6-digit program codes. 
-- *Records.* &nbsp; Credibly subset source data and refine the population to suit your study. 
+- *Records.* &nbsp; Credibly subset source data and refine the population. 
 - *Blocs.* &nbsp; Construct group of records for computing metrics.  
   
 This document introduces you to midfieldr's basic set of tools.
@@ -45,30 +45,21 @@ Before you start:
 
 ## midfieldr functions
 
-The major functions can be categorized based on their contribution to a typical workflow:
+The major functions for treating student records can be categorized based on their contribution to a typical workflow:
 
-Programs
+Programs  
 
 - `filter_programs()` helps you find program names and CIP codes.  
 
-Records and population 
+Records and population  
 
 - `timely_term()` estimates timely completion terms.  
 - `data_sufficiency()` identifies IDs to exclude due to insufficient data.  
-- `post_bacc_terms()` identifies post-baccalaureate terms to exclude.  
+- `post_completion_terms()` identifies rows with post-baccalaureate terms to exclude.  
 
-Blocs
+Blocs  
 
-- `select_basic_cols()` chooses those columns required by other midfieldr functions. 
 - `completion_status()` labels program completion as timely, late, or NA.  
-
-Special conditioning
-
-- `prep_fye_mice()` conditions data for imputing starting majors of FYE students.  
-- `order_multiway()` conditions data for Cleveland multiway charts.  
-
-
-
 
 
 
@@ -85,6 +76,10 @@ Special conditioning
 
 ```{r}
 #| echo: false
+options(
+  datatable.print.nrows = 10,
+  datatable.print.topn = 5
+)
 ```
 
 
@@ -111,28 +106,13 @@ cip
 filter_programs(cip, "music")
 ```
 
-To refine our results, we can assign the results of a first pass to the `dframe` argument of a second pass. For example, our first pass below searches the default `cip` dataset for "music". Our second pass searches the results of the  first pass for any line that starts with "50". 
+To refine our results, we can assign the results of a first pass to the `dframe` argument of a second pass. For example, our first pass below searches the default `cip` dataset for "music". Our second pass searches the results of the  first pass for any line that starts with "50". We can also drop the 2-digit level codes and names to reduce the visual clutter. Because these programs have the same 2-digit code and name, we can drop two columns to reduce the visual clutter. 
 
 ```{r}
 first_pass <- filter_programs(cip, "music")
 second_pass <- filter_programs(first_pass, "^50")
+second_pass[, c("cip2", "cip2name") := NULL]
 second_pass
-```
-
-Alternatively, one may chain the operations, 
-
-```{r}
-cip |>
-  filter_programs("music") |>
-  filter_programs("^50")
-```
-
-
-Assuming we are looking for programs in a School of Music, the 4-digit code "5009" appears to be the correct finding. Our third pass searches the results of the second pass for any line that starts with "5009". 
-
-```{r} 
-third_pass <- filter_programs(second_pass, "^5009")
-third_pass
 ```
 
 ```{r}
@@ -143,14 +123,31 @@ options(
 )
 ```
 
-If these were part of our study programs, we would save the 6-digit codes and names and add a `program` variable to label each row as needed to suit our goals. Here, we insert a placeholder value "label_TBD". We might save the data frame as our `programs` data frame. 
+Assuming we are looking for programs in a School of Music, the 4-digit code "5009" appears to be the correct finding. Our third pass searches the results of the second pass for any line that starts with "5009". Again (in this case) we can reduce the visual clutter and remove two more columns. 
+
+```{r} 
+third_pass <- filter_programs(second_pass, "^5009")
+third_pass[, c("cip4", "cip4name") := NULL]
+third_pass
+```
+
+Assuming these were our study programs, we save the 6-digit codes and names and optionally abbreviate some of the longer names. More importantly, we add a `program` column with our own program abbreviations (here I use the placeholder `label_TBD`). These custom program labels aggregate the 6-digit codes into groups that are relevant to the study goals. 
 
 ```{r}
-programs <- third_pass[, .(cip6name, cip6, program = "label_TBD")]
+programs <- third_pass[, .(cip6name, cip6, program = "TBD")]
+programs[, cip6name := gsub("Violin, Viola, Guitar", "Vn, Va, Gtr", cip6name)]
+programs[, cip6name := gsub("Instruments", "Instr", cip6name)]
 programs
 ```
 
-Which specific programs we select depend on the study, of course, but in all cases the end result is a data frame like the one shown above with the 6-digit CIP codes, possibly the NCES 6-digit program name, and our own program labels.  
+For example, here I label all programs I might consider part of an "orchestra" grouping. 
+```{r}
+orch_instr <- c("brass|wood|perc|conduct|vn")
+programs[cip6name %ilike% orch_instr, program := "Orchestra"]
+programs
+```
+
+The structure of this data frame is representative of the `programs` data frame you would find in any study: 6-digit CIP codes, possibly the NCES 6-digit program name, and our own program labels.  
 
 
 
@@ -176,7 +173,7 @@ For this article we load the `student`, `term`, and `degree` tables from midfiel
 data(student, term, degree)
 ```
 
-`look_at()` is a midfieldr convenience function that wraps `base::str()` using our preferred arguments. The data tables are linked by `mcid`, the anonymized student ID. 
+The data tables are linked by `mcid`, the anonymized student ID. 
 
 ```{r}
 look_at(student)
@@ -186,66 +183,37 @@ look_at(term)
 look_at(degree)
 ```
 
-As we prepare the data, we copy our "source" material under separate names (and locations in memory) at a couple of key points.   
+`look_at()` is a midfieldr convenience function that wraps base  `str()` with preset arguments. 
+
+We copy our "source" material under separate names (and locations in memory).   
 
 ```{r}
 student_source <- copy(student)
 term_source <- copy(term)
 degree_source <- copy(degree)
+
+# demonstrate that memory addresses are different
+address(student)
+address(student_source)
 ```
 
 Then we can use the shorter names such as `term` and `degree` as we work. The shorter names are also the default values for arguments in several midfieldr functions. 
 
+### *Terminology*
 
+The following sequence of definitions provides the context for the next few functions. 
 
+- Program *completion* means satisfying the requirements for a baccalaureate degree. 
+- Program completion is *timely* if accomplished within a set time span, typically 4, 6, or 8 years after admission depending on the definition one adopts. (The midfieldr default is 6 academic years.) The *timely-completion term* is the term at the end of that span. 
+- A student's *completion status* is "timely" if they graduate no later than their timely-completion term, "late" if they graduate after their timely-completion term, and NA for non-completers.
+- To avoid biased results, completion status can be assessed only for students for whom the data tables include a sufficient number of terms before and after their admission term. The test for *data sufficiency* identifies such students. Only those records passing the data sufficiency test are included in a population study. 
 
+In midfieldr:
 
-## `post_bacc_terms()`
-
-*Identify rows of post-baccalaureate terms to exclude.*
-
-In most cases, we are not generally interested in academic terms beyond the first degree term, so we use the results of this function to exclude post-first-degree terms from the source data. 
-
-`post_bacc_terms()` identifies terms later than the first baccalaureate, if any.  
-
-```{r}
-term <- post_bacc_terms(term_source, midfield_table = degree)
-degree <- post_bacc_terms(degree_source, midfield_table = degree)
-```
-
-`post_bacc_terms()` adds a column indicating the cluster a term belongs to with respect to the first degree term.
-
-```{r}
-look_at(term)
-```
-
-The possible term cluster values are given by, 
-
-```{r}
-term[, sort(unique(term_cluster), na.last = FALSE)]
-```
-
-We filter to exclude all terms labeled "post-first-degree" and drop the temporary columns. 
-
-```{r}
-term <- term[!"post-first-degree", on = "term_cluster"]
-degree <- degree[!"post-first-degree", on = "term_cluster"]
-
-term[, c("term_cluster", "first_degree_term") := NULL]
-degree[, c("term_cluster", "first_degree_term") := NULL]
-
-look_at(term)
-```
-
-We redefine our source material to incorporate the exclusion of post-baccalaureate terms. 
-
-```{r}
-term_source <- copy(term)
-degree_source <- copy(degree)
-```
-
-
-
+- `timely_term()` yields the timely-completion terms for every student. 
+- `data_sufficiency()` tests for data sufficiency for every student .
+- `post_completion_terms()` identifies post-baccalaureate terms to exclude.
+- `completion_status()` yields the completion status for every student passing the data sufficiency test. 
 
 
 
@@ -260,7 +228,7 @@ degree_source <- copy(degree)
 
 *Determine the term by which degree completion would be considered timely.*
 
-In this section, we begin refining the population, so we start with a unique set of IDs from the `term` record obtained above. 
+We start with a unique set of IDs from the `term` table. 
 
 ```{r}
 DT <- term[, .(mcid)]
@@ -272,7 +240,7 @@ DT
 `timely_term()` builds a data frame with one row per student, a column for the timely completion term, and columns of supporting information. This data frame contains the required inputs for both `data_sufficiency()` and `timely_completion()`. 
 
 ```{r}
-DT <- timely_term(DT, midfield_table = term)
+DT <- timely_term(DT, midf_table = term)
 
 DT
 ```
@@ -281,12 +249,17 @@ DT
 
 *Identify members of the population to exclude due to insufficient data.*
 
-*Data sufficiency* is an assessment whether a student record lies sufficiently within their institution's data range to unambiguously assess their completion status and if so include them in the study population. 
+
+
+
+
+
+
 
 `data_sufficiency()` builds on the output from `timely_term()`, labels rows to be included or excluded based on the data sufficiency finding, and generates additional columns of supporting information. 
 
 ```{r}
-DT <- data_sufficiency(DT, midfield_table = term)
+DT <- data_sufficiency(DT, midf_table = term)
 
 DT
 ```
@@ -328,6 +301,55 @@ degree <- copy(degree_source)
 all.equal(population$mcid, student_source$mcid)
 all.equal(population$mcid, unique(term_source$mcid))
 ```
+
+
+## `post_completion_terms()`
+
+*Identify rows of post-baccalaureate terms to exclude.*
+
+In most cases, we are not generally interested in academic terms beyond the first degree term, so we use the results of this function to exclude post-first-degree terms from the source data. 
+
+`post_completion_terms()` identifies terms later than the first baccalaureate, if any.  
+
+```{r}
+term <- post_completion_terms(term_source, midf_table = degree)
+degree <- post_completion_terms(degree_source, midf_table = degree)
+```
+
+`post_completion_terms()` adds a column indicating the cluster a term belongs to with respect to the first degree term.
+
+```{r}
+look_at(term)
+```
+
+The possible term cluster values are given by, 
+
+```{r}
+term[, sort(unique(term_cluster), na.last = FALSE)]
+```
+
+We filter to exclude all terms labeled "post-first-degree" and drop the temporary columns. 
+
+```{r}
+term <- term[!"post-first-degree", on = "term_cluster"]
+degree <- degree[!"post-first-degree", on = "term_cluster"]
+
+term[, c("term_cluster", "first_degree_term") := NULL]
+degree[, c("term_cluster", "first_degree_term") := NULL]
+
+look_at(term)
+```
+
+We redefine our source material to incorporate the exclusion of post-baccalaureate terms. 
+
+```{r}
+term_source <- copy(term)
+degree_source <- copy(degree)
+```
+
+
+
+
 
 
 
@@ -379,8 +401,8 @@ DT <- copy(population)
 `completion_status()` builds on the output from `timely_term()`, labels rows to indicate whether a student completes a degree timely or late compared to their timely completion term (or NA for no completion), and includes columns for the timely term and degree term as supporting information. 
 
 ```{r} 
-DT <- timely_term(DT, midfield_table = term)
-DT <- completion_status(DT, midfield_table = degree)
+DT <- timely_term(DT, midf_table = term)
+DT <- completion_status(DT, midf_table = degree)
 
 DT
 ```

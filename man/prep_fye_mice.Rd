@@ -4,18 +4,13 @@
 \alias{prep_fye_mice}
 \title{Prepare FYE data for imputation}
 \usage{
-prep_fye_mice(
-  midfield_student = student,
-  midfield_term = term,
-  ...,
-  fye_codes = NULL
-)
+prep_fye_mice(midf_student = student, midf_term = term, ..., fye_codes = NULL)
 }
 \arguments{
-\item{midfield_student}{\code{student} data frame with required variables
+\item{midf_student}{\code{student} data frame with required variables
 \verb{\{mcid, race, sex\}.}}
 
-\item{midfield_term}{\code{term} data frame with required variables
+\item{midf_term}{\code{term} data frame with required variables
 \verb{\{mcid, term, cip6, institution\}.}}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
@@ -136,8 +131,6 @@ colnames(toy_student)
 colnames(prep_fye_mice(toy_student, toy_term))
 
 # Optional argument permits multiple CIP codes for FYE
-prep_fye_mice(midfield_student = toy_student, 
-              midfield_term = toy_term, 
-              fye_codes = c("140101", "140102"))
+prep_fye_mice(toy_student, toy_term, fye_codes = c("140101", "140102"))
 
 }

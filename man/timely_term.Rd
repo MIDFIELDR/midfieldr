@@ -4,12 +4,12 @@
 \alias{timely_term}
 \title{Determine timely completion terms}
 \usage{
-timely_term(dframe, midfield_table = term, ..., sched_span = NULL, span = NULL)
+timely_term(dframe, midf_table = term, ..., sched_span = NULL, span = NULL)
 }
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) with required variable \verb{\{mcid\}.}}
 
-\item{midfield_table}{\code{term} data frame with required variables
+\item{midf_table}{\code{term} data frame with required variables
 \verb{\{mcid, term, level\}.}}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
@@ -34,9 +34,9 @@ below) are not modified; columns with matching names are replaced.
 The new columns added are:
 \itemize{
 \item \code{term_i}   Character. Initial term of a student's longitudinal
-record, encoded \code{YYYYT}. Extracted from \code{midfield_table.}
+record, encoded \code{YYYYT}. Extracted from \code{midf_table.}
 \item \code{level_i}   Character. Student level (01 Freshman, 02 Sophomore,
-etc.) in their initial term. Extracted from \code{midfield_table.}
+etc.) in their initial term. Extracted from \code{midf_table.}
 \item \code{adj_span}   Numeric. Integer span of years for timely
 completion adjusted for a student's initial level.
 \item \code{timely_term}   Character. Latest term by which program completion
@@ -70,10 +70,10 @@ x <- toy_student[c(51:55, 346:350), .(mcid, sex)]
 x
 
 # Add timely term columns. Unrelated columns (sex) are unaffected.
-x <- timely_term(x, midfield_table = term)
+x <- timely_term(x, midf_table = term)
 x
 
 # Repeat. New columns silently replace existing columns of the same name.
-y <- timely_term(x, midfield_table = term)
+y <- timely_term(x, midf_table = term)
 y
 }
