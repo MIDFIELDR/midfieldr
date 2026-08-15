@@ -21,13 +21,9 @@ path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
 ```{r child = paste0(path_to_rmd, "/common-setup.Rmd")}
 ```
 
-In this study we present a complete case with a focus on our process and its rationale. We leave the midfieldr function details to subsequent articles. 
-
-
+A complete case study illustrating how we work with longitudinal data and how midfieldr supports our process. Many of the topics introduced here are developed in depth in subsequent articles. 
 
 ## Description
-
-We define the parameters of our case study as follows:
 
 *Data.* &nbsp; Program CIP codes from midfieldr `cip.` Student records from the practice data in midfielddata: `student, term,` and `degree.`
 
@@ -742,12 +738,12 @@ DT
 Stickiness is the ratio of the number of graduates to the number ever enrolled, expressed as a percentage. Stickiness is calculated for each combination of program, race/ethnicity, and sex. 
 
 ```{r}
-DT[, stickiness := round(100 * grad / ever, 1)]
+DT[, stick := round(100 * grad / ever, 1)]
 setkey(DT, NULL)
 DT
 ```
 
-These data are in block-record form with three key columns (the grouping variables), one value column (stickiness), and thus one row per value. 
+These data are in block-record form with three key columns (the grouping variables), one value column (stick), and thus one row per value. 
 
 
 
@@ -807,17 +803,17 @@ options(
 Retain the columns that appear in the table. The result is in block-record with two key column and one value column. 
 
 ```{r}
-DT_table <- DT[, .(people, program, stickiness)]
+DT_table <- DT[, .(people, program, stick)]
 setorderv(DT_table, c("people", "program"))
 DT_table
 ```
 
-Transform the data to row-record form. The key column `{people}` remains in place, the `{program}` column yields the new key columns `{Civil, Electrical, etc.}`, and the values in the new columns are taken from the `{stickiness}` column. The `fill` argument replaces missing values with NA.  
+Transform the data to row-record form. The key column `{people}` remains in place, the `{program}` column yields the new key columns `{Civil, Electrical, etc.}`, and the values in the new columns are taken from the `{stick}` column. The `fill` argument replaces missing values with NA.  
 
 ```{r}
 DT_table <- dcast(DT_table,
   people ~ program,
-  value.var = "stickiness",
+  value.var = "stick",
   fill = NA
 )
 setnames(DT_table, old = "people", new = "People")
@@ -848,10 +844,11 @@ options(datatable.print.nrows = 5)
 
 ### *Chart*
 
-To use `ggplot()`, we want the data in its original block-record form with one value column (stickiness). 
+To use `ggplot()`, we want the data in its original block-record form with one value column (stickiness). We can drop two columns as well.
 
 ```{r}
 DT_chart <- copy(DT)
+DT_chart[, c("race", "sex") := NULL]
 ```
 
 We (optionally) rearrange the order of columns and rows.
@@ -869,11 +866,12 @@ With one quantitative variable (stickiness) for every combination of the levels 
 
 ```{r}
 DT_chart <- order_multiway(DT_chart,
-  quantity = "stickiness",
+  quantity = "stick",
   categories = c("people", "program"),
   method = "percent",
   ratio_of = c("grad", "ever")
 )
+DT_chart[, c("ever", "grad") := NULL]
 DT_chart
 ```
 
@@ -883,12 +881,12 @@ Format the chart for publication. No arguments for ordering the data are require
 #| label: fig01
 #| fig-asp: 1.2
 #| fig-cap: "Figure 1: Program stickiness."
-ggplot(DT_chart, aes(x = stickiness, y = people)) +
+ggplot(DT_chart, aes(x = stick, y = people)) +
   facet_wrap(vars(program),
     ncol = 1,
     as.table = FALSE
   ) +
-  geom_vline(aes(xintercept = program_stickiness),
+  geom_vline(aes(xintercept = program_stick),
     linetype = 2,
     color = "gray60"
   ) +
@@ -905,12 +903,12 @@ In the next chart, we swap the roles of panels and rows.
 #| label: fig02
 #| fig-asp: 0.7
 #| fig-cap: "Figure 2: Program stickiness."
-ggplot(DT_chart, aes(x = stickiness, y = program)) +
+ggplot(DT_chart, aes(x = stick, y = program)) +
   facet_wrap(vars(people),
     ncol = 2,
     as.table = FALSE
   ) +
-  geom_vline(aes(xintercept = people_stickiness),
+  geom_vline(aes(xintercept = people_stick),
     linetype = 2,
     color = "gray60"
   ) +

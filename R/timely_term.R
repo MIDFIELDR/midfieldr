@@ -101,9 +101,9 @@ timely_term <- function(dframe,
   # avoid overwriting columns that match names of temporary columns
   init_temp_vars <- c("idx", "yyyy", "t", "delta")
   temp_vars <- edit_new_col_names(dframe, init_temp_vars)
-  idx_chr   <- temp_vars[1]
-  yyyy_chr  <- temp_vars[2]
-  term_chr  <- temp_vars[3]
+  idx_chr <- temp_vars[1]
+  yyyy_chr <- temp_vars[2]
+  term_chr <- temp_vars[3]
   delta_chr <- temp_vars[4]
 
   # bind names due to NSE notes in R CMD check
@@ -143,7 +143,7 @@ timely_term <- function(dframe,
   # keep the row of the first term, lowest level, by ID and institution
   setorderv(x, c("mcid", "term"))
   x <- x[, .SD[1L], by = c("mcid")]
-  
+
   # rename term and level
   x <- x[, .(mcid, term_i = term, level_i = level)]
 
@@ -164,7 +164,7 @@ timely_term <- function(dframe,
 
   # for month terms, (letters A, B, ..., a, b, ...), set first term to zero
   dframe <- dframe[TERM %chin% c(LETTERS, letters), TERM := "0",
-                   env = list(TERM = term_chr)
+    env = list(TERM = term_chr)
   ]
 
   # make year and term numeric
@@ -196,10 +196,10 @@ timely_term <- function(dframe,
 
   # use adj_span to construct estimated timely-completion term
   dframe[TERM == 0 | TERM == 1, timely_term := paste0(YYYY + adj_span - 1, 3),
-         env = list(
-           YYYY = yyyy_chr,
-           TERM = term_chr
-         )
+    env = list(
+      YYYY = yyyy_chr,
+      TERM = term_chr
+    )
   ]
   dframe[TERM > 1, timely_term := paste0(YYYY + adj_span, 1),
     env = list(
@@ -225,6 +225,7 @@ timely_term <- function(dframe,
   # done
   dframe[]
 }
+
 
 # ---------- deprecated version ----------
 

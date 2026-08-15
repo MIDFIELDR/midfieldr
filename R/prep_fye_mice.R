@@ -233,7 +233,7 @@ prep_fye_mice <- function(midf_student = student,
 
   # Convert to factors to prepare for mice()
   factor_cols <- c("race", "sex", "institution", "proxy")
-  fye[ , names(.SD) := lapply(.SD, factor), .SDcols = factor_cols]
+  fye[, names(.SD) := lapply(.SD, factor), .SDcols = factor_cols]
 
   # ---------- prepare to return
 

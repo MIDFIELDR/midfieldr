@@ -49,18 +49,23 @@ The major functions for treating student records can be categorized based on the
 
 Programs  
 
-- `filter_programs()` helps you find program names and CIP codes.  
+- `filter_programs()`  &nbsp; helps you find program names and CIP codes.  
 
 Records and population  
 
-- `timely_term()` estimates timely completion terms.  
-- `data_sufficiency()` identifies IDs to exclude due to insufficient data.  
-- `post_completion_terms()` identifies rows with post-baccalaureate terms to exclude.  
+- `timely_term()`  &nbsp; estimates timely completion terms.  
+- `data_sufficiency()`  &nbsp; identifies IDs to exclude due to insufficient data.  
+- `post_completion_terms()`  &nbsp; identifies rows with post-baccalaureate terms to exclude.  
 
 Blocs  
 
-- `completion_status()` labels program completion as timely, late, or NA.  
+- `completion_status()`  &nbsp; labels program completion as timely, late, or NA.  
 
+Special data conditioning
+
+- `prep_fye_mice()` &nbsp; for imputing the starting majors of First-Year Engineering (FYE) students.  
+
+- `order_multiway()` &nbsp; for ordering Cleveland multiway data. 
 
 
 
@@ -134,7 +139,7 @@ third_pass
 Assuming these were our study programs, we save the 6-digit codes and names and optionally abbreviate some of the longer names. More importantly, we add a `program` column with our own program abbreviations (here I use the placeholder `label_TBD`). These custom program labels aggregate the 6-digit codes into groups that are relevant to the study goals. 
 
 ```{r}
-programs <- third_pass[, .(cip6name, cip6, program = "TBD")]
+programs <- third_pass[, .(cip6name, cip6, program = "to be determined")]
 programs[, cip6name := gsub("Violin, Viola, Guitar", "Vn, Va, Gtr", cip6name)]
 programs[, cip6name := gsub("Instruments", "Instr", cip6name)]
 programs
@@ -167,13 +172,13 @@ options(
 )
 ```
 
-For this article we load the `student`, `term`, and `degree` tables from midfielddata. 
+For this article we load the `student,` `term,` and `degree` tables from midfielddata. 
 
 ```{r}
 data(student, term, degree)
 ```
 
-The data tables are linked by `mcid`, the anonymized student ID. 
+The data tables are linked by `mcid`, the anonymized student ID. `look_at()` is a midfieldr convenience function that wraps base  `str()` with preset arguments. 
 
 ```{r}
 look_at(student)
@@ -183,7 +188,6 @@ look_at(term)
 look_at(degree)
 ```
 
-`look_at()` is a midfieldr convenience function that wraps base  `str()` with preset arguments. 
 
 We copy our "source" material under separate names (and locations in memory).   
 
@@ -210,7 +214,7 @@ The following sequence of definitions provides the context for the next few func
 
 In midfieldr:
 
-- `timely_term()` yields the timely-completion terms for every student. 
+- `timely_term()` yields the timely-completion term for every student. 
 - `data_sufficiency()` tests for data sufficiency for every student .
 - `post_completion_terms()` identifies post-baccalaureate terms to exclude.
 - `completion_status()` yields the completion status for every student passing the data sufficiency test. 

@@ -102,8 +102,8 @@ For information on accessing the MIDFIELD database for research, contact the Ame
 ```{r}
 #| echo: false
 options(
-  datatable.print.topn = 3,
-  datatable.print.nrows = 6
+  datatable.print.topn = 5,
+  datatable.print.nrows = 10
 )
 ```
 
@@ -119,7 +119,14 @@ term <- copy(toy_term)
 course <- copy(toy_course)
 degree <- copy(toy_degree)
 
+# Data structure
+look_at(student)
+
 look_at(term)
+
+look_at(course)
+
+look_at(degree)
 
 # Begin with the population
 DT <- term[, .(mcid)]
@@ -136,9 +143,10 @@ DT
 DT <- DT[, .(mcid, term_i, timely_term)]
 DT <- data_sufficiency(DT, midf_table = term)
 
-DT
+# Partial results
+DT[, !c("institution")][order(data_sufficiency)]
 
-# Initial population is set of IDs labeled "include"
+# Initial population labeled "include", drop all others
 population <- DT[data_sufficiency == "include", .(mcid)]
 population <- unique(population)
 
@@ -150,21 +158,27 @@ term <- population[term, on = "mcid", nomatch = NULL]
 course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-look_at(term)
+dim(student)
+dim(term)
+dim(course)
+dim(degree)
 
 # Identify post-baccalaureate terms
 term <- post_completion_terms(term, midf_table = degree)
 course <- post_completion_terms(course, midf_table = degree)
 degree <- post_completion_terms(degree, midf_table = degree)
 
-look_at(term)
+# View partial results
+term[, .(mcid, first_degree_term, term_cluster)][order(term_cluster)]
+
+course[, .(mcid, first_degree_term, term_cluster)][order(term_cluster)]
+
+degree[, .(mcid, first_degree_term, term_cluster)][order(term_cluster)]
 
 # Exclude rows after the first degree term
 term <- term[term_cluster != "post-first-degree"]
 course <- course[term_cluster != "post-first-degree"]
 degree <- degree[term_cluster != "post-first-degree"]
-
-look_at(term)
 
 # Choose a minimum set of columns to proceed
 student <- select_basic_cols(student)

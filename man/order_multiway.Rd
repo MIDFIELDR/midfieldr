@@ -23,7 +23,7 @@ variables.}
 variable.}
 
 \item{categories}{Character. Vector of names of the two multiway
-categorical variables.}
+categorical variables, in any order.}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
 referable only by name.}
@@ -32,13 +32,12 @@ referable only by name.}
 possible values are “median” (default) or “percent”. The median
 method determines medians of the quantitative column grouped by
 category. The percent method sums dividends and divisors by category
-and calculates their quotients (again, by category).}
+and calculates their quotients by category.}
 
-\item{ratio_of}{Character. Vector of names of the dividend and the divisor
-that produced the quantitative variable. Required when
-\code{method = "percent,"} ignored otherwise. Names can be in any order;
-the algorithm assumes that the parameter with the larger column sum
-is the denominator of the ratio.}
+\item{ratio_of}{Character. Vector of column names of the dividend
+and the divisor that produced the quantitative variable. Names
+must be in order, as in \verb{c(dividend, divisor).} Required
+when \code{method = "percent,"} ignored otherwise.}
 }
 \value{
 Data frame with the following properties:
@@ -49,15 +48,16 @@ not preserved.
 \item Column specified by \code{quantity} is converted to type double.
 Columns specified by \code{categories} are converted to factors and ordered.
 \item Columns with names different from the two new columns (named below) are not
-modified; columns with matching names are replaced. The new column names,
-depending on the method, have the following forms:
+modified; columns with matching names are replaced. The two new column
+names have the form:
 \itemize{
-\item \code{CATEGORY_median} for the "median" method. For example, if
-\verb{categories = c("program", "people"),} the new column names would be
-\code{program_median} and \code{people_median.}
-\item \code{CATEGORY_QUANTITY} for the "percent" method. For example, using the
-same categories as above with \verb{quantity = "grad_rate",}  new column
-names would be \code{program_grad_rate} and \code{people_grad_rate.}
+\item \code{CATEGORY_1_method_abbr}
+\item \code{CATEGORY_2_method_abbr}
+\item For example, if
+\code{categories = c("program", "people")} and \verb{method = "median",} the new
+column names would be \code{program_med} and \code{people_med.}
+For \verb{method = "percent",} the new column names would be \code{program_pct}
+and \code{people_pct.}
 }
 }
 }
@@ -93,28 +93,29 @@ DT[, c("race", "sex") := NULL]
 data.table::setnames(DT, 
          old = c("program", "graduates", "ever_enrolled", "stickiness"), 
          new = c("prgm", "grad", "ever", "stk"))
+data.table::setcolorder(DT, c("prgm", "people", "grad", "ever", "stk"))
 DT[]
 
 # Factor levels ordered by median
-mw1 <- order_multiway(DT, 
+DT1 <- data.table::copy(DT)
+DT1 <- DT1[, c("ever", "grad") := NULL]
+mw1 <- order_multiway(DT1, 
                       quantity = "stk", 
                       categories = c("prgm", "people"))
-data.table::setorderv(mw1, c("prgm_median", "people_median"))
-
-# The unused variables `ever` and `grad` are dropped
+data.table::setorderv(mw1, c("prgm_med", "people_med"))
 mw1
 
-# Levels in same increasing order as shown above
+# Levels in increasing order
 levels(mw1$prgm)
 levels(mw1$people)
 
 # Ordering using percent method
-mw2 <-order_multiway(DT, 
+mw2 <- order_multiway(DT, 
                quantity = "stk", 
                categories = c("prgm", "people"), 
                method = "percent", 
                ratio_of = c("grad", "ever"))
-data.table::setorderv(mw2, c("prgm_stk", "people_stk"))
+data.table::setorderv(mw2, c("prgm_pct", "people_pct"))
 
 # The two ratio_of variables `ever` and `grad` are retained
 mw2

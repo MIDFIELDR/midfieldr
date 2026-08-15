@@ -112,33 +112,29 @@ select_basic_cols <- function(dframe, col_pattern = NULL, ..., type = NULL) {
 
   if (is.null(type)) {
     uniq_s_cols <- c(
-      "race", "sex", "transfer", "hours_transfer",
-      "age_desc", "us_citizen", "home_zip", "high_school",
-      "sat_math", "sat_verbal", "act_comp"
+      "race", "sex", "transfer", "hours_transfer", "age_desc", "us_citizen",
+      "home_zip", "high_school", "sat_math", "sat_verbal", "act_comp"
     )
     uniq_t_cols <- c(
-      "term", "level", "standing", "coop", "hours_term",
-      "hours_term_attempt", "hours_cumul", "hours_cumul_attempt",
-      "gpa_term", "gpa_cumul"
+      "term", "level", "standing", "coop", "hours_term", "hours_term_attempt",
+      "hours_cumul", "hours_cumul_attempt", "gpa_term", "gpa_cumul"
     )
     uniq_c_cols <- c(
-      "term_course", "abbrev", "number", "course", "section",
-      "type", "faculty_rank", "hourse_course", "grade",
-      "discipline_midfield"
+      "term_course", "abbrev", "number", "course", "section", "type",
+      "faculty_rank", "hourse_course", "grade", "discipline_midfield"
     )
     uniq_d_cols <- c("term_degree", "degree")
 
-    if (length(intersect(colnames(dframe), uniq_s_cols)) > 0) {
-      type <- "s"
-    } else if (length(intersect(colnames(dframe), uniq_t_cols)) > 0) {
-      type <- "t"
-    } else if (length(intersect(colnames(dframe), uniq_c_cols)) > 0) {
-      type <- "c"
-    } else if (length(intersect(colnames(dframe), uniq_d_cols)) > 0) {
-      type <- "d"
-    } else {
-      type <- "a"
+    type_fun <- function(x) {
+      length(intersect(colnames(dframe), x))
     }
+    type <- fcase(
+      type_fun(uniq_s_cols) > 0, "s",
+      type_fun(uniq_t_cols) > 0, "t",
+      type_fun(uniq_c_cols) > 0, "c",
+      type_fun(uniq_d_cols) > 0, "d",
+      default = "a"
+    )
   }
 
   # bind names due to NSE notes in R CMD check
@@ -162,9 +158,11 @@ select_basic_cols <- function(dframe, col_pattern = NULL, ..., type = NULL) {
     )
   }
 
-  # separate canonical from non-canonical names
-  cols_to_search <- setdiff(colnames(dframe), record_vars)
+  # identify available columns matching the minimum set
   cols_to_keep <- intersect(colnames(dframe), record_vars)
+
+  # identify additional cols to search
+  cols_to_search <- setdiff(colnames(dframe), record_vars)
 
   # use search to update columns to keep
   search_col_pattern <- paste(col_pattern, collapse = "|")
@@ -181,14 +179,15 @@ select_basic_cols <- function(dframe, col_pattern = NULL, ..., type = NULL) {
 
   # ---------- prepare to return
 
-  # drop temp cols, restore col order, ensure unique rows
+  # subset columns
   dframe <- dframe[, .SD, .SDcols = return_vars]
+
+  # ensure unique rows
   dframe <- unique(dframe)
-  
+
   # restore class
-  setkey(dframe, NULL)
   setattr(dframe, "class", prior_class)
-  
+
   # done
   dframe[]
 }

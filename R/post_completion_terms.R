@@ -50,21 +50,19 @@ post_completion_terms <- function(dframe, midf_table = degree) {
   qassert(dframe, "d+")
   qassert(midf_table, "d+")
 
-  # assert class of required variables
-  qassert(dframe[["mcid"]], "s+")
+  # isolate the correct term column name
+  dframe_term_var <- intersect(term_var_choices, colnames(dframe))
+  assert_choice(dframe_term_var, choices = term_var_choices)
+  qassert(dframe_term_var, "s1")
 
-  # dframe term variable, exact match, string, length 1
-  var <- intersect(term_var_choices, colnames(dframe))
-  assert_choice(var, choices = term_var_choices)
-  qassert(var, "s1")
+  # required columns
+  reqd_dframe_vars <- c("mcid", dframe_term_var)
+  assert_names(colnames(dframe), must.include = reqd_dframe_vars)
+  assert_names(colnames(midf_table), must.include = reqd_table_vars)
 
-  # then assert
-  assert_names(colnames(midf_table),
-    must.include = reqd_table_vars
-  )
-  for (i in seq_along(reqd_table_vars)) {
-    qassert(midf_table[[reqd_table_vars[i]]], "s+")
-  }
+  # class of required columns
+  for (var in reqd_dframe_vars) qassert(dframe[[var]], "s+")
+  for (var in reqd_table_vars) qassert(midf_table[[var]], "s+")
 
   # ---------- preparation
 

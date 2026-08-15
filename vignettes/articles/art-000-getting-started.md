@@ -36,20 +36,27 @@ based on their contribution to a typical workflow:
 
 Programs
 
-- `filter_programs()` helps you find program names and CIP codes.
+- `filter_programs()`   helps you find program names and CIP codes.
 
 Records and population
 
-- `timely_term()` estimates timely completion terms.  
-- `data_sufficiency()` identifies IDs to exclude due to insufficient
+- `timely_term()`   estimates timely completion terms.  
+- `data_sufficiency()`   identifies IDs to exclude due to insufficient
   data.  
-- `post_bacc_terms()` identifies rows with post-baccalaureate terms to
-  exclude.
+- `post_completion_terms()`   identifies rows with post-baccalaureate
+  terms to exclude.
 
 Blocs
 
-- `completion_status()` labels program completion as timely, late, or
+- `completion_status()`   labels program completion as timely, late, or
   NA.
+
+Special data conditioning
+
+- `prep_fye_mice()`   for imputing the starting majors of First-Year
+  Engineering (FYE) students.
+
+- `order_multiway()`   for ordering Cleveland multiway data.
 
 ## Program data
 
@@ -169,7 +176,7 @@ can drop two columns to reduce the visual clutter.
 ``` r
 first_pass <- filter_programs(cip, "music")
 second_pass <- filter_programs(first_pass, "^50")
-second_pass[, c("cip2", "cip2name"):= NULL]
+second_pass[, c("cip2", "cip2name") := NULL]
 second_pass
 #>                                 cip6name   cip6
 #>                                   <char> <char>
@@ -207,7 +214,7 @@ more columns.
 
 ``` r
 third_pass <- filter_programs(second_pass, "^5009")
-third_pass[, c("cip4", "cip4name"):= NULL]
+third_pass[, c("cip4", "cip4name") := NULL]
 third_pass
 #>                                                 cip6name   cip6
 #>                                                   <char> <char>
@@ -238,29 +245,29 @@ program labels aggregate the 6-digit codes into groups that are relevant
 to the study goals.
 
 ``` r
-programs <- third_pass[, .(cip6name, cip6, program = "TBD")]
+programs <- third_pass[, .(cip6name, cip6, program = "to be determined")]
 programs[, cip6name := gsub("Violin, Viola, Guitar", "Vn, Va, Gtr", cip6name)]
 programs[, cip6name := gsub("Instruments", "Instr", cip6name)]
 programs
-#>                                 cip6name   cip6 program
-#>                                   <char> <char>  <char>
-#>  1:                       Music, General 500901     TBD
-#>  2: Music History, Literature and Theory 500902     TBD
-#>  3:           Music Performance, General 500903     TBD
-#>  4:         Music Theory and Composition 500904     TBD
-#>  5:       Musicology and Ethnomusicology 500905     TBD
-#>  6:                           Conducting 500906     TBD
-#>  7:                      Piano and Organ 500907     TBD
-#>  8:                      Voice and Opera 500908     TBD
-#>  9:   Music Management and Merchandising 500909     TBD
-#> 10:                   Jazz, Jazz Studies 500910     TBD
-#> 11: Vn, Va, Gtr and Other Stringed Instr 500911     TBD
-#> 12:                       Music Pedagogy 500912     TBD
-#> 13:                     Music Technology 500913     TBD
-#> 14:                          Brass Instr 500914     TBD
-#> 15:                       Woodwind Instr 500915     TBD
-#> 16:                     Percussion Instr 500916     TBD
-#> 17:                         Music, Other 500999     TBD
+#>                                 cip6name   cip6          program
+#>                                   <char> <char>           <char>
+#>  1:                       Music, General 500901 to be determined
+#>  2: Music History, Literature and Theory 500902 to be determined
+#>  3:           Music Performance, General 500903 to be determined
+#>  4:         Music Theory and Composition 500904 to be determined
+#>  5:       Musicology and Ethnomusicology 500905 to be determined
+#>  6:                           Conducting 500906 to be determined
+#>  7:                      Piano and Organ 500907 to be determined
+#>  8:                      Voice and Opera 500908 to be determined
+#>  9:   Music Management and Merchandising 500909 to be determined
+#> 10:                   Jazz, Jazz Studies 500910 to be determined
+#> 11: Vn, Va, Gtr and Other Stringed Instr 500911 to be determined
+#> 12:                       Music Pedagogy 500912 to be determined
+#> 13:                     Music Technology 500913 to be determined
+#> 14:                          Brass Instr 500914 to be determined
+#> 15:                       Woodwind Instr 500915 to be determined
+#> 16:                     Percussion Instr 500916 to be determined
+#> 17:                         Music, Other 500999 to be determined
 ```
 
 For example, here I label all programs I might consider part of an
@@ -270,25 +277,25 @@ For example, here I label all programs I might consider part of an
 orch_instr <- c("brass|wood|perc|conduct|vn")
 programs[cip6name %ilike% orch_instr, program := "Orchestra"]
 programs
-#>                                 cip6name   cip6   program
-#>                                   <char> <char>    <char>
-#>  1:                       Music, General 500901       TBD
-#>  2: Music History, Literature and Theory 500902       TBD
-#>  3:           Music Performance, General 500903       TBD
-#>  4:         Music Theory and Composition 500904       TBD
-#>  5:       Musicology and Ethnomusicology 500905       TBD
-#>  6:                           Conducting 500906 Orchestra
-#>  7:                      Piano and Organ 500907       TBD
-#>  8:                      Voice and Opera 500908       TBD
-#>  9:   Music Management and Merchandising 500909       TBD
-#> 10:                   Jazz, Jazz Studies 500910       TBD
-#> 11: Vn, Va, Gtr and Other Stringed Instr 500911 Orchestra
-#> 12:                       Music Pedagogy 500912       TBD
-#> 13:                     Music Technology 500913       TBD
-#> 14:                          Brass Instr 500914 Orchestra
-#> 15:                       Woodwind Instr 500915 Orchestra
-#> 16:                     Percussion Instr 500916 Orchestra
-#> 17:                         Music, Other 500999       TBD
+#>                                 cip6name   cip6          program
+#>                                   <char> <char>           <char>
+#>  1:                       Music, General 500901 to be determined
+#>  2: Music History, Literature and Theory 500902 to be determined
+#>  3:           Music Performance, General 500903 to be determined
+#>  4:         Music Theory and Composition 500904 to be determined
+#>  5:       Musicology and Ethnomusicology 500905 to be determined
+#>  6:                           Conducting 500906        Orchestra
+#>  7:                      Piano and Organ 500907 to be determined
+#>  8:                      Voice and Opera 500908 to be determined
+#>  9:   Music Management and Merchandising 500909 to be determined
+#> 10:                   Jazz, Jazz Studies 500910 to be determined
+#> 11: Vn, Va, Gtr and Other Stringed Instr 500911        Orchestra
+#> 12:                       Music Pedagogy 500912 to be determined
+#> 13:                     Music Technology 500913 to be determined
+#> 14:                          Brass Instr 500914        Orchestra
+#> 15:                       Woodwind Instr 500915        Orchestra
+#> 16:                     Percussion Instr 500916        Orchestra
+#> 17:                         Music, Other 500999 to be determined
 ```
 
 The structure of this data frame is representative of the `programs`
@@ -299,7 +306,7 @@ NCES 6-digit program name, and our own program labels.
 
 *Credibly subset the source data and refine the population.*
 
-For this article we load the `student`, `term`, and `degree` tables from
+For this article we load the `student,` `term,` and `degree` tables from
 midfielddata.
 
 ``` r
@@ -307,6 +314,8 @@ data(student, term, degree)
 ```
 
 The data tables are linked by `mcid`, the anonymized student ID.
+`look_at()` is a midfieldr convenience function that wraps base `str()`
+with preset arguments.
 
 ``` r
 look_at(student)
@@ -350,9 +359,6 @@ look_at(degree)
 #>  $ degree     : chr  "Bachelor of Science in Electrical Engineering" "Bachelo"..
 ```
 
-`look_at()` is a midfieldr convenience function that wraps base `str()`
-with preset arguments.
-
 We copy our “source” material under separate names (and locations in
 memory).
 
@@ -363,9 +369,9 @@ degree_source <- copy(degree)
 
 # demonstrate that memory addresses are different
 address(student)
-#> [1] "0000019bd074d6e8"
+#> [1] "000002513171af28"
 address(student_source)
-#> [1] "0000019bd296d860"
+#> [1] "0000025133967260"
 ```
 
 Then we can use the shorter names such as `term` and `degree` as we
@@ -396,7 +402,8 @@ In midfieldr:
 
 - `timely_term()` yields the timely-completion terms for every student.
 - `data_sufficiency()` tests for data sufficiency for every student .
-- `post_bacc_terms()` identifies post-baccalaureate terms to exclude.
+- `post_completion_terms()` identifies post-baccalaureate terms to
+  exclude.
 - `completion_status()` yields the completion status for every student
   passing the data sufficiency test.
 
@@ -429,7 +436,7 @@ This data frame contains the required inputs for both
 `data_sufficiency()` and `timely_completion()`.
 
 ``` r
-DT <- timely_term(DT, midfield_table = term)
+DT <- timely_term(DT, midf_table = term)
 
 DT
 #>                  mcid term_i       level_i adj_span timely_term
@@ -453,7 +460,7 @@ rows to be included or excluded based on the data sufficiency finding,
 and generates additional columns of supporting information.
 
 ``` r
-DT <- data_sufficiency(DT, midfield_table = term)
+DT <- data_sufficiency(DT, midf_table = term)
 
 DT
 #>                  mcid term_i       level_i adj_span timely_term   institution
@@ -547,7 +554,7 @@ all.equal(population$mcid, unique(term_source$mcid))
 #> [1] TRUE
 ```
 
-## `post_bacc_terms()`
+## `post_completion_terms()`
 
 *Identify rows of post-baccalaureate terms to exclude.*
 
@@ -555,16 +562,16 @@ In most cases, we are not generally interested in academic terms beyond
 the first degree term, so we use the results of this function to exclude
 post-first-degree terms from the source data.
 
-`post_bacc_terms()` identifies terms later than the first baccalaureate,
-if any.
+`post_completion_terms()` identifies terms later than the first
+baccalaureate, if any.
 
 ``` r
-term <- post_bacc_terms(term_source, midfield_table = degree)
-degree <- post_bacc_terms(degree_source, midfield_table = degree)
+term <- post_completion_terms(term_source, midf_table = degree)
+degree <- post_completion_terms(degree_source, midf_table = degree)
 ```
 
-`post_bacc_terms()` adds a column indicating the cluster a term belongs
-to with respect to the first degree term.
+`post_completion_terms()` adds a column indicating the cluster a term
+belongs to with respect to the first degree term.
 
 ``` r
 look_at(term)
@@ -730,8 +737,8 @@ includes columns for the timely term and degree term as supporting
 information.
 
 ``` r
-DT <- timely_term(DT, midfield_table = term)
-DT <- completion_status(DT, midfield_table = degree)
+DT <- timely_term(DT, midf_table = term)
+DT <- completion_status(DT, midf_table = degree)
 
 DT
 #>                  mcid term_i       level_i adj_span timely_term term_degree

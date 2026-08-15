@@ -1,13 +1,11 @@
 # Case study
 
 
-In this study we present a complete case with a focus on our process and
-its rationale. We leave the midfieldr function details to subsequent
-articles.
+A complete case study illustrating how we work with longitudinal data
+and how midfieldr supports our process. Many of the topics introduced
+here are developed in depth in subsequent articles.
 
 ## Description
-
-We define the parameters of our case study as follows:
 
 *Data.*   Program CIP codes from midfieldr `cip.` Student records from
 the practice data in midfielddata: `student, term,` and `degree.`
@@ -51,7 +49,7 @@ We use these packages:
 library("midfieldr")
 library("midfielddata")
 library("data.table")
-library("gt")      # for tables
+library("gt") # for tables
 library("ggplot2") # for charts
 ```
 
@@ -348,7 +346,7 @@ student <- select_basic_cols(student)
 term <- select_basic_cols(term)
 degree <- select_basic_cols(degree)
 
-student 
+student
 #>                  mcid          race    sex
 #>                <char>        <char> <char>
 #>     1: MCID3111142225         Asian   Male
@@ -385,20 +383,20 @@ degree
 For comparison as we refine the population, we start with the following
 number of rows in the original data frames.
 
-<div id="ltdgpomyua" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ltdgpomyua table {
+<div id="olbrfihhei" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#olbrfihhei table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-&#10;#ltdgpomyua thead, #ltdgpomyua tbody, #ltdgpomyua tfoot, #ltdgpomyua tr, #ltdgpomyua td, #ltdgpomyua th {
+&#10;#olbrfihhei thead, #olbrfihhei tbody, #olbrfihhei tfoot, #olbrfihhei tr, #olbrfihhei td, #olbrfihhei th {
   border-style: none;
 }
-&#10;#ltdgpomyua p {
+&#10;#olbrfihhei p {
   margin: 0;
   padding: 0;
 }
-&#10;#ltdgpomyua .gt_table {
+&#10;#olbrfihhei .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -423,11 +421,11 @@ number of rows in the original data frames.
   border-left-width: 2px;
   border-left-color: #D3D3D3;
 }
-&#10;#ltdgpomyua .gt_caption {
+&#10;#olbrfihhei .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
-&#10;#ltdgpomyua .gt_title {
+&#10;#olbrfihhei .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -438,7 +436,7 @@ number of rows in the original data frames.
   border-bottom-color: #FFFFFF;
   border-bottom-width: 0;
 }
-&#10;#ltdgpomyua .gt_subtitle {
+&#10;#olbrfihhei .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -449,7 +447,7 @@ number of rows in the original data frames.
   border-top-color: #FFFFFF;
   border-top-width: 0;
 }
-&#10;#ltdgpomyua .gt_heading {
+&#10;#olbrfihhei .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -460,12 +458,12 @@ number of rows in the original data frames.
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#ltdgpomyua .gt_bottom_border {
+&#10;#olbrfihhei .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#ltdgpomyua .gt_col_headings {
+&#10;#olbrfihhei .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -479,7 +477,7 @@ number of rows in the original data frames.
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#ltdgpomyua .gt_col_heading {
+&#10;#olbrfihhei .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -498,7 +496,7 @@ number of rows in the original data frames.
   padding-right: 5px;
   overflow-x: hidden;
 }
-&#10;#ltdgpomyua .gt_column_spanner_outer {
+&#10;#olbrfihhei .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -509,13 +507,13 @@ number of rows in the original data frames.
   padding-left: 4px;
   padding-right: 4px;
 }
-&#10;#ltdgpomyua .gt_column_spanner_outer:first-child {
+&#10;#olbrfihhei .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
-&#10;#ltdgpomyua .gt_column_spanner_outer:last-child {
+&#10;#olbrfihhei .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
-&#10;#ltdgpomyua .gt_column_spanner {
+&#10;#olbrfihhei .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -526,10 +524,10 @@ number of rows in the original data frames.
   display: inline-block;
   width: 100%;
 }
-&#10;#ltdgpomyua .gt_spanner_row {
+&#10;#olbrfihhei .gt_spanner_row {
   border-bottom-style: hidden;
 }
-&#10;#ltdgpomyua .gt_group_heading {
+&#10;#olbrfihhei .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -554,7 +552,7 @@ number of rows in the original data frames.
   vertical-align: middle;
   text-align: left;
 }
-&#10;#ltdgpomyua .gt_empty_group_heading {
+&#10;#olbrfihhei .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -568,13 +566,13 @@ number of rows in the original data frames.
   border-bottom-color: #5F5F5F;
   vertical-align: middle;
 }
-&#10;#ltdgpomyua .gt_from_md > :first-child {
+&#10;#olbrfihhei .gt_from_md > :first-child {
   margin-top: 0;
 }
-&#10;#ltdgpomyua .gt_from_md > :last-child {
+&#10;#olbrfihhei .gt_from_md > :last-child {
   margin-bottom: 0;
 }
-&#10;#ltdgpomyua .gt_row {
+&#10;#olbrfihhei .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -592,7 +590,7 @@ number of rows in the original data frames.
   vertical-align: middle;
   overflow-x: hidden;
 }
-&#10;#ltdgpomyua .gt_stub {
+&#10;#olbrfihhei .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -604,7 +602,7 @@ number of rows in the original data frames.
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#ltdgpomyua .gt_stub_row_group {
+&#10;#olbrfihhei .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -617,13 +615,13 @@ number of rows in the original data frames.
   padding-right: 5px;
   vertical-align: top;
 }
-&#10;#ltdgpomyua .gt_row_group_first td {
+&#10;#olbrfihhei .gt_row_group_first td {
   border-top-width: 2px;
 }
-&#10;#ltdgpomyua .gt_row_group_first th {
+&#10;#olbrfihhei .gt_row_group_first th {
   border-top-width: 2px;
 }
-&#10;#ltdgpomyua .gt_summary_row {
+&#10;#olbrfihhei .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -632,14 +630,14 @@ number of rows in the original data frames.
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#ltdgpomyua .gt_first_summary_row {
+&#10;#olbrfihhei .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
-&#10;#ltdgpomyua .gt_first_summary_row.thick {
+&#10;#olbrfihhei .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
-&#10;#ltdgpomyua .gt_last_summary_row {
+&#10;#olbrfihhei .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -648,7 +646,7 @@ number of rows in the original data frames.
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#ltdgpomyua .gt_grand_summary_row {
+&#10;#olbrfihhei .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -657,7 +655,7 @@ number of rows in the original data frames.
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#ltdgpomyua .gt_first_grand_summary_row {
+&#10;#olbrfihhei .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -666,7 +664,7 @@ number of rows in the original data frames.
   border-top-width: 6px;
   border-top-color: #5F5F5F;
 }
-&#10;#ltdgpomyua .gt_last_grand_summary_row_top {
+&#10;#olbrfihhei .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -675,10 +673,10 @@ number of rows in the original data frames.
   border-bottom-width: 6px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#ltdgpomyua .gt_striped {
+&#10;#olbrfihhei .gt_striped {
   background-color: #F4F4F4;
 }
-&#10;#ltdgpomyua .gt_table_body {
+&#10;#olbrfihhei .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -686,7 +684,7 @@ number of rows in the original data frames.
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#ltdgpomyua .gt_footnotes {
+&#10;#olbrfihhei .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -699,7 +697,7 @@ number of rows in the original data frames.
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#ltdgpomyua .gt_footnote {
+&#10;#olbrfihhei .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -707,7 +705,7 @@ number of rows in the original data frames.
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#ltdgpomyua .gt_sourcenotes {
+&#10;#olbrfihhei .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -720,64 +718,64 @@ number of rows in the original data frames.
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#ltdgpomyua .gt_sourcenote {
+&#10;#olbrfihhei .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#ltdgpomyua .gt_left {
+&#10;#olbrfihhei .gt_left {
   text-align: left;
 }
-&#10;#ltdgpomyua .gt_center {
+&#10;#olbrfihhei .gt_center {
   text-align: center;
 }
-&#10;#ltdgpomyua .gt_right {
+&#10;#olbrfihhei .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-&#10;#ltdgpomyua .gt_font_normal {
+&#10;#olbrfihhei .gt_font_normal {
   font-weight: normal;
 }
-&#10;#ltdgpomyua .gt_font_bold {
+&#10;#olbrfihhei .gt_font_bold {
   font-weight: bold;
 }
-&#10;#ltdgpomyua .gt_font_italic {
+&#10;#olbrfihhei .gt_font_italic {
   font-style: italic;
 }
-&#10;#ltdgpomyua .gt_super {
+&#10;#olbrfihhei .gt_super {
   font-size: 65%;
 }
-&#10;#ltdgpomyua .gt_footnote_marks {
+&#10;#olbrfihhei .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
-&#10;#ltdgpomyua .gt_asterisk {
+&#10;#olbrfihhei .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
-&#10;#ltdgpomyua .gt_indent_1 {
+&#10;#olbrfihhei .gt_indent_1 {
   text-indent: 5px;
 }
-&#10;#ltdgpomyua .gt_indent_2 {
+&#10;#olbrfihhei .gt_indent_2 {
   text-indent: 10px;
 }
-&#10;#ltdgpomyua .gt_indent_3 {
+&#10;#olbrfihhei .gt_indent_3 {
   text-indent: 15px;
 }
-&#10;#ltdgpomyua .gt_indent_4 {
+&#10;#olbrfihhei .gt_indent_4 {
   text-indent: 20px;
 }
-&#10;#ltdgpomyua .gt_indent_5 {
+&#10;#olbrfihhei .gt_indent_5 {
   text-indent: 25px;
 }
-&#10;#ltdgpomyua .katex-display {
+&#10;#olbrfihhei .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
-&#10;#ltdgpomyua div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+&#10;#olbrfihhei div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -852,7 +850,7 @@ We use `timely_term()` to determine the timely completion term for every
 student and add columns to the data frame to support those findings.
 
 ``` r
-DT <- timely_term(DT, midfield_table = term)
+DT <- timely_term(DT, midf_table = term)
 DT
 #>                  mcid term_i       level_i adj_span timely_term
 #>                <char> <char>        <char>    <num>      <char>
@@ -887,7 +885,7 @@ that pass the data sufficiency test and those that do not and add
 columns to the data frame to support those findings.
 
 ``` r
-DT <- data_sufficiency(DT, midfield_table = term)
+DT <- data_sufficiency(DT, midf_table = term)
 DT
 #>                  mcid term_i timely_term   institution lower_limit upper_limit
 #>                <char> <char>      <char>        <char>      <char>      <char>
@@ -985,20 +983,20 @@ term_source <- population[term_source, on = "mcid", nomatch = NULL]
 degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
 ```
 
-<div id="efidizfagp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#efidizfagp table {
+<div id="tuvhvytuua" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#tuvhvytuua table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-&#10;#efidizfagp thead, #efidizfagp tbody, #efidizfagp tfoot, #efidizfagp tr, #efidizfagp td, #efidizfagp th {
+&#10;#tuvhvytuua thead, #tuvhvytuua tbody, #tuvhvytuua tfoot, #tuvhvytuua tr, #tuvhvytuua td, #tuvhvytuua th {
   border-style: none;
 }
-&#10;#efidizfagp p {
+&#10;#tuvhvytuua p {
   margin: 0;
   padding: 0;
 }
-&#10;#efidizfagp .gt_table {
+&#10;#tuvhvytuua .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1023,11 +1021,11 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   border-left-width: 2px;
   border-left-color: #D3D3D3;
 }
-&#10;#efidizfagp .gt_caption {
+&#10;#tuvhvytuua .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
-&#10;#efidizfagp .gt_title {
+&#10;#tuvhvytuua .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1038,7 +1036,7 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   border-bottom-color: #FFFFFF;
   border-bottom-width: 0;
 }
-&#10;#efidizfagp .gt_subtitle {
+&#10;#tuvhvytuua .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1049,7 +1047,7 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   border-top-color: #FFFFFF;
   border-top-width: 0;
 }
-&#10;#efidizfagp .gt_heading {
+&#10;#tuvhvytuua .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1060,12 +1058,12 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#efidizfagp .gt_bottom_border {
+&#10;#tuvhvytuua .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#efidizfagp .gt_col_headings {
+&#10;#tuvhvytuua .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -1079,7 +1077,7 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#efidizfagp .gt_col_heading {
+&#10;#tuvhvytuua .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1098,7 +1096,7 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   padding-right: 5px;
   overflow-x: hidden;
 }
-&#10;#efidizfagp .gt_column_spanner_outer {
+&#10;#tuvhvytuua .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1109,13 +1107,13 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   padding-left: 4px;
   padding-right: 4px;
 }
-&#10;#efidizfagp .gt_column_spanner_outer:first-child {
+&#10;#tuvhvytuua .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
-&#10;#efidizfagp .gt_column_spanner_outer:last-child {
+&#10;#tuvhvytuua .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
-&#10;#efidizfagp .gt_column_spanner {
+&#10;#tuvhvytuua .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -1126,10 +1124,10 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   display: inline-block;
   width: 100%;
 }
-&#10;#efidizfagp .gt_spanner_row {
+&#10;#tuvhvytuua .gt_spanner_row {
   border-bottom-style: hidden;
 }
-&#10;#efidizfagp .gt_group_heading {
+&#10;#tuvhvytuua .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1154,7 +1152,7 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   vertical-align: middle;
   text-align: left;
 }
-&#10;#efidizfagp .gt_empty_group_heading {
+&#10;#tuvhvytuua .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1168,13 +1166,13 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   border-bottom-color: #5F5F5F;
   vertical-align: middle;
 }
-&#10;#efidizfagp .gt_from_md > :first-child {
+&#10;#tuvhvytuua .gt_from_md > :first-child {
   margin-top: 0;
 }
-&#10;#efidizfagp .gt_from_md > :last-child {
+&#10;#tuvhvytuua .gt_from_md > :last-child {
   margin-bottom: 0;
 }
-&#10;#efidizfagp .gt_row {
+&#10;#tuvhvytuua .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1192,7 +1190,7 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   vertical-align: middle;
   overflow-x: hidden;
 }
-&#10;#efidizfagp .gt_stub {
+&#10;#tuvhvytuua .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -1204,7 +1202,7 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#efidizfagp .gt_stub_row_group {
+&#10;#tuvhvytuua .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1217,13 +1215,13 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   padding-right: 5px;
   vertical-align: top;
 }
-&#10;#efidizfagp .gt_row_group_first td {
+&#10;#tuvhvytuua .gt_row_group_first td {
   border-top-width: 2px;
 }
-&#10;#efidizfagp .gt_row_group_first th {
+&#10;#tuvhvytuua .gt_row_group_first th {
   border-top-width: 2px;
 }
-&#10;#efidizfagp .gt_summary_row {
+&#10;#tuvhvytuua .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1232,14 +1230,14 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#efidizfagp .gt_first_summary_row {
+&#10;#tuvhvytuua .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
-&#10;#efidizfagp .gt_first_summary_row.thick {
+&#10;#tuvhvytuua .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
-&#10;#efidizfagp .gt_last_summary_row {
+&#10;#tuvhvytuua .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1248,7 +1246,7 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#efidizfagp .gt_grand_summary_row {
+&#10;#tuvhvytuua .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -1257,7 +1255,7 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#efidizfagp .gt_first_grand_summary_row {
+&#10;#tuvhvytuua .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1266,7 +1264,7 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   border-top-width: 6px;
   border-top-color: #5F5F5F;
 }
-&#10;#efidizfagp .gt_last_grand_summary_row_top {
+&#10;#tuvhvytuua .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1275,10 +1273,10 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   border-bottom-width: 6px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#efidizfagp .gt_striped {
+&#10;#tuvhvytuua .gt_striped {
   background-color: #F4F4F4;
 }
-&#10;#efidizfagp .gt_table_body {
+&#10;#tuvhvytuua .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -1286,7 +1284,7 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#efidizfagp .gt_footnotes {
+&#10;#tuvhvytuua .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1299,7 +1297,7 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#efidizfagp .gt_footnote {
+&#10;#tuvhvytuua .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1307,7 +1305,7 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#efidizfagp .gt_sourcenotes {
+&#10;#tuvhvytuua .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1320,64 +1318,64 @@ degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#efidizfagp .gt_sourcenote {
+&#10;#tuvhvytuua .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#efidizfagp .gt_left {
+&#10;#tuvhvytuua .gt_left {
   text-align: left;
 }
-&#10;#efidizfagp .gt_center {
+&#10;#tuvhvytuua .gt_center {
   text-align: center;
 }
-&#10;#efidizfagp .gt_right {
+&#10;#tuvhvytuua .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-&#10;#efidizfagp .gt_font_normal {
+&#10;#tuvhvytuua .gt_font_normal {
   font-weight: normal;
 }
-&#10;#efidizfagp .gt_font_bold {
+&#10;#tuvhvytuua .gt_font_bold {
   font-weight: bold;
 }
-&#10;#efidizfagp .gt_font_italic {
+&#10;#tuvhvytuua .gt_font_italic {
   font-style: italic;
 }
-&#10;#efidizfagp .gt_super {
+&#10;#tuvhvytuua .gt_super {
   font-size: 65%;
 }
-&#10;#efidizfagp .gt_footnote_marks {
+&#10;#tuvhvytuua .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
-&#10;#efidizfagp .gt_asterisk {
+&#10;#tuvhvytuua .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
-&#10;#efidizfagp .gt_indent_1 {
+&#10;#tuvhvytuua .gt_indent_1 {
   text-indent: 5px;
 }
-&#10;#efidizfagp .gt_indent_2 {
+&#10;#tuvhvytuua .gt_indent_2 {
   text-indent: 10px;
 }
-&#10;#efidizfagp .gt_indent_3 {
+&#10;#tuvhvytuua .gt_indent_3 {
   text-indent: 15px;
 }
-&#10;#efidizfagp .gt_indent_4 {
+&#10;#tuvhvytuua .gt_indent_4 {
   text-indent: 20px;
 }
-&#10;#efidizfagp .gt_indent_5 {
+&#10;#tuvhvytuua .gt_indent_5 {
   text-indent: 25px;
 }
-&#10;#efidizfagp .katex-display {
+&#10;#tuvhvytuua .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
-&#10;#efidizfagp div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+&#10;#tuvhvytuua div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1422,8 +1420,8 @@ degree term and adds columns to the data frame to support those
 findings.
 
 ``` r
-term <- post_completion_terms(term, midfield_table = degree)
-degree <- post_completion_terms(degree, midfield_table = degree)
+term <- post_completion_terms(term, midf_table = degree)
+degree <- post_completion_terms(degree, midf_table = degree)
 
 term
 #>                   mcid   term   cip6   institution          level      standing
@@ -1495,20 +1493,20 @@ term_source <- copy(term)
 degree_source <- copy(degree)
 ```
 
-<div id="rnukbnhlqt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#rnukbnhlqt table {
+<div id="vcvalenaoh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#vcvalenaoh table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-&#10;#rnukbnhlqt thead, #rnukbnhlqt tbody, #rnukbnhlqt tfoot, #rnukbnhlqt tr, #rnukbnhlqt td, #rnukbnhlqt th {
+&#10;#vcvalenaoh thead, #vcvalenaoh tbody, #vcvalenaoh tfoot, #vcvalenaoh tr, #vcvalenaoh td, #vcvalenaoh th {
   border-style: none;
 }
-&#10;#rnukbnhlqt p {
+&#10;#vcvalenaoh p {
   margin: 0;
   padding: 0;
 }
-&#10;#rnukbnhlqt .gt_table {
+&#10;#vcvalenaoh .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1533,11 +1531,11 @@ degree_source <- copy(degree)
   border-left-width: 2px;
   border-left-color: #D3D3D3;
 }
-&#10;#rnukbnhlqt .gt_caption {
+&#10;#vcvalenaoh .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
-&#10;#rnukbnhlqt .gt_title {
+&#10;#vcvalenaoh .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1548,7 +1546,7 @@ degree_source <- copy(degree)
   border-bottom-color: #FFFFFF;
   border-bottom-width: 0;
 }
-&#10;#rnukbnhlqt .gt_subtitle {
+&#10;#vcvalenaoh .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1559,7 +1557,7 @@ degree_source <- copy(degree)
   border-top-color: #FFFFFF;
   border-top-width: 0;
 }
-&#10;#rnukbnhlqt .gt_heading {
+&#10;#vcvalenaoh .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1570,12 +1568,12 @@ degree_source <- copy(degree)
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#rnukbnhlqt .gt_bottom_border {
+&#10;#vcvalenaoh .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#rnukbnhlqt .gt_col_headings {
+&#10;#vcvalenaoh .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -1589,7 +1587,7 @@ degree_source <- copy(degree)
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#rnukbnhlqt .gt_col_heading {
+&#10;#vcvalenaoh .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1608,7 +1606,7 @@ degree_source <- copy(degree)
   padding-right: 5px;
   overflow-x: hidden;
 }
-&#10;#rnukbnhlqt .gt_column_spanner_outer {
+&#10;#vcvalenaoh .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1619,13 +1617,13 @@ degree_source <- copy(degree)
   padding-left: 4px;
   padding-right: 4px;
 }
-&#10;#rnukbnhlqt .gt_column_spanner_outer:first-child {
+&#10;#vcvalenaoh .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
-&#10;#rnukbnhlqt .gt_column_spanner_outer:last-child {
+&#10;#vcvalenaoh .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
-&#10;#rnukbnhlqt .gt_column_spanner {
+&#10;#vcvalenaoh .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -1636,10 +1634,10 @@ degree_source <- copy(degree)
   display: inline-block;
   width: 100%;
 }
-&#10;#rnukbnhlqt .gt_spanner_row {
+&#10;#vcvalenaoh .gt_spanner_row {
   border-bottom-style: hidden;
 }
-&#10;#rnukbnhlqt .gt_group_heading {
+&#10;#vcvalenaoh .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1664,7 +1662,7 @@ degree_source <- copy(degree)
   vertical-align: middle;
   text-align: left;
 }
-&#10;#rnukbnhlqt .gt_empty_group_heading {
+&#10;#vcvalenaoh .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1678,13 +1676,13 @@ degree_source <- copy(degree)
   border-bottom-color: #5F5F5F;
   vertical-align: middle;
 }
-&#10;#rnukbnhlqt .gt_from_md > :first-child {
+&#10;#vcvalenaoh .gt_from_md > :first-child {
   margin-top: 0;
 }
-&#10;#rnukbnhlqt .gt_from_md > :last-child {
+&#10;#vcvalenaoh .gt_from_md > :last-child {
   margin-bottom: 0;
 }
-&#10;#rnukbnhlqt .gt_row {
+&#10;#vcvalenaoh .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1702,7 +1700,7 @@ degree_source <- copy(degree)
   vertical-align: middle;
   overflow-x: hidden;
 }
-&#10;#rnukbnhlqt .gt_stub {
+&#10;#vcvalenaoh .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -1714,7 +1712,7 @@ degree_source <- copy(degree)
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#rnukbnhlqt .gt_stub_row_group {
+&#10;#vcvalenaoh .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1727,13 +1725,13 @@ degree_source <- copy(degree)
   padding-right: 5px;
   vertical-align: top;
 }
-&#10;#rnukbnhlqt .gt_row_group_first td {
+&#10;#vcvalenaoh .gt_row_group_first td {
   border-top-width: 2px;
 }
-&#10;#rnukbnhlqt .gt_row_group_first th {
+&#10;#vcvalenaoh .gt_row_group_first th {
   border-top-width: 2px;
 }
-&#10;#rnukbnhlqt .gt_summary_row {
+&#10;#vcvalenaoh .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1742,14 +1740,14 @@ degree_source <- copy(degree)
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#rnukbnhlqt .gt_first_summary_row {
+&#10;#vcvalenaoh .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
-&#10;#rnukbnhlqt .gt_first_summary_row.thick {
+&#10;#vcvalenaoh .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
-&#10;#rnukbnhlqt .gt_last_summary_row {
+&#10;#vcvalenaoh .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1758,7 +1756,7 @@ degree_source <- copy(degree)
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#rnukbnhlqt .gt_grand_summary_row {
+&#10;#vcvalenaoh .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -1767,7 +1765,7 @@ degree_source <- copy(degree)
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#rnukbnhlqt .gt_first_grand_summary_row {
+&#10;#vcvalenaoh .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1776,7 +1774,7 @@ degree_source <- copy(degree)
   border-top-width: 6px;
   border-top-color: #5F5F5F;
 }
-&#10;#rnukbnhlqt .gt_last_grand_summary_row_top {
+&#10;#vcvalenaoh .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1785,10 +1783,10 @@ degree_source <- copy(degree)
   border-bottom-width: 6px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#rnukbnhlqt .gt_striped {
+&#10;#vcvalenaoh .gt_striped {
   background-color: #F4F4F4;
 }
-&#10;#rnukbnhlqt .gt_table_body {
+&#10;#vcvalenaoh .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -1796,7 +1794,7 @@ degree_source <- copy(degree)
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#rnukbnhlqt .gt_footnotes {
+&#10;#vcvalenaoh .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1809,7 +1807,7 @@ degree_source <- copy(degree)
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#rnukbnhlqt .gt_footnote {
+&#10;#vcvalenaoh .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1817,7 +1815,7 @@ degree_source <- copy(degree)
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#rnukbnhlqt .gt_sourcenotes {
+&#10;#vcvalenaoh .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1830,64 +1828,64 @@ degree_source <- copy(degree)
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#rnukbnhlqt .gt_sourcenote {
+&#10;#vcvalenaoh .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#rnukbnhlqt .gt_left {
+&#10;#vcvalenaoh .gt_left {
   text-align: left;
 }
-&#10;#rnukbnhlqt .gt_center {
+&#10;#vcvalenaoh .gt_center {
   text-align: center;
 }
-&#10;#rnukbnhlqt .gt_right {
+&#10;#vcvalenaoh .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-&#10;#rnukbnhlqt .gt_font_normal {
+&#10;#vcvalenaoh .gt_font_normal {
   font-weight: normal;
 }
-&#10;#rnukbnhlqt .gt_font_bold {
+&#10;#vcvalenaoh .gt_font_bold {
   font-weight: bold;
 }
-&#10;#rnukbnhlqt .gt_font_italic {
+&#10;#vcvalenaoh .gt_font_italic {
   font-style: italic;
 }
-&#10;#rnukbnhlqt .gt_super {
+&#10;#vcvalenaoh .gt_super {
   font-size: 65%;
 }
-&#10;#rnukbnhlqt .gt_footnote_marks {
+&#10;#vcvalenaoh .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
-&#10;#rnukbnhlqt .gt_asterisk {
+&#10;#vcvalenaoh .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
-&#10;#rnukbnhlqt .gt_indent_1 {
+&#10;#vcvalenaoh .gt_indent_1 {
   text-indent: 5px;
 }
-&#10;#rnukbnhlqt .gt_indent_2 {
+&#10;#vcvalenaoh .gt_indent_2 {
   text-indent: 10px;
 }
-&#10;#rnukbnhlqt .gt_indent_3 {
+&#10;#vcvalenaoh .gt_indent_3 {
   text-indent: 15px;
 }
-&#10;#rnukbnhlqt .gt_indent_4 {
+&#10;#vcvalenaoh .gt_indent_4 {
   text-indent: 20px;
 }
-&#10;#rnukbnhlqt .gt_indent_5 {
+&#10;#vcvalenaoh .gt_indent_5 {
   text-indent: 25px;
 }
-&#10;#rnukbnhlqt .katex-display {
+&#10;#vcvalenaoh .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
-&#10;#rnukbnhlqt div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+&#10;#vcvalenaoh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2413,10 +2411,11 @@ columns are taken from the `N` column. The `fill` argument replaces
 missing values with zero.
 
 ``` r
-DT <- dcast(DT, 
-            program + sex + race ~ bloc, 
-            value.var = "N", 
-            fill = 0)
+DT <- dcast(DT,
+  program + sex + race ~ bloc,
+  value.var = "N",
+  fill = 0
+)
 setkey(DT, NULL)
 DT
 #>     program    sex            race  ever  grad
@@ -2462,22 +2461,22 @@ enrolled, expressed as a percentage. Stickiness is calculated for each
 combination of program, race/ethnicity, and sex.
 
 ``` r
-DT[, stickiness := round(100 * grad / ever, 1)]
+DT[, stick := round(100 * grad / ever, 1)]
 setkey(DT, NULL)
 DT
-#>     program    sex            race  ever  grad stickiness
-#>      <char> <char>          <char> <int> <int>      <num>
-#>  1:      CE Female           Asian    14    10       71.4
-#>  2:      CE Female           Black     4     1       25.0
-#>  3:      CE Female        Hispanic    13     6       46.2
-#> ---                                                      
-#> 48:      ME   Male Native American     5     1       20.0
-#> 49:      ME   Male   Other/Unknown    81    41       50.6
-#> 50:      ME   Male           White  1587   952       60.0
+#>     program    sex            race  ever  grad stick
+#>      <char> <char>          <char> <int> <int> <num>
+#>  1:      CE Female           Asian    14    10  71.4
+#>  2:      CE Female           Black     4     1  25.0
+#>  3:      CE Female        Hispanic    13     6  46.2
+#> ---                                                 
+#> 48:      ME   Male Native American     5     1  20.0
+#> 49:      ME   Male   Other/Unknown    81    41  50.6
+#> 50:      ME   Male           White  1587   952  60.0
 ```
 
 These data are in block-record form with three key columns (the grouping
-variables), one value column (stickiness), and thus one row per value.
+variables), one value column (stick), and thus one row per value.
 
 ## Dissemination
 
@@ -2489,23 +2488,23 @@ student anonymity can no longer be assured. Here, for example, we have
 
 ``` r
 head(DT[order(grad, ever)], 15L)
-#>     program    sex            race  ever  grad stickiness
-#>      <char> <char>          <char> <int> <int>      <num>
-#>  1:      EE Female Native American     1     0        0.0
-#>  2:      EE   Male Native American     3     0        0.0
-#>  3:      CE Female Native American     1     1      100.0
-#>  4:      CE   Male Native American     3     1       33.3
-#>  5:      CE Female           Black     4     1       25.0
-#>  6:      ME   Male Native American     5     1       20.0
-#>  7:      ME Female           Asian     7     1       14.3
-#>  8:      ME Female           Black     3     2       66.7
-#>  9:     ISE Female   International     6     2       33.3
-#> 10:      CE Female   Other/Unknown     5     3       60.0
-#> 11:      EE Female           Black     6     3       50.0
-#> 12:      EE Female   Other/Unknown     7     3       42.9
-#> 13:      EE Female        Hispanic     8     3       37.5
-#> 14:     ISE   Male        Hispanic     6     4       66.7
-#> 15:      ME Female   Other/Unknown     8     4       50.0
+#>     program    sex            race  ever  grad stick
+#>      <char> <char>          <char> <int> <int> <num>
+#>  1:      EE Female Native American     1     0   0.0
+#>  2:      EE   Male Native American     3     0   0.0
+#>  3:      CE Female Native American     1     1 100.0
+#>  4:      CE   Male Native American     3     1  33.3
+#>  5:      CE Female           Black     4     1  25.0
+#>  6:      ME   Male Native American     5     1  20.0
+#>  7:      ME Female           Asian     7     1  14.3
+#>  8:      ME Female           Black     3     2  66.7
+#>  9:     ISE Female   International     6     2  33.3
+#> 10:      CE Female   Other/Unknown     5     3  60.0
+#> 11:      EE Female           Black     6     3  50.0
+#> 12:      EE Female   Other/Unknown     7     3  42.9
+#> 13:      EE Female        Hispanic     8     3  37.5
+#> 14:     ISE   Male        Hispanic     6     4  66.7
+#> 15:      ME Female   Other/Unknown     8     4  50.0
 ```
 
 When dealing with the full MIDFIELD research data, we typically use
@@ -2515,15 +2514,15 @@ using $\small N > 3$ in the graduate column.
 ``` r
 DT <- DT[grad > 3]
 DT
-#>     program    sex          race  ever  grad stickiness
-#>      <char> <char>        <char> <int> <int>      <num>
-#>  1:      CE Female         Asian    14    10       71.4
-#>  2:      CE Female      Hispanic    13     6       46.2
-#>  3:      CE Female International    23    13       56.5
-#> ---                                                    
-#> 35:      ME   Male International   176    89       50.6
-#> 36:      ME   Male Other/Unknown    81    41       50.6
-#> 37:      ME   Male         White  1587   952       60.0
+#>     program    sex          race  ever  grad stick
+#>      <char> <char>        <char> <int> <int> <num>
+#>  1:      CE Female         Asian    14    10  71.4
+#>  2:      CE Female      Hispanic    13     6  46.2
+#>  3:      CE Female International    23    13  56.5
+#> ---                                               
+#> 35:      ME   Male International   176    89  50.6
+#> 36:      ME   Male Other/Unknown    81    41  50.6
+#> 37:      ME   Male         White  1587   952  60.0
 ```
 
 We have found it useful to report such data with a variable that
@@ -2533,15 +2532,15 @@ combines race/ethnicity and sex.
 DT[, people := paste(race, sex)]
 setcolorder(DT)
 DT
-#>     program    sex          race  ever  grad stickiness               people
-#>      <char> <char>        <char> <int> <int>      <num>               <char>
-#>  1:      CE Female         Asian    14    10       71.4         Asian Female
-#>  2:      CE Female      Hispanic    13     6       46.2      Hispanic Female
-#>  3:      CE Female International    23    13       56.5 International Female
-#> ---                                                                         
-#> 35:      ME   Male International   176    89       50.6   International Male
-#> 36:      ME   Male Other/Unknown    81    41       50.6   Other/Unknown Male
-#> 37:      ME   Male         White  1587   952       60.0           White Male
+#>     program    sex          race  ever  grad stick               people
+#>      <char> <char>        <char> <int> <int> <num>               <char>
+#>  1:      CE Female         Asian    14    10  71.4         Asian Female
+#>  2:      CE Female      Hispanic    13     6  46.2      Hispanic Female
+#>  3:      CE Female International    23    13  56.5 International Female
+#> ---                                                                    
+#> 35:      ME   Male International   176    89  50.6   International Male
+#> 36:      ME   Male Other/Unknown    81    41  50.6   Other/Unknown Male
+#> 37:      ME   Male         White  1587   952  60.0           White Male
 ```
 
 Readers can more readily interpret our charts and tables if the programs
@@ -2555,15 +2554,15 @@ DT[, program := fcase(
   program %like% "ISE", "Industrial/Systems"
 )]
 DT
-#>        program    sex          race  ever  grad stickiness               people
-#>         <char> <char>        <char> <int> <int>      <num>               <char>
-#>  1:      Civil Female         Asian    14    10       71.4         Asian Female
-#>  2:      Civil Female      Hispanic    13     6       46.2      Hispanic Female
-#>  3:      Civil Female International    23    13       56.5 International Female
-#> ---                                                                            
-#> 35: Mechanical   Male International   176    89       50.6   International Male
-#> 36: Mechanical   Male Other/Unknown    81    41       50.6   Other/Unknown Male
-#> 37: Mechanical   Male         White  1587   952       60.0           White Male
+#>        program    sex          race  ever  grad stick               people
+#>         <char> <char>        <char> <int> <int> <num>               <char>
+#>  1:      Civil Female         Asian    14    10  71.4         Asian Female
+#>  2:      Civil Female      Hispanic    13     6  46.2      Hispanic Female
+#>  3:      Civil Female International    23    13  56.5 International Female
+#> ---                                                                       
+#> 35: Mechanical   Male International   176    89  50.6   International Male
+#> 36: Mechanical   Male Other/Unknown    81    41  50.6   Other/Unknown Male
+#> 37: Mechanical   Male         White  1587   952  60.0           White Male
 ```
 
 ### *Table*
@@ -2572,37 +2571,38 @@ Retain the columns that appear in the table. The result is in
 block-record with two key column and one value column.
 
 ``` r
-DT_table <- DT[, .(people, program, stickiness)]
+DT_table <- DT[, .(people, program, stick)]
 setorderv(DT_table, c("people", "program"))
 DT_table
-#>           people            program stickiness
-#>           <char>             <char>      <num>
-#>  1: Asian Female              Civil       71.4
-#>  2: Asian Female         Electrical       57.1
-#>  3: Asian Female Industrial/Systems       66.7
-#>  4:   Asian Male              Civil       75.8
-#>  5:   Asian Male         Electrical       58.2
-#>  6:   Asian Male Industrial/Systems       66.7
-#> ---                                           
-#> 32: White Female Industrial/Systems       74.0
-#> 33: White Female         Mechanical       62.9
-#> 34:   White Male              Civil       64.6
-#> 35:   White Male         Electrical       51.8
-#> 36:   White Male Industrial/Systems       73.0
-#> 37:   White Male         Mechanical       60.0
+#>           people            program stick
+#>           <char>             <char> <num>
+#>  1: Asian Female              Civil  71.4
+#>  2: Asian Female         Electrical  57.1
+#>  3: Asian Female Industrial/Systems  66.7
+#>  4:   Asian Male              Civil  75.8
+#>  5:   Asian Male         Electrical  58.2
+#>  6:   Asian Male Industrial/Systems  66.7
+#> ---                                      
+#> 32: White Female Industrial/Systems  74.0
+#> 33: White Female         Mechanical  62.9
+#> 34:   White Male              Civil  64.6
+#> 35:   White Male         Electrical  51.8
+#> 36:   White Male Industrial/Systems  73.0
+#> 37:   White Male         Mechanical  60.0
 ```
 
 Transform the data to row-record form. The key column `{people}` remains
 in place, the `{program}` column yields the new key columns
 `{Civil, Electrical, etc.}`, and the values in the new columns are taken
-from the `{stickiness}` column. The `fill` argument replaces missing
-values with NA.
+from the `{stick}` column. The `fill` argument replaces missing values
+with NA.
 
 ``` r
-DT_table <- dcast(DT_table, 
-                  people ~ program, 
-                  value.var = "stickiness", 
-                  fill = NA)
+DT_table <- dcast(DT_table,
+  people ~ program,
+  value.var = "stick",
+  fill = NA
+)
 setnames(DT_table, old = "people", new = "People")
 setkey(DT_table, NULL)
 DT_table
@@ -2628,7 +2628,7 @@ NAs with an em-dash to improve readability.
 ``` r
 DT_table |>
   gt() |>
-  sub_missing() |> 
+  sub_missing() |>
   tab_caption("Table 1. Engineering program stickiness (%)") |>
   tab_options(table.font.size = "small") |>
   opt_stylize(style = 1, color = "gray") |>
@@ -2638,20 +2638,20 @@ DT_table |>
   )
 ```
 
-<div id="aqklwzawoq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#aqklwzawoq table {
+<div id="mlwtxzdilo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#mlwtxzdilo table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-&#10;#aqklwzawoq thead, #aqklwzawoq tbody, #aqklwzawoq tfoot, #aqklwzawoq tr, #aqklwzawoq td, #aqklwzawoq th {
+&#10;#mlwtxzdilo thead, #mlwtxzdilo tbody, #mlwtxzdilo tfoot, #mlwtxzdilo tr, #mlwtxzdilo td, #mlwtxzdilo th {
   border-style: none;
 }
-&#10;#aqklwzawoq p {
+&#10;#mlwtxzdilo p {
   margin: 0;
   padding: 0;
 }
-&#10;#aqklwzawoq .gt_table {
+&#10;#mlwtxzdilo .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2676,11 +2676,11 @@ DT_table |>
   border-left-width: 2px;
   border-left-color: #D3D3D3;
 }
-&#10;#aqklwzawoq .gt_caption {
+&#10;#mlwtxzdilo .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
-&#10;#aqklwzawoq .gt_title {
+&#10;#mlwtxzdilo .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2691,7 +2691,7 @@ DT_table |>
   border-bottom-color: #FFFFFF;
   border-bottom-width: 0;
 }
-&#10;#aqklwzawoq .gt_subtitle {
+&#10;#mlwtxzdilo .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2702,7 +2702,7 @@ DT_table |>
   border-top-color: #FFFFFF;
   border-top-width: 0;
 }
-&#10;#aqklwzawoq .gt_heading {
+&#10;#mlwtxzdilo .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2713,12 +2713,12 @@ DT_table |>
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#aqklwzawoq .gt_bottom_border {
+&#10;#mlwtxzdilo .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#aqklwzawoq .gt_col_headings {
+&#10;#mlwtxzdilo .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -2732,7 +2732,7 @@ DT_table |>
   border-right-width: 1px;
   border-right-color: #D3D3D3;
 }
-&#10;#aqklwzawoq .gt_col_heading {
+&#10;#mlwtxzdilo .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2751,7 +2751,7 @@ DT_table |>
   padding-right: 5px;
   overflow-x: hidden;
 }
-&#10;#aqklwzawoq .gt_column_spanner_outer {
+&#10;#mlwtxzdilo .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2762,13 +2762,13 @@ DT_table |>
   padding-left: 4px;
   padding-right: 4px;
 }
-&#10;#aqklwzawoq .gt_column_spanner_outer:first-child {
+&#10;#mlwtxzdilo .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
-&#10;#aqklwzawoq .gt_column_spanner_outer:last-child {
+&#10;#mlwtxzdilo .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
-&#10;#aqklwzawoq .gt_column_spanner {
+&#10;#mlwtxzdilo .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
@@ -2779,10 +2779,10 @@ DT_table |>
   display: inline-block;
   width: 100%;
 }
-&#10;#aqklwzawoq .gt_spanner_row {
+&#10;#mlwtxzdilo .gt_spanner_row {
   border-bottom-style: hidden;
 }
-&#10;#aqklwzawoq .gt_group_heading {
+&#10;#mlwtxzdilo .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2807,7 +2807,7 @@ DT_table |>
   vertical-align: middle;
   text-align: left;
 }
-&#10;#aqklwzawoq .gt_empty_group_heading {
+&#10;#mlwtxzdilo .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2821,13 +2821,13 @@ DT_table |>
   border-bottom-color: #5F5F5F;
   vertical-align: middle;
 }
-&#10;#aqklwzawoq .gt_from_md > :first-child {
+&#10;#mlwtxzdilo .gt_from_md > :first-child {
   margin-top: 0;
 }
-&#10;#aqklwzawoq .gt_from_md > :last-child {
+&#10;#mlwtxzdilo .gt_from_md > :last-child {
   margin-bottom: 0;
 }
-&#10;#aqklwzawoq .gt_row {
+&#10;#mlwtxzdilo .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2845,7 +2845,7 @@ DT_table |>
   vertical-align: middle;
   overflow-x: hidden;
 }
-&#10;#aqklwzawoq .gt_stub {
+&#10;#mlwtxzdilo .gt_stub {
   color: #FFFFFF;
   background-color: #5F5F5F;
   font-size: 100%;
@@ -2857,7 +2857,7 @@ DT_table |>
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#aqklwzawoq .gt_stub_row_group {
+&#10;#mlwtxzdilo .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2870,13 +2870,13 @@ DT_table |>
   padding-right: 5px;
   vertical-align: top;
 }
-&#10;#aqklwzawoq .gt_row_group_first td {
+&#10;#mlwtxzdilo .gt_row_group_first td {
   border-top-width: 2px;
 }
-&#10;#aqklwzawoq .gt_row_group_first th {
+&#10;#mlwtxzdilo .gt_row_group_first th {
   border-top-width: 2px;
 }
-&#10;#aqklwzawoq .gt_summary_row {
+&#10;#mlwtxzdilo .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2885,14 +2885,14 @@ DT_table |>
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#aqklwzawoq .gt_first_summary_row {
+&#10;#mlwtxzdilo .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #5F5F5F;
 }
-&#10;#aqklwzawoq .gt_first_summary_row.thick {
+&#10;#mlwtxzdilo .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
-&#10;#aqklwzawoq .gt_last_summary_row {
+&#10;#mlwtxzdilo .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2901,7 +2901,7 @@ DT_table |>
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#aqklwzawoq .gt_grand_summary_row {
+&#10;#mlwtxzdilo .gt_grand_summary_row {
   color: #333333;
   background-color: #D5D5D5;
   text-transform: inherit;
@@ -2910,7 +2910,7 @@ DT_table |>
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#aqklwzawoq .gt_first_grand_summary_row {
+&#10;#mlwtxzdilo .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2919,7 +2919,7 @@ DT_table |>
   border-top-width: 6px;
   border-top-color: #5F5F5F;
 }
-&#10;#aqklwzawoq .gt_last_grand_summary_row_top {
+&#10;#mlwtxzdilo .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2928,10 +2928,10 @@ DT_table |>
   border-bottom-width: 6px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#aqklwzawoq .gt_striped {
+&#10;#mlwtxzdilo .gt_striped {
   background-color: #F4F4F4;
 }
-&#10;#aqklwzawoq .gt_table_body {
+&#10;#mlwtxzdilo .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #5F5F5F;
@@ -2939,7 +2939,7 @@ DT_table |>
   border-bottom-width: 2px;
   border-bottom-color: #5F5F5F;
 }
-&#10;#aqklwzawoq .gt_footnotes {
+&#10;#mlwtxzdilo .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2952,7 +2952,7 @@ DT_table |>
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#aqklwzawoq .gt_footnote {
+&#10;#mlwtxzdilo .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2960,7 +2960,7 @@ DT_table |>
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#aqklwzawoq .gt_sourcenotes {
+&#10;#mlwtxzdilo .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2973,64 +2973,64 @@ DT_table |>
   border-right-width: 2px;
   border-right-color: #D3D3D3;
 }
-&#10;#aqklwzawoq .gt_sourcenote {
+&#10;#mlwtxzdilo .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
   padding-left: 5px;
   padding-right: 5px;
 }
-&#10;#aqklwzawoq .gt_left {
+&#10;#mlwtxzdilo .gt_left {
   text-align: left;
 }
-&#10;#aqklwzawoq .gt_center {
+&#10;#mlwtxzdilo .gt_center {
   text-align: center;
 }
-&#10;#aqklwzawoq .gt_right {
+&#10;#mlwtxzdilo .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-&#10;#aqklwzawoq .gt_font_normal {
+&#10;#mlwtxzdilo .gt_font_normal {
   font-weight: normal;
 }
-&#10;#aqklwzawoq .gt_font_bold {
+&#10;#mlwtxzdilo .gt_font_bold {
   font-weight: bold;
 }
-&#10;#aqklwzawoq .gt_font_italic {
+&#10;#mlwtxzdilo .gt_font_italic {
   font-style: italic;
 }
-&#10;#aqklwzawoq .gt_super {
+&#10;#mlwtxzdilo .gt_super {
   font-size: 65%;
 }
-&#10;#aqklwzawoq .gt_footnote_marks {
+&#10;#mlwtxzdilo .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
-&#10;#aqklwzawoq .gt_asterisk {
+&#10;#mlwtxzdilo .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
-&#10;#aqklwzawoq .gt_indent_1 {
+&#10;#mlwtxzdilo .gt_indent_1 {
   text-indent: 5px;
 }
-&#10;#aqklwzawoq .gt_indent_2 {
+&#10;#mlwtxzdilo .gt_indent_2 {
   text-indent: 10px;
 }
-&#10;#aqklwzawoq .gt_indent_3 {
+&#10;#mlwtxzdilo .gt_indent_3 {
   text-indent: 15px;
 }
-&#10;#aqklwzawoq .gt_indent_4 {
+&#10;#mlwtxzdilo .gt_indent_4 {
   text-indent: 20px;
 }
-&#10;#aqklwzawoq .gt_indent_5 {
+&#10;#mlwtxzdilo .gt_indent_5 {
   text-indent: 25px;
 }
-&#10;#aqklwzawoq .katex-display {
+&#10;#mlwtxzdilo .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
-&#10;#aqklwzawoq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+&#10;#mlwtxzdilo div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -3113,10 +3113,11 @@ DT_table |>
 ### *Chart*
 
 To use `ggplot()`, we want the data in its original block-record form
-with one value column (stickiness).
+with one value column (stickiness). We can drop two columns as well.
 
 ``` r
 DT_chart <- copy(DT)
+DT_chart[, c("race", "sex") := NULL]
 ```
 
 We (optionally) rearrange the order of columns and rows.
@@ -3126,21 +3127,21 @@ setcolorder(DT_chart, c("people", "program"))
 setkeyv(DT_chart, c("people", "program"))
 setkey(DT_chart, NULL)
 DT_chart
-#>           people            program    sex   race  ever  grad stickiness
-#>           <char>             <char> <char> <char> <int> <int>      <num>
-#>  1: Asian Female              Civil Female  Asian    14    10       71.4
-#>  2: Asian Female         Electrical Female  Asian    21    12       57.1
-#>  3: Asian Female Industrial/Systems Female  Asian    15    10       66.7
-#>  4:   Asian Male              Civil   Male  Asian    33    25       75.8
-#>  5:   Asian Male         Electrical   Male  Asian   122    71       58.2
-#>  6:   Asian Male Industrial/Systems   Male  Asian    21    14       66.7
-#> ---                                                                     
-#> 32: White Female Industrial/Systems Female  White    73    54       74.0
-#> 33: White Female         Mechanical Female  White   213   134       62.9
-#> 34:   White Male              Civil   Male  White   948   612       64.6
-#> 35:   White Male         Electrical   Male  White   848   439       51.8
-#> 36:   White Male Industrial/Systems   Male  White   178   130       73.0
-#> 37:   White Male         Mechanical   Male  White  1587   952       60.0
+#>           people            program  ever  grad stick
+#>           <char>             <char> <int> <int> <num>
+#>  1: Asian Female              Civil    14    10  71.4
+#>  2: Asian Female         Electrical    21    12  57.1
+#>  3: Asian Female Industrial/Systems    15    10  66.7
+#>  4:   Asian Male              Civil    33    25  75.8
+#>  5:   Asian Male         Electrical   122    71  58.2
+#>  6:   Asian Male Industrial/Systems    21    14  66.7
+#> ---                                                  
+#> 32: White Female Industrial/Systems    73    54  74.0
+#> 33: White Female         Mechanical   213   134  62.9
+#> 34:   White Male              Civil   948   612  64.6
+#> 35:   White Male         Electrical   848   439  51.8
+#> 36:   White Male Industrial/Systems   178   130  73.0
+#> 37:   White Male         Mechanical  1587   952  60.0
 ```
 
 With one quantitative variable (stickiness) for every combination of the
@@ -3156,54 +3157,40 @@ category.
 
 ``` r
 DT_chart <- order_multiway(DT_chart,
-  quantity = "stickiness",
+  quantity = "stick",
   categories = c("people", "program"),
   method = "percent",
   ratio_of = c("grad", "ever")
 )
+DT_chart[, c("ever", "grad") := NULL]
 DT_chart
-#>           people            program    sex   race  ever  grad stickiness
-#>           <fctr>             <fctr> <char> <char> <num> <num>      <num>
-#>  1: Asian Female              Civil Female  Asian    14    10       71.4
-#>  2: Asian Female         Electrical Female  Asian    21    12       57.1
-#>  3: Asian Female Industrial/Systems Female  Asian    15    10       66.7
-#>  4:   Asian Male              Civil   Male  Asian    33    25       75.8
-#>  5:   Asian Male         Electrical   Male  Asian   122    71       58.2
-#>  6:   Asian Male Industrial/Systems   Male  Asian    21    14       66.7
-#> ---                                                                     
-#> 32: White Female Industrial/Systems Female  White    73    54       74.0
-#> 33: White Female         Mechanical Female  White   213   134       62.9
-#> 34:   White Male              Civil   Male  White   948   612       64.6
-#> 35:   White Male         Electrical   Male  White   848   439       51.8
-#> 36:   White Male Industrial/Systems   Male  White   178   130       73.0
-#> 37:   White Male         Mechanical   Male  White  1587   952       60.0
-#>     people_stickiness program_stickiness
-#>                 <num>              <num>
-#>  1:              64.0               62.4
-#>  2:              64.0               50.3
-#>  3:              64.0               71.5
-#>  4:              62.8               62.4
-#>  5:              62.8               50.3
-#>  6:              62.8               71.5
-#> ---                                     
-#> 32:              61.1               71.5
-#> 33:              61.1               59.1
-#> 34:              59.9               62.4
-#> 35:              59.9               50.3
-#> 36:              59.9               71.5
-#> 37:              59.9               59.1
+#>           people            program stick people_stick program_stick
+#>           <fctr>             <fctr> <num>        <num>         <num>
+#>  1: Asian Female              Civil  71.4         64.0          62.4
+#>  2: Asian Female         Electrical  57.1         64.0          50.3
+#>  3: Asian Female Industrial/Systems  66.7         64.0          71.5
+#>  4:   Asian Male              Civil  75.8         62.8          62.4
+#>  5:   Asian Male         Electrical  58.2         62.8          50.3
+#>  6:   Asian Male Industrial/Systems  66.7         62.8          71.5
+#> ---                                                                 
+#> 32: White Female Industrial/Systems  74.0         61.1          71.5
+#> 33: White Female         Mechanical  62.9         61.1          59.1
+#> 34:   White Male              Civil  64.6         59.9          62.4
+#> 35:   White Male         Electrical  51.8         59.9          50.3
+#> 36:   White Male Industrial/Systems  73.0         59.9          71.5
+#> 37:   White Male         Mechanical  60.0         59.9          59.1
 ```
 
 Format the chart for publication. No arguments for ordering the data are
 required because the two categorical variables are ordered factors.
 
 ``` r
-ggplot(DT_chart, aes(x = stickiness, y = people)) +
+ggplot(DT_chart, aes(x = stick, y = people)) +
   facet_wrap(vars(program),
     ncol = 1,
     as.table = FALSE
   ) +
-  geom_vline(aes(xintercept = program_stickiness),
+  geom_vline(aes(xintercept = program_stick),
     linetype = 2,
     color = "gray60"
   ) +
@@ -3224,12 +3211,12 @@ determines the row order, also increasing from bottom to top.
 In the next chart, we swap the roles of panels and rows.
 
 ``` r
-ggplot(DT_chart, aes(x = stickiness, y = program)) +
+ggplot(DT_chart, aes(x = stick, y = program)) +
   facet_wrap(vars(people),
     ncol = 2,
     as.table = FALSE
   ) +
-  geom_vline(aes(xintercept = people_stickiness),
+  geom_vline(aes(xintercept = people_stick),
     linetype = 2,
     color = "gray60"
   ) +

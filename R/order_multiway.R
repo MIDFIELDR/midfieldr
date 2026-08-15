@@ -32,7 +32,7 @@
 #'        variable.
 #'
 #' @param categories Character. Vector of names of the two multiway
-#'        categorical variables.
+#'        categorical variables, in any order.
 #'
 #' @param ... `r param_dots`
 #'
@@ -40,13 +40,12 @@
 #'        possible values are “median” (default) or “percent”. The median
 #'        method determines medians of the quantitative column grouped by
 #'        category. The percent method sums dividends and divisors by category
-#'        and calculates their quotients (again, by category).
+#'        and calculates their quotients by category.
 #'
-#' @param ratio_of Character. Vector of names of the dividend and the divisor
-#'        that produced the quantitative variable. Required when
-#'        `method = "percent,"` ignored otherwise. Names can be in any order;
-#'        the algorithm assumes that the parameter with the larger column sum
-#'        is the denominator of the ratio.
+#' @param ratio_of Character. Vector of column names of the dividend
+#'        and the divisor that produced the quantitative variable. Names
+#'        must be in order, as in `c(dividend, divisor).` Required
+#'        when `method = "percent,"` ignored otherwise.
 #'
 #' @returns Data frame with the following properties:
 #' * `r df_class_preserved`
@@ -54,14 +53,15 @@
 #' * Column specified by `quantity` is converted to type double.
 #'   Columns specified by `categories` are converted to factors and ordered.
 #' * Columns with names different from the two new columns (named below) are not
-#'   modified; columns with matching names are replaced. The new column names,
-#'   depending on the method, have the following forms:
-#'   - `CATEGORY_median` for the "median" method. For example, if
-#'     `categories = c("program", "people"),` the new column names would be
-#'     `program_median` and `people_median.`
-#'   - `CATEGORY_QUANTITY` for the "percent" method. For example, using the
-#'      same categories as above with `quantity = "grad_rate",`  new column
-#'      names would be `program_grad_rate` and `people_grad_rate.`
+#'   modified; columns with matching names are replaced. The two new column 
+#'   names have the form: 
+#'   - `CATEGORY_1_method_abbr` 
+#'   - `CATEGORY_2_method_abbr`
+#'   - For example, if 
+#'   `categories = c("program", "people")` and `method = "median",` the new 
+#'   column names would be `program_med` and `people_med.` 
+#'   For `method = "percent",` the new column names would be `program_pct` 
+#'   and `people_pct.`
 #'
 #' @references
 #'   Cleveland WS (1993). \emph{Visualizing Data}. Hobart Press, Summit, NJ.
@@ -76,24 +76,24 @@ order_multiway <- function(dframe,
                            ratio_of = NULL) {
   #
   # ---------- base R checks (all data frame classes)
-
+  
   # arguments after ... must be named
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     "Arguments after ... must be named, as in arg = val."
   )
-
+  
   # required data frame(s) and required columns
   qassert(dframe, "d+") # data frame, missing values OK, length 1 or more
   assert_names(colnames(dframe), must.include = c(quantity, categories))
-
+  
   # required arguments
   qassert(quantity, "S1") # string, missing values prohibited, length 1
   qassert(categories, "S2") # string, missing values prohibited, length 2
-
+  
   # class of required columns
   qassert(dframe[[quantity]], "n+") # numeric, length 1 or more
-
+  
   # categories class factor or character
   x <- copy(dframe)
   one_row_df <- as.data.frame(x)[1, categories, drop = FALSE]
@@ -104,7 +104,7 @@ order_multiway <- function(dframe,
     empty.ok = FALSE,
     .var.name = "categories"
   )
-
+  
   # optional arguments
   method <- method %?% "median"
   qassert(method, "S1")
@@ -114,7 +114,7 @@ order_multiway <- function(dframe,
     empty.ok = FALSE,
     .var.name = "method"
   )
-
+  
   if (method == "percent") {
     qassert(ratio_of, "S2")
     assert_subset(
@@ -138,198 +138,103 @@ order_multiway <- function(dframe,
       warning("Argument 'ratio_of' is not used when `method = median.`")
     }
   }
-
+  
   # ---------- preparation
-
+  
   # to restore class except grouped tibbles
   prior_class <- setdiff(class(dframe), "grouped_df")
-
+  
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
-
+  
   # avoid overwriting columns that match names of temporary columns
   init_temp_vars <- c("idx")
   temp_vars <- edit_new_col_names(dframe, init_temp_vars)
   idx_chr <- temp_vars[1]
-
+  
+  ### protect overwriting by temp col names
+  
   # bind names due to NSE notes in R CMD check
+  CATEGORY <- NULL
+  DEN <- NULL
   IDX <- NULL
-
+  NUM <- NULL
+  ORDER_COL <- NULL
+  QUANTITY <- NULL
+  
   # ---------- do the work
-
+  
   # add temp col to restore row order
   dframe[, IDX := .I,
-    env = list(IDX = idx_chr)
+         env = list(IDX = idx_chr)
   ]
-
-  # treatment the same both methods
+  
+  # convert categories to factors
   dframe[, (categories) := lapply(.SD, as.factor), .SDcols = categories]
-  dframe[, (quantity) := lapply(.SD, as.double), .SDcols = quantity]
-
-  # call subroutine for percent or median method
+  
+  # ensure numerical values are double
   if (method == "percent") {
-    dframe <- order_by_percent(
-      dframe,
-      categories,
-      quantity,
-      ratio_of
-    )
-  } else { # method = "median"
-    dframe <- order_by_median(
-      dframe,
-      categories,
-      quantity,
-      method
-    )
+    dframe[, (ratio_of) := lapply(.SD, as.double), .SDcols = ratio_of]
   }
-
+  dframe[, (quantity) := lapply(.SD, as.double), .SDcols = quantity]
+  
+  # column names for ordering the factor levels
+  col_label <- fifelse (method == "percent", "pct", "med")
+  order_col <- paste(categories, col_label, sep = "_")
+  
+  # functions for creating the ordering columns
+  f_percent <- function(x, y) {
+    round(100 * sum(x, na.rm = TRUE) / sum(y, na.rm = TRUE), 1)
+  }
+  f_median <- function(x) {
+    median(x, na.rm = TRUE)
+  }
+  
+  # create the ordering columns and order the factor levels by category
+  for (jj in seq_along(categories)) {
+    
+    # apply functions to create ordering columns
+    dframe[, ORDER_COL := fcase(
+      method == "percent", f_percent(NUM, DEN),
+      method == "median", f_median(QUANTITY),
+      default = f_median(QUANTITY)
+    ),
+    by = CATEGORY,
+    env = list(
+      ORDER_COL = order_col[jj],
+      QUANTITY = quantity,
+      CATEGORY = categories[jj],
+      NUM = ratio_of[1],
+      DEN = ratio_of[2]
+    )
+    ]
+    
+    # order the factor levels
+    dframe[, CATEGORY := reorder(CATEGORY, ORDER_COL),
+           env = list(
+             CATEGORY = categories[jj],
+             ORDER_COL = order_col[jj]
+           )
+    ]
+  }
+  
   # ---------- prepare to return
-
+  
   # restore row order
   setkeyv(dframe, idx_chr)
-
+  
   # drop temporary cols
   dframe[, IDX := NULL,
-    env = list(IDX = idx_chr)
+         env = list(IDX = idx_chr)
   ]
-
+  
   # ensure unique rows
   dframe <- unique(dframe)
-
+  
   # restore class
   setattr(dframe, "class", prior_class)
-
+  
   # done
-  dframe[]
-}
-
-
-# --------------------------------------------------------------------------
-# internal functions
-# --------------------------------------------------------------------------
-order_by_percent <- function(dframe,
-                             categories,
-                             quantity,
-                             ratio_of) {
-  # bind names due to NSE notes in R CMD check
-  A <- NULL
-  B <- NULL
-  CATEG_I <- NULL
-  COUNT_I <- NULL
-  NEW_COL <- NULL
-
-  # replace NA in count columns with zero
-  dframe[, (ratio_of) := lapply(.SD, function(quantity) {
-    fifelse(is.na(quantity), 0, quantity)
-  }), .SDcols = ratio_of]
-
-  # ensure dividend and divisor are double, not integer
-  dframe[, (ratio_of) := lapply(.SD, as.double), .SDcols = ratio_of]
-
-  # sum the two counts by the individual categories
-  # provides columns needed to determine row and panel order
-  for (categ_i in categories) {
-    for (count_i in ratio_of) {
-      new_col <- paste(categ_i, count_i, sep = "_")
-      dframe[, (new_col) := sum(COUNT_I),
-        by = categ_i,
-        env = list(COUNT_I = count_i)
-      ]
-    }
-  }
-
-  # Determine the names of the columns used as the numerator and
-  # denominator of the ratio. Assumes the smaller number is the numerator,
-  # e.g., grad / ever or grad / start. Always more starters or ever-enrolled
-  # overall (summing across all programs) than grads.
-  count_col_totals <- colSums(dframe[, ratio_of, with = FALSE])
-  count_col_min <- names(which.min(count_col_totals))
-  count_col_max <- names(which.max(count_col_totals))
-
-  # computing the metric for individual categories
-  # used for ordering rows and panels
-  for (categ_i in categories) {
-    #
-    # names of new columns, numerator and denominator of
-    # category summary metric
-    a <- paste(categ_i, count_col_min, sep = "_")
-    b <- paste(categ_i, count_col_max, sep = "_")
-    new_col <- paste(categ_i, quantity, sep = "_")
-    
-    # percent-based metric by individual category
-    dframe[, NEW_COL := round(100 * A / B, 1),
-      env = list(
-        A = a,
-        B = b,
-        NEW_COL = new_col
-      )
-    ]
-
-    # order factor levels by values in new column
-    dframe[, CATEG_I := reorder(CATEG_I, NEW_COL),
-      env = list(
-        CATEG_I = categ_i,
-        NEW_COL = new_col
-      )
-    ]
-
-    # drop temp columns
-    dframe[, `:=`(A = NULL, B = NULL),
-      env = list(A = a, B = b)
-    ]
-  }
-  dframe[]
-}
-
-# --------------------------------------------------------------------------
-order_by_median <- function(dframe,
-                            categories,
-                            quantity,
-                            method) {
-  #
-  # bind names due to NSE notes in R CMD check
-  CATEG_1 <- NULL # e.g., program
-  CATEG_2 <- NULL # e.g., people
-  ORDER_1 <- NULL # e.g., program_median
-  ORDER_2 <- NULL # e.g., people_median
-  QUANTITY <- NULL # e.g., grad_rate or stickiness
-
-  # create names for value variables
-  categ_1 <- categories[[1]]
-  categ_2 <- categories[[2]]
-  order_1 <- paste(categ_1, method, sep = "_")
-  order_2 <- paste(categ_2, method, sep = "_")
-
-  # add new columns
-  dframe[, ORDER_1 := median(QUANTITY, na.rm = TRUE),
-    by = CATEG_1,
-    env = list(
-      ORDER_1 = order_1,
-      QUANTITY = quantity,
-      CATEG_1 = categ_1
-    )
-  ]
-  dframe[, ORDER_2 := median(QUANTITY, na.rm = TRUE),
-    by = CATEG_2,
-    env = list(
-      ORDER_2 = order_2,
-      QUANTITY = quantity,
-      CATEG_2 = categ_2
-    )
-  ]
-  dframe[, CATEG_1 := reorder(CATEG_1, ORDER_1),
-    env = list(
-      CATEG_1 = categ_1,
-      ORDER_1 = order_1
-    )
-  ]
-  dframe[, CATEG_2 := reorder(CATEG_2, ORDER_2),
-    env = list(
-      CATEG_2 = categ_2,
-      ORDER_2 = order_2
-    )
-  ]
-
   dframe[]
 }

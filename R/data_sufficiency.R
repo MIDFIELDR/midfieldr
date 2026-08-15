@@ -87,7 +87,7 @@ data_sufficiency <- function(dframe, midf_table = term) {
   init_temp_vars <- c("idx")
   temp_vars <- edit_new_col_names(dframe, init_temp_vars)
   idx_chr <- temp_vars[1]
-  
+
   # avoid overwriting these variables
   potential_overwrite_vars <- c("institution")
   non_overwrite_vars <- edit_new_col_names(dframe, potential_overwrite_vars)
@@ -148,12 +148,13 @@ data_sufficiency <- function(dframe, midf_table = term) {
   # restore row order
   setkeyv(dframe, idx_chr)
 
-  # drop temp cols, restore col order, ensure unique rows
+  # drop temporary cols, restore original col order
   dframe <- dframe[, .SD, .SDcols = return_vars]
+
+  # ensure unique rows
   dframe <- unique(dframe)
 
   # restore class
-  setkey(dframe, NULL)
   setattr(dframe, "class", prior_class)
 
   # done

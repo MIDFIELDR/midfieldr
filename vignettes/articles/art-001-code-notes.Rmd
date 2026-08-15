@@ -25,38 +25,39 @@ path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
 
 ```{r}
 library("midfieldr")
-library("midfielddata")
 library("data.table")
 library("tibble")
 ```
  
-*On printing data frame:* &nbsp; Set the following data frame printing options to print all columns with the total number of rows set by `print_all_rows_max`.
+*On printing a data frame:* &nbsp; Set the following data frame printing options to print *all columns* with the total number of rows displayed set by `max_n_rows`.
 
 ```{r}
 # set max number of rows to display
-print_all_rows_max <- 6
+max_n_rows <- 6
 
-# data.table syntax
-half_max <- round(print_all_rows_max / 2, 0)
+# data.table options
+half_max <- round(max_n_rows / 2, 0)
 options(
-  datatable.print.nrows = print_all_rows_max,
+  datatable.print.nrows = max_n_rows,
   datatable.print.topn = half_max
 )
 
-# dplyr/tibble syntax
+# dplyr/tibble options
 options(
   pillar.width = Inf,
-  pillar.print_max = print_all_rows_max,
-  pillar.print_min = print_all_rows_max
+  pillar.print_max = max_n_rows,
+  pillar.print_min = max_n_rows
 )
 ```
 
 For example
 
 ```{r}
-# data.table syntax
+# example data frame
 x <- copy(toy_student)
-as.data.table(x)
+
+# data.table syntax
+x
 
 # tibble syntax
 library(tibble)
@@ -64,6 +65,11 @@ as_tibble(x)
 
 # base R syntax
 x <- as.data.frame(x)
-head(x, n = print_all_rows_max)
+head(x, n = max_n_rows)
+
+# alternative base R syntax
+head(x, n = half_max)
+
+tail(x, n = half_max)
 ```
 
