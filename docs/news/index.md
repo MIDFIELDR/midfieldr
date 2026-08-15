@@ -7,7 +7,7 @@
 New features
 
 - New function
-  [`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
+  [`post_completion_terms()`](https://midfieldr.github.io/midfieldr/reference/post_completion_terms.md)
   to identify rows of post-baccalaureate terms to exclude.
 - New utilities
   [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md),
@@ -51,6 +51,8 @@ Bug fixes
   degree.
 - This same fix added two rows to the `study_observations` built-in data
   set.
+- Existing column names that happen to have the same name as internal
+  temporary column names are now prevented from being overwritten.
 
 ## version 1.0.3
 

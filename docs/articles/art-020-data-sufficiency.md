@@ -269,9 +269,9 @@ every student.
 - **`dframe`**   Data frame of student-level records keyed by student
   ID. Required variable (column) is `mcid`.
 
-- **`midfield_table`**   Data frame of student-level term observations
-  keyed by student ID. Default is `term`. Required variables (columns)
-  are `mcid`, `term`, and `level`.
+- **`midf_table`**   Data frame of student-level term observations keyed
+  by student ID. Default is `term`. Required variables (columns) are
+  `mcid`, `term`, and `level`.
 
 - **`span`**   Optional integer scalar, number of years to define timely
   completion. Commonly used values are are 100%, 150%, and 200% of
@@ -287,12 +287,12 @@ results,
 ``` r
 
 # Required arguments in order and explicitly named
-x <- timely_term(dframe = DT, midfield_table = term)
+x <- timely_term(dframe = DT, midf_table = term)
 
 # Required arguments in order, but not named
 y <- timely_term(DT, term)
 
-# Using the implicit default for the midfield_table argument
+# Using the implicit default for the midf_table argument
 z <- timely_term(DT)
 
 # Demonstrate equivalence
@@ -320,15 +320,15 @@ check_equiv_frames(x, z)
 # Add timely term column and supporting variables
 DT <- timely_term(DT, term)
 DT
-#>                  mcid term_i       level_i adj_span timely_term
-#>                <char> <char>        <char>    <num>      <char>
-#>     1: MCID3111142225  19881 01 First-year        6       19933
-#>     2: MCID3111142283  19881 01 First-year        6       19933
-#>     3: MCID3111142290  19881 01 First-year        6       19933
-#>    ---                                                         
-#> 97553: MCID3112898894  20181 01 First-year        6       20233
-#> 97554: MCID3112898895  20181 01 First-year        6       20233
-#> 97555: MCID3112898940  20181 01 First-year        6       20233
+#>                  mcid   institution term_i       level_i adj_span timely_term
+#>                <char>        <char> <char>        <char>    <num>      <char>
+#>     1: MCID3111142225 Institution B  19881 01 First-year        6       19933
+#>     2: MCID3111142283 Institution J  19881 01 First-year        6       19933
+#>     3: MCID3111142290 Institution J  19881 01 First-year        6       19933
+#>    ---                                                                       
+#> 97553: MCID3112898894 Institution B  20181 01 First-year        6       20233
+#> 97554: MCID3112898895 Institution B  20181 01 First-year        6       20233
+#> 97555: MCID3112898940 Institution B  20181 01 First-year        6       20233
 ```
 
 ### Closer look
@@ -345,9 +345,9 @@ timely completion is 6 years, that is, academic years 2007–08, 08–09,
 
 # Display one student by ID
 DT[mcid == "MCID3112785480"]
-#>              mcid term_i       level_i adj_span timely_term
-#>            <char> <char>        <char>    <num>      <char>
-#> 1: MCID3112785480  20071 01 First-year        6       20123
+#>              mcid   institution term_i       level_i adj_span timely_term
+#>            <char>        <char> <char>        <char>    <num>      <char>
+#> 1: MCID3112785480 Institution C  20071 01 First-year        6       20123
 ```
 
 *Example 2.*   The student’s initial term is Spring 2002 (encoded
@@ -361,9 +361,9 @@ completion term of Fall 2005.
 
 # Display one student by ID
 DT[mcid == "MCID3111860641"]
-#>              mcid term_i       level_i adj_span timely_term
-#>            <char> <char>        <char>    <num>      <char>
-#> 1: MCID3111860641  20013 03 Third-year        4       20051
+#>              mcid   institution term_i       level_i adj_span timely_term
+#>            <char>        <char> <char>        <char>    <num>      <char>
+#> 1: MCID3111860641 Institution J  20013 03 Third-year        4       20051
 ```
 
 ### Alternate source names
@@ -380,7 +380,7 @@ like this,
 toy_mcid <- toy_student[, .(mcid)]
 
 # Source data table names that differ from the defaults
-toy_DT <- timely_term(dframe = toy_mcid, midfield_table = toy_term)
+toy_DT <- timely_term(dframe = toy_mcid, midf_table = toy_term)
 
 # Equivalently
 toy_DT <- timely_term(toy_mcid, toy_term)
@@ -440,8 +440,8 @@ range.
 - **`dframe`**   Data frame of student-level records keyed by student
   ID. Required variables are `mcid` and `timely_term`.
 
-- **`midfield_table`**   Data frame of student-level term observations
-  keyed by student ID. Default is `term`. Required variables are `mcid`,
+- **`midf_table`**   Data frame of student-level term observations keyed
+  by student ID. Default is `term`. Required variables are `mcid`,
   `institution`, and `term`.
 
 *Equivalent usage.*   The following implementations yield identical
@@ -450,12 +450,12 @@ results,
 ``` r
 
 # Required arguments in order and explicitly named
-x <- data_sufficiency(dframe = DT, midfield_table = term)
+x <- data_sufficiency(dframe = DT, midf_table = term)
 
 # Required arguments in order, but not named
 y <- data_sufficiency(DT, term)
 
-# Using the implicit default for the midfield_table argument
+# Using the implicit default for the midf_table argument
 z <- data_sufficiency(DT)
 
 # Demonstrate equivalence

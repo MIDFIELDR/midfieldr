@@ -9,21 +9,16 @@ variable to be imputed (program CIP code).
 ## Usage
 
 ``` r
-prep_fye_mice(
-  midfield_student = student,
-  midfield_term = term,
-  ...,
-  fye_codes = NULL
-)
+prep_fye_mice(midf_student = student, midf_term = term, ..., fye_codes = NULL)
 ```
 
 ## Arguments
 
-- midfield_student:
+- midf_student:
 
   `student` data frame with required variables `{mcid, race, sex}.`
 
-- midfield_term:
+- midf_term:
 
   `term` data frame with required variables
   `{mcid, term, cip6, institution}.`
@@ -168,9 +163,7 @@ colnames(prep_fye_mice(toy_student, toy_term))
 #> [1] "mcid"        "race"        "sex"         "institution" "proxy"      
 
 # Optional argument permits multiple CIP codes for FYE
-prep_fye_mice(midfield_student = toy_student, 
-              midfield_term = toy_term, 
-              fye_codes = c("140101", "140102"))
+prep_fye_mice(toy_student, toy_term, fye_codes = c("140101", "140102"))
 #>                mcid          race    sex   institution  proxy
 #>              <char>        <fctr> <fctr>        <fctr> <fctr>
 #>   1: MCID3112328521         Asian Female Institution J   <NA>

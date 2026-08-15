@@ -168,7 +168,7 @@ DT[, c("term_i", "level_i", "adj_span") := NULL]
 - **`dframe`**   Data frame of student-level records keyed by student
   ID. Required variables are `mcid` and `timely_term`.
 
-- **`midfield_table`**   Data frame of student-level degree observations
+- **`midf_table`**   Data frame of student-level degree observations
   keyed by student ID. Default is `degree`. Required variables are
   `mcid` and `term_degree`.
 
@@ -178,12 +178,12 @@ results,
 ``` r
 
 # Required arguments in order and explicitly named
-x <- completion_status(dframe = DT, midfield_table = degree)
+x <- completion_status(dframe = DT, midf_table = degree)
 
 # Required arguments in order, but not named
 y <- completion_status(DT, degree)
 
-# Using the implicit default for the midfield_table argument
+# Using the implicit default for the midf_table argument
 z <- completion_status(DT)
 
 # Demonstrate equivalence

@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9018</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9023</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -398,14 +398,14 @@ reference.</p>
 <p>The working data frames <code>student, term,</code> and
 <code>degree</code> should always be present in our computing
 environment so we can take advantage of midfieldr default argument
-values. For example, <code><a href="../reference/post_bacc_terms.html">post_bacc_terms()</a></code> accesses the
+values. For example, <code><a href="../reference/post_completion_terms.html">post_completion_terms()</a></code> accesses the
 <code>degree</code> table to do its work. If <code>degree</code> is in
 the environment, the following lines yield the same results:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># not run</span></span>
-<span><span class="fu"><a href="../reference/post_bacc_terms.html">post_bacc_terms</a></span><span class="op">(</span><span class="va">term</span>, midfield_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/post_bacc_terms.html">post_bacc_terms</a></span><span class="op">(</span><span class="va">term</span>, <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/post_bacc_terms.html">post_bacc_terms</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/post_completion_terms.html">post_completion_terms</a></span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/post_completion_terms.html">post_completion_terms</a></span><span class="op">(</span><span class="va">term</span>, <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/post_completion_terms.html">post_completion_terms</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span></code></pre></div>
 <p>In this article, we use the latter form.</p>
 <div class="section level3">
 <h3 id="select-basic-columns">
@@ -490,12 +490,13 @@ term, so we identify and exclude terms later than the first degree term.
 Multiple degrees earned in the first degree term are retained, but any
 courses, terms, or degrees after the first baccalaureate are
 excluded.</p>
-<p><code><a href="../reference/post_bacc_terms.html">post_bacc_terms()</a></code> adds a column of labels indicating
-that a term belongs to one of three clusters: terms that are prior to,
-equal to, or subsequent to the student’s first degree term.</p>
+<p><code><a href="../reference/post_completion_terms.html">post_completion_terms()</a></code> adds a column of labels
+indicating that a term belongs to one of three clusters: terms that are
+prior to, equal to, or subsequent to the student’s first degree
+term.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/post_bacc_terms.html">post_bacc_terms</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/post_bacc_terms.html">post_bacc_terms</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/post_completion_terms.html">post_completion_terms</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/post_completion_terms.html">post_completion_terms</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
 <span><span class="co">#&gt; tibble [639,915 × 7] (S3: tbl_df/tbl/data.frame)</span></span>
@@ -628,31 +629,31 @@ sufficiency criteria.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_sufficiency.html">data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 97,536 × 7</span></span></span>
-<span><span class="co">#&gt;    mcid           term_i timely_term institution   lower_limit upper_limit</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> MCID3111142225 19881  19933       Institution B 19881       20181      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> MCID3111142283 19881  19933       Institution J 19881       20096      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> MCID3111142290 19881  19933       Institution J 19881       20096      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> MCID3111142294 19881  19933       Institution J 19881       20096      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> MCID3111142299 19881  19933       Institution J 19881       20096      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> MCID3111142303 19881  19933       Institution J 19881       20096      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> MCID3111142633 19881  19933       Institution J 19881       20096      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> MCID3111142689 19883  19941       Institution B 19881       20181      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> MCID3111142729 19881  19933       Institution B 19881       20181      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> MCID3111142775 19881  19933       Institution J 19881       20096      </span></span>
-<span><span class="co">#&gt;    data_sufficiency</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> exclude-lower   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> exclude-lower   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> exclude-lower   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> exclude-lower   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> exclude-lower   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> exclude-lower   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> exclude-lower   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> include         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> exclude-lower   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> exclude-lower   </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 97,536 × 9</span></span></span>
+<span><span class="co">#&gt;    mcid           term_i level_i       adj_span timely_term institution  </span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> MCID3111142225 19881  01 First-year        6 19933       Institution B</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> MCID3111142283 19881  01 First-year        6 19933       Institution J</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> MCID3111142290 19881  01 First-year        6 19933       Institution J</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> MCID3111142294 19881  01 First-year        6 19933       Institution J</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> MCID3111142299 19881  01 First-year        6 19933       Institution J</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> MCID3111142303 19881  01 First-year        6 19933       Institution J</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> MCID3111142633 19881  01 First-year        6 19933       Institution J</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> MCID3111142689 19883  01 First-year        6 19941       Institution B</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> MCID3111142729 19881  01 First-year        6 19933       Institution B</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> MCID3111142775 19881  01 First-year        6 19933       Institution J</span></span>
+<span><span class="co">#&gt;    lower_limit upper_limit data_sufficiency</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 19881       20181       exclude-lower   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 19881       20096       exclude-lower   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 19881       20096       exclude-lower   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 19881       20096       exclude-lower   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 19881       20096       exclude-lower   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 19881       20096       exclude-lower   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 19881       20096       exclude-lower   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 19881       20181       include         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 19881       20181       exclude-lower   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 19881       20096       exclude-lower   </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 97,526 more rows</span></span></span></code></pre></div>
 <p>Again, a quick assessment of the relative size of the three possible
 labels.</p>
@@ -854,19 +855,31 @@ non-completers).</p>
 <span>  <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/completion_status.html">completion_status</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 76,865 × 4</span></span></span>
-<span><span class="co">#&gt;    mcid           timely_term term_degree completion_status</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> MCID3111142689 19941       19913       timely           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> MCID3111142782 19941       19903       timely           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> MCID3111142881 19951       19894       timely           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> MCID3111142884 19941       <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> MCID3111142893 19941       <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> MCID3111142962 19941       <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> MCID3111142965 19941       19901       timely           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> MCID3111143066 19941       19883       timely           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> MCID3111143068 19943       19903       timely           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> MCID3111143078 19941       19891       timely           </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 76,865 × 7</span></span></span>
+<span><span class="co">#&gt;    mcid           term_i level_i       adj_span timely_term term_degree</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> MCID3111142689 19883  01 First-year        6 19941       19913      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> MCID3111142782 19883  01 First-year        6 19941       19903      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> MCID3111142881 19893  01 First-year        6 19951       19894      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> MCID3111142884 19883  01 First-year        6 19941       <span style="color: #BB0000;">NA</span>         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> MCID3111142893 19883  01 First-year        6 19941       <span style="color: #BB0000;">NA</span>         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> MCID3111142962 19883  01 First-year        6 19941       <span style="color: #BB0000;">NA</span>         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> MCID3111142965 19883  01 First-year        6 19941       19901      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> MCID3111143066 19883  01 First-year        6 19941       19883      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> MCID3111143068 19891  01 First-year        6 19943       19903      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> MCID3111143078 19883  01 First-year        6 19941       19891      </span></span>
+<span><span class="co">#&gt;    completion_status</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> timely           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> timely           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> timely           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> <span style="color: #BB0000;">NA</span>               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> <span style="color: #BB0000;">NA</span>               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> <span style="color: #BB0000;">NA</span>               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> timely           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> timely           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> timely           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> timely           </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 76,855 more rows</span></span></span></code></pre></div>
 <p>Another brief assessment. Here we compare the relative size of the
 three possible status labels.</p>
@@ -2030,18 +2043,18 @@ ordering—are added in new columns.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Civil   Other/Unknown Male   Other/Unknown Male      27    11       40.7</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Civil   White         Female White Female           260   162       62.3</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Civil   White         Male   White Male             943   612       64.9</span></span>
-<span><span class="co">#&gt;    program_stickiness people_stickiness</span></span>
-<span><span class="co">#&gt;                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>               62.8              64  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>               62.8              63.9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>               62.8              62.7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>               62.8              56  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>               62.8              48.5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>               62.8              47.8</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>               62.8              50.4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>               62.8              46.3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>               62.8              61.3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>               62.8              60.1</span></span>
+<span><span class="co">#&gt;    program_metric people_metric</span></span>
+<span><span class="co">#&gt;             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>           62.8          64  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>           62.8          63.9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>           62.8          62.7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>           62.8          56  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>           62.8          48.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>           62.8          47.8</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>           62.8          50.4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>           62.8          46.3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>           62.8          61.3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>           62.8          60.1</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 27 more rows</span></span></span></code></pre></div>
 <p>Format the chart for publication.</p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
@@ -2051,7 +2064,7 @@ ordering—are added in new columns.</p>
 <span>    ncol <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>    as.table <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">program_stickiness</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">program_metric</span><span class="op">)</span>,</span>
 <span>    linetype <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>    color <span class="op">=</span> <span class="st">"gray60"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>

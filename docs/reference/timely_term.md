@@ -6,7 +6,7 @@ and add columns that support the findings.
 ## Usage
 
 ``` r
-timely_term(dframe, midfield_table = term, ..., sched_span = NULL, span = NULL)
+timely_term(dframe, midf_table = term, ..., sched_span = NULL, span = NULL)
 ```
 
 ## Arguments
@@ -16,7 +16,7 @@ timely_term(dframe, midfield_table = term, ..., sched_span = NULL, span = NULL)
   Data frame or data frame extension (e.g., data.table or tibble) with
   required variable `{mcid}.`
 
-- midfield_table:
+- midf_table:
 
   `term` data frame with required variables `{mcid, term, level}.`
 
@@ -50,10 +50,10 @@ Data frame with the following properties:
   columns added are:
 
   - `term_i`   Character. Initial term of a student's longitudinal
-    record, encoded `YYYYT`. Extracted from `midfield_table.`
+    record, encoded `YYYYT`. Extracted from `midf_table.`
 
   - `level_i`   Character. Student level (01 Freshman, 02 Sophomore,
-    etc.) in their initial term. Extracted from `midfield_table.`
+    etc.) in their initial term. Extracted from `midf_table.`
 
   - `adj_span`   Numeric. Integer span of years for timely completion
     adjusted for a student's initial level.
@@ -98,7 +98,7 @@ x
 #> 10: MCID3112869843 Female
 
 # Add timely term columns. Unrelated columns (sex) are unaffected.
-x <- timely_term(x, midfield_table = term)
+x <- timely_term(x, midf_table = term)
 x
 #>               mcid    sex term_i        level_i adj_span timely_term
 #>             <char> <char> <char>         <char>    <num>      <char>
@@ -114,7 +114,7 @@ x
 #> 10: MCID3112869843 Female  20173  01 First-year        6       20231
 
 # Repeat. New columns silently replace existing columns of the same name.
-y <- timely_term(x, midfield_table = term)
+y <- timely_term(x, midf_table = term)
 y
 #>               mcid    sex term_i        level_i adj_span timely_term
 #>             <char> <char> <char>         <char>    <num>      <char>

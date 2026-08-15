@@ -231,7 +231,7 @@ results.
 ``` r
 
 # Required arguments in order and explicitly named
-x <- prep_fye_mice(midfield_student = student, midfield_term = term)
+x <- prep_fye_mice(midf_student = student, midf_term = term)
 
 # Required arguments in order, but not named
 y <- prep_fye_mice(student, term)

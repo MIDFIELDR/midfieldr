@@ -22,8 +22,8 @@
   : Choose rows of CIP data
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   : Order multiway categories
-- [`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
-  : Identify post-baccalaureate terms
+- [`post_completion_terms()`](https://midfieldr.github.io/midfieldr/reference/post_completion_terms.md)
+  : Identify terms after the first completion term
 - [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
   : Prepare FYE data for imputation
 - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)

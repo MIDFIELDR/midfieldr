@@ -343,16 +343,16 @@ degree_source <- degree
 The working data frames `student, term,` and `degree` should always be
 present in our computing environment so we can take advantage of
 midfieldr default argument values. For example,
-[`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
+[`post_completion_terms()`](https://midfieldr.github.io/midfieldr/reference/post_completion_terms.md)
 accesses the `degree` table to do its work. If `degree` is in the
 environment, the following lines yield the same results:
 
 ``` r
 
 # not run
-post_bacc_terms(term, midfield_table = degree)
-post_bacc_terms(term, degree)
-post_bacc_terms(term)
+post_completion_terms(term, midf_table = degree)
+post_completion_terms(term, degree)
+post_completion_terms(term)
 ```
 
 In this article, we use the latter form.
@@ -445,15 +445,15 @@ so we identify and exclude terms later than the first degree term.
 Multiple degrees earned in the first degree term are retained, but any
 courses, terms, or degrees after the first baccalaureate are excluded.
 
-[`post_bacc_terms()`](https://midfieldr.github.io/midfieldr/reference/post_bacc_terms.md)
+[`post_completion_terms()`](https://midfieldr.github.io/midfieldr/reference/post_completion_terms.md)
 adds a column of labels indicating that a term belongs to one of three
 clusters: terms that are prior to, equal to, or subsequent to the
 student’s first degree term.
 
 ``` r
 
-term <- post_bacc_terms(term)
-degree <- post_bacc_terms(degree)
+term <- post_completion_terms(term)
+degree <- post_completion_terms(degree)
 
 look_at(term)
 #> tibble [639,915 × 7] (S3: tbl_df/tbl/data.frame)
@@ -608,31 +608,31 @@ satisfy) the data sufficiency criteria.
 
 DT <- data_sufficiency(DT)
 DT
-#> # A tibble: 97,536 × 7
-#>    mcid           term_i timely_term institution   lower_limit upper_limit
-#>    <chr>          <chr>  <chr>       <chr>         <chr>       <chr>      
-#>  1 MCID3111142225 19881  19933       Institution B 19881       20181      
-#>  2 MCID3111142283 19881  19933       Institution J 19881       20096      
-#>  3 MCID3111142290 19881  19933       Institution J 19881       20096      
-#>  4 MCID3111142294 19881  19933       Institution J 19881       20096      
-#>  5 MCID3111142299 19881  19933       Institution J 19881       20096      
-#>  6 MCID3111142303 19881  19933       Institution J 19881       20096      
-#>  7 MCID3111142633 19881  19933       Institution J 19881       20096      
-#>  8 MCID3111142689 19883  19941       Institution B 19881       20181      
-#>  9 MCID3111142729 19881  19933       Institution B 19881       20181      
-#> 10 MCID3111142775 19881  19933       Institution J 19881       20096      
-#>    data_sufficiency
-#>    <chr>           
-#>  1 exclude-lower   
-#>  2 exclude-lower   
-#>  3 exclude-lower   
-#>  4 exclude-lower   
-#>  5 exclude-lower   
-#>  6 exclude-lower   
-#>  7 exclude-lower   
-#>  8 include         
-#>  9 exclude-lower   
-#> 10 exclude-lower   
+#> # A tibble: 97,536 × 9
+#>    mcid           term_i level_i       adj_span timely_term institution  
+#>    <chr>          <chr>  <chr>            <dbl> <chr>       <chr>        
+#>  1 MCID3111142225 19881  01 First-year        6 19933       Institution B
+#>  2 MCID3111142283 19881  01 First-year        6 19933       Institution J
+#>  3 MCID3111142290 19881  01 First-year        6 19933       Institution J
+#>  4 MCID3111142294 19881  01 First-year        6 19933       Institution J
+#>  5 MCID3111142299 19881  01 First-year        6 19933       Institution J
+#>  6 MCID3111142303 19881  01 First-year        6 19933       Institution J
+#>  7 MCID3111142633 19881  01 First-year        6 19933       Institution J
+#>  8 MCID3111142689 19883  01 First-year        6 19941       Institution B
+#>  9 MCID3111142729 19881  01 First-year        6 19933       Institution B
+#> 10 MCID3111142775 19881  01 First-year        6 19933       Institution J
+#>    lower_limit upper_limit data_sufficiency
+#>    <chr>       <chr>       <chr>           
+#>  1 19881       20181       exclude-lower   
+#>  2 19881       20096       exclude-lower   
+#>  3 19881       20096       exclude-lower   
+#>  4 19881       20096       exclude-lower   
+#>  5 19881       20096       exclude-lower   
+#>  6 19881       20096       exclude-lower   
+#>  7 19881       20096       exclude-lower   
+#>  8 19881       20181       include         
+#>  9 19881       20181       exclude-lower   
+#> 10 19881       20096       exclude-lower   
 #> # ℹ 97,526 more rows
 ```
 
@@ -850,19 +850,31 @@ DT <- DT |>
   timely_term() |>
   completion_status()
 DT
-#> # A tibble: 76,865 × 4
-#>    mcid           timely_term term_degree completion_status
-#>    <chr>          <chr>       <chr>       <chr>            
-#>  1 MCID3111142689 19941       19913       timely           
-#>  2 MCID3111142782 19941       19903       timely           
-#>  3 MCID3111142881 19951       19894       timely           
-#>  4 MCID3111142884 19941       NA          NA               
-#>  5 MCID3111142893 19941       NA          NA               
-#>  6 MCID3111142962 19941       NA          NA               
-#>  7 MCID3111142965 19941       19901       timely           
-#>  8 MCID3111143066 19941       19883       timely           
-#>  9 MCID3111143068 19943       19903       timely           
-#> 10 MCID3111143078 19941       19891       timely           
+#> # A tibble: 76,865 × 7
+#>    mcid           term_i level_i       adj_span timely_term term_degree
+#>    <chr>          <chr>  <chr>            <dbl> <chr>       <chr>      
+#>  1 MCID3111142689 19883  01 First-year        6 19941       19913      
+#>  2 MCID3111142782 19883  01 First-year        6 19941       19903      
+#>  3 MCID3111142881 19893  01 First-year        6 19951       19894      
+#>  4 MCID3111142884 19883  01 First-year        6 19941       NA         
+#>  5 MCID3111142893 19883  01 First-year        6 19941       NA         
+#>  6 MCID3111142962 19883  01 First-year        6 19941       NA         
+#>  7 MCID3111142965 19883  01 First-year        6 19941       19901      
+#>  8 MCID3111143066 19883  01 First-year        6 19941       19883      
+#>  9 MCID3111143068 19891  01 First-year        6 19943       19903      
+#> 10 MCID3111143078 19883  01 First-year        6 19941       19891      
+#>    completion_status
+#>    <chr>            
+#>  1 timely           
+#>  2 timely           
+#>  3 timely           
+#>  4 NA               
+#>  5 NA               
+#>  6 NA               
+#>  7 timely           
+#>  8 timely           
+#>  9 timely           
+#> 10 timely           
 #> # ℹ 76,855 more rows
 ```
 
@@ -1561,18 +1573,18 @@ DT_chart
 #>  8 Civil   Other/Unknown Male   Other/Unknown Male      27    11       40.7
 #>  9 Civil   White         Female White Female           260   162       62.3
 #> 10 Civil   White         Male   White Male             943   612       64.9
-#>    program_stickiness people_stickiness
-#>                 <dbl>             <dbl>
-#>  1               62.8              64  
-#>  2               62.8              63.9
-#>  3               62.8              62.7
-#>  4               62.8              56  
-#>  5               62.8              48.5
-#>  6               62.8              47.8
-#>  7               62.8              50.4
-#>  8               62.8              46.3
-#>  9               62.8              61.3
-#> 10               62.8              60.1
+#>    program_metric people_metric
+#>             <dbl>         <dbl>
+#>  1           62.8          64  
+#>  2           62.8          63.9
+#>  3           62.8          62.7
+#>  4           62.8          56  
+#>  5           62.8          48.5
+#>  6           62.8          47.8
+#>  7           62.8          50.4
+#>  8           62.8          46.3
+#>  9           62.8          61.3
+#> 10           62.8          60.1
 #> # ℹ 27 more rows
 ```
 
@@ -1586,7 +1598,7 @@ ggplot(DT_chart, aes(x = stickiness, y = people)) +
     ncol = 1,
     as.table = FALSE
   ) +
-  geom_vline(aes(xintercept = program_stickiness),
+  geom_vline(aes(xintercept = program_metric),
     linetype = 2,
     color = "gray60"
   ) +

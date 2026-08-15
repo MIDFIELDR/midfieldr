@@ -11,7 +11,7 @@ single quantitative response variable."><meta property="og:image" content="https
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9021</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9023</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,7 +94,7 @@ variable.</p></dd>
 
 <dt id="arg-categories">categories<a class="anchor" aria-label="anchor" href="#arg-categories"></a></dt>
 <dd><p>Character. Vector of names of the two multiway
-categorical variables.</p></dd>
+categorical variables, in any order.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -107,41 +107,33 @@ referable only by name.</p></dd>
 possible values are “median” (default) or “percent”. The median
 method determines medians of the quantitative column grouped by
 category. The percent method sums dividends and divisors by category
-and calculates their quotients (again, by category).</p></dd>
+and calculates their quotients by category.</p></dd>
 
 
 <dt id="arg-ratio-of">ratio_of<a class="anchor" aria-label="anchor" href="#arg-ratio-of"></a></dt>
-<dd><p>Character. Vector of names of the dividend and the divisor
-that produced the quantitative variable. Required when
-<code>method = "percent,"</code> ignored otherwise. Names can be in any order;
-the algorithm assumes that the parameter with the larger column sum
-is the denominator of the ratio.</p></dd>
+<dd><p>Character. Vector of column names of the dividend
+and the divisor that produced the quantitative variable. Names
+must be in order, as in <code>c(dividend, divisor).</code> Required
+when <code>method = "percent,"</code> ignored otherwise.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Data frame with the following properties:</p><ul><li><p>Data frame class is preserved. Groups and keys are
 not preserved.</p></li>
-<li><p>Rows are preserved, though the row order may change.</p></li>
-<li><p>Numerical variables are converted to type double. Columns
-specified by <code>categories</code> are converted to factors and ordered.</p></li>
-<li><p>New columns are added or replace existing columns of the same name (if
-any). Other columns are not modified. New columns are added as described
-below.</p></li>
-<li><p>With <code>method = median</code>, two columns are added with names of the form
-<code>CATEGORY_median,</code> with <code>CATEGORY</code> replaced with the values from the
-<code>categories</code> argument. For example, if <code>categories = c("program", "people"),</code>
-the two new column names would be:</p><ul><li><p><code>program_median</code></p></li>
-<li><p><code>people_median</code></p></li>
+<li><p>Row order is preserved. Duplicated rows are removed.</p></li>
+<li><p>Column specified by <code>quantity</code> is converted to type double.
+Columns specified by <code>categories</code> are converted to factors and ordered.</p></li>
+<li><p>Columns with names different from the two new columns (named below) are not
+modified; columns with matching names are replaced. The two new column
+names have the form:</p><ul><li><p><code>CATEGORY_1_method_abbr</code></p></li>
+<li><p><code>CATEGORY_2_method_abbr</code></p></li>
+<li><p>For example, if
+<code>categories = c("program", "people")</code> and <code>method = "median",</code> the new
+column names would be <code>program_med</code> and <code>people_med.</code>
+For <code>method = "percent",</code> the new column names would be <code>program_pct</code>
+and <code>people_pct.</code></p></li>
 </ul></li>
-<li><p>With <code>method = percent</code>, two columns are added with names of the form
-<code>CATEGORY_QUANTITY,</code> with <code>CATEGORY</code> replaced with the values from the
-<code>categories</code> argument and <code>QUANTITY</code> from the <code>quantity</code> argument. For
-example, if <code>categories = c("program", "people")</code>  and
-<code>quantity = "grad_rate",</code> the two new column names would be:</p><ul><li><p><code>program_grad_rate</code></p></li>
-<li><p><code>people_grad_rate</code></p></li>
-</ul></li>
-<li><p>Groups and keys are not preserved.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -211,54 +203,55 @@ is encoded along identical horizontal scales.</p>
 <span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">DT</span>, </span></span>
 <span class="r-in"><span>         old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"graduates"</span>, <span class="st">"ever_enrolled"</span>, <span class="st">"stickiness"</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>         new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm"</span>, <span class="st">"grad"</span>, <span class="st">"ever"</span>, <span class="st">"stk"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm"</span>, <span class="st">"people"</span>, <span class="st">"grad"</span>, <span class="st">"ever"</span>, <span class="st">"stk"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       prgm  ever  grad   stk          people</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;          &lt;char&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     EE    21    12  57.1    Asian Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     EE     6     3  50.0    Black Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     EE     8     3  37.5 Hispanic Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     EE   118    56  47.5    White Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     EE   123    71  57.7      Asian Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     EE    29    17  58.6      Black Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     EE    45    17  37.8   Hispanic Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     EE   864   439  50.8      White Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     ME     7     1  14.3    Asian Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     ME     3     2  66.7    Black Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:     ME    12     8  66.7 Hispanic Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     ME   213   134  62.9    White Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:     ME    76    49  64.5      Asian Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:     ME    30    19  63.3      Black Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:     ME    79    42  53.2   Hispanic Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:     ME  1596   955  59.8      White Male</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       prgm          people  grad  ever   stk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;char&gt;          &lt;char&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     EE    Asian Female    12    21  57.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     EE    Black Female     3     6  50.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     EE Hispanic Female     3     8  37.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     EE    White Female    56   118  47.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     EE      Asian Male    71   123  57.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     EE      Black Male    17    29  58.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     EE   Hispanic Male    17    45  37.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     EE      White Male   439   864  50.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     ME    Asian Female     1     7  14.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     ME    Black Female     2     3  66.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:     ME Hispanic Female     8    12  66.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     ME    White Female   134   213  62.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:     ME      Asian Male    49    76  64.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:     ME      Black Male    19    30  63.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:     ME   Hispanic Male    42    79  53.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:     ME      White Male   955  1596  59.8</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Factor levels ordered by median</span></span></span>
-<span class="r-in"><span><span class="va">mw1</span> <span class="op">&lt;-</span> <span class="fu">order_multiway</span><span class="op">(</span><span class="va">DT</span>, </span></span>
+<span class="r-in"><span><span class="va">DT1</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">DT1</span> <span class="op">&lt;-</span> <span class="va">DT1</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ever"</span>, <span class="st">"grad"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">mw1</span> <span class="op">&lt;-</span> <span class="fu">order_multiway</span><span class="op">(</span><span class="va">DT1</span>, </span></span>
 <span class="r-in"><span>                      quantity <span class="op">=</span> <span class="st">"stk"</span>, </span></span>
 <span class="r-in"><span>                      categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">mw1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm_median"</span>, <span class="st">"people_median"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># The unused variables `ever` and `grad` are dropped</span></span></span>
 <span class="r-in"><span><span class="va">mw1</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       prgm  ever  grad   stk          people prgm_median people_median</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;fctr&gt; &lt;int&gt; &lt;int&gt; &lt;num&gt;          &lt;fctr&gt;       &lt;num&gt;         &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     EE    21    12  57.1    Asian Female        50.4         35.70</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     EE    45    17  37.8   Hispanic Male        50.4         45.50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     EE     8     3  37.5 Hispanic Female        50.4         52.10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     EE   118    56  47.5    White Female        50.4         55.20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     EE   864   439  50.8      White Male        50.4         55.30</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     EE     6     3  50.0    Black Female        50.4         58.35</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     EE    29    17  58.6      Black Male        50.4         60.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     EE   123    71  57.7      Asian Male        50.4         61.10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     ME     7     1  14.3    Asian Female        63.1         35.70</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     ME    79    42  53.2   Hispanic Male        63.1         45.50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:     ME    12     8  66.7 Hispanic Female        63.1         52.10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     ME   213   134  62.9    White Female        63.1         55.20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:     ME  1596   955  59.8      White Male        63.1         55.30</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:     ME     3     2  66.7    Black Female        63.1         58.35</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:     ME    30    19  63.3      Black Male        63.1         60.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:     ME    76    49  64.5      Asian Male        63.1         61.10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       prgm          people   stk prgm_median people_median</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;fctr&gt;          &lt;fctr&gt; &lt;num&gt;       &lt;num&gt;         &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     EE    Asian Female  57.1        50.4         35.70</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     EE   Hispanic Male  37.8        50.4         45.50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     EE Hispanic Female  37.5        50.4         52.10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     EE    White Female  47.5        50.4         55.20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     EE      White Male  50.8        50.4         55.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     EE    Black Female  50.0        50.4         58.35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     EE      Black Male  58.6        50.4         60.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     EE      Asian Male  57.7        50.4         61.10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     ME    Asian Female  14.3        63.1         35.70</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     ME   Hispanic Male  53.2        63.1         45.50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:     ME Hispanic Female  66.7        63.1         52.10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     ME    White Female  62.9        63.1         55.20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:     ME      White Male  59.8        63.1         55.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:     ME    Black Female  66.7        63.1         58.35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:     ME      Black Male  63.3        63.1         60.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:     ME      Asian Male  64.5        63.1         61.10</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Levels in same increasing order as shown above</span></span></span>
+<span class="r-in"><span><span class="co"># Levels in increasing order</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">mw1</span><span class="op">$</span><span class="va">prgm</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "EE" "ME"</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">mw1</span><span class="op">$</span><span class="va">people</span><span class="op">)</span></span></span>
@@ -266,33 +259,33 @@ is encoded along identical horizontal scales.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "White Male"      "Black Female"    "Black Male"      "Asian Male"     </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Ordering using percent method</span></span></span>
-<span class="r-in"><span><span class="va">mw2</span> <span class="op">&lt;-</span><span class="fu">order_multiway</span><span class="op">(</span><span class="va">DT</span>, </span></span>
+<span class="r-in"><span><span class="va">mw2</span> <span class="op">&lt;-</span> <span class="fu">order_multiway</span><span class="op">(</span><span class="va">DT</span>, </span></span>
 <span class="r-in"><span>               quantity <span class="op">=</span> <span class="st">"stk"</span>, </span></span>
 <span class="r-in"><span>               categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm"</span>, <span class="st">"people"</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>               method <span class="op">=</span> <span class="st">"percent"</span>, </span></span>
 <span class="r-in"><span>               ratio_of <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grad"</span>, <span class="st">"ever"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">mw2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm_stk"</span>, <span class="st">"people_stk"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">mw2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm_metric"</span>, <span class="st">"people_metric"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The two ratio_of variables `ever` and `grad` are retained</span></span></span>
 <span class="r-in"><span><span class="va">mw2</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       prgm  ever  grad   stk          people prgm_stk people_stk</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;fctr&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt;          &lt;fctr&gt;    &lt;num&gt;      &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     EE    21    12  57.1    Asian Female     50.9       46.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     EE    45    17  37.8   Hispanic Male     50.9       47.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     EE     8     3  37.5 Hispanic Female     50.9       55.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     EE     6     3  50.0    Black Female     50.9       55.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     EE   864   439  50.8      White Male     50.9       56.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     EE   118    56  47.5    White Female     50.9       57.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     EE   123    71  57.7      Asian Male     50.9       60.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     EE    29    17  58.6      Black Male     50.9       61.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     ME     7     1  14.3    Asian Female     60.0       46.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     ME    79    42  53.2   Hispanic Male     60.0       47.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:     ME    12     8  66.7 Hispanic Female     60.0       55.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     ME     3     2  66.7    Black Female     60.0       55.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:     ME  1596   955  59.8      White Male     60.0       56.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:     ME   213   134  62.9    White Female     60.0       57.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:     ME    76    49  64.5      Asian Male     60.0       60.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:     ME    30    19  63.3      Black Male     60.0       61.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       prgm          people  grad  ever   stk prgm_metric people_metric</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;fctr&gt;          &lt;fctr&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt;       &lt;num&gt;         &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     EE    Asian Female    12    21  57.1        50.9          46.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     EE   Hispanic Male    17    45  37.8        50.9          47.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     EE Hispanic Female     3     8  37.5        50.9          55.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     EE    Black Female     3     6  50.0        50.9          55.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     EE      White Male   439   864  50.8        50.9          56.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     EE    White Female    56   118  47.5        50.9          57.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     EE      Asian Male    71   123  57.7        50.9          60.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     EE      Black Male    17    29  58.6        50.9          61.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     ME    Asian Female     1     7  14.3        60.0          46.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     ME   Hispanic Male    42    79  53.2        60.0          47.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:     ME Hispanic Female     8    12  66.7        60.0          55.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     ME    Black Female     2     3  66.7        60.0          55.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:     ME      White Male   955  1596  59.8        60.0          56.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:     ME    White Female   134   213  62.9        60.0          57.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:     ME      Asian Male    49    76  64.5        60.0          60.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:     ME      Black Male    19    30  63.3        60.0          61.0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Levels in same increasing order as shown above</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">mw2</span><span class="op">$</span><span class="va">prgm</span><span class="op">)</span></span></span>

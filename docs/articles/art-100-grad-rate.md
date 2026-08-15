@@ -693,24 +693,24 @@ DT <- order_multiway(DT,
   ratio_of   = c("graduates", "starters")
 )
 DT
-#>        program               people graduates starters  rate program_rate
-#>         <fctr>               <fctr>     <num>    <num> <num>        <num>
-#>  1:      Civil           Asian Male         9       17  52.9         47.0
-#>  2:      Civil        Hispanic Male        10       33  30.3         47.0
-#>  3:      Civil International Female         6       14  42.9         47.0
-#> ---                                                                      
-#> 25: Mechanical   Other/Unknown Male        24       53  45.3         46.4
-#> 26: Mechanical         White Female        71      146  48.6         46.4
-#> 27: Mechanical           White Male       568     1225  46.4         46.4
-#>     people_rate
-#>           <num>
-#>  1:        48.8
-#>  2:        34.2
-#>  3:        42.9
-#> ---            
-#> 25:        37.5
-#> 26:        46.6
-#> 27:        45.7
+#>        program               people graduates starters  rate program_metric
+#>         <fctr>               <fctr>     <num>    <num> <num>          <num>
+#>  1:      Civil           Asian Male         9       17  52.9           47.0
+#>  2:      Civil        Hispanic Male        10       33  30.3           47.0
+#>  3:      Civil International Female         6       14  42.9           47.0
+#> ---                                                                        
+#> 25: Mechanical   Other/Unknown Male        24       53  45.3           46.4
+#> 26: Mechanical         White Female        71      146  48.6           46.4
+#> 27: Mechanical           White Male       568     1225  46.4           46.4
+#>     people_metric
+#>             <num>
+#>  1:          48.8
+#>  2:          34.2
+#>  3:          42.9
+#> ---              
+#> 25:          37.5
+#> 26:          46.6
+#> 27:          45.7
 ```
 
 *Multiway chart.*   Code adapted from [Multiway data and
@@ -726,7 +726,7 @@ groupings to practice data.
 
 ggplot(DT, aes(x = rate, y = people)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = program_rate), linetype = 2, color = "gray60") +
+  geom_vline(aes(xintercept = program_metric), linetype = 2, color = "gray60") +
   geom_point() +
   labs(x = "Graduation rate (%)", y = "") +
   scale_x_continuous(limits = c(20, 90), breaks = seq(0, 100, 10))

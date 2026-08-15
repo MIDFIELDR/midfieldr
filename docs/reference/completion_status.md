@@ -6,7 +6,7 @@ add columns that support the findings.
 ## Usage
 
 ``` r
-completion_status(dframe, midfield_table = degree)
+completion_status(dframe, midf_table = degree)
 ```
 
 ## Arguments
@@ -16,7 +16,7 @@ completion_status(dframe, midfield_table = degree)
   Data frame or data frame extension (e.g., data.table or tibble) with
   required variables `{mcid, timely_term}.`
 
-- midfield_table:
+- midf_table:
 
   `degree` data frame with required variables `{mcid, term_degree}.`
 
@@ -33,7 +33,7 @@ Data frame with the following properties:
   not modified; columns with matching names are replaced. The new
   columns added are:
 
-  - `term_degree`   Joined from `midfield_table.`
+  - `term_degree`   Joined from `midf_table.`
 
   - `completion_status`   Character. Possible values of "timely", "late"
     and "NA".
@@ -81,7 +81,7 @@ x
 #> 16: MCID3111311799 Female
 
 # Add the required columns from timely_term().
-x <- timely_term(x, midfield_table = term)
+x <- timely_term(x, midf_table = term)
 x <- x[, .(mcid, sex, timely_term)]
 x
 #>               mcid    sex timely_term
@@ -104,7 +104,7 @@ x
 #> 16: MCID3111311799 Female       19963
 
 # Add completion status columns. Unrelated columns (sex) are unaffected.
-x <- completion_status(x, midfield_table = degree)
+x <- completion_status(x, midf_table = degree)
 x
 #>               mcid    sex timely_term term_degree completion_status
 #>             <char> <char>      <char>      <char>            <char>
@@ -126,7 +126,7 @@ x
 #> 16: MCID3111311799 Female       19963        <NA>              <NA>
 
 # Repeat. New columns silently replace existing columns of the same name.
-y <- completion_status(x, midfield_table = degree)
+y <- completion_status(x, midf_table = degree)
 y
 #>               mcid    sex timely_term term_degree completion_status
 #>             <char> <char>      <char>      <char>            <char>

@@ -521,15 +521,15 @@ DT
 #> 33: Mechanical   International Male           178        89       50.0
 #> 34: Mechanical   Other/Unknown Male            80        41       51.2
 #> 35: Mechanical           White Male          1596       955       59.8
-#>     program_stickiness people_stickiness
-#>                  <num>             <num>
-#>  1:               62.4              62.7
-#>  2:               62.4              56.0
-#>  3:               62.4              47.1
-#> ---                                     
-#> 33:               59.0              50.0
-#> 34:               59.0              45.6
-#> 35:               59.0              59.4
+#>     program_metric people_metric
+#>              <num>         <num>
+#>  1:           62.4          62.7
+#>  2:           62.4          56.0
+#>  3:           62.4          47.1
+#> ---                             
+#> 33:           59.0          50.0
+#> 34:           59.0          45.6
+#> 35:           59.0          59.4
 ```
 
 *Multiway chart.*   Code adapted from [Multiway data and
@@ -545,7 +545,7 @@ practice data.
 
 ggplot(DT, aes(x = stickiness, y = people)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = program_stickiness), linetype = 2, color = "gray60") +
+  geom_vline(aes(xintercept = program_metric), linetype = 2, color = "gray60") +
   geom_point() +
   labs(x = "Stickiness (%)", y = "") +
   scale_x_continuous(limits = c(20, 90), breaks = seq(0, 100, 10))

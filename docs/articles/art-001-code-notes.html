@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9018</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9023</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,34 +94,35 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfieldr/">"midfieldr"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfielddata/" class="external-link">"midfielddata"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://tibble.tidyverse.org/" class="external-link">"tibble"</a></span><span class="op">)</span></span></code></pre></div>
-<p><em>On printing data frame:</em>   Set the following data frame
-printing options to print all columns with the total number of rows set
-by <code>print_all_rows_max</code>.</p>
+<p><em>On printing a data frame:</em>   Set the following data frame
+printing options to print <em>all columns</em> with the total number of
+rows displayed set by <code>max_n_rows</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set max number of rows to display</span></span>
-<span><span class="va">print_all_rows_max</span> <span class="op">&lt;-</span> <span class="fl">6</span></span>
+<span><span class="va">max_n_rows</span> <span class="op">&lt;-</span> <span class="fl">6</span></span>
 <span></span>
-<span><span class="co"># data.table syntax</span></span>
-<span><span class="va">half_max</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">print_all_rows_max</span> <span class="op">/</span> <span class="fl">2</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="co"># data.table options</span></span>
+<span><span class="va">half_max</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">max_n_rows</span> <span class="op">/</span> <span class="fl">2</span>, <span class="fl">0</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span></span>
-<span>  datatable.print.nrows <span class="op">=</span> <span class="va">print_all_rows_max</span>,</span>
+<span>  datatable.print.nrows <span class="op">=</span> <span class="va">max_n_rows</span>,</span>
 <span>  datatable.print.topn <span class="op">=</span> <span class="va">half_max</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># dplyr/tibble syntax</span></span>
+<span><span class="co"># dplyr/tibble options</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span></span>
 <span>  pillar.width <span class="op">=</span> <span class="cn">Inf</span>,</span>
-<span>  pillar.print_max <span class="op">=</span> <span class="va">print_all_rows_max</span>,</span>
-<span>  pillar.print_min <span class="op">=</span> <span class="va">print_all_rows_max</span></span>
+<span>  pillar.print_max <span class="op">=</span> <span class="va">max_n_rows</span>,</span>
+<span>  pillar.print_min <span class="op">=</span> <span class="va">max_n_rows</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>For example</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># data.table syntax</span></span>
+<code class="sourceCode R"><span><span class="co"># example data frame</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">toy_student</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/as.data.table.html" class="external-link">as.data.table</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># data.table syntax</span></span>
+<span><span class="va">x</span></span>
 <span><span class="co">#&gt;                mcid          race    sex   institution              transfer</span></span>
 <span><span class="co">#&gt;              &lt;char&gt;        &lt;char&gt; &lt;char&gt;        &lt;char&gt;                &lt;char&gt;</span></span>
 <span><span class="co">#&gt;   1: MCID3111142897 International   Male Institution B   First-Time Transfer</span></span>
@@ -182,7 +183,7 @@ by <code>print_all_rows_max</code>.</p>
 <span></span>
 <span><span class="co"># base R syntax</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">x</span>, n <span class="op">=</span> <span class="va">print_all_rows_max</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">x</span>, n <span class="op">=</span> <span class="va">max_n_rows</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             mcid          race    sex   institution              transfer</span></span>
 <span><span class="co">#&gt; 1 MCID3111142897 International   Male Institution B   First-Time Transfer</span></span>
 <span><span class="co">#&gt; 2 MCID3111157634         White Female Institution J First-Time in College</span></span>
@@ -203,7 +204,36 @@ by <code>print_all_rows_max</code>.</p>
 <span><span class="co">#&gt; 3       NA</span></span>
 <span><span class="co">#&gt; 4       NA</span></span>
 <span><span class="co">#&gt; 5       NA</span></span>
-<span><span class="co">#&gt; 6       NA</span></span></code></pre></div>
+<span><span class="co">#&gt; 6       NA</span></span>
+<span></span>
+<span><span class="co"># alternative base R syntax</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">x</span>, n <span class="op">=</span> <span class="va">half_max</span><span class="op">)</span></span>
+<span><span class="co">#&gt;             mcid          race    sex   institution              transfer</span></span>
+<span><span class="co">#&gt; 1 MCID3111142897 International   Male Institution B   First-Time Transfer</span></span>
+<span><span class="co">#&gt; 2 MCID3111157634         White Female Institution J First-Time in College</span></span>
+<span><span class="co">#&gt; 3 MCID3111158724         White   Male Institution J First-Time in College</span></span>
+<span><span class="co">#&gt;   hours_transfer age_desc us_citizen home_zip high_school sat_math sat_verbal</span></span>
+<span><span class="co">#&gt; 1             NA Under 25         No     &lt;NA&gt;        &lt;NA&gt;       NA         NA</span></span>
+<span><span class="co">#&gt; 2             NA Under 25        Yes    23842      471790      610        550</span></span>
+<span><span class="co">#&gt; 3             NA Under 25        Yes    22026      471345      760        560</span></span>
+<span><span class="co">#&gt;   act_comp</span></span>
+<span><span class="co">#&gt; 1       NA</span></span>
+<span><span class="co">#&gt; 2       NA</span></span>
+<span><span class="co">#&gt; 3       NA</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">x</span>, n <span class="op">=</span> <span class="va">half_max</span><span class="op">)</span></span>
+<span><span class="co">#&gt;               mcid  race    sex   institution              transfer</span></span>
+<span><span class="co">#&gt; 349 MCID3112868072 White   Male Institution B First-Time in College</span></span>
+<span><span class="co">#&gt; 350 MCID3112869843 White Female Institution B   First-Time Transfer</span></span>
+<span><span class="co">#&gt; 351 MCID3112885339 White   Male Institution B First-Time in College</span></span>
+<span><span class="co">#&gt;     hours_transfer age_desc us_citizen home_zip high_school sat_math sat_verbal</span></span>
+<span><span class="co">#&gt; 349             NA Under 25        Yes    98354      481345      670        460</span></span>
+<span><span class="co">#&gt; 350             NA Under 25        Yes    80238      060400       NA         NA</span></span>
+<span><span class="co">#&gt; 351             NA Under 25        Yes    81615      060060      600        640</span></span>
+<span><span class="co">#&gt;     act_comp</span></span>
+<span><span class="co">#&gt; 349       25</span></span>
+<span><span class="co">#&gt; 350       28</span></span>
+<span><span class="co">#&gt; 351       29</span></span></code></pre></div>
   </main>
 </div>
 

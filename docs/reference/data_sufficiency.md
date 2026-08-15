@@ -1,12 +1,12 @@
 # Determine data sufficiency
 
-Determine *data sufficiency* for each student in a data frame and add
-columns that support the findings.
+Determine institutional *data sufficiency* for each student in a data
+frame and add columns that support the findings.
 
 ## Usage
 
 ``` r
-data_sufficiency(dframe, midfield_table = term)
+data_sufficiency(dframe, midf_table = term)
 ```
 
 ## Arguments
@@ -16,7 +16,7 @@ data_sufficiency(dframe, midfield_table = term)
   Data frame or data frame extension (e.g., data.table or tibble) with
   required variables `{mcid, term_i, timely_term}.`
 
-- midfield_table:
+- midf_table:
 
   `term` data frame with required variables `{mcid, term, institution}.`
 
@@ -37,37 +37,45 @@ Data frame with the following properties:
     student is enrolled in a term.
 
   - `lower_limit`   Character. Initial term of an institution's data
-    range, encoded `YYYYT`. Extracted from `midfield_table.`
+    range, encoded `YYYYT`. Extracted from `midf_table.`
 
   - `upper_limit`   Character. Final term of an institution's data
-    range, encoded `YYYYT`. Extracted from `midfield_table.`
+    range, encoded `YYYYT`. Extracted from `midf_table.`
 
   - `data_sufficiency`   Character. Possible values are "include",
     "exclude-lower," and "exclude-upper."
 
 ## Details
 
-*Data sufficiency* is a criterion for including or excluding a student
-record based on the feasibility of determining their completion status
-given the range of data available from their institution. If determining
-completion status is feasible, the student record is included in the
-study population; if not, they must be excluded to avoid biased counts
-of completers and non-completers. Such biases occur at the upper and
-lower bounds of an institution's data range.
+In most studies, the population must satisfy the *data sufficiency*
+criterion, developed as follows:
 
-To apply this criterion, our heuristic labels a row "exclude-upper" when
-a student's timely completion term exceeds the upper limit of their
-institution's data range; "exclude-lower" when their initial term
-matches the lowest non-summer limit of the data range; and "include"
-otherwise. The rationale for these specific filters is explained in our
-data sufficiency article (see references). In most studies, the
-population must satisfy the data sufficiency requirement.
+- Program *completion* means satisfying the requirements for a first
+  baccalaureate degree.
+
+- Completion *status* is "timely" if accomplished within a set time
+  span, typically 4, 6, or 8 years after admission depending on the
+  definition one adopts. The *timely-completion term* is the term at the
+  end of that span.
+
+- The *data sufficiency* test identifies students whose actual admission
+  term and projected timely completion term both lie within their
+  institution's data range. These are the students for whom completion
+  status—timely or otherwise—can be positively asserted, and are
+  therefore the only students included a population.
+
+To apply this criterion, our heuristic labels a row (keyed by student
+ID) "exclude-upper" when a student's timely completion term exceeds the
+upper limit of their institution's data range; "exclude-lower" when
+their initial term matches the non-summer, lower limit of the data
+range; and "include" otherwise. The rationale for these specific filters
+is explained in our data sufficiency article (see references).
 
 ## References
 
-Richard Layton, Russell Long, Matthew Ohland, Marisa Orr, and Susan Lord
-(2026) Data sufficiency,
-https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.html
+R. Layton, R. Long, M. Ohland, M. Orr, and S. Lord (2026), "Data
+sufficiency,"
+<https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.html>
 
 ## Examples
 
@@ -91,7 +99,7 @@ x
 #> 10: MCID3112751130   Male
 
 # Add the required columns from timely_term().
-x <- timely_term(x, midfield_table = term)
+x <- timely_term(x, midf_table = term)
 x <- x[, .(mcid, sex, term_i, timely_term)]
 x
 #>               mcid    sex term_i timely_term
@@ -108,7 +116,7 @@ x
 #> 10: MCID3112751130   Male  20151       20203
 
 # Add data sufficiency columns. Unrelated columns (sex) are unaffected.
-x <- data_sufficiency(x, midfield_table = term)
+x <- data_sufficiency(x, midf_table = term)
 x
 #>               mcid    sex term_i timely_term   institution lower_limit
 #>             <char> <char> <char>      <char>        <char>      <char>
@@ -136,7 +144,7 @@ x
 #> 10:       20181    exclude-upper
 
 # Repeat. New columns silently replace existing columns of the same name.
-y <- data_sufficiency(x, midfield_table = term)
+y <- data_sufficiency(x, midf_table = term)
 y
 #>               mcid    sex term_i timely_term   institution lower_limit
 #>             <char> <char> <char>      <char>        <char>      <char>

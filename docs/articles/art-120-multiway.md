@@ -683,30 +683,30 @@ DT_ratio
 #> 27: Mechanical   International Male International   Male           178
 #> 28: Mechanical   Other/Unknown Male Other/Unknown   Male            80
 #> 29: Mechanical           White Male         White   Male          1596
-#>     graduates stickiness program_stickiness people_stickiness
-#>         <num>      <num>              <num>             <num>
-#>  1:        10       66.7               62.5              62.7
-#>  2:        13       56.5               62.5              57.1
-#>  3:       162       61.6               62.5              60.5
-#> ---                                                          
-#> 27:        89       50.0               59.0              50.0
-#> 28:        41       51.2               59.0              45.6
-#> 29:       955       59.8               59.0              59.4
+#>     graduates stickiness program_metric people_metric
+#>         <num>      <num>          <num>         <num>
+#>  1:        10       66.7           62.5          62.7
+#>  2:        13       56.5           62.5          57.1
+#>  3:       162       61.6           62.5          60.5
+#> ---                                                  
+#> 27:        89       50.0           59.0          50.0
+#> 28:        41       51.2           59.0          45.6
+#> 29:       955       59.8           59.0          59.4
 ```
 
 The function again converts the categories to factors and adds two
-columns (`program_stickiness` and `people_stickiness`) to display the
-computed percentages used to order the factors. In the percentage
-method, the new column names are a combination of the category variable
-names (from `categories`) plus the quantitative column name (from `x`).
+columns (`program_metric` and `people_metric`) to display the computed
+percentages used to order the factors. In the percentage method, the new
+column names are a combination of the category variable names (from
+`categories`) plus `metric.`
 
 For example, the results show that the stickiness of Civil Engineering
-(`program_stickiness`) is 62.5%, and of Asian Females, 62.7%
-(`people_stickiness`). We confirm these results by computing the group
+(`program_metric`) is 62.5%, and of Asian Females, 62.7%
+(`people_metric`). We confirm these results by computing the group
 stickiness values independently.
 
-The following values agree with those in the `program_stickiness`
-variable above,
+The following values agree with those in the `program_metric` variable
+above,
 
 ``` r
 
@@ -755,7 +755,7 @@ The order of rows and panels has changed from the earlier charts.
 # Programs encoded by rows
 ggplot(DT_ratio, aes(x = stickiness, y = program)) +
   facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = people_stickiness), linetype = 2, color = ref_line_color) +
+  geom_vline(aes(xintercept = people_metric), linetype = 2, color = ref_line_color) +
   labs(x = "Stickiness", y = "", title = "Engineering stickiness") +
   geom_point()
 ```
@@ -781,7 +781,7 @@ effectively. This is done far better in the second chart that encodes
 # People encoded by rows
 ggplot(DT_ratio, aes(x = stickiness, y = people)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = program_stickiness), linetype = 2, color = ref_line_color) +
+  geom_vline(aes(xintercept = program_metric), linetype = 2, color = ref_line_color) +
   labs(x = "Stickiness", y = "", title = "Engineering stickiness") +
   geom_point()
 ```

@@ -32,7 +32,8 @@ order_multiway(
 
 - categories:
 
-  Character. Vector of names of the two multiway categorical variables.
+  Character. Vector of names of the two multiway categorical variables,
+  in any order.
 
 - ...:
 
@@ -45,15 +46,14 @@ order_multiway(
   values are “median” (default) or “percent”. The median method
   determines medians of the quantitative column grouped by category. The
   percent method sums dividends and divisors by category and calculates
-  their quotients (again, by category).
+  their quotients by category.
 
 - ratio_of:
 
-  Character. Vector of names of the dividend and the divisor that
-  produced the quantitative variable. Required when
-  `method = "percent,"` ignored otherwise. Names can be in any order;
-  the algorithm assumes that the parameter with the larger column sum is
-  the denominator of the ratio.
+  Character. Vector of column names of the dividend and the divisor that
+  produced the quantitative variable. Names must be in order, as in
+  `c(dividend, divisor).` Required when `method = "percent,"` ignored
+  otherwise.
 
 ## Value
 
@@ -61,36 +61,23 @@ Data frame with the following properties:
 
 - Data frame class is preserved. Groups and keys are not preserved.
 
-- Rows are preserved, though the row order may change.
+- Row order is preserved. Duplicated rows are removed.
 
-- Numerical variables are converted to type double. Columns specified by
-  `categories` are converted to factors and ordered.
+- Column specified by `quantity` is converted to type double. Columns
+  specified by `categories` are converted to factors and ordered.
 
-- New columns are added or replace existing columns of the same name (if
-  any). Other columns are not modified. New columns are added as
-  described below.
+- Columns with names different from the two new columns (named below)
+  are not modified; columns with matching names are replaced. The two
+  new column names have the form:
 
-- With `method = median`, two columns are added with names of the form
-  `CATEGORY_median,` with `CATEGORY` replaced with the values from the
-  `categories` argument. For example, if
-  `categories = c("program", "people"),` the two new column names would
-  be:
+  - `CATEGORY_1_method_abbr`
 
-  - `program_median`
+  - `CATEGORY_2_method_abbr`
 
-  - `people_median`
-
-- With `method = percent`, two columns are added with names of the form
-  `CATEGORY_QUANTITY,` with `CATEGORY` replaced with the values from the
-  `categories` argument and `QUANTITY` from the `quantity` argument. For
-  example, if `categories = c("program", "people")` and
-  `quantity = "grad_rate",` the two new column names would be:
-
-  - `program_grad_rate`
-
-  - `people_grad_rate`
-
-- Groups and keys are not preserved.
+  - For example, if `categories = c("program", "people")` and
+    `method = "median",` the new column names would be `program_med` and
+    `people_med.` For `method = "percent",` the new column names would
+    be `program_pct` and `people_pct.`
 
 ## Details
 
@@ -162,54 +149,55 @@ DT[, c("race", "sex") := NULL]
 data.table::setnames(DT, 
          old = c("program", "graduates", "ever_enrolled", "stickiness"), 
          new = c("prgm", "grad", "ever", "stk"))
+data.table::setcolorder(DT, c("prgm", "people", "grad", "ever", "stk"))
 DT[]
-#>       prgm  ever  grad   stk          people
-#>     <char> <int> <int> <num>          <char>
-#>  1:     EE    21    12  57.1    Asian Female
-#>  2:     EE     6     3  50.0    Black Female
-#>  3:     EE     8     3  37.5 Hispanic Female
-#>  4:     EE   118    56  47.5    White Female
-#>  5:     EE   123    71  57.7      Asian Male
-#>  6:     EE    29    17  58.6      Black Male
-#>  7:     EE    45    17  37.8   Hispanic Male
-#>  8:     EE   864   439  50.8      White Male
-#>  9:     ME     7     1  14.3    Asian Female
-#> 10:     ME     3     2  66.7    Black Female
-#> 11:     ME    12     8  66.7 Hispanic Female
-#> 12:     ME   213   134  62.9    White Female
-#> 13:     ME    76    49  64.5      Asian Male
-#> 14:     ME    30    19  63.3      Black Male
-#> 15:     ME    79    42  53.2   Hispanic Male
-#> 16:     ME  1596   955  59.8      White Male
+#>       prgm          people  grad  ever   stk
+#>     <char>          <char> <int> <int> <num>
+#>  1:     EE    Asian Female    12    21  57.1
+#>  2:     EE    Black Female     3     6  50.0
+#>  3:     EE Hispanic Female     3     8  37.5
+#>  4:     EE    White Female    56   118  47.5
+#>  5:     EE      Asian Male    71   123  57.7
+#>  6:     EE      Black Male    17    29  58.6
+#>  7:     EE   Hispanic Male    17    45  37.8
+#>  8:     EE      White Male   439   864  50.8
+#>  9:     ME    Asian Female     1     7  14.3
+#> 10:     ME    Black Female     2     3  66.7
+#> 11:     ME Hispanic Female     8    12  66.7
+#> 12:     ME    White Female   134   213  62.9
+#> 13:     ME      Asian Male    49    76  64.5
+#> 14:     ME      Black Male    19    30  63.3
+#> 15:     ME   Hispanic Male    42    79  53.2
+#> 16:     ME      White Male   955  1596  59.8
 
 # Factor levels ordered by median
-mw1 <- order_multiway(DT, 
+DT1 <- data.table::copy(DT)
+DT1 <- DT1[, c("ever", "grad") := NULL]
+mw1 <- order_multiway(DT1, 
                       quantity = "stk", 
                       categories = c("prgm", "people"))
 data.table::setorderv(mw1, c("prgm_median", "people_median"))
-
-# The unused variables `ever` and `grad` are dropped
 mw1
-#>       prgm  ever  grad   stk          people prgm_median people_median
-#>     <fctr> <int> <int> <num>          <fctr>       <num>         <num>
-#>  1:     EE    21    12  57.1    Asian Female        50.4         35.70
-#>  2:     EE    45    17  37.8   Hispanic Male        50.4         45.50
-#>  3:     EE     8     3  37.5 Hispanic Female        50.4         52.10
-#>  4:     EE   118    56  47.5    White Female        50.4         55.20
-#>  5:     EE   864   439  50.8      White Male        50.4         55.30
-#>  6:     EE     6     3  50.0    Black Female        50.4         58.35
-#>  7:     EE    29    17  58.6      Black Male        50.4         60.95
-#>  8:     EE   123    71  57.7      Asian Male        50.4         61.10
-#>  9:     ME     7     1  14.3    Asian Female        63.1         35.70
-#> 10:     ME    79    42  53.2   Hispanic Male        63.1         45.50
-#> 11:     ME    12     8  66.7 Hispanic Female        63.1         52.10
-#> 12:     ME   213   134  62.9    White Female        63.1         55.20
-#> 13:     ME  1596   955  59.8      White Male        63.1         55.30
-#> 14:     ME     3     2  66.7    Black Female        63.1         58.35
-#> 15:     ME    30    19  63.3      Black Male        63.1         60.95
-#> 16:     ME    76    49  64.5      Asian Male        63.1         61.10
+#>       prgm          people   stk prgm_median people_median
+#>     <fctr>          <fctr> <num>       <num>         <num>
+#>  1:     EE    Asian Female  57.1        50.4         35.70
+#>  2:     EE   Hispanic Male  37.8        50.4         45.50
+#>  3:     EE Hispanic Female  37.5        50.4         52.10
+#>  4:     EE    White Female  47.5        50.4         55.20
+#>  5:     EE      White Male  50.8        50.4         55.30
+#>  6:     EE    Black Female  50.0        50.4         58.35
+#>  7:     EE      Black Male  58.6        50.4         60.95
+#>  8:     EE      Asian Male  57.7        50.4         61.10
+#>  9:     ME    Asian Female  14.3        63.1         35.70
+#> 10:     ME   Hispanic Male  53.2        63.1         45.50
+#> 11:     ME Hispanic Female  66.7        63.1         52.10
+#> 12:     ME    White Female  62.9        63.1         55.20
+#> 13:     ME      White Male  59.8        63.1         55.30
+#> 14:     ME    Black Female  66.7        63.1         58.35
+#> 15:     ME      Black Male  63.3        63.1         60.95
+#> 16:     ME      Asian Male  64.5        63.1         61.10
 
-# Levels in same increasing order as shown above
+# Levels in increasing order
 levels(mw1$prgm)
 #> [1] "EE" "ME"
 levels(mw1$people)
@@ -217,33 +205,33 @@ levels(mw1$people)
 #> [5] "White Male"      "Black Female"    "Black Male"      "Asian Male"     
 
 # Ordering using percent method
-mw2 <-order_multiway(DT, 
+mw2 <- order_multiway(DT, 
                quantity = "stk", 
                categories = c("prgm", "people"), 
                method = "percent", 
                ratio_of = c("grad", "ever"))
-data.table::setorderv(mw2, c("prgm_stk", "people_stk"))
+data.table::setorderv(mw2, c("prgm_metric", "people_metric"))
 
 # The two ratio_of variables `ever` and `grad` are retained
 mw2
-#>       prgm  ever  grad   stk          people prgm_stk people_stk
-#>     <fctr> <num> <num> <num>          <fctr>    <num>      <num>
-#>  1:     EE    21    12  57.1    Asian Female     50.9       46.4
-#>  2:     EE    45    17  37.8   Hispanic Male     50.9       47.6
-#>  3:     EE     8     3  37.5 Hispanic Female     50.9       55.0
-#>  4:     EE     6     3  50.0    Black Female     50.9       55.6
-#>  5:     EE   864   439  50.8      White Male     50.9       56.7
-#>  6:     EE   118    56  47.5    White Female     50.9       57.4
-#>  7:     EE   123    71  57.7      Asian Male     50.9       60.3
-#>  8:     EE    29    17  58.6      Black Male     50.9       61.0
-#>  9:     ME     7     1  14.3    Asian Female     60.0       46.4
-#> 10:     ME    79    42  53.2   Hispanic Male     60.0       47.6
-#> 11:     ME    12     8  66.7 Hispanic Female     60.0       55.0
-#> 12:     ME     3     2  66.7    Black Female     60.0       55.6
-#> 13:     ME  1596   955  59.8      White Male     60.0       56.7
-#> 14:     ME   213   134  62.9    White Female     60.0       57.4
-#> 15:     ME    76    49  64.5      Asian Male     60.0       60.3
-#> 16:     ME    30    19  63.3      Black Male     60.0       61.0
+#>       prgm          people  grad  ever   stk prgm_metric people_metric
+#>     <fctr>          <fctr> <num> <num> <num>       <num>         <num>
+#>  1:     EE    Asian Female    12    21  57.1        50.9          46.4
+#>  2:     EE   Hispanic Male    17    45  37.8        50.9          47.6
+#>  3:     EE Hispanic Female     3     8  37.5        50.9          55.0
+#>  4:     EE    Black Female     3     6  50.0        50.9          55.6
+#>  5:     EE      White Male   439   864  50.8        50.9          56.7
+#>  6:     EE    White Female    56   118  47.5        50.9          57.4
+#>  7:     EE      Asian Male    71   123  57.7        50.9          60.3
+#>  8:     EE      Black Male    17    29  58.6        50.9          61.0
+#>  9:     ME    Asian Female     1     7  14.3        60.0          46.4
+#> 10:     ME   Hispanic Male    42    79  53.2        60.0          47.6
+#> 11:     ME Hispanic Female     8    12  66.7        60.0          55.0
+#> 12:     ME    Black Female     2     3  66.7        60.0          55.6
+#> 13:     ME      White Male   955  1596  59.8        60.0          56.7
+#> 14:     ME    White Female   134   213  62.9        60.0          57.4
+#> 15:     ME      Asian Male    49    76  64.5        60.0          60.3
+#> 16:     ME      Black Male    19    30  63.3        60.0          61.0
 
 # Levels in same increasing order as shown above
 levels(mw2$prgm)
