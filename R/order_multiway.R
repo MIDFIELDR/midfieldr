@@ -53,14 +53,14 @@
 #' * Column specified by `quantity` is converted to type double.
 #'   Columns specified by `categories` are converted to factors and ordered.
 #' * Columns with names different from the two new columns (named below) are not
-#'   modified; columns with matching names are replaced. The two new column 
-#'   names have the form: 
-#'   - `CATEGORY_1_method_abbr` 
+#'   modified; columns with matching names are replaced. The two new column
+#'   names have the form:
+#'   - `CATEGORY_1_method_abbr`
 #'   - `CATEGORY_2_method_abbr`
-#'   - For example, if 
-#'   `categories = c("program", "people")` and `method = "median",` the new 
-#'   column names would be `program_med` and `people_med.` 
-#'   For `method = "percent",` the new column names would be `program_pct` 
+#'   - For example, if
+#'   `categories = c("program", "people")` and `method = "median",` the new
+#'   column names would be `program_med` and `people_med.`
+#'   For `method = "percent",` the new column names would be `program_pct`
 #'   and `people_pct.`
 #'
 #' @references
@@ -76,24 +76,24 @@ order_multiway <- function(dframe,
                            ratio_of = NULL) {
   #
   # ---------- base R checks (all data frame classes)
-  
+
   # arguments after ... must be named
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     "Arguments after ... must be named, as in arg = val."
   )
-  
+
   # required data frame(s) and required columns
   qassert(dframe, "d+") # data frame, missing values OK, length 1 or more
   assert_names(colnames(dframe), must.include = c(quantity, categories))
-  
+
   # required arguments
   qassert(quantity, "S1") # string, missing values prohibited, length 1
   qassert(categories, "S2") # string, missing values prohibited, length 2
-  
+
   # class of required columns
   qassert(dframe[[quantity]], "n+") # numeric, length 1 or more
-  
+
   # categories class factor or character
   x <- copy(dframe)
   one_row_df <- as.data.frame(x)[1, categories, drop = FALSE]
@@ -104,7 +104,7 @@ order_multiway <- function(dframe,
     empty.ok = FALSE,
     .var.name = "categories"
   )
-  
+
   # optional arguments
   method <- method %?% "median"
   qassert(method, "S1")
@@ -114,7 +114,7 @@ order_multiway <- function(dframe,
     empty.ok = FALSE,
     .var.name = "method"
   )
-  
+
   if (method == "percent") {
     qassert(ratio_of, "S2")
     assert_subset(
@@ -138,23 +138,23 @@ order_multiway <- function(dframe,
       warning("Argument 'ratio_of' is not used when `method = median.`")
     }
   }
-  
+
   # ---------- preparation
-  
+
   # to restore class except grouped tibbles
   prior_class <- setdiff(class(dframe), "grouped_df")
-  
+
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   setDT(dframe)
-  
+
   # avoid overwriting columns that match names of temporary columns
   init_temp_vars <- c("idx")
   temp_vars <- edit_new_col_names(dframe, init_temp_vars)
   idx_chr <- temp_vars[1]
-  
+
   ### protect overwriting by temp col names
-  
+
   # bind names due to NSE notes in R CMD check
   CATEGORY <- NULL
   DEN <- NULL
@@ -162,27 +162,27 @@ order_multiway <- function(dframe,
   NUM <- NULL
   ORDER_COL <- NULL
   QUANTITY <- NULL
-  
+
   # ---------- do the work
-  
+
   # add temp col to restore row order
   dframe[, IDX := .I,
-         env = list(IDX = idx_chr)
+    env = list(IDX = idx_chr)
   ]
-  
+
   # convert categories to factors
   dframe[, (categories) := lapply(.SD, as.factor), .SDcols = categories]
-  
+
   # ensure numerical values are double
   if (method == "percent") {
     dframe[, (ratio_of) := lapply(.SD, as.double), .SDcols = ratio_of]
   }
   dframe[, (quantity) := lapply(.SD, as.double), .SDcols = quantity]
-  
+
   # column names for ordering the factor levels
-  col_label <- fifelse (method == "percent", "pct", "med")
+  col_label <- fifelse(method == "percent", "metric", "median")
   order_col <- paste(categories, col_label, sep = "_")
-  
+
   # functions for creating the ordering columns
   f_percent <- function(x, y) {
     round(100 * sum(x, na.rm = TRUE) / sum(y, na.rm = TRUE), 1)
@@ -190,10 +190,9 @@ order_multiway <- function(dframe,
   f_median <- function(x) {
     median(x, na.rm = TRUE)
   }
-  
+
   # create the ordering columns and order the factor levels by category
   for (jj in seq_along(categories)) {
-    
     # apply functions to create ordering columns
     dframe[, ORDER_COL := fcase(
       method == "percent", f_percent(NUM, DEN),
@@ -209,32 +208,32 @@ order_multiway <- function(dframe,
       DEN = ratio_of[2]
     )
     ]
-    
+
     # order the factor levels
     dframe[, CATEGORY := reorder(CATEGORY, ORDER_COL),
-           env = list(
-             CATEGORY = categories[jj],
-             ORDER_COL = order_col[jj]
-           )
+      env = list(
+        CATEGORY = categories[jj],
+        ORDER_COL = order_col[jj]
+      )
     ]
   }
-  
+
   # ---------- prepare to return
-  
+
   # restore row order
   setkeyv(dframe, idx_chr)
-  
+
   # drop temporary cols
   dframe[, IDX := NULL,
-         env = list(IDX = idx_chr)
+    env = list(IDX = idx_chr)
   ]
-  
+
   # ensure unique rows
   dframe <- unique(dframe)
-  
+
   # restore class
   setattr(dframe, "class", prior_class)
-  
+
   # done
   dframe[]
 }

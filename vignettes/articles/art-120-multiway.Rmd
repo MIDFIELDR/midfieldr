@@ -471,11 +471,11 @@ DT_ratio <- order_multiway(DT_ratio,
 DT_ratio
 ```
 
-The function again converts the categories to factors and adds two columns (`program_stickiness` and `people_stickiness`) to display the computed percentages used to order the factors. In the percentage method, the new column names are a combination of the category variable names (from `categories`) plus the quantitative column name (from `x`). 
+The function again converts the categories to factors and adds two columns (`program_metric` and `people_metric`) to display the computed percentages used to order the factors. In the percentage method, the new column names are a combination of the category variable names (from `categories`) plus `metric.`
 
-For example, the results show that the stickiness of Civil Engineering (`program_stickiness`) is `r unique(DT_ratio[program == "Civil", (program_stickiness)])`%, and of Asian Females, `r unique(DT_ratio[people == "Asian Female", (people_stickiness)])`% (`people_stickiness`). We confirm these results by computing the group stickiness values independently. 
+For example, the results show that the stickiness of Civil Engineering (`program_metric`) is `r unique(DT_ratio[program == "Civil", (program_metric)])`%, and of Asian Females, `r unique(DT_ratio[people == "Asian Female", (people_metric)])`% (`people_metric`). We confirm these results by computing the group stickiness values independently. 
 
-The following values agree with those in the `program_stickiness` variable above,  
+The following values agree with those in the `program_metric` variable above,  
 
 ```{r}
 # Verify order_multiway() output
@@ -514,7 +514,7 @@ The order of rows and panels has changed from the earlier charts.
 # Programs encoded by rows
 ggplot(DT_ratio, aes(x = stickiness, y = program)) +
   facet_wrap(vars(people), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = people_stickiness), linetype = 2, color = ref_line_color) +
+  geom_vline(aes(xintercept = people_metric), linetype = 2, color = ref_line_color) +
   labs(x = "Stickiness", y = "", title = "Engineering stickiness") +
   geom_point()
 ```
@@ -534,7 +534,7 @@ Again, we cannot compare the eight values for a given program as effectively. Th
 # People encoded by rows
 ggplot(DT_ratio, aes(x = stickiness, y = people)) +
   facet_wrap(vars(program), ncol = 1, as.table = FALSE) +
-  geom_vline(aes(xintercept = program_stickiness), linetype = 2, color = ref_line_color) +
+  geom_vline(aes(xintercept = program_metric), linetype = 2, color = ref_line_color) +
   labs(x = "Stickiness", y = "", title = "Engineering stickiness") +
   geom_point()
 ```

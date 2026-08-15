@@ -122,28 +122,28 @@ test_order_multiway <- function() {
     expect_equal(class(mw_med[["catg1"]]), "factor")
     expect_equal(class(mw_med[["catg2"]]), "factor")
     expect_equal(class(mw_med[["metric"]]), "numeric")
-    expect_equal(class(mw_med[["catg1_med"]]), "numeric")
-    expect_equal(class(mw_med[["catg2_med"]]), "numeric")
+    expect_equal(class(mw_med[["catg1_median"]]), "numeric")
+    expect_equal(class(mw_med[["catg2_median"]]), "numeric")
     
     expect_equal(class(mw_pct[["catg1"]]), "factor")
     expect_equal(class(mw_pct[["catg2"]]), "factor")
     expect_equal(class(mw_pct[["metric"]]), "numeric")
-    expect_equal(class(mw_pct[["catg1_pct"]]), "numeric")
-    expect_equal(class(mw_pct[["catg2_pct"]]), "numeric")
+    expect_equal(class(mw_pct[["catg1_metric"]]), "numeric")
+    expect_equal(class(mw_pct[["catg2_metric"]]), "numeric")
     
     # median method produces correct answers
-    x <- DT_med[, catg1_med := median(metric), by = c("catg1")]
-    expect_equal(x[, .(catg1_med)], mw_med[, .(catg1_med)])
+    x <- DT_med[, catg1_median := median(metric), by = c("catg1")]
+    expect_equal(x[, .(catg1_median)], mw_med[, .(catg1_median)])
     
-    x <- DT_med[, catg2_med := median(metric), by = c("catg2")]
-    expect_equal(x[, .(catg2_med)], mw_med[, .(catg2_med)])
+    x <- DT_med[, catg2_median := median(metric), by = c("catg2")]
+    expect_equal(x[, .(catg2_median)], mw_med[, .(catg2_median)])
     
     # percent method produces correct answers
-    x <- DT_pct[, catg1_pct := round(100 * sum(num) / sum(den), 1), by = "catg1"]
-    expect_equal(x[, .(catg1_pct)], mw_pct[, .(catg1_pct)])
+    x <- DT_pct[, catg1_metric := round(100 * sum(num) / sum(den), 1), by = "catg1"]
+    expect_equal(x[, .(catg1_metric)], mw_pct[, .(catg1_metric)])
     
-    x <- DT_pct[, catg2_pct := round(100 * sum(num) / sum(den), 1), by = "catg2"]
-    expect_equal(x[, .(catg2_pct)], mw_pct[, .(catg2_pct)])
+    x <- DT_pct[, catg2_metric := round(100 * sum(num) / sum(den), 1), by = "catg2"]
+    expect_equal(x[, .(catg2_metric)], mw_pct[, .(catg2_metric)])
     
     # NULL method same as median
     expect_equivalent(

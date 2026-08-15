@@ -15,7 +15,7 @@ DT1 <- DT1[, c("ever", "grad") := NULL]
 mw1 <- order_multiway(DT1, 
                       quantity = "stk", 
                       categories = c("prgm", "people"))
-data.table::setorderv(mw1, c("prgm_med", "people_med"))
+data.table::setorderv(mw1, c("prgm_median", "people_median"))
 mw1
 
 # Levels in increasing order
@@ -28,7 +28,7 @@ mw2 <- order_multiway(DT,
                categories = c("prgm", "people"), 
                method = "percent", 
                ratio_of = c("grad", "ever"))
-data.table::setorderv(mw2, c("prgm_pct", "people_pct"))
+data.table::setorderv(mw2, c("prgm_metric", "people_metric"))
 
 # The two ratio_of variables `ever` and `grad` are retained
 mw2

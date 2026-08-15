@@ -51,7 +51,7 @@ library("midfieldr")
 packageVersion("midfieldr")
 #> [1] '1.0.3.9023'
 Sys.Date()
-#> [1] "2026-08-13"
+#> [1] "2026-08-15"
 ```
 
 ## Installation
@@ -103,7 +103,7 @@ term <- copy(toy_term)
 course <- copy(toy_course)
 degree <- copy(toy_degree)
 
-# Data structure 
+# Data structure
 look_at(student)
 #> Classes 'data.table' and 'data.frame':   351 obs. of  13 variables:
 #>  $ mcid          : chr  "MCID3111142897" "MCID3111157634" "MCID3111158724" "M"..
