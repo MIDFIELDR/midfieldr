@@ -16,6 +16,7 @@
 #' @importFrom data.table %like%
 #' @importFrom data.table as.data.table
 #' @importFrom data.table copy
+#' @importFrom data.table data.table
 #' @importFrom data.table fcase
 #' @importFrom data.table fifelse
 #' @importFrom data.table setattr

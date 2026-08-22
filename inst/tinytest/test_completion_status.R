@@ -8,10 +8,10 @@ expect_class_preserved <- function(df1, df2, fnc) {
         expect_equal(class(y), class(z))
     }
     
-    # runs 3 checks: data.frame, tibble, data.table
     x <- copy(df1)
     y <- copy(df2)
     
+    # run check 3 times: data.frame, tibble, data.table
     x <- as.data.frame(x)
     y <- as.data.frame(y)
     run_check(x, y, fnc)
@@ -24,6 +24,7 @@ expect_class_preserved <- function(df1, df2, fnc) {
     y <- as.data.table(y)
     run_check(x, y, fnc)
     
+    # done
     rm(x, y)
 }
 
@@ -75,7 +76,7 @@ test_completion_status <- function() {
     
     # correct columns in place
     dframe_vars <- c("mcid", "timely_term")
-    added_vars  <- c("term_degree", "completion_status")
+    added_vars  <- c("completion_term", "completion_status")
     return_vars <- c(dframe_vars, added_vars)
     expect_equal(return_vars, colnames(DT))
     

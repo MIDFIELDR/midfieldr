@@ -4,29 +4,29 @@
 \alias{prep_fye_mice}
 \title{Prepare FYE data for imputation}
 \usage{
-prep_fye_mice(midf_student = student, midf_term = term, ..., fye_codes = NULL)
+prep_fye_mice(m_student, m_term, fye_cip = NULL)
 }
 \arguments{
-\item{midf_student}{\code{student} data frame with required variables
-\verb{\{mcid, race, sex\}.}}
+\item{m_student}{Data frame or data frame extension (e.g., data.table or tibble) with required character variables
+\verb{\{mcid, race, sex\}.} Typically based on one's original,
+unfiltered \code{student} source data without regard to data sufficiency.}
 
-\item{midf_term}{\code{term} data frame with required variables
-\verb{\{mcid, term, cip6, institution\}.}}
+\item{m_term}{Data frame or data frame extension (e.g., data.table or tibble) with required character variables
+\verb{\{mcid, term, cip6, institution\}.} Typically based on one's original,
+unfiltered \code{term} source data without regard to data sufficiency.}
 
-\item{...}{Not used for passing values; forces subsequent arguments to be
-referable only by name.}
-
-\item{fye_codes}{Optional character vector of 6-digit CIP codes to identify
-FYE programs, default "140102". Codes must be 6-digit strings of numbers;
-regular expressions are prohibited. Non-engineering codes---those that do
-not start with 14---produce an error.}
+\item{fye_cip}{Data frame or data frame extension (e.g., data.table or tibble) with required character variables
+\verb{\{institution, fye_cip6\}.} Default has one institution
+value (\code{"Institution J"}) and one CIP code value (\code{"140102"}),
+compatible with midfielddata practice data and the midfieldr "toy"
+datasets.}
 }
 \value{
 Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved. Groups and keys are
 not preserved.
-\item Rows: One row for every FYE student from the \code{term} input data frame.
+\item Rows: One row for every degree-seeking FYE student.
 \item Columns: Conditioned for later use as an input to the mice R
 package for multiple imputation as follows:
 \itemize{
@@ -38,99 +38,155 @@ frame. An imputation predictor variable.
 \item \code{institution}   Factor, anonymized institution name from the
 \code{term} data frame. An imputation predictor variable.
 \item \code{proxy}   Factor, 6-digit CIP code of a student's known,
-post-FYE engineering program or NA representing missing
+first degree-granting engineering program or NA representing missing
 values to be imputed.
 }
 }
 }
 \description{
-Constructs a data frame of students enrolled in
-First-Year Engineering
-(FYE) programs keyed by student ID. Conditions the data for use as an input to the mice
-R package for multiple imputation. Sets up three variables as predictors
-(institution, race/ethnicity, and sex) and one variable to be imputed
-(program CIP code).
+Constructs a data frame of students ever enrolled in First-Year Engineering
+(FYE) programs at their institutions based on information in the MIDFIELD
+(or equivalent) \code{student} and \code{term} data tables. Conditions the data for
+use as an input to the mice R package for multiple imputation. Sets up
+three variables as predictors  (institution, race/ethnicity, and sex) and
+one variable to be imputed (program CIP code) keyed by student ID.
 }
-\details{
-At some US institutions, engineering students are required to complete a
-First-Year Engineering (FYE) program as a prerequisite for declaring an
-engineering major. Administratively, degree-granting engineering programs
-such as Electrical Engineering or Mechanical Engineering treat their incoming
-post-FYE students as their "starting" cohorts.  However, when computing a
-metric that requires a count of starters---graduation rate, for example---FYE
-records must be treated with special care to avoid a miscount.
+\section{Background}{
+  At some US institutions, engineering students are
+required to complete a First-Year Engineering (FYE) program as a prerequisite
+for declaring an engineering major. FYE students who then transition to a
+degree-granting engineering program are  typically counted as "starters" in
+that program for purposes of calculating, for example, graduation rates.
 
-To illustrate the potential for miscounting starters, suppose we wish to
-calculate a Mechanical Engineering (ME) graduation rate. Students starting in
-ME constitute the starting pool and the fraction of that pool graduating in
-ME is the graduation rate. At FYE institutions, an ME program would typically
-define their starting pool as the post-FYE cohort entering their program.
-This may be the best information available, but it invariably undercounts
-starters by failing to account for FYE students who do not transition
-(post-FYE) to degree-granting engineering programs---students who may have
-left the institution or switched to non-engineering majors. In either case,
-in the absence of the FYE requirement, some of these students would have been
-ME starters. By neglecting these students, the count of ME starters is
-artificially low resulting in an ME graduation rate that is artificially
-high. The same is true for every degree-granting engineering discipline in an
-FYE institution.
+This approach invariably undercounts starters and over-estimates associated
+metrics because it fails to account for FYE students who change majors
+(never enrolling in an engineering major) or drop out of the database
+altogether. Had the FYE program not been required, they would have enrolled
+in their preferred engineering program---the count of starters would have
+increased and a metric such as graduation rate would have decreased.
 
-Therefore, to avoid miscounting starters at FYE institutions, we have to
-estimate an "FYE proxy", that is, the 6-digit CIP codes of the
-degree-granting engineering programs that FYE students would have declared
-had they not been required to enroll in FYE. The purpose of
-`prep_fye_mice()`` is to prepare the data for making that estimation.
-
-After running \code{prep_fye_mice()} but before running \code{mice()}, one can edit
-variables or add variables to create a custom set of predictors. The mice
-package expects all predictors and the proxy variables to be factors. Do not
-delete the institution variable because it ensures that a student's imputed
-program is available at their institution.
-
-In addition, ensure that the only missing values are in the proxy column.
-Other variables are expected to be complete (no NA values). A value of
-"unknown" in a predictor column, e.g., race/ethnicity or sex, is an
-acceptable value, not missing data. Observations with missing or unknown
-values in the ID or institution columns (if any) should be removed.
+To include FYE students when a count of starters is needed, we estimate an
+"FYE proxy", that is, the 6-digit CIP codes of the degree-granting
+engineering programs that FYE students would have declared had they not been
+required to enroll in FYE. The purpose of \code{prep_fye_mice()} is to prepare
+the data for imputing the unknown CIP codes.
 }
+
 \section{Method}{
- The function extracts all terms for all FYE students,
-including those who migrate to enter Engineering after their first term,
-and identifies the first post-FYE program in which they enroll, if any.
-This treatment yields two possible outcomes for values returned in the
-\code{proxy} column:
-
+ The function extracts all terms for all FYE students and
+identifies all engineering programs in which they were ever enrolled. A
+\code{proxy} variable is added with one of the following values:
 \enumerate{
-\item{The student completes FYE and enrolls in an engineering major. For
-this outcome, we know that at the student's first opportunity, they
-enrolled in an engineering program of their choosing. The CIP code of
-that program is returned as the student's FYE proxy.}
-\item{The student does not enroll post-FYE in an engineering major. Such
-students have no further records in the database or switched from
-Engineering to another program. For this outcome, the data provide no
-information regarding what engineering program the student would have
-declared originally had the institution not required them to enroll in
-FYE. For these students a proxy value of NA is returned. These are the
-data treated as missing values to be imputed by \code{mice()}.}
+\item{If a student record includes at least one, non-FYE, degree-granting
+engineering program, the CIP code of the first such program is
+returned as the student's FYE proxy.}
+\item{If not, the proxy is NA and is treated as a missing value to be
+imputed by \code{mice()}.}
 }
 
-In cases where students enter FYE, change programs, and re-enter FYE, only
-the first group of FYE terms is considered. Any programs before FYE are
-ignored.
-
-The resulting data frame is ready for use as input for the mice package,
+Notes:
+\itemize{
+\item Missing values (NA) in the required columns are removed. However, a
+value of "unknown" in a predictor column, e.g., race/ethnicity or sex,
+is acceptable.
+\item After running \code{prep_fye_mice()} but before running \code{mice()}, one can edit
+the predictor variables if desired. The institution variable should remain
+to ensure that a student's imputed program is available at their
+institution.
+\item The resulting data frame is ready for use as input for the mice package,
 with all variables except \code{mcid} returned as factors.
+}
 }
 
 \examples{
-# Using toy data
-prep_fye_mice(toy_student, toy_term)
+library(data.table)
 
-# Other columns, if any, are dropped
-colnames(toy_student)
-colnames(prep_fye_mice(toy_student, toy_term))
+# Student A enrolls in FYE (140102) followed by Mechanical Engng 
+# (141901). The FYE proxy is Mechanical Engng (141901), abbreviated "ME".
+one_student <- data.table(mcid = "A", race = "unknown", sex = "unknown")
+term_excerpt <- data.table(
+    mcid = "A", 
+    institution = "Institution J",
+    term = c("20013", "20021"), 
+    program = c("FYE", "ME"),
+    cip6 = c("140102", "141901")
+)
+one_student
+term_excerpt
+prep_fye_mice(one_student, term_excerpt)
 
-# Optional argument permits multiple CIP codes for FYE
-prep_fye_mice(toy_student, toy_term, fye_codes = c("140101", "140102"))
+# Student B enrolls in FYE (140102) followed by History (540101). 
+# The FYE proxy is NA.
+one_student <- data.table(mcid = "B", race = "unknown", sex = "unknown")
+term_excerpt <- data.table(
+    mcid = "B", 
+    institution = "Institution J",
+    term = c("20013", "20021"), 
+    program = c("FYE", "History"),
+    cip6 = c("140102", "540101")
+)
+one_student
+term_excerpt
+prep_fye_mice(one_student, term_excerpt)
 
+# Student C enrolls in FYE (140102) but drops out of the database.
+# The FYE proxy is NA.
+one_student <- data.table(mcid = "C", race = "unknown", sex = "unknown")
+term_excerpt <- data.table(
+    mcid = "C", 
+    institution = "Institution J",
+    term = c("20013", "20021"), 
+    program = c("FYE", "FYE"),
+    cip6 = c("140102", "140102")
+)
+one_student
+term_excerpt
+prep_fye_mice(one_student, term_excerpt)
+
+# Student D starts in History (540101), switches to FYE for two terms, 
+# followed by ME (141901). The FYE proxy is ME (141901).
+one_student <- data.table(mcid = "D", race = "unknown", sex = "unknown")
+term_excerpt <- data.table(mcid = "D", 
+                           institution = "Institution J",
+                           term = c("20013", "20021", "20023", "20031"), 
+                           program = c("History", "FYE", "FYE", "ME"),
+                           cip6 = c("540101", "140102", "140102", "141901"))
+one_student
+term_excerpt
+prep_fye_mice(one_student, term_excerpt)
+
+# Student E is similar to Student D except they switched out of FYE 
+# (140102) to History (540101), then returned to FYE followed by ME
+# (141901). The FYE proxy is ME (141901).
+one_student <- data.table(mcid = "E", race = "unknown", sex = "unknown")
+term_excerpt <- data.table(
+    mcid = "E", 
+    institution = "Institution J",
+    term = c("20011", "20013", "20021", "20023", "20031"), 
+    program = c("FYE", "History", "History", "FYE", "ME"),
+    cip6 = c("140102", "540101", "540101", "140102", "141901")
+)
+one_student
+term_excerpt
+prep_fye_mice(one_student, term_excerpt)
+
+# Student F enrolls in FYE at Institution C that uses an alternate CIP
+# code (140101), followed by ME (141901), so we have to specify a 
+# non-default FYE CIP code. The FYE proxy is ME (141901).
+one_student <- data.table(mcid = "F", race = "unknown", sex = "unknown")
+term_excerpt <- data.table(
+    mcid = "F", 
+    institution = "Univ ABC",
+    term = c("20013", "20021"), 
+    program = c("FYE", "ME"),
+    cip6 = c("140101", "141901")
+)
+fye_cip <- data.table(institution = "Univ ABC", fye_cip6 = "140101")
+one_student
+term_excerpt
+fye_cip
+prep_fye_mice(one_student, term_excerpt, fye_cip)
+
+# Using datasets with multiple students
+prep_fye_mice(toy_student, toy_term)[order(proxy)]
 }

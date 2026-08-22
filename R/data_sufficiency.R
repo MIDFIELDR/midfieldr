@@ -28,49 +28,50 @@
 #'
 #' @param dframe `r dframe` with required variables
 #'        `{mcid, term_i, timely_term}.`
-#'
 #' @param midf_table `r midfield_x("term")` with required variables
 #'        `{mcid, term, institution}.`
-#'
 #' @returns Data frame with the following properties:
 #' * `r df_class_preserved`
 #' * `r rows_not_modified`
 #' * `r new_cols_added`
-#'   - `institution` &nbsp; Character. Name of the institution at which a
-#'      student is enrolled in a term.
-#'   - `lower_limit` &nbsp; Character. Initial term of an institution's
-#'      data range, encoded `YYYYT`. Extracted from `midf_table.`
-#'   - `upper_limit` &nbsp; Character. Final term of an institution's
-#'      data range, encoded `YYYYT`. Extracted from `midf_table.`
+#'   - `data_range` &nbsp; Character. Institution data range, encoded
+#'     `YYYYT-YYYYT,` indicating the institution's first and last term in the
+#'     database. Extracted from `midf_table.`
 #'   - `data_sufficiency` &nbsp; Character. Possible values are "include",
 #'      "exclude-lower," and "exclude-upper."
-#'
 #' @references R. Layton, R. Long, M. Ohland, M. Orr, and S. Lord (2026), "Data sufficiency,"  \url{https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.html}
-#'
 #' @example man/examples/exa_data_sufficiency.R
 #' @export
 #'
 data_sufficiency <- function(dframe, midf_table = term) {
   #
-  # ---------- assign active column names
-
-  reqd_dframe_vars <- c("mcid", "term_i", "timely_term")
-  reqd_table_vars <- c("mcid", "term", "institution")
-  added_vars <- c("institution", "lower_limit", "upper_limit", "data_sufficiency")
-
-  # ---------- base R checks (all data frame classes)
-
-  # data frame assessment
+  # class of required data frames, at least one column, missing values OK
   qassert(dframe, "d+")
   qassert(midf_table, "d+")
 
-  # required columns
+  # ---------- declarations
+
+  # active column names
+  reqd_dframe_vars <- c("mcid", "term_i", "timely_term")
+  reqd_table_vars <- c("mcid", "term", "institution")
+  added_vars <- c("data_range", "data_sufficiency")
+
+  # bind names for R CMD check
+  data_range <- NULL
+  term_i <- NULL
+  IDX <- NULL
+  LOWER_LIMIT <- NULL
+  UPPER_LIMIT <- NULL
+
+  # ---------- base R checks (all data frame classes)
+
+  # required columns exist
   assert_names(colnames(dframe), must.include = reqd_dframe_vars)
   assert_names(colnames(midf_table), must.include = reqd_table_vars)
 
   # class of required columns
-  for (var in reqd_dframe_vars) qassert(dframe[[var]], "s+")
-  for (var in reqd_table_vars) qassert(midf_table[[var]], "s+")
+  for (var in reqd_dframe_vars) qassert(dframe[[var]], c("s+", "f+"))
+  for (var in reqd_table_vars) qassert(midf_table[[var]], c("s+", "f+"))
 
   # ---------- preparation
 
@@ -79,76 +80,89 @@ data_sufficiency <- function(dframe, midf_table = term) {
 
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
-  setDT(dframe)
   midf_table <- copy(midf_table)
+
+  # convert class for analysis
+  setDT(dframe)
   setDT(midf_table)
-
-  # avoid overwriting columns that match names of temporary columns
-  init_temp_vars <- c("idx")
-  temp_vars <- edit_new_col_names(dframe, init_temp_vars)
-  idx_chr <- temp_vars[1]
-
-  # avoid overwriting these variables
-  potential_overwrite_vars <- c("institution")
-  non_overwrite_vars <- edit_new_col_names(dframe, potential_overwrite_vars)
-  inst_chr <- non_overwrite_vars[1]
-
-  # bind names due to NSE notes in R CMD check
-  data_sufficiency <- NULL
-  lower_limit <- NULL
-  term_i <- NULL
-  timely_term <- NULL
-  upper_limit <- NULL
-  IDX <- NULL
-  INST <- NULL
+  
+  # ensure character vars
+  psi <- function(x, sel_cols) {
+    x[, names(.SD) := lapply(.SD, as.character), .SDcols = sel_cols]
+  }
+  dframe <- psi(dframe, reqd_dframe_vars)
+  midf_table <- psi(midf_table, reqd_table_vars)
 
   # ---------- do the work
 
-  # save columns except those being added
-  saved_vars <- setdiff(colnames(dframe), added_vars)
-  return_vars <- c(saved_vars, added_vars)
+  # dframe columns to retain and return
+  keep_dframe_vars <- setdiff(colnames(dframe), added_vars)
+  return_vars <- c(keep_dframe_vars, added_vars)
 
-  # drop added vars, omit NA in required vars
-  dframe <- dframe[, .SD, .SDcols = saved_vars]
-  dframe <- na.omit(dframe, cols = reqd_dframe_vars)
-  dframe <- unique(dframe)
-
-  # keep required vars and omit NAs
+  # select columns
+  dframe <- dframe[, .SD, .SDcols = keep_dframe_vars]
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
-  midf_table <- na.omit(midf_table, cols = reqd_table_vars)
-  midf_table <- unique(midf_table)
+  
+  # filter NAs in reqd vars
+  phi <- function(x, reqd_vars) {
+    x <- na.omit(x, cols = reqd_vars)
+    x <- unique(x)
+  }
+  dframe <- phi(dframe, reqd_dframe_vars)
+  midf_table <- phi(midf_table, reqd_table_vars)
 
-  # add temp col to restore row order
-  dframe[, IDX := .I,
-    env = list(IDX = idx_chr)
+  # prevent overwriting by temporary columns
+  temp_vars <- c("idx", "lower_limit", "upper_limit", "institution")
+  temp_vars <- edit_new_col_names(dframe, temp_vars)
+  idx <- temp_vars[1]
+  lower_limit <- temp_vars[2]
+  upper_limit <- temp_vars[3]
+  institution <- temp_vars[4]
+
+  # add temporary column to restore row order
+  dframe[, IDX := .I, env = list(IDX = idx)]
+
+  # add institution data range limits
+  midf_table[, `:=`(
+    LOWER_LIMIT = min(term),
+    UPPER_LIMIT = max(term)
+  ),
+  by = "institution",
+  env = list(
+    LOWER_LIMIT = lower_limit,
+    UPPER_LIMIT = upper_limit
+  )
   ]
+  midf_table[, term := NULL]
 
-  # join institutions
-  x <- midf_table[, .(mcid, institution)]
-  x <- unique(x)
-  dframe <- x[dframe, on = "mcid"]
+  # edit name before join
+  setnames(midf_table, old = "institution", new = institution)
+  dframe <- midf_table[dframe, on = "mcid"]
 
-  # join lower and upper limits by institution
-  x <- midf_table[, .(lower_limit = min(term), upper_limit = max(term)),
-    by = "institution"
-  ]
-  dframe <- x[dframe, on = "institution"]
-
-  # ---------- data sufficiency labels
-
-  # one row per ID
+  # compare student terms to institution range limits
   dframe[, data_sufficiency := fcase(
-    timely_term > upper_limit, "exclude-upper",
-    term_i == lower_limit, "exclude-lower",
+    timely_term > UPPER_LIMIT, "exclude-upper",
+    term_i == LOWER_LIMIT, "exclude-lower",
     default = "include"
+  ), env = list(
+    LOWER_LIMIT = lower_limit,
+    UPPER_LIMIT = upper_limit
   )]
+
+  # combine limits for the data_range variable
+  dframe[, data_range := paste(LOWER_LIMIT, UPPER_LIMIT, sep = "-"),
+    env = list(
+      LOWER_LIMIT = lower_limit,
+      UPPER_LIMIT = upper_limit
+    )
+  ]
 
   # ---------- prepare to return
 
   # restore row order
-  setkeyv(dframe, idx_chr)
+  setkeyv(dframe, idx)
 
-  # drop temporary cols, restore original col order
+  # restore column order and drop temporary columns
   dframe <- dframe[, .SD, .SDcols = return_vars]
 
   # ensure unique rows
@@ -162,7 +176,7 @@ data_sufficiency <- function(dframe, midf_table = term) {
 }
 
 
-# ---------- deprecated version
+# ========== deprecated version ==========
 #
 #' midfieldr deprecated functions
 #' @param dframe `r dframe`
@@ -176,8 +190,6 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
     msg = "This function was deprecated as part of an update to all
     midfieldr functions. Please use `data_sufficiency()` instead."
   )
-
   # original function calls the new function
   data_sufficiency(dframe = dframe, midf_table = midfield_term)
 }
-NULL

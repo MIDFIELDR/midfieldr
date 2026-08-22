@@ -51,7 +51,7 @@ library("midfieldr")
 packageVersion("midfieldr")
 #> [1] '1.0.3.9023'
 Sys.Date()
-#> [1] "2026-08-15"
+#> [1] "2026-08-19"
 ```
 
 ## Installation
@@ -91,13 +91,67 @@ the American Society for Engineering Education (ASEE).
 We illustrate usage with a small sample that loads with midfieldr for
 use in such examples. These data frames
 `(toy_student, toy_term, toy_course, toy_degree)` have the same
-structure as the tables in midfielddata.
+structure as the practice data in midfielddata. Academic program names
+and codes in dataset `cip` also loads with midfieldr.
 
 ``` r
 library("midfieldr")
 library("data.table")
 
-# Assign data tables to the expected names
+# Program codes
+look_at(cip)
+#> Classes 'data.table' and 'data.frame':   1582 obs. of  6 variables:
+#>  $ cip6name: chr  "Agriculture, General" "Agricultural Business and Managemen"..
+#>  $ cip6    : chr  "010000" "010101" "010102" "010103" ...
+#>  $ cip4name: chr  "Agriculture, General" "Agricultural Business and Managemen"..
+#>  $ cip4    : chr  "0100" "0101" "0101" "0101" ...
+#>  $ cip2name: chr  "Agriculture, Agricultural Operations and Related Sciences""..
+#>  $ cip2    : chr  "01" "01" "01" "01" ...
+
+# Search for program 6-digit codes
+cip |>
+  filter_programs("^14") |>
+  filter_programs(c("civil", "mechanical"))
+#>                                  cip6name   cip6                      cip4name
+#>                                    <char> <char>                        <char>
+#> 1:             Civil Engineering, General 140801             Civil Engineering
+#> 2:               Geotechnical Engineering 140802             Civil Engineering
+#> 3:                 Structural Engineering 140803             Civil Engineering
+#> 4: Transportation and Highway Engineering 140804             Civil Engineering
+#> 5:            Water Resources Engineering 140805             Civil Engineering
+#> 6:               Civil Engineering, Other 140899             Civil Engineering
+#> 7:                 Mechanical Engineering 141901        Mechanical Engineering
+#> 8:          Electromechanical Engineering 144101 Electromechanical Engineering
+#>      cip4    cip2name   cip2
+#>    <char>      <char> <char>
+#> 1:   1408 Engineering     14
+#> 2:   1408 Engineering     14
+#> 3:   1408 Engineering     14
+#> 4:   1408 Engineering     14
+#> 5:   1408 Engineering     14
+#> 6:   1408 Engineering     14
+#> 7:   1419 Engineering     14
+#> 8:   1441 Engineering     14
+
+# Set up program table with convenient labels
+programs <- filter_programs(cip, c("^1408", "^1419"))
+programs <- programs[, .(cip6name, cip6)]
+programs[, program_abbr := fcase(
+  cip6 %like% "^1408", "CE",
+  cip6 %like% "^1419", "ME"
+)]
+programs
+#>                                  cip6name   cip6 program_abbr
+#>                                    <char> <char>       <char>
+#> 1:             Civil Engineering, General 140801           CE
+#> 2:               Geotechnical Engineering 140802           CE
+#> 3:                 Structural Engineering 140803           CE
+#> 4: Transportation and Highway Engineering 140804           CE
+#> 5:            Water Resources Engineering 140805           CE
+#> 6:               Civil Engineering, Other 140899           CE
+#> 7:                 Mechanical Engineering 141901           ME
+
+# "Toy" data sets assigned standard names
 student <- copy(toy_student)
 term <- copy(toy_term)
 course <- copy(toy_course)
@@ -162,7 +216,6 @@ look_at(degree)
 # Begin with the population
 DT <- term[, .(mcid)]
 DT <- unique(DT)
-
 DT
 #>                mcid
 #>              <char>
@@ -178,9 +231,8 @@ DT
 #> 350: MCID3112869843
 #> 351: MCID3112885339
 
-# Add timely-completion term columns
+# Add timely-completion columns
 DT <- timely_term(DT, midf_table = term)
-
 DT
 #>                mcid term_i       level_i adj_span timely_term
 #>              <char> <char>        <char>    <num>      <char>
@@ -199,27 +251,24 @@ DT
 # Add data sufficiency columns
 DT <- DT[, .(mcid, term_i, timely_term)]
 DT <- data_sufficiency(DT, midf_table = term)
-
-# Partial results
-DT[, !c("institution")][order(data_sufficiency)]
-#>                mcid term_i timely_term lower_limit upper_limit data_sufficiency
-#>              <char> <char>      <char>      <char>      <char>           <char>
-#>   1: MCID3111142897  19881       19933       19881       20181    exclude-lower
-#>   2: MCID3111157634  19881       19933       19881       20096    exclude-lower
-#>   3: MCID3111158724  19881       19933       19881       20096    exclude-lower
-#>   4: MCID3111163443  19881       19933       19881       20096    exclude-lower
-#>   5: MCID3111163894  19881       19933       19881       20096    exclude-lower
-#>  ---                                                                           
-#> 347: MCID3112486054  20101       20153       19881       20181          include
-#> 348: MCID3112587501  20121       20173       19881       20181          include
-#> 349: MCID3112592592  20121       20173       19881       20181          include
-#> 350: MCID3112593368  20121       20173       19881       20181          include
-#> 351: MCID3112617577  20123       20181       19881       20181          include
+DT[order(data_sufficiency)]
+#>                mcid term_i timely_term  data_range data_sufficiency
+#>              <char> <char>      <char>      <char>           <char>
+#>   1: MCID3111142897  19881       19933 19881-20181    exclude-lower
+#>   2: MCID3111157634  19881       19933 19881-20096    exclude-lower
+#>   3: MCID3111158724  19881       19933 19881-20096    exclude-lower
+#>   4: MCID3111163443  19881       19933 19881-20096    exclude-lower
+#>   5: MCID3111163894  19881       19933 19881-20096    exclude-lower
+#>  ---                                                               
+#> 347: MCID3112486054  20101       20153 19881-20181          include
+#> 348: MCID3112587501  20121       20173 19881-20181          include
+#> 349: MCID3112592592  20121       20173 19881-20181          include
+#> 350: MCID3112593368  20121       20173 19881-20181          include
+#> 351: MCID3112617577  20123       20181 19881-20181          include
 
 # Initial population labeled "include", drop all others
 population <- DT[data_sufficiency == "include", .(mcid)]
 population <- unique(population)
-
 population
 #>                mcid
 #>              <char>

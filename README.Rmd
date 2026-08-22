@@ -107,13 +107,30 @@ options(
 )
 ```
 
-We illustrate usage with a small sample that loads with midfieldr for use in such examples. These data frames `(toy_student, toy_term, toy_course, toy_degree)` have the same structure as the tables in midfielddata. 
+We illustrate usage with a small sample that loads with midfieldr for use in such examples. These data frames `(toy_student, toy_term, toy_course, toy_degree)` have the same structure as the practice data in midfielddata. Academic program names and codes in dataset `cip` also loads with midfieldr. 
 
 ```{r}
 library("midfieldr")
 library("data.table")
 
-# Assign data tables to the expected names
+# Program codes
+look_at(cip)
+
+# Search for program 6-digit codes
+cip |>
+  filter_programs("^14") |>
+  filter_programs(c("civil", "mechanical"))
+
+# Set up program table with convenient labels
+programs <- filter_programs(cip, c("^1408", "^1419"))
+programs <- programs[, .(cip6name, cip6)]
+programs[, program_abbr := fcase(
+  cip6 %like% "^1408", "CE",
+  cip6 %like% "^1419", "ME"
+)]
+programs
+
+# "Toy" data sets assigned standard names
 student <- copy(toy_student)
 term <- copy(toy_term)
 course <- copy(toy_course)
@@ -131,25 +148,20 @@ look_at(degree)
 # Begin with the population
 DT <- term[, .(mcid)]
 DT <- unique(DT)
-
 DT
 
-# Add timely-completion term columns
+# Add timely-completion columns
 DT <- timely_term(DT, midf_table = term)
-
 DT
 
 # Add data sufficiency columns
 DT <- DT[, .(mcid, term_i, timely_term)]
 DT <- data_sufficiency(DT, midf_table = term)
-
-# Partial results
-DT[, !c("institution")][order(data_sufficiency)]
+DT[order(data_sufficiency)]
 
 # Initial population labeled "include", drop all others
 population <- DT[data_sufficiency == "include", .(mcid)]
 population <- unique(population)
-
 population
 
 # Inner join to restrict source data to this population

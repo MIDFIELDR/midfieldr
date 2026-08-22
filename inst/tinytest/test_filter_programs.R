@@ -7,9 +7,9 @@ expect_class_preserved <- function(x, text, fnc) {
         expect_equal(class(x), class(z))
     }
     
-    # runs 3 checks: data.frame, tibble, data.table
     x <- copy(x)
     
+    # run check 3 times: data.frame, tibble, data.table
     x <- as.data.frame(x)
     run_check(x, text, fnc)
     
@@ -19,6 +19,7 @@ expect_class_preserved <- function(x, text, fnc) {
     x <- as.data.table(x)
     run_check(x, text, fnc)
     
+    # done
     rm(x)
 }
 

@@ -1,192 +1,197 @@
+
+# function used in the test
+expect_class_preserved <- function(df1, df2, df3, fnc) {
+    
+    run_check <- function(w, x, y, fnc) {
+        z <- fnc(w, x, y)
+        expect_equal(class(w), class(z))
+        expect_equal(class(x), class(z))
+        expect_equal(class(y), class(z))
+    }
+
+    w <- copy(df1)
+    x <- copy(df2)
+    y <- copy(df3)
+    
+    # run check 3 times: data.frame, tibble, data.table
+    w <- as.data.frame(w)
+    x <- as.data.frame(x)
+    y <- as.data.frame(y)
+    run_check(w, x, y, fnc)
+    
+    setattr(w, "class", c("tbl_df", "tbl", "data.frame"))
+    setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
+    setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
+    run_check(w, x, y, fnc)
+    
+    w <- as.data.table(w)
+    x <- as.data.table(x)
+    y <- as.data.table(y)
+    run_check(w, x, y, fnc)
+    
+    # done
+    rm(w, x, y)
+}
+
 test_prep_fye_mice <- function() {
-
+    
     # usage
-    # prep_fye_mice(midfield_student,   # mcid, race, sex
-    #               midfield_term,      # term, institution
-    #               ...,
-    #               fye_codes = NULL)   # default 140102
-
-    # CTRL-L to load midfieldr
+    # prep_fye_mice(midf_student,     # mcid, race, sex
+    #               midf_term,        # mcid, term, institution, cip6
+    #               fye_codes = NULL) # institution, fye_cip6
     
     # Needed for tinytest::build_install_test()
     require("data.table")
-
-    # create an answer
-    # set.seed(20260513)
-    # DT <- prep_fye_mice(toy_student, toy_term)
-    # cat(wrapr::draw_frame(DT))
-
-    # test case
-    DT <- wrapr::build_frame(
-        "mcid"            , "race"         , "sex"   , "institution"  , "proxy"       |
-            "MCID3112328521", "Asian"        , "Female", "Institution J", NA_character_ |
-            "MCID3111452065", "Black"        , "Female", "Institution J", NA_character_ |
-            "MCID3111566004", "Black"        , "Female", "Institution J", NA_character_ |
-            "MCID3111992957", "International", "Female", "Institution J", NA_character_ |
-            "MCID3112266585", "Other/Unknown", "Female", "Institution J", NA_character_ |
-            "MCID3111301718", "White"        , "Female", "Institution J", NA_character_ |
-            "MCID3111408816", "White"        , "Female", "Institution J", NA_character_ |
-            "MCID3111625298", "White"        , "Female", "Institution J", NA_character_ |
-            "MCID3111658234", "White"        , "Female", "Institution J", NA_character_ |
-            "MCID3111855934", "White"        , "Female", "Institution J", NA_character_ |
-            "MCID3112325226", "White"        , "Female", "Institution J", NA_character_ |
-            "MCID3112381538", "White"        , "Female", "Institution J", NA_character_ |
-            "MCID3112382861", "White"        , "Female", "Institution J", NA_character_ |
-            "MCID3112383166", "White"        , "Female", "Institution J", NA_character_ |
-            "MCID3112383176", "White"        , "Female", "Institution J", NA_character_ |
-            "MCID3111697452", "Asian"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112265642", "Asian"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112317750", "Asian"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112266077", "Hispanic"     , "Male"  , "Institution J", NA_character_ |
-            "MCID3112320270", "Hispanic"     , "Male"  , "Institution J", NA_character_ |
-            "MCID3112320295", "Hispanic"     , "Male"  , "Institution J", NA_character_ |
-            "MCID3112320393", "Hispanic"     , "Male"  , "Institution J", NA_character_ |
-            "MCID3112379886", "Hispanic"     , "Male"  , "Institution J", NA_character_ |
-            "MCID3112380099", "Hispanic"     , "Male"  , "Institution J", NA_character_ |
-            "MCID3112320559", "International", "Male"  , "Institution J", NA_character_ |
-            "MCID3112447552", "International", "Male"  , "Institution J", NA_character_ |
-            "MCID3112123176", "Other/Unknown", "Male"  , "Institution J", NA_character_ |
-            "MCID3112266592", "Other/Unknown", "Male"  , "Institution J", NA_character_ |
-            "MCID3112380659", "Other/Unknown", "Male"  , "Institution J", NA_character_ |
-            "MCID3111158724", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111163443", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111164659", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111165208", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111208924", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111246563", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111296595", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111412771", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111413518", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111523185", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111524817", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111580337", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111585561", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111656553", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111716841", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111789588", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111790191", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111864654", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111999514", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112074509", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112075167", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112075197", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112268500", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112269550", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112269697", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112322575", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112323687", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112324635", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112325316", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112378802", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112381457", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112381488", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112382065", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112382120", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112382756", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112382807", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112383954", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112384277", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112384523", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3112447663", "White"        , "Male"  , "Institution J", NA_character_ |
-            "MCID3111793283", "White"        , "Female", "Institution J", "140201"      |
-            "MCID3112320374", "Hispanic"     , "Male"  , "Institution J", "140201"      |
-            "MCID3112322943", "White"        , "Male"  , "Institution J", "140201"      |
-            "MCID3112322988", "White"        , "Male"  , "Institution J", "140201"      |
-            "MCID3112324662", "White"        , "Male"  , "Institution J", "140201"      |
-            "MCID3112267696", "White"        , "Male"  , "Institution J", "140301"      |
-            "MCID3112319668", "Asian"        , "Female", "Institution J", "140701"      |
-            "MCID3112217827", "White"        , "Female", "Institution J", "140701"      |
-            "MCID3112269126", "White"        , "Male"  , "Institution J", "140701"      |
-            "MCID3112323008", "White"        , "Male"  , "Institution J", "140701"      |
-            "MCID3112383099", "White"        , "Male"  , "Institution J", "140701"      |
-            "MCID3111981962", "Other/Unknown", "Male"  , "Institution J", "140801"      |
-            "MCID3112266542", "Other/Unknown", "Male"  , "Institution J", "140801"      |
-            "MCID3112270138", "White"        , "Male"  , "Institution J", "140801"      |
-            "MCID3112325173", "White"        , "Male"  , "Institution J", "140801"      |
-            "MCID3112388822", "White"        , "Female", "Institution J", "140901"      |
-            "MCID3112266140", "Hispanic"     , "Male"  , "Institution J", "140901"      |
-            "MCID3112214437", "Other/Unknown", "Male"  , "Institution J", "140901"      |
-            "MCID3111254412", "White"        , "Male"  , "Institution J", "140901"      |
-            "MCID3111589406", "White"        , "Male"  , "Institution J", "140901"      |
-            "MCID3112324963", "White"        , "Male"  , "Institution J", "140901"      |
-            "MCID3112328548", "Hispanic"     , "Female", "Institution J", "141001"      |
-            "MCID3111908614", "International", "Female", "Institution J", "141001"      |
-            "MCID3111356171", "White"        , "Male"  , "Institution J", "141001"      |
-            "MCID3111562218", "White"        , "Male"  , "Institution J", "141001"      |
-            "MCID3111986635", "White"        , "Male"  , "Institution J", "141001"      |
-            "MCID3112269084", "White"        , "Male"  , "Institution J", "141001"      |
-            "MCID3112269415", "White"        , "Male"  , "Institution J", "141001"      |
-            "MCID3112269532", "White"        , "Male"  , "Institution J", "141001"      |
-            "MCID3112328622", "White"        , "Male"  , "Institution J", "141001"      |
-            "MCID3112211555", "Asian"        , "Male"  , "Institution J", "141901"      |
-            "MCID3112165543", "Other/Unknown", "Male"  , "Institution J", "141901"      |
-            "MCID3111447797", "White"        , "Male"  , "Institution J", "141901"      |
-            "MCID3111460403", "White"        , "Male"  , "Institution J", "141901"      |
-            "MCID3111701868", "White"        , "Male"  , "Institution J", "141901"      |
-            "MCID3111722964", "White"        , "Male"  , "Institution J", "141901"      |
-            "MCID3111832009", "White"        , "Male"  , "Institution J", "141901"      |
-            "MCID3111911746", "White"        , "Male"  , "Institution J", "141901"      |
-            "MCID3112008884", "White"        , "Male"  , "Institution J", "141901"      |
-            "MCID3112174290", "White"        , "Male"  , "Institution J", "141901"      |
-            "MCID3112322571", "White"        , "Male"  , "Institution J", "141901"      |
-            "MCID3112324274", "White"        , "Male"  , "Institution J", "141901"      |
-            "MCID3112215058", "White"        , "Female", "Institution J", "142101"      |
-            "MCID3112323893", "White"        , "Female", "Institution J", "142101"      |
-            "MCID3112168643", "Other/Unknown", "Male"  , "Institution J", "142101"      |
-            "MCID3112267788", "White"        , "Male"  , "Institution J", "143301"      |
-            "MCID3112321615", "White"        , "Male"  , "Institution J", "143301"      |
-            "MCID3112265788", "Asian"        , "Female", "Institution J", "143501"      |
-            "MCID3112321979", "White"        , "Male"  , "Institution J", "143501"      )
-    setDT(DT)
-    DT <- DT[, c("race", "sex", "institution", "proxy") :=
-           list(as.factor(race),
-                as.factor(sex),
-                as.factor(institution),
-                as.factor(proxy)
-           )]
-    # DT[]
-
-    # Correct answer
+    
+    # test data
+    test_data <- wrapr::build_frame(
+        "mcid"           , "race"    , "sex"    , "term" , "cip6"  , "institution", "proxy"       |
+            "A-to-ME"      , "Asian"   , "Male"   , "20011", "140102", "A"          , "141901"      |
+            "A-to-ME"      , "Asian"   , "Male"   , "20013", "140102", "A"          , "141901"      |
+            "A-to-ME"      , "Asian"   , "Male"   , "20021", "141901", "A"          , "141901"      |
+            "B-to-EE"      , "Black"   , "Female" , "20021", "140102", "A"          , "141001"      |
+            "B-to-EE"      , "Black"   , "Female" , "20023", "140102", "A"          , "141001"      |
+            "B-to-EE"      , "Black"   , "Female" , "20031", "141001", "A"          , "141001"      |
+            "C-to-HSSA"    , "Hispanic", "Unknown", "20041", "140101", "B"          , NA_character_ |
+            "C-to-HSSA"    , "Hispanic", "Unknown", "20043", "540101", "B"          , NA_character_ |
+            "D-to-unknown" , "White"   , "Male"   , "20051", "140101", "B"          , NA_character_ |
+            "E-twice"      , "Asian"   , "Female" , "20061", "140102", "A"          , "141901"      |
+            "E-twice"      , "Asian"   , "Female" , "20063", "540101", "A"          , "141901"      |
+            "E-twice"      , "Asian"   , "Female" , "20071", "540101", "A"          , "141901"      |
+            "E-twice"      , "Asian"   , "Female" , "20073", "140102", "A"          , "141901"      |
+            "E-twice"      , "Asian"   , "Female" , "20081", "141901", "A"          , "141901"      |
+            "F-late-entry" , "Black"   , "Male"   , "20091", "540101", "B"          , "141001"      |
+            "F-late-entry" , "Black"   , "Male"   , "20093", "540101", "B"          , "141001"      |
+            "F-late-entry" , "Black"   , "Male"   , "20101", "140101", "B"          , "141001"      |
+            "F-late-entry" , "Black"   , "Male"   , "20103", "140101", "B"          , "141001"      |
+            "F-late-entry" , "Black"   , "Male"   , "20111", "141001", "B"          , "141001"      |
+            "G-ENGR-before", "Hispanic", "Female" , "20123", "141901", "A"          , "141901"      |
+            "G-ENGR-before", "Hispanic", "Female" , "20131", "140102", "A"          , "141901"      |
+            "G-ENGR-before", "Hispanic", "Female" , "20133", "140102", "A"          , "141901"      |
+            "G-ENGR-before", "Hispanic", "Female" , "20141", "540101", "A"          , "141901"      |
+            "H-never"      , "White"   , "Male"   , "20011", "540101", "B"          , "omit"        |
+            "H-never"      , "White"   , "Male"   , "20013", "540101", "B"          , "omit"        |
+            "I-to-HSSA"    , "Asian"   , "Unknown", "20041", "140102", "A"          , NA_character_ |
+            "I-to-HSSA"    , "Asian"   , "Unknown", "20043", "140102", "A"          , NA_character_ |
+            "I-to-HSSA"    , "Asian"   , "Unknown", "20051", "540101", "A"          , NA_character_ )
+    setDT(test_data)
+    
+    m_student <- test_data[, .(mcid, race, sex)] |> unique()
+    m_term    <- test_data[, .(mcid, institution, term, cip6)] |> unique()
+    fye_cip   <- data.frame(institution = c("A", "B"), 
+                            fye_cip6 = c("140102", "140101"))
+    correct_ans <- test_data[!proxy %like% "omit", 
+                             .(mcid, 
+                               institution = factor(institution), 
+                               race = factor(race), 
+                               sex = factor(sex), 
+                               proxy = factor(proxy))] |> unique()
+    
+    # answer is correct using two FYE CIP codes
     expect_equal(
-        DT,
-        prep_fye_mice(toy_student, toy_term)
+        correct_ans,
+        prep_fye_mice(m_student, m_term, fye_cip)
     )
-
+    
+    # check that class is preserved function
+    expect_class_preserved(m_student, m_term, fye_cip, prep_fye_mice)
+    
     # Results are factors except for ID
-    DT <- prep_fye_mice(toy_student, toy_term)
+    DT <- prep_fye_mice(m_student, m_term, fye_cip)
     expect_equal(class(DT[, mcid]), "character")
     expect_equal(class(DT[, institution]), "factor")
     expect_equal(class(DT[, race]), "factor")
     expect_equal(class(DT[, sex]), "factor")
     expect_equal(class(DT[, proxy]), "factor")
-
-    # specific names of columns
-     expect_equivalent(
-        names(DT),
-        c("mcid", "race", "sex", "institution", "proxy")
-    )
-
-     # extra columns are dropped, add column for cip6
-     DT <- prep_fye_mice(toy_student, toy_term)
-     expect_equal(
-         names(DT),
-         c("mcid", "race", "sex", "institution", "proxy")
-     )
-
-    # CIPs must be 6-digit, number characters only, start with 14
-    x <- toy_student[, .(mcid, race, sex)]
-    expect_error(
-        prep_fye_mice(x, toy_term, fye_codes = c("14", "1410", "143501"))
-    )
-    expect_error(
-        prep_fye_mice(x, toy_term, fye_codes = c("^14350", "143501"))
-    )
-    expect_error(
-        prep_fye_mice(x, toy_term, fye_codes = c("543501", "143501"))
-    )
-
     
+    # change Inst from A to J to test default FYE codes
+    m_term_2 <- copy(m_term)
+    m_term_2[institution == "A", institution := "Institution J"]
+    correct_ans_2 <- copy(correct_ans)
+    correct_ans_2 <- correct_ans_2[institution != "B"]
+    correct_ans_2[, institution := "Institution J"]
+    expect_equal(
+        correct_ans_2,
+        prep_fye_mice(m_student, m_term_2)
+    )
+    
+    # Missing student variable, that ID is dropped
+    x <- copy(m_student)
+    x <- x[mcid == "A-to-ME", race := NA_character_]
+    y <- copy(m_term)
+    z <- copy(correct_ans)
+    expect_equal(
+        z[mcid != "A-to-ME"],
+        prep_fye_mice(x, y, fye_cip)
+    )
+    
+    # Missing term variable no effect if contains a duplicated CIP
+    x <- copy(m_student)
+    y <- copy(m_term)
+    y$term[2] <- NA_character_
+    expect_equal(
+        correct_ans,
+        prep_fye_mice(x, y, fye_cip)
+    )
+    
+    # Missing term variable for FYE terms, that ID is dropped
+    x <- copy(m_student)
+    y <- copy(m_term)
+    y$term[1:2] <- NA_character_
+    z <- copy(correct_ans)
+    expect_equal(
+        z[mcid != "A-to-ME"],
+        prep_fye_mice(x, y, fye_cip)
+    )
+    
+    # Missing term variable for post-FYE Engng terms, proxy is NA
+    x <- copy(m_student)
+    y <- copy(m_term)
+    y$term[3] <- NA_character_
+    z <- copy(correct_ans)
+    expect_equal(
+        z[1, proxy := NA_character_],
+        prep_fye_mice(x, y, fye_cip)
+    )
 
+    # Required variables as factors OK, converted to character
+    x <- copy(m_student)
+    y <- copy(m_term)
+    x$race <- as.factor(x$race)
+    expect_equal(
+        correct_ans,
+        prep_fye_mice(x, y, fye_cip)
+    )
+    
+    # ---------- error checks
+    
+    # Arguments required as data frames
+    expect_error(prep_fye_mice(1, m_term, fye_cip))
+    expect_error(prep_fye_mice(m_student, 1, fye_cip))
+    expect_error(prep_fye_mice(m_student, m_term, 1))
+    
+    # Missing variables that are required
+    expect_error(prep_fye_mice(m_student[, mcid := NULL], m_term, fye_cip))
+    expect_error(prep_fye_mice(m_student, m_term[, mcid := NULL], fye_cip))
+    expect_error(prep_fye_mice(m_student, m_term, fye_cip[, institution := NULL]))
+    
+    # Incorrect class of required columns
+    expect_error(prep_fye_mice(m_student[, mcid := as.factor(mcid)], m_term, fye_cip))
+    
+    # Checking values of CIP codes
+    # 6 digits required
+    y <- copy(m_term)
+    y$cip6[1] <- "14010" 
+    expect_error(prep_fye_mice(m_student, y, fye_cip))
+    # start with 14 required
+    y <- copy(m_term)
+    y$cip6[1] <- "120102" 
+    expect_error(prep_fye_mice(m_student, y, fye_cip))
+    # all digits required
+    y <- copy(m_term)
+    y$cip6[1] <- "14010A" 
+    expect_error(prep_fye_mice(m_student, y, fye_cip))
+    
     # set.seed(NULL)
     invisible(NULL)
 }

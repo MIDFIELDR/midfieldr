@@ -14,10 +14,8 @@
 #'
 #' @param dframe `r dframe` with required variables `{mcid}` and one of
 #'        `{term, term_course, term_degree}.`
-#'
 #' @param midf_table `r midfield_x("degree")` with required variables
 #'        `{mcid, term_degree}.`
-#'
 #' @returns Data frame with the following properties:
 #' * `r df_class_preserved`
 #' * `r rows_not_modified`
@@ -31,38 +29,42 @@
 #'      equal to ("first-degree"), or subsequent to ("post-first-degree")
 #'      the student’s first degree term.
 #' * `r not_preserved`
-#'
 #' @example man/examples/exa_post_completion_terms.R
 #' @export
 #'
 post_completion_terms <- function(dframe, midf_table = degree) {
   #
-  # ---------- assign active column names
-
-  # reqd_dframe_vars are mcid and one term_var, obtained later
-  reqd_table_vars <- c("mcid", "term_degree")
-  added_vars <- c("first_degree_term", "term_cluster")
-  term_var_choices <- c("term", "term_course", "term_degree")
-
-  # ---------- base R checks (all data frame classes)
-
-  # assert data frames
+  # class of required data frames, at least one column, missing values OK
   qassert(dframe, "d+")
   qassert(midf_table, "d+")
 
-  # isolate the correct term column name
-  dframe_term_var <- intersect(term_var_choices, colnames(dframe))
-  assert_choice(dframe_term_var, choices = term_var_choices)
-  qassert(dframe_term_var, "s1")
+  # determine name of term variable
+  term_var_choices <- c("term", "term_course", "term_degree")
+  term_var <- intersect(colnames(dframe), term_var_choices)
+  qassert(term_var, "s1")
 
-  # required columns
-  reqd_dframe_vars <- c("mcid", dframe_term_var)
+  # ---------- declarations
+
+  # active column names
+  reqd_dframe_vars <- c("mcid", term_var)
+  reqd_table_vars <- c("mcid", "term_degree")
+  added_vars <- c("first_degree_term", "term_cluster")
+
+  # bind names for R CMD check
+  first_degree_term <- NULL
+  term_cluster <- NULL
+  IDX <- NULL
+  TERM_VAR <- NULL
+
+  # ---------- base R checks (all data frame classes)
+
+  # required columns exist
   assert_names(colnames(dframe), must.include = reqd_dframe_vars)
   assert_names(colnames(midf_table), must.include = reqd_table_vars)
 
   # class of required columns
-  for (var in reqd_dframe_vars) qassert(dframe[[var]], "s+")
-  for (var in reqd_table_vars) qassert(midf_table[[var]], "s+")
+  for (var in reqd_dframe_vars) qassert(dframe[[var]], c("s+", "f+"))
+  for (var in reqd_table_vars) qassert(midf_table[[var]], c("s+", "f+"))
 
   # ---------- preparation
 
@@ -71,65 +73,55 @@ post_completion_terms <- function(dframe, midf_table = degree) {
 
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
-  setDT(dframe)
   midf_table <- copy(midf_table)
+
+  # convert class for analysis
+  setDT(dframe)
   setDT(midf_table)
 
-  # avoid overwriting columns that match names of temporary columns
-  init_temp_vars <- c("idx")
-  temp_vars <- edit_new_col_names(dframe, init_temp_vars)
-  idx_chr <- temp_vars[1]
-
-  # bind names due to NSE notes in R CMD check
-  first_degree_term <- NULL
-  term_cluster <- NULL
-  IDX <- NULL
-  TERM_VAR <- NULL
-
+  # ensure character vars
+  psi <- function(x, sel_cols) {
+    x[, names(.SD) := lapply(.SD, as.character), .SDcols = sel_cols]
+  }
+  dframe <- psi(dframe, reqd_dframe_vars)
+  midf_table <- psi(midf_table, reqd_table_vars)
+  
   # ---------- do the work
 
-  # added_vars are dropped from dframe
-  saved_vars <- setdiff(colnames(dframe), added_vars)
-  return_vars <- c(saved_vars, added_vars)
+  # dframe columns to retain and return
+  keep_dframe_vars <- setdiff(colnames(dframe), added_vars)
+  return_vars <- c(keep_dframe_vars, added_vars)
 
-  # saved columns stay with dframe
-  dframe <- dframe[, .SD, .SDcols = saved_vars]
-
-  # get name of term variable, assign required vars for dframe
-  term_var <- intersect(term_var_choices, colnames(dframe))
-  reqd_dframe_vars <- c("mcid", term_var)
-
-  # now can omit NAs in dframe required vars
-  dframe <- na.omit(dframe, cols = reqd_dframe_vars)
-  dframe <- unique(dframe)
-
-  # keep required vars and omit NAs
+  # select columns
+  dframe <- dframe[, .SD, .SDcols = keep_dframe_vars]
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
-  midf_table <- na.omit(midf_table, cols = reqd_table_vars)
-  midf_table <- unique(midf_table)
+  
+  # filter NAs in reqd vars
+  phi <- function(x, reqd_vars) {
+    x <- na.omit(x, cols = reqd_vars)
+    x <- unique(x)
+  }
+  dframe <- phi(dframe, reqd_dframe_vars)
+  midf_table <- phi(midf_table, reqd_table_vars)
 
-  # add temp col to restore row order
-  dframe[, IDX := .I,
-    env = list(IDX = idx_chr)
-  ]
+  # prevent overwriting by temporary columns
+  temp_vars <- c("idx")
+  temp_vars <- edit_new_col_names(dframe, temp_vars)
+  idx <- temp_vars[1]
 
-  # prepare to inner join IDs and subset_degree
-  dframe_id <- dframe[, .(mcid)]
+  # add temporary column to restore row order
+  dframe[, IDX := .I, env = list(IDX = idx)]
 
-  # join degree data
-  x <- midf_table[dframe_id, on = "mcid", nomatch = NULL]
+  # edit name before join
+  setnames(midf_table, old = "term_degree", new = "first_degree_term")
+  DT <- midf_table[dframe[, .(mcid)], on = "mcid", nomatch = NULL]
 
-  # keep the term of the first degree(s)
-  setorderv(x, reqd_table_vars)
-  x <- x[, .SD[1L], by = "mcid"]
-
-  # rename the first degree term
-  x <- x[, .(mcid, first_degree_term = term_degree)]
+  # keep the first-degree term/row
+  setorderv(DT, c("mcid", "first_degree_term"))
+  DT <- DT[, .SD[1L], by = "mcid"]
 
   # left-join to dframe, introduces NAs in first_degree_term col
-  dframe <- x[dframe, on = "mcid"]
-
-  # ---------- term cluster labels
+  dframe <- DT[dframe, on = "mcid"]
 
   # assign term status labels
   dframe[, term_cluster := fcase(
@@ -143,7 +135,7 @@ post_completion_terms <- function(dframe, midf_table = degree) {
   # ---------- prepare to return
 
   # restore row order
-  setkeyv(dframe, idx_chr)
+  setkeyv(dframe, idx)
 
   # drop temporary cols, restore original col order
   dframe <- dframe[, .SD, .SDcols = return_vars]

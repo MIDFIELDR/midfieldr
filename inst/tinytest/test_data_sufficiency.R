@@ -1,23 +1,25 @@
 
 # function used in the test
 expect_class_preserved <- function(df1, df2, fnc) {
+    
     run_check <- function(x, y, fnc) {
         z <- fnc(x, y)
         expect_equal(class(x), class(z))
         expect_equal(class(y), class(z))
     }
     
-    # check data.frame preserved
-    x <- as.data.frame(copy(df1))
-    y <- as.data.frame(copy(df2))
+    x <- copy(df1)
+    y <- copy(df2)
+    
+    # run check 3 times: data.frame, tibble, data.table
+    x <- as.data.frame(x)
+    y <- as.data.frame(y)
     run_check(x, y, fnc)
     
-    # check tibble preserved
     setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
     setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
     run_check(x, y, fnc)
     
-    # check data.table preserved
     x <- as.data.table(x)
     y <- as.data.table(y)
     run_check(x, y, fnc)
@@ -85,8 +87,8 @@ test_data_sufficiency <- function() {
     DT <- data_sufficiency(dframe, term)
     DT <- unique(DT)
     setnames(DT, 
-             old = c("data_sufficiency", "institution"), 
-             new = c("ds", "inst"))
+             old = c("data_sufficiency"), 
+             new = c("ds"))
     
     expect_equal("include", DT[mcid %like% "A1", (ds)])
     expect_equal("include", DT[mcid %like% "A2", (ds)])
@@ -100,7 +102,7 @@ test_data_sufficiency <- function() {
     
     # correct columns in place
     dframe_vars <- c("mcid", "term_i", "timely_term")
-    added_vars  <- c("institution", "lower_limit", "upper_limit", "data_sufficiency")
+    added_vars  <- c("data_range", "data_sufficiency")
     return_vars <- c(dframe_vars, added_vars)
     DT <- data_sufficiency(dframe, term)
     expect_equal(return_vars, colnames(DT))
@@ -123,8 +125,8 @@ test_data_sufficiency <- function() {
     expect_equal(y, z)
     
     # row order is maintained
-    x <- copy(test_DT)
-    setorderv(x, c("term", "mcid"))
+    x <- copy(dframe)
+    setorderv(x, c("term_i", "mcid"))
     x[, rownum := .I]
     y <- data_sufficiency(x, term)
     expect_equal(unique(y[["mcid"]]), unique(x[["mcid"]]))

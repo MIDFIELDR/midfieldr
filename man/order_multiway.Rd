@@ -51,15 +51,20 @@ Columns specified by \code{categories} are converted to factors and ordered.
 modified; columns with matching names are replaced. The two new column
 names have the form:
 \itemize{
-\item \code{CATEGORY_1_method_abbr}
-\item \code{CATEGORY_2_method_abbr}
-\item For example, if
+\item \code{CATEGORY_1_LABEL}
+\item \code{CATEGORY_2_LABEL}
+}
+}
+
+The \code{CATEGORY} placeholder in the new column names is replaced with the
+column names from \code{categories.} The \code{LABEL} placeholder depends on the method.
+For \code{method = median}, the label is \code{median}. For \code{method = percent}, the
+label is \verb{metric,} indicating that the metric in percent has been
+recalculated for the entire category. For example, if
 \code{categories = c("program", "people")} and \verb{method = "median",} the new
-column names would be \code{program_med} and \code{people_med.}
-For \verb{method = "percent",} the new column names would be \code{program_pct}
-and \code{people_pct.}
-}
-}
+column names would be \code{program_median} and \code{people_median.}
+For \verb{method = "percent",} the new column names would be \code{program_metric}
+and \code{people_metric.}
 }
 \description{
 Condition data for Cleveland multiway charts. Two independent categorical

@@ -34,19 +34,22 @@ add_timely_term(
 
 \item{midfield_term}{\verb{*term*} data frame}
 
-\item{keep_text}{Deprecated \code{filter_cip()}. Character vector of search text to keep.}
+\item{keep_text}{Deprecated \code{filter_cip()}. Character vector of search
+text to keep.}
 
-\item{drop_text}{Deprecated \code{filter_cip()}. Character vector of search text to drop.}
+\item{drop_text}{Deprecated \code{filter_cip()}. Character vector of search
+text to drop.}
 
 \item{cip}{Deprecated \code{filter_cip()}. Data frame of programs to be searched.}
 
-\item{select}{Deprecated \code{filter_cip()}. Character vector of column names to select.}
+\item{select}{Deprecated \code{filter_cip()}. Character vector of column
+names to select.}
 
 \item{midfield_x}{Deprecated \code{select_required()}. Data frame from which
 columns are selected.}
 
-\item{select_add}{Deprecated \code{select_required()}. Character vector of
-col_patterns to search \code{dframe} column names.}
+\item{select_add}{Defunct \code{select_required()}. Character vector of
+patterns to search \code{dframe} column names.}
 
 \item{...}{Not used for passing values; forces subsequent arguments to be
 referable only by name.}

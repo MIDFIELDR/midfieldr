@@ -1,6 +1,6 @@
 
 # function used in the test
-expect_class_preserved <- function(df1, df2, fnc) {
+expect_class_preserved <- function(x, y, fnc) {
   
   run_check <- function(x, y, fnc) {
     z <- fnc(x, y)
@@ -8,10 +8,10 @@ expect_class_preserved <- function(df1, df2, fnc) {
     expect_equal(class(y), class(z))
   }
   
-  # runs 3 checks: data.frame, tibble, data.table
-  x <- copy(df1)
-  y <- copy(df2)
+  x <- copy(x)
+  y <- copy(y)
   
+  # run check 3 times: data.frame, tibble, data.table
   x <- as.data.frame(x)
   y <- as.data.frame(y)
   run_check(x, y, fnc)
@@ -24,6 +24,7 @@ expect_class_preserved <- function(df1, df2, fnc) {
   y <- as.data.table(y)
   run_check(x, y, fnc)
   
+  # done
   rm(x, y)
 }
 
@@ -56,12 +57,12 @@ test_post_completion_terms <- function() {
   y <- copy(toy_degree)
   z <- post_completion_terms(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
-  
+
   # course added columns correct
   x <- copy(toy_course)
   z <- post_completion_terms(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
-  
+   
   # degree added columns correct
   x <- copy(toy_degree)
   z <- post_completion_terms(x, y)

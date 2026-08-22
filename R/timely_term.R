@@ -54,11 +54,24 @@ timely_term <- function(dframe,
                         sched_span = NULL,
                         span = NULL) {
   #
-  # ---------- assign active column names
+  # ---------- declarations
 
+  span <- span %?% 6
+  sched_span <- sched_span %?% 4
+
+  # active column names
   reqd_dframe_vars <- c("mcid")
   reqd_table_vars <- c("mcid", "term", "level")
   added_vars <- c("term_i", "level_i", "adj_span", "timely_term")
+
+  # bind names due to NSE notes in R CMD check
+  adj_span <- NULL
+  level_i <- NULL
+  term_i <- NULL
+  DELTA <- NULL
+  IDX <- NULL
+  TERM_CODE <- NULL
+  YYYY <- NULL
 
   # ---------- base R checks (all data frame classes)
 
@@ -77,13 +90,10 @@ timely_term <- function(dframe,
   assert_names(colnames(midf_table), must.include = reqd_table_vars)
 
   # class of required columns
-  for (var in reqd_dframe_vars) qassert(dframe[[var]], "s+")
-  for (var in reqd_table_vars) qassert(midf_table[[var]], "s+")
+  for (var in reqd_dframe_vars) qassert(dframe[[var]], c("s+", "f+"))
+  for (var in reqd_table_vars) qassert(midf_table[[var]], c("s+", "f+"))
 
   # other arguments
-  span <- span %?% 6
-  sched_span <- sched_span %?% 4
-
   assert_int(sched_span, lower = 0)
   assert_int(span, lower = sched_span)
 
@@ -94,90 +104,93 @@ timely_term <- function(dframe,
 
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
-  setDT(dframe)
   midf_table <- copy(midf_table)
+
+  # convert class for analysis
+  setDT(dframe)
   setDT(midf_table)
 
-  # avoid overwriting columns that match names of temporary columns
-  init_temp_vars <- c("idx", "yyyy", "t", "delta")
-  temp_vars <- edit_new_col_names(dframe, init_temp_vars)
-  idx_chr <- temp_vars[1]
-  yyyy_chr <- temp_vars[2]
-  term_chr <- temp_vars[3]
-  delta_chr <- temp_vars[4]
-
-  # bind names due to NSE notes in R CMD check
-  adj_span <- NULL
-  level_i <- NULL
-  term_i <- NULL
-  timely_term <- NULL
-  IDX <- NULL
-  DELTA <- NULL
-  TERM <- NULL
-  YYYY <- NULL
-
+  # ensure character vars
+  psi <- function(x, sel_cols) {
+    x[, names(.SD) := lapply(.SD, as.character), .SDcols = sel_cols]
+  }
+  dframe <- psi(dframe, reqd_dframe_vars)
+  midf_table <- psi(midf_table, reqd_table_vars)
+  
   # ---------- do the work
+  
+  # dframe columns to retain and return
+  keep_dframe_vars <- setdiff(colnames(dframe), added_vars)
+  return_vars <- c(keep_dframe_vars, added_vars)
 
-  # save columns except those being added
-  saved_vars <- setdiff(colnames(dframe), added_vars)
-  return_vars <- c(saved_vars, added_vars)
-
-  # drop added vars, omit NA in required vars
-  dframe <- dframe[, .SD, .SDcols = saved_vars]
-  dframe <- na.omit(dframe, cols = reqd_dframe_vars)
-  dframe <- unique(dframe)
-
-  # keep required vars and omit NAs
+  # select columns
+  dframe <- dframe[, .SD, .SDcols = keep_dframe_vars]
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
-  midf_table <- na.omit(midf_table, cols = reqd_table_vars)
-  midf_table <- unique(midf_table)
+  
+  # filter NAs in reqd vars
+  phi <- function(x, reqd_vars) {
+    x <- na.omit(x, cols = reqd_vars)
+    x <- unique(x)
+  }
+  dframe <- phi(dframe, reqd_dframe_vars)
+  midf_table <- phi(midf_table, reqd_table_vars)
 
-  # add temp col to restore row order
-  dframe[, IDX := .I, env = list(IDX = idx_chr)]
+  # make temporary colnames unique to prevent overwriting
+  temp_vars <- c("idx", "yyyy", "term_code", "delta")
+  temp_vars <- edit_new_col_names(dframe, temp_vars)
+  idx <- temp_vars[1]
+  yyyy <- temp_vars[2]
+  term_code <- temp_vars[3]
+  delta <- temp_vars[4]
 
-  # inner-join dframe ID and required table vars
-  x <- unique(dframe[, .(mcid)])
-  x <- midf_table[x, on = "mcid", nomatch = NULL]
-  x <- unique(x)
+  # add temporary column to restore row order
+  dframe[, IDX := .I, env = list(IDX = idx)]
 
-  # keep the row of the first term, lowest level, by ID and institution
-  setorderv(x, c("mcid", "term"))
-  x <- x[, .SD[1L], by = c("mcid")]
+  # edit names before joining
+  setnames(midf_table,
+    old = c("term", "level"),
+    new = c("term_i", "level_i")
+  )
 
-  # rename term and level
-  x <- x[, .(mcid, term_i = term, level_i = level)]
+  # inner-join IDs, terms, levels
+  ID_only <- unique(dframe[, .(mcid)])
+  ID_term <- midf_table[ID_only, on = "mcid", nomatch = NULL]
+  ID_term <- unique(ID_term)
+
+  # keep the row of the first term by ID
+  setorderv(ID_term, c("mcid", "term_i"))
+  ID_term <- ID_term[, .SD[1L], by = c("mcid")]
 
   # left-join the results back to dframe
-  dframe <- x[dframe, on = "mcid"]
+  dframe <- ID_term[dframe, on = "mcid"]
 
-  # ---------- construct timely term
-
+  # separate year and term codes
   dframe[, `:=`(
     YYYY = substr(term_i, 1, 4),
-    TERM = substr(term_i, 5, 5)
+    TERM_CODE = substr(term_i, 5, 5)
   ),
   env = list(
-    YYYY = yyyy_chr,
-    TERM = term_chr
+    YYYY = yyyy,
+    TERM_CODE = term_code
   )
   ]
 
   # for month terms, (letters A, B, ..., a, b, ...), set first term to zero
-  dframe <- dframe[TERM %chin% c(LETTERS, letters), TERM := "0",
-    env = list(TERM = term_chr)
+  dframe <- dframe[TERM_CODE %chin% c(LETTERS, letters), TERM_CODE := "0",
+    env = list(TERM_CODE = term_code)
   ]
 
   # make year and term numeric
-  dframe[, names(.SD) := lapply(.SD, as.numeric), .SDcols = c(yyyy_chr, term_chr)]
+  dframe[, names(.SD) := lapply(.SD, as.numeric), .SDcols = c(yyyy, term_code)]
 
   # if first term is in summer, delay to the subsequent Fall
-  dframe[TERM > 3, `:=`(
+  dframe[TERM_CODE > 3, `:=`(
     YYYY = YYYY + 1,
-    TERM = 1
+    TERM_CODE = 1
   ),
   env = list(
-    YYYY = yyyy_chr,
-    TERM = term_chr
+    YYYY = yyyy,
+    TERM_CODE = term_code
   )
   ]
 
@@ -187,31 +200,24 @@ timely_term <- function(dframe,
     level_i %like% "02", 1,
     default = 0
   ),
-  env = list(DELTA = delta_chr)
+  env = list(DELTA = delta)
   ]
+  dframe[, adj_span := span - DELTA, env = list(DELTA = delta)]
 
-  dframe[, adj_span := span - DELTA,
-    env = list(DELTA = delta_chr)
-  ]
-
-  # use adj_span to construct estimated timely-completion term
-  dframe[TERM == 0 | TERM == 1, timely_term := paste0(YYYY + adj_span - 1, 3),
-    env = list(
-      YYYY = yyyy_chr,
-      TERM = term_chr
-    )
-  ]
-  dframe[TERM > 1, timely_term := paste0(YYYY + adj_span, 1),
-    env = list(
-      YYYY = yyyy_chr,
-      TERM = term_chr
-    )
-  ]
+  # construct the timely-completion term
+  dframe[, timely_term := fcase(
+    TERM_CODE == 0, paste0(YYYY + adj_span - 1, 3),
+    TERM_CODE == 1, paste0(YYYY + adj_span - 1, 3),
+    TERM_CODE > 1, paste0(YYYY + adj_span, 1)
+  ), env = list(
+    YYYY = yyyy,
+    TERM_CODE = term_code
+  )]
 
   # ---------- prepare to return
 
   # restore row order
-  setkeyv(dframe, idx_chr)
+  setkeyv(dframe, idx)
 
   # drop temporary cols, restore original col order
   dframe <- dframe[, .SD, .SDcols = return_vars]
@@ -227,7 +233,7 @@ timely_term <- function(dframe,
 }
 
 
-# ---------- deprecated version ----------
+# ========== deprecated version ==========
 
 #' midfieldr deprecated functions
 #' @param dframe `r dframe`
@@ -248,7 +254,6 @@ add_timely_term <- function(dframe,
     msg = "This function was deprecated as part of an update to all
     midfieldr functions. Please use `timely_term()` instead."
   )
-
   # original function calls the new function
   timely_term(
     dframe = dframe,

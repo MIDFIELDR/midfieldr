@@ -24,12 +24,9 @@ of the required variables are removed. Duplicated rows are removed.
 below) are not modified; columns with matching names are replaced.
 The new columns added are:
 \itemize{
-\item \code{institution}   Character. Name of the institution at which a
-student is enrolled in a term.
-\item \code{lower_limit}   Character. Initial term of an institution's
-data range, encoded \code{YYYYT}. Extracted from \code{midf_table.}
-\item \code{upper_limit}   Character. Final term of an institution's
-data range, encoded \code{YYYYT}. Extracted from \code{midf_table.}
+\item \code{data_range}   Character. Institution data range, encoded
+\verb{YYYYT-YYYYT,} indicating the institution's first and last term in the
+database. Extracted from \code{midf_table.}
 \item \code{data_sufficiency}   Character. Possible values are "include",
 "exclude-lower," and "exclude-upper."
 }
@@ -64,24 +61,28 @@ otherwise. The rationale for these specific filters is explained in our
 data sufficiency article (see references).
 }
 \examples{
+# Assign toy data sets
+student <- toy_student
 term <- toy_term
 
-# Start with a selected population.
-x <- toy_student[c(9:15, 342:344), .(mcid, sex)]
+# Start with a selected population
+x <- student[c(9:11, 21:30, 344:345), .(mcid)]
 x
 
-# Add the required columns from timely_term().
+# Add the required columns from timely_term()
 x <- timely_term(x, midf_table = term)
-x <- x[, .(mcid, sex, term_i, timely_term)]
+x <- x[, .(mcid, term_i, timely_term)]
 x
 
-# Add data sufficiency columns. Unrelated columns (sex) are unaffected.
+# Add data sufficiency columns
 x <- data_sufficiency(x, midf_table = term)
 x
 
-# Repeat. New columns silently replace existing columns of the same name.
-y <- data_sufficiency(x, midf_table = term)
-y
+# If you repeat, the new columns are overwritten
+data_sufficiency(x, midf_table = term)
+
+# Typical application retains "include" rows only
+x[data_sufficiency == "include"]
 }
 \references{
 R. Layton, R. Long, M. Ohland, M. Orr, and S. Lord (2026), "Data sufficiency,"  \url{https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.html}

@@ -4,11 +4,15 @@ select_basic_cols(toy_term[1:5])
 select_basic_cols(toy_course[1:5])
 select_basic_cols(toy_degree[1:5])
 
-# With col_pattern for additional columns
-DT <- toy_student[141:146]
-select_basic_cols(DT, col_pattern = c("transfer", "hours_tranfer"))
+# If the input is not strictly one of the four MIDFIELD data
+# tables, all possible required columns are returned.
+x <- toy_student[toy_degree, on = c("mcid")][1:5]
+select_basic_cols(x)
 
-# Using regular expressions
-these_IDs <- DT$mcid
-DT <- toy_term[mcid %chin% these_IDs]
-select_basic_cols(DT, col_pattern = c("^gpa"))
+# Required columns can only be returned if present, 
+# e.g., consider the result for a full table:
+select_basic_cols(toy_term)
+
+# Compared to the result for a subset of the same table:
+y <- toy_term[, .(mcid, term, cip6, hours_term, gpa_term)]
+select_basic_cols(y)

@@ -1,13 +1,21 @@
+# Assign toy data sets
+student <- toy_student
 term <- toy_term
+degree <- toy_degree
 
-# Start with a selected population. 
-x <- toy_student[c(51:55, 346:350), .(mcid, sex)]
+# Start with a selected population
+x <- student[c(9:11, 21:30, 344:345), .(mcid)]
 x
 
-# Add timely term columns. Unrelated columns (sex) are unaffected.
+# Add timely term columns
 x <- timely_term(x, midf_table = term)
 x
 
-# Repeat. New columns silently replace existing columns of the same name.
-y <- timely_term(x, midf_table = term)
-y
+# If you repeat, the new columns are overwritten
+timely_term(x, midf_table = term)
+
+# Application: data_sufficiency() requires term_i and timely_term
+data_sufficiency(x[, .(mcid, term_i, timely_term)], midf_table = term)
+
+# Application: completion_status() requires timely_term
+completion_status(x[, .(mcid, timely_term)], midf_table = degree)

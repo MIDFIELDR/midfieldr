@@ -11,27 +11,25 @@
 #'
 #' @param dframe `r dframe` with CIP program names and codes, e.g., the
 #'        `cip` dataset.
-#'
 #' @param pattern Character vector of search strings, including regular
 #'        expressions.
-#'
 #' @param ... `r param_dots`
-#'
 #' @param negate Logical (default FALSE). If TRUE, inverts the
 #'        resulting Boolean vector.
-#'
 #' @returns Data frame with the following properties:
 #' * `r df_class_preserved`
 #' * Rows are a subset of the input and appear in the same order.
 #'   Duplicated rows are removed.
 #' * Columns are not modified.
 #' * `r not_preserved`
-#'
 #' @example man/examples/exa_filter_programs.R
 #' @export
 #'
 filter_programs <- function(dframe, pattern, ..., negate = FALSE) {
   #
+  # class of required data frame, at least one column, missing values OK
+  qassert(dframe, "d+")
+
   # ---------- base R checks (all data frame classes)
 
   wrapr::stop_if_dot_args(
@@ -39,10 +37,9 @@ filter_programs <- function(dframe, pattern, ..., negate = FALSE) {
     "Arguments after ... must be named, e.g., arg = val."
   )
 
-  # arguments
-  qassert(dframe, "d+")
-  if (!is.null(pattern)) qassert(pattern, "s+")
-  qassert(negate, "B1") # missing not allowed
+  # class of required arguments, missing not allowed
+  qassert(pattern, "S+") # character, length at least 1
+  qassert(negate, "B1") # Boolean, length = 1
 
   # ---------- preparation
 
@@ -51,21 +48,21 @@ filter_programs <- function(dframe, pattern, ..., negate = FALSE) {
 
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
+
+  # convert class for analysis
   setDT(dframe)
 
   # ---------- do the work
 
-  if (length(pattern) > 0) {
-    pattern <- paste0(pattern, collapse = "|")
+  pattern <- paste0(pattern, collapse = "|")
 
-    dframe <- dframe[apply(dframe, 1, function(i) {
-      if (negate) {
-        !any(grepl(pattern, i, ignore.case = TRUE, fixed = FALSE))
-      } else {
-        any(grepl(pattern, i, ignore.case = TRUE, fixed = FALSE))
-      }
-    }), ]
+  f <- function(x, y) {
+    any(grepl(x, y, ignore.case = TRUE, fixed = FALSE))
   }
+
+  dframe <- dframe[apply(dframe, 1, function(y) {
+    fifelse(negate, !f(pattern, y), f(pattern, y))
+  }), ]
 
   # ---------- prepare to return
 
@@ -80,18 +77,16 @@ filter_programs <- function(dframe, pattern, ..., negate = FALSE) {
 }
 
 
-
-
-
-
-
-# ---------- deprecated version
+# ========== deprecated version ==========
 #
 #' midfieldr deprecated functions
-#' @param keep_text Deprecated `filter_cip()`. Character vector of search text to keep.
-#' @param drop_text Deprecated `filter_cip()`. Character vector of search text to drop.
+#' @param keep_text Deprecated `filter_cip()`. Character vector of search
+#'        text to keep.
+#' @param drop_text Deprecated `filter_cip()`. Character vector of search
+#'        text to drop.
 #' @param cip Deprecated `filter_cip()`. Data frame of programs to be searched.
-#' @param select Deprecated `filter_cip()`. Character vector of column names to select.
+#' @param select Deprecated `filter_cip()`. Character vector of column
+#'        names to select.
 #' @rdname midfieldr-deprecated
 #' @export
 filter_cip <- function(keep_text = NULL,
@@ -105,15 +100,12 @@ filter_cip <- function(keep_text = NULL,
     first argument making it possible to chain with other functions.
     Please use `filter_programs()` instead."
   )
-
   # attempt to continue to use original function with partial success
   if (is.null(cip)) cip <- midfieldr::cip
   negate <- FALSE
-
   if (!is.null(drop_text)) {
     keep_text <- drop_text
     negate <- TRUE
   }
-
   filter_programs(dframe = cip, pattern = keep_text, negate = negate)
 }

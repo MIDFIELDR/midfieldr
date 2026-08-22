@@ -1,3 +1,28 @@
+
+# function used in the test
+expect_class_preserved <- function(w, x, y, fnc) {
+    
+    run_check <- function(w, x, y, fnc) {
+        z <- fnc(w, x, y)
+        expect_equal(class(w), class(z))
+    }
+    
+    w <- copy(w)
+    
+    # run check 3 times: data.frame, tibble, data.table
+    w <- as.data.frame(w)
+    run_check(w, x, y, fnc)
+    
+    setattr(w, "class", c("tbl_df", "tbl", "data.frame"))
+    run_check(w, x, y, fnc)
+    
+    w <- as.data.table(w)
+    run_check(w, x, y, fnc)
+    
+    # done
+    rm(w, x, y)
+}
+
 test_order_multiway <- function() {
     
     # usage 
@@ -9,7 +34,6 @@ test_order_multiway <- function() {
     #              ratio_of = NULL)
     
     # Needed for tinytest::build_install_test()
-    # library(tinytest, checkmate)
     suppressPackageStartupMessages(require("data.table"))
     
     # create a multiway data.frame
@@ -44,6 +68,12 @@ test_order_multiway <- function() {
                              categories = c("catg1", "catg2"), 
                              method = "percent", 
                              ratio_of = c("num", "den"))
+    
+    # check that class is preserved
+    expect_class_preserved(DT_med, 
+                           "metric", 
+                           c("catg1", "catg2"), 
+                           order_multiway)
     
     # ---------- correct answers
     

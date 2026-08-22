@@ -4,63 +4,39 @@
 \alias{select_basic_cols}
 \title{Choose columns of student records}
 \usage{
-select_basic_cols(dframe, col_pattern = NULL, ..., type = NULL)
+select_basic_cols(dframe)
 }
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) equivalent to or derived from one of the MIDFIELD
 data tables: \verb{\{student, term, course, degree\}.}}
-
-\item{col_pattern}{Character vector containing strings or regular
-expressions to be matched or partially matched to the column
-names of \code{dframe.}.}
-
-\item{...}{Not used for passing values; forces subsequent arguments to be
-referable only by name.}
-
-\item{type}{Character identifying the table type. Possible values are "s",
-"t", "c", "d", "a", or NULL (default). See Details.}
 }
 \value{
 Data frame with the following properties:
 \itemize{
 \item Data frame class is preserved. Groups and keys are
 not preserved.
-\item Row order is preserved. Rows with \code{NA} values in any
-of the required variables are removed. Duplicated rows are removed.
+\item Rows are not modified.
 \item Columns are a subset of the input, appearing in the same order.
-\item Groups and keys are not preserved.
 }
 }
 \description{
-Subset one of the four MIDFIELD data tables \verb{\{student, term, course, degree\}}
-by selecting the columns required by other midfieldr
-functions.
+Subset a MIDFIELD data table to retain the variables required by one or
+more midfieldr functions. Variables that constitute the key or composite
+key for a table are retained as well. A convenience function to reduce
+the number of columns displayed.
 }
 \details{
-A convenience function to reduce the dimensions of a MIDFIELD
-data table by selecting only those columns required by other midfieldr
-functions or that are required to form a composite key. Particularly
-useful in interactive sessions when viewing the data tables at various
-stages of an analysis.
-
-Several midfieldr functions require input data frames containing
-specific variables (column names) such as \code{mcid} or \code{cip6}. In addition,
-the MIDFIELD data tables have specific variables that act as keys
-or composite keys to the information in that table. If the \code{type} argument
-is NULL (default), one of the following codes is assigned to return the
-column names indicated (if present):
+Functions in midfieldr with a MIDFIELD dataset argument---such as
+\verb{student, term,} etc.---typically require only a few of the columns
+available in the table. Depending on which table is input, the following
+columns are returned if present:
 \itemize{
-\item \code{type = "s"} (student) looks for \verb{\{mcid, race, sex\}}
-\item \code{type = "t"} (term) looks for \verb{\{mcid, term, cip6, institution, level\}}
-\item \code{type = "c"} (course) looks for  \verb{\{mcid, term_course, abbrev, number\}}
-\item \code{type = "d"} (degree) looks for  \verb{\{mcid, term_degree, cip6\}}
-\item \code{type = "a"} looks for all the above columns
+\item \verb{student: \{mcid, race, sex\}}
+\item \verb{term: \{mcid, term, cip6, institution, level\}}
+\item \verb{course: \{mcid, term_course, abbrev, number\}}
+\item \verb{degree: \{mcid, term_degree, cip6\}}
+\item Combination of the above if \code{dframe} contains columns from multiple tables.
 }
-
-Specifying the type \verb{\{s, t, c, d, a\}} manually in the argument overrides
-the automatic selection. Additional column names can be included by using
-the \code{col_pattern} argument. In all cases, unmatched search strings are
-silently ignored.
 }
 \examples{
 # Basic usage
@@ -69,12 +45,16 @@ select_basic_cols(toy_term[1:5])
 select_basic_cols(toy_course[1:5])
 select_basic_cols(toy_degree[1:5])
 
-# With col_pattern for additional columns
-DT <- toy_student[141:146]
-select_basic_cols(DT, col_pattern = c("transfer", "hours_tranfer"))
+# If the input is not strictly one of the four MIDFIELD data
+# tables, all possible required columns are returned.
+x <- toy_student[toy_degree, on = c("mcid")][1:5]
+select_basic_cols(x)
 
-# Using regular expressions
-these_IDs <- DT$mcid
-DT <- toy_term[mcid \%chin\% these_IDs]
-select_basic_cols(DT, col_pattern = c("^gpa"))
+# Required columns can only be returned if present, 
+# e.g., consider the result for a full table:
+select_basic_cols(toy_term)
+
+# Compared to the result for a subset of the same table:
+y <- toy_term[, .(mcid, term, cip6, hours_term, gpa_term)]
+select_basic_cols(y)
 }
