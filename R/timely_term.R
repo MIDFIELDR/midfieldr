@@ -19,19 +19,14 @@
 #' observation.
 #'
 #' @param dframe `r dframe` with required variable `{mcid}.`
-#'
 #' @param midf_table `r midfield_x("term")` with required variables
 #'        `{mcid, term, level}.`
-#'
 #' @param ... `r param_dots`
-#'
 #' @param sched_span Integer scalar (default 4), the number of years an
 #'        institution officially schedules for completing a program.
-#'
 #' @param span Integer scalar (default 6), number of years to define timely
 #'        completion, typically 4, 6, or 8 years (100%, 150%, 200% respectively
 #'        of `sched_span`).
-#'
 #' @returns Data frame with the following properties:
 #' * `r df_class_preserved`
 #' * `r rows_not_modified`
@@ -116,9 +111,9 @@ timely_term <- function(dframe,
   }
   dframe <- psi(dframe, reqd_dframe_vars)
   midf_table <- psi(midf_table, reqd_table_vars)
-  
+
   # ---------- do the work
-  
+
   # dframe columns to retain and return
   keep_dframe_vars <- setdiff(colnames(dframe), added_vars)
   return_vars <- c(keep_dframe_vars, added_vars)
@@ -126,7 +121,7 @@ timely_term <- function(dframe,
   # select columns
   dframe <- dframe[, .SD, .SDcols = keep_dframe_vars]
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
-  
+
   # filter NAs in reqd vars
   phi <- function(x, reqd_vars) {
     x <- na.omit(x, cols = reqd_vars)

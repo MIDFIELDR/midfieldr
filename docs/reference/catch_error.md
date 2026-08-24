@@ -66,7 +66,7 @@ catch_error(post_completion_terms(t, d))
 
 # Error, no term variable 
 catch_error(post_completion_terms(s, d))
-#> Error: Assertion on 'dframe_term_var' failed: Must be element of set {'term','term_course','term_degree'}, but is not atomic scalar. 
+#> Error: Assertion on 'term_var' failed. Must be of length == 1, but has length 0. 
 
 # Error, missing dframe argument
 catch_error(post_completion_terms())

@@ -33,7 +33,7 @@ Data frame with the following properties:
   not modified; columns with matching names are replaced. The new
   columns added are:
 
-  - `term_degree`   Joined from `midf_table.`
+  - `completion_term`   Equal to `term_degree` from `midf_table.`
 
   - `completion_status`   Character. Possible values of "timely", "late"
     and "NA".
@@ -55,95 +55,107 @@ is "late". For students with no degree, completion status is NA.
 ## Examples
 
 ``` r
+# Assign toy data sets
+student <- toy_student
 term <- toy_term
 degree <- toy_degree
 
-# Start with a selected population. 
-x <- toy_student[21:36, .(mcid, sex)]
+# Start with a selected population
+x <- student[c(9:11, 21:30, 344:345), .(mcid)]
 x
-#>               mcid    sex
-#>             <char> <char>
-#>  1: MCID3111257807 Female
-#>  2: MCID3111258275   Male
-#>  3: MCID3111258347 Female
-#>  4: MCID3111259642   Male
-#>  5: MCID3111262210   Male
-#>  6: MCID3111265287   Male
-#>  7: MCID3111269576   Male
-#>  8: MCID3111272691 Female
-#>  9: MCID3111272880 Female
-#> 10: MCID3111277081   Male
-#> 11: MCID3111278815   Male
-#> 12: MCID3111282337 Female
-#> 13: MCID3111296595   Male
-#> 14: MCID3111301718 Female
-#> 15: MCID3111310842 Female
-#> 16: MCID3111311799 Female
+#>               mcid
+#>             <char>
+#>  1: MCID3111169729
+#>  2: MCID3111170852
+#>  3: MCID3111173999
+#>  4: MCID3111257807
+#>  5: MCID3111258275
+#>  6: MCID3111258347
+#>  7: MCID3111259642
+#>  8: MCID3111262210
+#>  9: MCID3111265287
+#> 10: MCID3111269576
+#> 11: MCID3111272691
+#> 12: MCID3111272880
+#> 13: MCID3111277081
+#> 14: MCID3112751130
+#> 15: MCID3112754537
 
-# Add the required columns from timely_term().
+# Add the required columns from timely_term()
 x <- timely_term(x, midf_table = term)
-x <- x[, .(mcid, sex, timely_term)]
+x <- x[, .(mcid, timely_term)]
 x
-#>               mcid    sex timely_term
-#>             <char> <char>      <char>
-#>  1: MCID3111257807 Female       19953
-#>  2: MCID3111258275   Male       19953
-#>  3: MCID3111258347 Female       19953
-#>  4: MCID3111259642   Male       19953
-#>  5: MCID3111262210   Male       19953
-#>  6: MCID3111265287   Male       19953
-#>  7: MCID3111269576   Male       19953
-#>  8: MCID3111272691 Female       19953
-#>  9: MCID3111272880 Female       19953
-#> 10: MCID3111277081   Male       19961
-#> 11: MCID3111278815   Male       19961
-#> 12: MCID3111282337 Female       19963
-#> 13: MCID3111296595   Male       19963
-#> 14: MCID3111301718 Female       19963
-#> 15: MCID3111310842 Female       19963
-#> 16: MCID3111311799 Female       19963
+#>               mcid timely_term
+#>             <char>      <char>
+#>  1: MCID3111169729       19933
+#>  2: MCID3111170852       19933
+#>  3: MCID3111173999       19933
+#>  4: MCID3111257807       19953
+#>  5: MCID3111258275       19953
+#>  6: MCID3111258347       19953
+#>  7: MCID3111259642       19953
+#>  8: MCID3111262210       19953
+#>  9: MCID3111265287       19953
+#> 10: MCID3111269576       19953
+#> 11: MCID3111272691       19953
+#> 12: MCID3111272880       19953
+#> 13: MCID3111277081       19961
+#> 14: MCID3112751130       20203
+#> 15: MCID3112754537       20203
 
-# Add completion status columns. Unrelated columns (sex) are unaffected.
+# Add completion status columns
 x <- completion_status(x, midf_table = degree)
 x
-#>               mcid    sex timely_term term_degree completion_status
-#>             <char> <char>      <char>      <char>            <char>
-#>  1: MCID3111257807 Female       19953       19964              late
-#>  2: MCID3111258275   Male       19953       19921            timely
-#>  3: MCID3111258347 Female       19953       19923            timely
-#>  4: MCID3111259642   Male       19953       19934            timely
-#>  5: MCID3111262210   Male       19953       19951            timely
-#>  6: MCID3111265287   Male       19953       19904            timely
-#>  7: MCID3111269576   Male       19953       19943            timely
-#>  8: MCID3111272691 Female       19953       19914            timely
-#>  9: MCID3111272880 Female       19953       19934            timely
-#> 10: MCID3111277081   Male       19961       19963              late
-#> 11: MCID3111278815   Male       19961        <NA>              <NA>
-#> 12: MCID3111282337 Female       19963       19924            timely
-#> 13: MCID3111296595   Male       19963        <NA>              <NA>
-#> 14: MCID3111301718 Female       19963        <NA>              <NA>
-#> 15: MCID3111310842 Female       19963        <NA>              <NA>
-#> 16: MCID3111311799 Female       19963        <NA>              <NA>
+#>               mcid timely_term completion_term completion_status
+#>             <char>      <char>          <char>            <char>
+#>  1: MCID3111169729       19933           19901            timely
+#>  2: MCID3111170852       19933            <NA>              <NA>
+#>  3: MCID3111173999       19933            <NA>              <NA>
+#>  4: MCID3111257807       19953           19964              late
+#>  5: MCID3111258275       19953           19921            timely
+#>  6: MCID3111258347       19953           19923            timely
+#>  7: MCID3111259642       19953           19934            timely
+#>  8: MCID3111262210       19953           19951            timely
+#>  9: MCID3111265287       19953           19904            timely
+#> 10: MCID3111269576       19953           19943            timely
+#> 11: MCID3111272691       19953           19914            timely
+#> 12: MCID3111272880       19953           19934            timely
+#> 13: MCID3111277081       19961           19963              late
+#> 14: MCID3112751130       20203           20171            timely
+#> 15: MCID3112754537       20203            <NA>              <NA>
 
-# Repeat. New columns silently replace existing columns of the same name.
-y <- completion_status(x, midf_table = degree)
-y
-#>               mcid    sex timely_term term_degree completion_status
-#>             <char> <char>      <char>      <char>            <char>
-#>  1: MCID3111257807 Female       19953       19964              late
-#>  2: MCID3111258275   Male       19953       19921            timely
-#>  3: MCID3111258347 Female       19953       19923            timely
-#>  4: MCID3111259642   Male       19953       19934            timely
-#>  5: MCID3111262210   Male       19953       19951            timely
-#>  6: MCID3111265287   Male       19953       19904            timely
-#>  7: MCID3111269576   Male       19953       19943            timely
-#>  8: MCID3111272691 Female       19953       19914            timely
-#>  9: MCID3111272880 Female       19953       19934            timely
-#> 10: MCID3111277081   Male       19961       19963              late
-#> 11: MCID3111278815   Male       19961        <NA>              <NA>
-#> 12: MCID3111282337 Female       19963       19924            timely
-#> 13: MCID3111296595   Male       19963        <NA>              <NA>
-#> 14: MCID3111301718 Female       19963        <NA>              <NA>
-#> 15: MCID3111310842 Female       19963        <NA>              <NA>
-#> 16: MCID3111311799 Female       19963        <NA>              <NA>
+# If you repeat, the new columns are overwritten
+completion_status(x, midf_table = degree)
+#>               mcid timely_term completion_term completion_status
+#>             <char>      <char>          <char>            <char>
+#>  1: MCID3111169729       19933           19901            timely
+#>  2: MCID3111170852       19933            <NA>              <NA>
+#>  3: MCID3111173999       19933            <NA>              <NA>
+#>  4: MCID3111257807       19953           19964              late
+#>  5: MCID3111258275       19953           19921            timely
+#>  6: MCID3111258347       19953           19923            timely
+#>  7: MCID3111259642       19953           19934            timely
+#>  8: MCID3111262210       19953           19951            timely
+#>  9: MCID3111265287       19953           19904            timely
+#> 10: MCID3111269576       19953           19943            timely
+#> 11: MCID3111272691       19953           19914            timely
+#> 12: MCID3111272880       19953           19934            timely
+#> 13: MCID3111277081       19961           19963              late
+#> 14: MCID3112751130       20203           20171            timely
+#> 15: MCID3112754537       20203            <NA>              <NA>
+
+# Typical application retains "timely" rows only
+x[completion_status == "timely"]
+#>               mcid timely_term completion_term completion_status
+#>             <char>      <char>          <char>            <char>
+#>  1: MCID3111169729       19933           19901            timely
+#>  2: MCID3111258275       19953           19921            timely
+#>  3: MCID3111258347       19953           19923            timely
+#>  4: MCID3111259642       19953           19934            timely
+#>  5: MCID3111262210       19953           19951            timely
+#>  6: MCID3111265287       19953           19904            timely
+#>  7: MCID3111269576       19953           19943            timely
+#>  8: MCID3111272691       19953           19914            timely
+#>  9: MCID3111272880       19953           19934            timely
+#> 10: MCID3112751130       20203           20171            timely
 ```

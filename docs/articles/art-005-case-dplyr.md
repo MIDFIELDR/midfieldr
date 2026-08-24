@@ -519,25 +519,22 @@ again.
 
 ``` r
 
-term <- select_basic_cols(term, "t")
-degree <- select_basic_cols(degree, "d")
+term <- select_basic_cols(term)
+degree <- select_basic_cols(degree)
 
 look_at(term)
-#> tibble [632,917 × 7] (S3: tbl_df/tbl/data.frame)
-#>  $ mcid             : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283""..
-#>  $ term             : chr  "19881" "19881" "19883" "19885" ...
-#>  $ cip6             : chr  "140901" "240102" "240102" "190601" ...
-#>  $ institution      : chr  "Institution B" "Institution J" "Institution J" "I"..
-#>  $ level            : chr  "01 First-year" "01 First-year" "01 First-year" "0"..
-#>  $ first_degree_term: chr  "19881" NA NA NA ...
-#>  $ term_cluster     : chr  "first-degree" "pre-degree" "pre-degree" "pre-degr"..
+#> tibble [632,917 × 5] (S3: tbl_df/tbl/data.frame)
+#>  $ mcid       : chr  "MCID3111142225" "MCID3111142283" "MCID3111142283" "MCID"..
+#>  $ term       : chr  "19881" "19881" "19883" "19885" ...
+#>  $ cip6       : chr  "140901" "240102" "240102" "190601" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
+#>  $ level      : chr  "01 First-year" "01 First-year" "01 First-year" "01 Firs"..
 
 look_at(degree)
-#> tibble [49,618 × 4] (S3: tbl_df/tbl/data.frame)
-#>  $ mcid             : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294""..
-#>  $ term_degree      : chr  "19881" "19921" "19903" "19921" ...
-#>  $ cip6             : chr  "141001" "141001" "141001" "141001" ...
-#>  $ first_degree_term: chr  "19881" "19921" "19903" "19921" ...
+#> tibble [49,618 × 3] (S3: tbl_df/tbl/data.frame)
+#>  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..
+#>  $ term_degree: chr  "19881" "19921" "19903" "19921" ...
+#>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
 ```
 
 ### *Filter for data sufficiency*
@@ -608,31 +605,31 @@ satisfy) the data sufficiency criteria.
 
 DT <- data_sufficiency(DT)
 DT
-#> # A tibble: 97,536 × 9
-#>    mcid           term_i level_i       adj_span timely_term institution  
-#>    <chr>          <chr>  <chr>            <dbl> <chr>       <chr>        
-#>  1 MCID3111142225 19881  01 First-year        6 19933       Institution B
-#>  2 MCID3111142283 19881  01 First-year        6 19933       Institution J
-#>  3 MCID3111142290 19881  01 First-year        6 19933       Institution J
-#>  4 MCID3111142294 19881  01 First-year        6 19933       Institution J
-#>  5 MCID3111142299 19881  01 First-year        6 19933       Institution J
-#>  6 MCID3111142303 19881  01 First-year        6 19933       Institution J
-#>  7 MCID3111142633 19881  01 First-year        6 19933       Institution J
-#>  8 MCID3111142689 19883  01 First-year        6 19941       Institution B
-#>  9 MCID3111142729 19881  01 First-year        6 19933       Institution B
-#> 10 MCID3111142775 19881  01 First-year        6 19933       Institution J
-#>    lower_limit upper_limit data_sufficiency
-#>    <chr>       <chr>       <chr>           
-#>  1 19881       20181       exclude-lower   
-#>  2 19881       20096       exclude-lower   
-#>  3 19881       20096       exclude-lower   
-#>  4 19881       20096       exclude-lower   
-#>  5 19881       20096       exclude-lower   
-#>  6 19881       20096       exclude-lower   
-#>  7 19881       20096       exclude-lower   
-#>  8 19881       20181       include         
-#>  9 19881       20181       exclude-lower   
-#> 10 19881       20096       exclude-lower   
+#> # A tibble: 97,536 × 7
+#>    mcid           term_i level_i       adj_span timely_term data_range 
+#>    <chr>          <chr>  <chr>            <dbl> <chr>       <chr>      
+#>  1 MCID3111142225 19881  01 First-year        6 19933       19881-20181
+#>  2 MCID3111142283 19881  01 First-year        6 19933       19881-20096
+#>  3 MCID3111142290 19881  01 First-year        6 19933       19881-20096
+#>  4 MCID3111142294 19881  01 First-year        6 19933       19881-20096
+#>  5 MCID3111142299 19881  01 First-year        6 19933       19881-20096
+#>  6 MCID3111142303 19881  01 First-year        6 19933       19881-20096
+#>  7 MCID3111142633 19881  01 First-year        6 19933       19881-20096
+#>  8 MCID3111142689 19883  01 First-year        6 19941       19881-20181
+#>  9 MCID3111142729 19881  01 First-year        6 19933       19881-20181
+#> 10 MCID3111142775 19881  01 First-year        6 19933       19881-20096
+#>    data_sufficiency
+#>    <chr>           
+#>  1 exclude-lower   
+#>  2 exclude-lower   
+#>  3 exclude-lower   
+#>  4 exclude-lower   
+#>  5 exclude-lower   
+#>  6 exclude-lower   
+#>  7 exclude-lower   
+#>  8 include         
+#>  9 exclude-lower   
+#> 10 exclude-lower   
 #> # ℹ 97,526 more rows
 ```
 
@@ -764,21 +761,18 @@ look_at(student)
 #>  $ sex : chr  "Female" "Female" "Male" "Male" ...
 
 look_at(term)
-#> tibble [525,446 × 7] (S3: tbl_df/tbl/data.frame)
-#>  $ mcid             : chr  "MCID3111142689" "MCID3111142782" "MCID3111142782""..
-#>  $ term             : chr  "19883" "19883" "19885" "19893" ...
-#>  $ cip6             : chr  "090401" "260101" "260101" "260101" ...
-#>  $ institution      : chr  "Institution B" "Institution J" "Institution J" "I"..
-#>  $ level            : chr  "01 First-year" "01 First-year" "02 Second-year" ""..
-#>  $ first_degree_term: chr  "19913" "19903" "19903" "19903" ...
-#>  $ term_cluster     : chr  "pre-degree" "pre-degree" "pre-degree" "pre-degree"..
+#> tibble [525,446 × 5] (S3: tbl_df/tbl/data.frame)
+#>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142782" "MCID"..
+#>  $ term       : chr  "19883" "19883" "19885" "19893" ...
+#>  $ cip6       : chr  "090401" "260101" "260101" "260101" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
+#>  $ level      : chr  "01 First-year" "01 First-year" "02 Second-year" "02 Sec"..
 
 look_at(degree)
-#> tibble [43,847 × 4] (S3: tbl_df/tbl/data.frame)
-#>  $ mcid             : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881""..
-#>  $ term_degree      : chr  "19913" "19903" "19894" "19901" ...
-#>  $ cip6             : chr  "090401" "260101" "450601" "141001" ...
-#>  $ first_degree_term: chr  "19913" "19903" "19894" "19901" ...
+#> tibble [43,847 × 3] (S3: tbl_df/tbl/data.frame)
+#>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID"..
+#>  $ term_degree: chr  "19913" "19903" "19894" "19901" ...
+#>  $ cip6       : chr  "090401" "260101" "450601" "141001" ...
 ```
 
 ## Blocs and groupings
@@ -851,18 +845,18 @@ DT <- DT |>
   completion_status()
 DT
 #> # A tibble: 76,865 × 7
-#>    mcid           term_i level_i       adj_span timely_term term_degree
-#>    <chr>          <chr>  <chr>            <dbl> <chr>       <chr>      
-#>  1 MCID3111142689 19883  01 First-year        6 19941       19913      
-#>  2 MCID3111142782 19883  01 First-year        6 19941       19903      
-#>  3 MCID3111142881 19893  01 First-year        6 19951       19894      
-#>  4 MCID3111142884 19883  01 First-year        6 19941       NA         
-#>  5 MCID3111142893 19883  01 First-year        6 19941       NA         
-#>  6 MCID3111142962 19883  01 First-year        6 19941       NA         
-#>  7 MCID3111142965 19883  01 First-year        6 19941       19901      
-#>  8 MCID3111143066 19883  01 First-year        6 19941       19883      
-#>  9 MCID3111143068 19891  01 First-year        6 19943       19903      
-#> 10 MCID3111143078 19883  01 First-year        6 19941       19891      
+#>    mcid           term_i level_i       adj_span timely_term completion_term
+#>    <chr>          <chr>  <chr>            <dbl> <chr>       <chr>          
+#>  1 MCID3111142689 19883  01 First-year        6 19941       19913          
+#>  2 MCID3111142782 19883  01 First-year        6 19941       19903          
+#>  3 MCID3111142881 19893  01 First-year        6 19951       19894          
+#>  4 MCID3111142884 19883  01 First-year        6 19941       NA             
+#>  5 MCID3111142893 19883  01 First-year        6 19941       NA             
+#>  6 MCID3111142962 19883  01 First-year        6 19941       NA             
+#>  7 MCID3111142965 19883  01 First-year        6 19941       19901          
+#>  8 MCID3111143066 19883  01 First-year        6 19941       19883          
+#>  9 MCID3111143068 19891  01 First-year        6 19943       19903          
+#> 10 MCID3111143078 19883  01 First-year        6 19941       19891          
 #>    completion_status
 #>    <chr>            
 #>  1 timely           

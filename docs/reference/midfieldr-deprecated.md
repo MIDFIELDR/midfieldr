@@ -59,8 +59,8 @@ add_timely_term(
 
 - select_add:
 
-  Deprecated `select_required()`. Character vector of col_patterns to
-  search `dframe` column names.
+  Defunct `select_required()`. Character vector of patterns to search
+  `dframe` column names.
 
 - ...:
 

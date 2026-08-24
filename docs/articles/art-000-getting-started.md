@@ -384,9 +384,9 @@ degree_source <- copy(degree)
 
 # demonstrate that memory addresses are different
 address(student)
-#> [1] "000001f020b7a4a8"
+#> [1] "00000149f2f8a848"
 address(student_source)
-#> [1] "000001f022760c60"
+#> [1] "00000149f423b660"
 ```
 
 Then we can use the shorter names such as `term` and `degree` as we
@@ -488,24 +488,24 @@ finding, and generates additional columns of supporting information.
 DT <- data_sufficiency(DT, midf_table = term)
 
 DT
-#>                  mcid term_i       level_i adj_span timely_term   institution
-#>                <char> <char>        <char>    <num>      <char>        <char>
-#>     1: MCID3111142225  19881 01 First-year        6       19933 Institution B
-#>     2: MCID3111142283  19881 01 First-year        6       19933 Institution J
-#>     3: MCID3111142290  19881 01 First-year        6       19933 Institution J
-#>    ---                                                                       
-#> 97553: MCID3112898894  20181 01 First-year        6       20233 Institution B
-#> 97554: MCID3112898895  20181 01 First-year        6       20233 Institution B
-#> 97555: MCID3112898940  20181 01 First-year        6       20233 Institution B
-#>        lower_limit upper_limit data_sufficiency
-#>             <char>      <char>           <char>
-#>     1:       19881       20181    exclude-lower
-#>     2:       19881       20096    exclude-lower
-#>     3:       19881       20096    exclude-lower
-#>    ---                                         
-#> 97553:       19881       20181    exclude-upper
-#> 97554:       19881       20181    exclude-upper
-#> 97555:       19881       20181    exclude-upper
+#>                  mcid term_i       level_i adj_span timely_term  data_range
+#>                <char> <char>        <char>    <num>      <char>      <char>
+#>     1: MCID3111142225  19881 01 First-year        6       19933 19881-20181
+#>     2: MCID3111142283  19881 01 First-year        6       19933 19881-20096
+#>     3: MCID3111142290  19881 01 First-year        6       19933 19881-20096
+#>    ---                                                                     
+#> 97553: MCID3112898894  20181 01 First-year        6       20233 19881-20181
+#> 97554: MCID3112898895  20181 01 First-year        6       20233 19881-20181
+#> 97555: MCID3112898940  20181 01 First-year        6       20233 19881-20181
+#>        data_sufficiency
+#>                  <char>
+#>     1:    exclude-lower
+#>     2:    exclude-lower
+#>     3:    exclude-lower
+#>    ---                 
+#> 97553:    exclude-upper
+#> 97554:    exclude-upper
+#> 97555:    exclude-upper
 ```
 
 The possible values for data sufficiency are:
@@ -783,15 +783,15 @@ DT <- timely_term(DT, midf_table = term)
 DT <- completion_status(DT, midf_table = degree)
 
 DT
-#>                  mcid term_i       level_i adj_span timely_term term_degree
-#>                <char> <char>        <char>    <num>      <char>      <char>
-#>     1: MCID3111142689  19883 01 First-year        6       19941       19913
-#>     2: MCID3111142782  19883 01 First-year        6       19941       19903
-#>     3: MCID3111142881  19893 01 First-year        6       19951       19894
-#>    ---                                                                     
-#> 76863: MCID3112785480  20071 01 First-year        6       20123        <NA>
-#> 76864: MCID3112800920  20101 01 First-year        6       20153        <NA>
-#> 76865: MCID3112870009  19951 01 First-year        6       20003        <NA>
+#>                  mcid term_i       level_i adj_span timely_term completion_term
+#>                <char> <char>        <char>    <num>      <char>          <char>
+#>     1: MCID3111142689  19883 01 First-year        6       19941           19913
+#>     2: MCID3111142782  19883 01 First-year        6       19941           19903
+#>     3: MCID3111142881  19893 01 First-year        6       19951           19894
+#>    ---                                                                         
+#> 76863: MCID3112785480  20071 01 First-year        6       20123            <NA>
+#> 76864: MCID3112800920  20101 01 First-year        6       20153            <NA>
+#> 76865: MCID3112870009  19951 01 First-year        6       20003            <NA>
 #>        completion_status
 #>                   <char>
 #>     1:            timely

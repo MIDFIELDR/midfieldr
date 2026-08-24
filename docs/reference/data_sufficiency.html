@@ -9,7 +9,7 @@ and add columns that support the findings."><meta property="og:image" content="h
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9023</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9024</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,12 +88,9 @@ not preserved.</p></li>
 of the required variables are removed. Duplicated rows are removed.</p></li>
 <li><p>Columns with names different from the new columns (named
 below) are not modified; columns with matching names are replaced.
-The new columns added are:</p><ul><li><p><code>institution</code>   Character. Name of the institution at which a
-student is enrolled in a term.</p></li>
-<li><p><code>lower_limit</code>   Character. Initial term of an institution's
-data range, encoded <code>YYYYT</code>. Extracted from <code>midf_table.</code></p></li>
-<li><p><code>upper_limit</code>   Character. Final term of an institution's
-data range, encoded <code>YYYYT</code>. Extracted from <code>midf_table.</code></p></li>
+The new columns added are:</p><ul><li><p><code>data_range</code>   Character. Institution data range, encoded
+<code>YYYYT-YYYYT,</code> indicating the institution's first and last term in the
+database. Extracted from <code>midf_table.</code></p></li>
 <li><p><code>data_sufficiency</code>   Character. Possible values are "include",
 "exclude-lower," and "exclude-upper."</p></li>
 </ul></li>
@@ -126,96 +123,107 @@ data sufficiency article (see references).</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">toy_term</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Assign toy data sets</span></span></span>
+<span class="r-in"><span><span class="va">student</span> <span class="op">&lt;-</span> <span class="va">toy_student</span></span></span>
+<span class="r-in"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">toy_term</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Start with a selected population.</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">toy_student</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9</span><span class="op">:</span><span class="fl">15</span>, <span class="fl">342</span><span class="op">:</span><span class="fl">344</span><span class="op">)</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="co"># Start with a selected population</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9</span><span class="op">:</span><span class="fl">11</span>, <span class="fl">21</span><span class="op">:</span><span class="fl">30</span>, <span class="fl">344</span><span class="op">:</span><span class="fl">345</span><span class="op">)</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">x</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               mcid    sex</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;char&gt; &lt;char&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1: MCID3111169729 Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2: MCID3111170852   Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3: MCID3111173999 Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4: MCID3111198701   Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: MCID3111208924   Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: MCID3111213539 Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: MCID3111213856 Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8: MCID3112727716   Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9: MCID3112749981 Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10: MCID3112751130   Male</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               mcid</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1: MCID3111169729</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: MCID3111170852</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3: MCID3111173999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4: MCID3111257807</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5: MCID3111258275</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6: MCID3111258347</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: MCID3111259642</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8: MCID3111262210</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9: MCID3111265287</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10: MCID3111269576</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: MCID3111272691</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12: MCID3111272880</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13: MCID3111277081</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14: MCID3112751130</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15: MCID3112754537</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Add the required columns from timely_term().</span></span></span>
+<span class="r-in"><span><span class="co"># Add the required columns from timely_term()</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">x</span>, midf_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">sex</span>, <span class="va">term_i</span>, <span class="va">timely_term</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term_i</span>, <span class="va">timely_term</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">x</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               mcid    sex term_i timely_term</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;char&gt; &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1: MCID3111169729 Female  19881       19933</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2: MCID3111170852   Male  19881       19933</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3: MCID3111173999 Female  19881       19933</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4: MCID3111198701   Male  19891       19943</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: MCID3111208924   Male  19891       19943</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: MCID3111213539 Female  19891       19943</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: MCID3111213856 Female  19891       19943</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8: MCID3112727716   Male  20143       20201</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9: MCID3112749981 Female  20151       20203</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10: MCID3112751130   Male  20151       20203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               mcid term_i timely_term</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1: MCID3111169729  19881       19933</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: MCID3111170852  19881       19933</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3: MCID3111173999  19881       19933</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4: MCID3111257807  19901       19953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5: MCID3111258275  19901       19953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6: MCID3111258347  19901       19953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: MCID3111259642  19901       19953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8: MCID3111262210  19901       19953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9: MCID3111265287  19901       19953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10: MCID3111269576  19901       19953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: MCID3111272691  19901       19953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12: MCID3111272880  19901       19953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13: MCID3111277081  19903       19961</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14: MCID3112751130  20151       20203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15: MCID3112754537  20151       20203</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Add data sufficiency columns. Unrelated columns (sex) are unaffected.</span></span></span>
+<span class="r-in"><span><span class="co"># Add data sufficiency columns</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">data_sufficiency</span><span class="op">(</span><span class="va">x</span>, midf_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">x</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               mcid    sex term_i timely_term   institution lower_limit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;char&gt; &lt;char&gt; &lt;char&gt;      &lt;char&gt;        &lt;char&gt;      &lt;char&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1: MCID3111169729 Female  19881       19933 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2: MCID3111170852   Male  19881       19933 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3: MCID3111173999 Female  19881       19933 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4: MCID3111198701   Male  19891       19943 Institution J       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: MCID3111208924   Male  19891       19943 Institution J       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: MCID3111213539 Female  19891       19943 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: MCID3111213856 Female  19891       19943 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8: MCID3112727716   Male  20143       20201 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9: MCID3112749981 Female  20151       20203 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10: MCID3112751130   Male  20151       20203 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     upper_limit data_sufficiency</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;char&gt;           &lt;char&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:       20181    exclude-lower</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:       20181    exclude-lower</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:       20181    exclude-lower</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:       20096          include</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:       20096          include</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:       20181          include</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:       20181          include</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:       20181    exclude-upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:       20181    exclude-upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:       20181    exclude-upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               mcid term_i timely_term  data_range data_sufficiency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1: MCID3111169729  19881       19933 19881-20181    exclude-lower</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: MCID3111170852  19881       19933 19881-20181    exclude-lower</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3: MCID3111173999  19881       19933 19881-20181    exclude-lower</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4: MCID3111257807  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5: MCID3111258275  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6: MCID3111258347  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: MCID3111259642  19901       19953 19901-20153    exclude-lower</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8: MCID3111262210  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9: MCID3111265287  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10: MCID3111269576  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: MCID3111272691  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12: MCID3111272880  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13: MCID3111277081  19903       19961 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14: MCID3112751130  20151       20203 19881-20181    exclude-upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15: MCID3112754537  20151       20203 19881-20181    exclude-upper</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Repeat. New columns silently replace existing columns of the same name.</span></span></span>
-<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">data_sufficiency</span><span class="op">(</span><span class="va">x</span>, midf_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">y</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               mcid    sex term_i timely_term   institution lower_limit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;char&gt; &lt;char&gt; &lt;char&gt;      &lt;char&gt;        &lt;char&gt;      &lt;char&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1: MCID3111169729 Female  19881       19933 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2: MCID3111170852   Male  19881       19933 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3: MCID3111173999 Female  19881       19933 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4: MCID3111198701   Male  19891       19943 Institution J       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: MCID3111208924   Male  19891       19943 Institution J       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: MCID3111213539 Female  19891       19943 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: MCID3111213856 Female  19891       19943 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8: MCID3112727716   Male  20143       20201 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9: MCID3112749981 Female  20151       20203 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10: MCID3112751130   Male  20151       20203 Institution B       19881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     upper_limit data_sufficiency</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;char&gt;           &lt;char&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:       20181    exclude-lower</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:       20181    exclude-lower</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:       20181    exclude-lower</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:       20096          include</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:       20096          include</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:       20181          include</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:       20181          include</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:       20181    exclude-upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:       20181    exclude-upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:       20181    exclude-upper</span>
+<span class="r-in"><span><span class="co"># If you repeat, the new columns are overwritten</span></span></span>
+<span class="r-in"><span><span class="fu">data_sufficiency</span><span class="op">(</span><span class="va">x</span>, midf_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               mcid term_i timely_term  data_range data_sufficiency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1: MCID3111169729  19881       19933 19881-20181    exclude-lower</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: MCID3111170852  19881       19933 19881-20181    exclude-lower</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3: MCID3111173999  19881       19933 19881-20181    exclude-lower</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4: MCID3111257807  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5: MCID3111258275  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6: MCID3111258347  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: MCID3111259642  19901       19953 19901-20153    exclude-lower</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8: MCID3111262210  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9: MCID3111265287  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10: MCID3111269576  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: MCID3111272691  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12: MCID3111272880  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13: MCID3111277081  19903       19961 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14: MCID3112751130  20151       20203 19881-20181    exclude-upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15: MCID3112754537  20151       20203 19881-20181    exclude-upper</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Typical application retains "include" rows only</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              mcid term_i timely_term  data_range data_sufficiency</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: MCID3111257807  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2: MCID3111258275  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3: MCID3111258347  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4: MCID3111262210  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5: MCID3111265287  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6: MCID3111269576  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7: MCID3111272691  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8: MCID3111272880  19901       19953 19881-20181          include</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9: MCID3111277081  19903       19961 19881-20181          include</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

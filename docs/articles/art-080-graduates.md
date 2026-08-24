@@ -208,15 +208,15 @@ check_equiv_frames(x, z)
 # Add completion status and supporting variables
 DT <- completion_status(DT, degree)
 DT
-#>                  mcid timely_term term_degree completion_status
-#>                <char>      <char>      <char>            <char>
-#>     1: MCID3111142689       19941       19913            timely
-#>     2: MCID3111142782       19941       19903            timely
-#>     3: MCID3111142881       19951       19894            timely
-#>    ---                                                         
-#> 76919: MCID3112785480       20123        <NA>              <NA>
-#> 76920: MCID3112800920       20153        <NA>              <NA>
-#> 76921: MCID3112870009       20003        <NA>              <NA>
+#>                  mcid timely_term completion_term completion_status
+#>                <char>      <char>          <char>            <char>
+#>     1: MCID3111142689       19941           19913            timely
+#>     2: MCID3111142782       19941           19903            timely
+#>     3: MCID3111142881       19951           19894            timely
+#>    ---                                                             
+#> 76919: MCID3112785480       20123            <NA>              <NA>
+#> 76920: MCID3112800920       20153            <NA>              <NA>
+#> 76921: MCID3112870009       20003            <NA>              <NA>
 ```
 
 Similar to the details described in the data sufficiency vignette,
@@ -240,7 +240,7 @@ their completion status is “timely”.
 
 # Display one student by ID
 DT[mcid == "MID25783162"]
-#> Empty data.table (0 rows and 4 cols): mcid,timely_term,term_degree,completion_status
+#> Empty data.table (0 rows and 4 cols): mcid,timely_term,completion_term,completion_status
 ```
 
 *Example 2.*   This student too has a degree term, Spring 2017 (encoded
@@ -252,7 +252,7 @@ completion status is “late”.
 
 # Display one student by ID
 DT[mcid == "MID26696871"]
-#> Empty data.table (0 rows and 4 cols): mcid,timely_term,term_degree,completion_status
+#> Empty data.table (0 rows and 4 cols): mcid,timely_term,completion_term,completion_status
 ```
 
 *Example 3.*   The student’s degree term is NA, indicating they did not
@@ -262,7 +262,7 @@ complete their program. Thus completion status is NA as well.
 
 # Display one student by ID
 DT[mcid == "MID26697615"]
-#> Empty data.table (0 rows and 4 cols): mcid,timely_term,term_degree,completion_status
+#> Empty data.table (0 rows and 4 cols): mcid,timely_term,completion_term,completion_status
 ```
 
 ## Graduates

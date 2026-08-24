@@ -33,14 +33,9 @@ Data frame with the following properties:
   not modified; columns with matching names are replaced. The new
   columns added are:
 
-  - `institution`   Character. Name of the institution at which a
-    student is enrolled in a term.
-
-  - `lower_limit`   Character. Initial term of an institution's data
-    range, encoded `YYYYT`. Extracted from `midf_table.`
-
-  - `upper_limit`   Character. Final term of an institution's data
-    range, encoded `YYYYT`. Extracted from `midf_table.`
+  - `data_range`   Character. Institution data range, encoded
+    `YYYYT-YYYYT,` indicating the institution's first and last term in
+    the database. Extracted from `midf_table.`
 
   - `data_sufficiency`   Character. Possible values are "include",
     "exclude-lower," and "exclude-upper."
@@ -80,94 +75,105 @@ sufficiency,"
 ## Examples
 
 ``` r
+# Assign toy data sets
+student <- toy_student
 term <- toy_term
 
-# Start with a selected population.
-x <- toy_student[c(9:15, 342:344), .(mcid, sex)]
+# Start with a selected population
+x <- student[c(9:11, 21:30, 344:345), .(mcid)]
 x
-#>               mcid    sex
-#>             <char> <char>
-#>  1: MCID3111169729 Female
-#>  2: MCID3111170852   Male
-#>  3: MCID3111173999 Female
-#>  4: MCID3111198701   Male
-#>  5: MCID3111208924   Male
-#>  6: MCID3111213539 Female
-#>  7: MCID3111213856 Female
-#>  8: MCID3112727716   Male
-#>  9: MCID3112749981 Female
-#> 10: MCID3112751130   Male
+#>               mcid
+#>             <char>
+#>  1: MCID3111169729
+#>  2: MCID3111170852
+#>  3: MCID3111173999
+#>  4: MCID3111257807
+#>  5: MCID3111258275
+#>  6: MCID3111258347
+#>  7: MCID3111259642
+#>  8: MCID3111262210
+#>  9: MCID3111265287
+#> 10: MCID3111269576
+#> 11: MCID3111272691
+#> 12: MCID3111272880
+#> 13: MCID3111277081
+#> 14: MCID3112751130
+#> 15: MCID3112754537
 
-# Add the required columns from timely_term().
+# Add the required columns from timely_term()
 x <- timely_term(x, midf_table = term)
-x <- x[, .(mcid, sex, term_i, timely_term)]
+x <- x[, .(mcid, term_i, timely_term)]
 x
-#>               mcid    sex term_i timely_term
-#>             <char> <char> <char>      <char>
-#>  1: MCID3111169729 Female  19881       19933
-#>  2: MCID3111170852   Male  19881       19933
-#>  3: MCID3111173999 Female  19881       19933
-#>  4: MCID3111198701   Male  19891       19943
-#>  5: MCID3111208924   Male  19891       19943
-#>  6: MCID3111213539 Female  19891       19943
-#>  7: MCID3111213856 Female  19891       19943
-#>  8: MCID3112727716   Male  20143       20201
-#>  9: MCID3112749981 Female  20151       20203
-#> 10: MCID3112751130   Male  20151       20203
+#>               mcid term_i timely_term
+#>             <char> <char>      <char>
+#>  1: MCID3111169729  19881       19933
+#>  2: MCID3111170852  19881       19933
+#>  3: MCID3111173999  19881       19933
+#>  4: MCID3111257807  19901       19953
+#>  5: MCID3111258275  19901       19953
+#>  6: MCID3111258347  19901       19953
+#>  7: MCID3111259642  19901       19953
+#>  8: MCID3111262210  19901       19953
+#>  9: MCID3111265287  19901       19953
+#> 10: MCID3111269576  19901       19953
+#> 11: MCID3111272691  19901       19953
+#> 12: MCID3111272880  19901       19953
+#> 13: MCID3111277081  19903       19961
+#> 14: MCID3112751130  20151       20203
+#> 15: MCID3112754537  20151       20203
 
-# Add data sufficiency columns. Unrelated columns (sex) are unaffected.
+# Add data sufficiency columns
 x <- data_sufficiency(x, midf_table = term)
 x
-#>               mcid    sex term_i timely_term   institution lower_limit
-#>             <char> <char> <char>      <char>        <char>      <char>
-#>  1: MCID3111169729 Female  19881       19933 Institution B       19881
-#>  2: MCID3111170852   Male  19881       19933 Institution B       19881
-#>  3: MCID3111173999 Female  19881       19933 Institution B       19881
-#>  4: MCID3111198701   Male  19891       19943 Institution J       19881
-#>  5: MCID3111208924   Male  19891       19943 Institution J       19881
-#>  6: MCID3111213539 Female  19891       19943 Institution B       19881
-#>  7: MCID3111213856 Female  19891       19943 Institution B       19881
-#>  8: MCID3112727716   Male  20143       20201 Institution B       19881
-#>  9: MCID3112749981 Female  20151       20203 Institution B       19881
-#> 10: MCID3112751130   Male  20151       20203 Institution B       19881
-#>     upper_limit data_sufficiency
-#>          <char>           <char>
-#>  1:       20181    exclude-lower
-#>  2:       20181    exclude-lower
-#>  3:       20181    exclude-lower
-#>  4:       20096          include
-#>  5:       20096          include
-#>  6:       20181          include
-#>  7:       20181          include
-#>  8:       20181    exclude-upper
-#>  9:       20181    exclude-upper
-#> 10:       20181    exclude-upper
+#>               mcid term_i timely_term  data_range data_sufficiency
+#>             <char> <char>      <char>      <char>           <char>
+#>  1: MCID3111169729  19881       19933 19881-20181    exclude-lower
+#>  2: MCID3111170852  19881       19933 19881-20181    exclude-lower
+#>  3: MCID3111173999  19881       19933 19881-20181    exclude-lower
+#>  4: MCID3111257807  19901       19953 19881-20181          include
+#>  5: MCID3111258275  19901       19953 19881-20181          include
+#>  6: MCID3111258347  19901       19953 19881-20181          include
+#>  7: MCID3111259642  19901       19953 19901-20153    exclude-lower
+#>  8: MCID3111262210  19901       19953 19881-20181          include
+#>  9: MCID3111265287  19901       19953 19881-20181          include
+#> 10: MCID3111269576  19901       19953 19881-20181          include
+#> 11: MCID3111272691  19901       19953 19881-20181          include
+#> 12: MCID3111272880  19901       19953 19881-20181          include
+#> 13: MCID3111277081  19903       19961 19881-20181          include
+#> 14: MCID3112751130  20151       20203 19881-20181    exclude-upper
+#> 15: MCID3112754537  20151       20203 19881-20181    exclude-upper
 
-# Repeat. New columns silently replace existing columns of the same name.
-y <- data_sufficiency(x, midf_table = term)
-y
-#>               mcid    sex term_i timely_term   institution lower_limit
-#>             <char> <char> <char>      <char>        <char>      <char>
-#>  1: MCID3111169729 Female  19881       19933 Institution B       19881
-#>  2: MCID3111170852   Male  19881       19933 Institution B       19881
-#>  3: MCID3111173999 Female  19881       19933 Institution B       19881
-#>  4: MCID3111198701   Male  19891       19943 Institution J       19881
-#>  5: MCID3111208924   Male  19891       19943 Institution J       19881
-#>  6: MCID3111213539 Female  19891       19943 Institution B       19881
-#>  7: MCID3111213856 Female  19891       19943 Institution B       19881
-#>  8: MCID3112727716   Male  20143       20201 Institution B       19881
-#>  9: MCID3112749981 Female  20151       20203 Institution B       19881
-#> 10: MCID3112751130   Male  20151       20203 Institution B       19881
-#>     upper_limit data_sufficiency
-#>          <char>           <char>
-#>  1:       20181    exclude-lower
-#>  2:       20181    exclude-lower
-#>  3:       20181    exclude-lower
-#>  4:       20096          include
-#>  5:       20096          include
-#>  6:       20181          include
-#>  7:       20181          include
-#>  8:       20181    exclude-upper
-#>  9:       20181    exclude-upper
-#> 10:       20181    exclude-upper
+# If you repeat, the new columns are overwritten
+data_sufficiency(x, midf_table = term)
+#>               mcid term_i timely_term  data_range data_sufficiency
+#>             <char> <char>      <char>      <char>           <char>
+#>  1: MCID3111169729  19881       19933 19881-20181    exclude-lower
+#>  2: MCID3111170852  19881       19933 19881-20181    exclude-lower
+#>  3: MCID3111173999  19881       19933 19881-20181    exclude-lower
+#>  4: MCID3111257807  19901       19953 19881-20181          include
+#>  5: MCID3111258275  19901       19953 19881-20181          include
+#>  6: MCID3111258347  19901       19953 19881-20181          include
+#>  7: MCID3111259642  19901       19953 19901-20153    exclude-lower
+#>  8: MCID3111262210  19901       19953 19881-20181          include
+#>  9: MCID3111265287  19901       19953 19881-20181          include
+#> 10: MCID3111269576  19901       19953 19881-20181          include
+#> 11: MCID3111272691  19901       19953 19881-20181          include
+#> 12: MCID3111272880  19901       19953 19881-20181          include
+#> 13: MCID3111277081  19903       19961 19881-20181          include
+#> 14: MCID3112751130  20151       20203 19881-20181    exclude-upper
+#> 15: MCID3112754537  20151       20203 19881-20181    exclude-upper
+
+# Typical application retains "include" rows only
+x[data_sufficiency == "include"]
+#>              mcid term_i timely_term  data_range data_sufficiency
+#>            <char> <char>      <char>      <char>           <char>
+#> 1: MCID3111257807  19901       19953 19881-20181          include
+#> 2: MCID3111258275  19901       19953 19881-20181          include
+#> 3: MCID3111258347  19901       19953 19881-20181          include
+#> 4: MCID3111262210  19901       19953 19881-20181          include
+#> 5: MCID3111265287  19901       19953 19881-20181          include
+#> 6: MCID3111269576  19901       19953 19881-20181          include
+#> 7: MCID3111272691  19901       19953 19881-20181          include
+#> 8: MCID3111272880  19901       19953 19881-20181          include
+#> 9: MCID3111277081  19903       19961 19881-20181          include
 ```

@@ -70,14 +70,19 @@ Data frame with the following properties:
   are not modified; columns with matching names are replaced. The two
   new column names have the form:
 
-  - `CATEGORY_1_method_abbr`
+  - `CATEGORY_1_LABEL`
 
-  - `CATEGORY_2_method_abbr`
+  - `CATEGORY_2_LABEL`
 
-  - For example, if `categories = c("program", "people")` and
-    `method = "median",` the new column names would be `program_med` and
-    `people_med.` For `method = "percent",` the new column names would
-    be `program_pct` and `people_pct.`
+The `CATEGORY` placeholder in the new column names is replaced with the
+column names from `categories.` The `LABEL` placeholder depends on the
+method. For `method = median`, the label is `median`. For
+`method = percent`, the label is `metric,` indicating that the metric in
+percent has been recalculated for the entire category. For example, if
+`categories = c("program", "people")` and `method = "median",` the new
+column names would be `program_median` and `people_median.` For
+`method = "percent",` the new column names would be `program_metric` and
+`people_metric.`
 
 ## Details
 

@@ -1,65 +1,507 @@
 # Case study
 
 A complete case study illustrating how we work with longitudinal data
-and how midfieldr supports our process. Many of the topics introduced
-here are developed in depth in subsequent articles.
+and how midfieldr supports the process. In subsequent articles, many of
+the topics introduced here are more fully developed.
 
-## Description
+## Outline
 
-*Data.*   Program CIP codes from midfieldr `cip.` Student records from
-the practice data in midfielddata: `student, term,` and `degree.`
+The work is organized in three major sections.
+
+1.  Refining the student records—generally independent of the case
+    specifics
+2.  Obtaining the metric—depends on one’s programs, metrics, and
+    groupings.
+3.  Conditioning the results for dissemination—depends on one’s audience
+    and rhetorical goals.
+
+### *Scope*
+
+*Records.*   Data: `student, term,` and `degree` from midfielddata.
+Filter for data sufficiency and degree seeking; exclude records later
+than a student’s first degree term.
+
+*Population.*   The set of unique IDs from the above records.
+
+*Programs.*   Data: `cip` from midfieldr. We study four Engineering
+majors: Civil, Electrical, Industrial/Systems, and Mechanical.
 
 *Metric.*   Program *stickiness:* the ratio \small (S) of the number of
 graduates of a program \small (N\_\textrm{grad}) to the number ever
-enrolled in the program \small (N\_\textrm{ever}), including part-time
-students, migrators, transfers, and students admitted in any term
-([Ohland et al. 2012](#ref-Ohland+Orr+others:2012)).
+enrolled in the program \small (N\_\textrm{ever}).
 
 \small S = \frac{\small N\_\textrm{grad}}{\small N\_\textrm{ever}} =
 \frac{\small\mathrm{number\\ of\\ graduates\\ of\\ a\\
 program}}{\small\mathrm{number\\ ever\\ enrolled\\ in\\ the\\ program}}
 
-*Programs.*   Civil, Electrical, Industrial/Systems, and Mechanical
-Engineering.
-
-*Records.*   Filter for data sufficiency and degree seeking; no
-exclusions due to part-time status, transfer status, admission term, or
-starting program; exclude records later than a student’s first degree
-term.
-
-*Population.*   The set of unique IDs from the above records.
+“Ever-enrolled” means that students at some point decided to seek a
+degree in that program. Stickiness reports the likelihood that such
+students will “stick to” and graduate from that program ([Ohland et al.
+2012](#ref-Ohland+Orr+others:2012)).
 
 *Blocs.*   The metric requires two blocs: students ever enrolled in the
 programs; and timely graduates of the programs.
 
-*Groupings.*   The metric will be grouped by program, race/ethnicity,
-and sex.
-
-*Outcome.*   A data frame with columns for each grouping variable and
-bloc summary counts \small N\_\textrm{grad} and \small N\_\textrm{ever}
-from which the metric \small S is calculated. The grouping variables are
-a composite key to the numerical results.
+*Groupings.*   Group the findings by program, race/ethnicity, and sex.
 
 *Dissemination.*   Exclude groupings too small to preserve anonymity.
 Edit column names to suit the audience. Condition/transform data as
 needed for tables or charts.
 
-We use these packages:
+### *Terminology*
+
+Definitions critical to understanding our data manipulation process.
+
+- The population is usually expected to be *degree-seeking,* i.e.,
+  attempting to complete a program.
+
+- *Program completion* means satisfying the requirements for a first
+  baccalaureate degree.
+
+- The *timely-completion term* is the term by which we would consider
+  their completion “timely”, default 6 years after admission.
+
+- The *data sufficiency* test identifies students whose admission term
+  and projected timely completion term lie within the range of data
+  available from their institution—a necessary and sufficient condition
+  for determining completion status.
+
+- *Completion status* is “timely” for students graduating no later than
+  their timely-completion term; “late” if they graduate after that term;
+  and “NA” for non-completion.
+
+## Refining the records
 
 ``` r
 
-library("midfieldr")
-library("midfielddata")
-library("data.table")
-library("gt") # for tables
-library("ggplot2") # for charts
+# packages
+library("midfieldr")    # working with student records
+library("midfielddata") # practice data
+library("data.table")   # data manipulation
+library("gt")           # tables
+library("ggplot2")      # charts
 ```
+
+We load three of the midfielddata data tables. This study does not
+require the `course` data table. If it had been required, it would be
+included here and in similar steps throughout the article.
+
+``` r
+
+data(student, term, degree)
+```
+
+We copy the original data sets, giving them new names
+`{student_source, term_source, degree_source}` and new locations in
+memory. This step allows us to use the more convenient names
+`{student, term, degree}` to do our work without updating the source
+tables “by reference.” Reference semantics in data.table is documented
+in ([*Reference Semantics* 2026](#ref-reference-semantics:2026)).
+
+``` r
+
+student_source <- copy(student)
+term_source <- copy(term)
+degree_source <- copy(degree)
+```
+
+For comparing results as we refine the population, we start with the
+following number of rows in the original data frames.
+
+| Table   | Original tables |
+|---------|-----------------|
+| student | 97,555          |
+| term    | 639,915         |
+| degree  | 49,665          |
+
+Table 1(a). Number of rows. {.table .gt_table
+quarto-disable-processing="false" quarto-bootstrap="false"}
+
+### *Minimum necessary columns*
+
+In the next few steps, we do not require all of the columns in our data
+tables. We can (optionally) minimize the number of columns we see during
+an interactive session using `select_basic_cols().` The columns returned
+are those required by other midfieldr functions.
+
+``` r
+
+student <- select_basic_cols(student)
+term <- select_basic_cols(term)
+degree <- select_basic_cols(degree)
+
+student
+#>                  mcid          race    sex
+#>                <char>        <char> <char>
+#>     1: MCID3111142225         Asian   Male
+#>     2: MCID3111142283         Asian Female
+#>     3: MCID3111142290         Asian   Male
+#>    ---                                    
+#> 97553: MCID3112898894         White Female
+#> 97554: MCID3112898895         White Female
+#> 97555: MCID3112898940 Other/Unknown   Male
+
+term
+#>                   mcid   term   cip6   institution         level
+#>                 <char> <char> <char>        <char>        <char>
+#>      1: MCID3111142225  19881 140901 Institution B 01 First-year
+#>      2: MCID3111142283  19881 240102 Institution J 01 First-year
+#>      3: MCID3111142283  19883 240102 Institution J 01 First-year
+#>     ---                                                         
+#> 639913: MCID3112898894  20181 451001 Institution B 01 First-year
+#> 639914: MCID3112898895  20181 302001 Institution B 01 First-year
+#> 639915: MCID3112898940  20181 050103 Institution B 01 First-year
+
+degree
+#>                  mcid term_degree   cip6
+#>                <char>      <char> <char>
+#>     1: MCID3111142225       19881 141001
+#>     2: MCID3111142290       19921 141001
+#>     3: MCID3111142294       19903 141001
+#>    ---                                  
+#> 49663: MCID3112839623       20181 160102
+#> 49664: MCID3112845220       20181 270101
+#> 49665: MCID3112845673       20174 090101
+```
+
+### *Data sufficiency*
+
+Per the terminology discussion above, only those records passing the
+data sufficiency test are included in a population study. We start with
+the full set of unique student IDs.
+
+``` r
+
+DT <- term[, .(mcid)]
+DT <- unique(DT)
+DT
+#>                  mcid
+#>                <char>
+#>     1: MCID3111142225
+#>     2: MCID3111142283
+#>     3: MCID3111142290
+#>    ---               
+#> 97553: MCID3112898894
+#> 97554: MCID3112898895
+#> 97555: MCID3112898940
+```
+
+We use
+[`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
+to determine the timely completion term for every student and add
+columns to the data frame to support those findings.
+
+``` r
+
+DT <- timely_term(DT, midf_table = term)
+DT
+#>                  mcid term_i       level_i adj_span timely_term
+#>                <char> <char>        <char>    <num>      <char>
+#>     1: MCID3111142225  19881 01 First-year        6       19933
+#>     2: MCID3111142283  19881 01 First-year        6       19933
+#>     3: MCID3111142290  19881 01 First-year        6       19933
+#>    ---                                                         
+#> 97553: MCID3112898894  20181 01 First-year        6       20233
+#> 97554: MCID3112898895  20181 01 First-year        6       20233
+#> 97555: MCID3112898940  20181 01 First-year        6       20233
+```
+
+Next, we can (optionally) reduce the number of columns to just those
+needed in the next step.
+
+``` r
+
+DT <- DT[, .(mcid, term_i, timely_term)]
+DT
+#>                  mcid term_i timely_term
+#>                <char> <char>      <char>
+#>     1: MCID3111142225  19881       19933
+#>     2: MCID3111142283  19881       19933
+#>     3: MCID3111142290  19881       19933
+#>    ---                                  
+#> 97553: MCID3112898894  20181       20233
+#> 97554: MCID3112898895  20181       20233
+#> 97555: MCID3112898940  20181       20233
+```
+
+We operate on this output with
+[`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
+to identify records that pass the data sufficiency test and those that
+do not and add columns to the data frame to support those findings.
+
+``` r
+
+DT <- data_sufficiency(DT, midf_table = term)
+DT
+#>                  mcid term_i timely_term  data_range data_sufficiency
+#>                <char> <char>      <char>      <char>           <char>
+#>     1: MCID3111142225  19881       19933 19881-20181    exclude-lower
+#>     2: MCID3111142283  19881       19933 19881-20096    exclude-lower
+#>     3: MCID3111142290  19881       19933 19881-20096    exclude-lower
+#>    ---                                                               
+#> 97553: MCID3112898894  20181       20233 19881-20181    exclude-upper
+#> 97554: MCID3112898895  20181       20233 19881-20181    exclude-upper
+#> 97555: MCID3112898940  20181       20233 19881-20181    exclude-upper
+```
+
+*Summary check.*   A brief aside to summarize the numbers of students
+identified to include and exclude. We run a similar summary at a number
+of points in the analysis as a credibility check.
+
+``` r
+
+DT[, .N, by = c("data_sufficiency")][order(-N)]
+#>    data_sufficiency     N
+#>              <char> <int>
+#> 1:          include 76875
+#> 2:    exclude-upper 17934
+#> 3:    exclude-lower  2746
+```
+
+We filter to retain rows labeled “include” and drop all but the ID
+column.
+
+``` r
+
+DT <- DT[data_sufficiency == "include", .(mcid)]
+DT
+#>                  mcid
+#>                <char>
+#>     1: MCID3111142689
+#>     2: MCID3111142782
+#>     3: MCID3111142881
+#>    ---               
+#> 76873: MCID3112785480
+#> 76874: MCID3112800920
+#> 76875: MCID3112870009
+```
+
+### *Degree seeking*
+
+We require all students in our study to be degree-seeking. By design,
+the `student` table contains only degree-seeking students. We inner-join
+the ID column from the `student` table, matching on `mcid`. In effect,
+the inner join filters our population to remove any non-degree-seeking
+students.
+
+``` r
+
+student_cols <- student[, .(mcid)]
+DT <- student_cols[DT, on = "mcid", nomatch = NULL]
+DT
+#>                  mcid
+#>                <char>
+#>     1: MCID3111142689
+#>     2: MCID3111142782
+#>     3: MCID3111142881
+#>    ---               
+#> 76873: MCID3112785480
+#> 76874: MCID3112800920
+#> 76875: MCID3112870009
+```
+
+It happens that all students in this case are degree-seeking, so this
+step did not reduce the size of our population. Still, we include the
+step to illustrate our complete process.
+
+### *Population*
+
+Filtering for data sufficiency and degree-seeking yields the baseline
+population for this study.
+
+``` r
+
+population <- copy(DT)
+```
+
+We use this population to filter the source records using an inner join,
+matching on ID. The inner join retains those IDs common to both data
+frames. The results are our first iteration of our “baseline” data
+tables.
+
+``` r
+
+student_baseline <- population[student_source, on = "mcid", nomatch = NULL]
+term_baseline <- population[term_source, on = "mcid", nomatch = NULL]
+degree_baseline <- population[degree_source, on = "mcid", nomatch = NULL]
+```
+
+| Table   | Original tables | Refined population |
+|---------|-----------------|--------------------|
+| student | 97,555          | 76,875             |
+| term    | 639,915         | 531,419            |
+| degree  | 49,665          | 43,903             |
+
+Table 1(b). Number of rows {.table .gt_table
+quarto-disable-processing="false" quarto-bootstrap="false"}
+
+### *Post-completion terms*
+
+We are not generally interested in terms beyond the first degree term,
+so we identify and exclude terms later than the first degree term in all
+the source data frames. Here, we retrieve our source tables with term
+variables. (A study that used the `course` data table would be included
+in this step too.)
+
+``` r
+
+term <- copy(term_baseline)
+degree <- copy(degree_baseline)
+```
+
+For each student and term in a data frame,
+[`post_completion_terms()`](https://midfieldr.github.io/midfieldr/reference/post_completion_terms.md)
+identifies terms that are before, equal to, or after the student’s first
+degree term and adds columns to the data frame to support those
+findings.
+
+``` r
+
+term <- post_completion_terms(term, midf_table = degree)
+degree <- post_completion_terms(degree, midf_table = degree)
+
+term
+#>                   mcid   term   cip6   institution          level      standing
+#>                 <char> <char> <char>        <char>         <char>        <char>
+#>      1: MCID3111142689  19883 090401 Institution B  01 First-year Good Standing
+#>      2: MCID3111142782  19883 260101 Institution J  01 First-year Good Standing
+#>      3: MCID3111142782  19885 260101 Institution J 02 Second-year Good Standing
+#>     ---                                                                        
+#> 531417: MCID3112870009  19953 240102 Institution B  01 First-year Good Standing
+#> 531418: MCID3112870009  19954 240102 Institution B  01 First-year Good Standing
+#> 531419: MCID3112870009  19983 240102 Institution B 02 Second-year Good Standing
+#>           coop hours_term hours_term_attempt hours_cumul hours_cumul_attempt
+#>         <char>      <num>              <num>       <num>               <num>
+#>      1:     No          9                  9          18                  18
+#>      2:     No         16                 16          26                  26
+#>      3:     No          4                  4          30                  30
+#>     ---                                                                     
+#> 531417:     No         12                 12          24                  24
+#> 531418:     No          1                  1          25                  25
+#> 531419:     No          7                  7          53                  53
+#>         gpa_term gpa_cumul first_degree_term term_cluster
+#>            <num>     <num>            <char>       <char>
+#>      1:     3.33      3.05             19913   pre-degree
+#>      2:     2.80      2.57             19903   pre-degree
+#>      3:     3.00      2.63             19903   pre-degree
+#>     ---                                                  
+#> 531417:     3.57      3.71              <NA>   pre-degree
+#> 531418:     4.00      3.72              <NA>   pre-degree
+#> 531419:     4.00      3.87              <NA>   pre-degree
+```
+
+*Summary check.*   Numbers of students in each term cluster.
+
+``` r
+
+term[, .N, by = c("term_cluster")][order(-N)]
+#>         term_cluster      N
+#>               <char>  <int>
+#> 1:        pre-degree 495563
+#> 2:      first-degree  29883
+#> 3: post-first-degree   5973
+
+degree[, .N, by = c("term_cluster")][order(-N)]
+#>         term_cluster     N
+#>               <char> <int>
+#> 1:      first-degree 43857
+#> 2: post-first-degree    46
+```
+
+We exclude the rows labeled “post-first-degree.” Note that we are
+dropping *terms* without affecting the number of student IDs.
+
+``` r
+
+term <- term[term_cluster != "post-first-degree"]
+degree <- degree[term_cluster != "post-first-degree"]
+```
+
+We drop the temporary columns.
+
+``` r
+
+term[, c("term_cluster", "first_degree_term") := NULL]
+degree[, c("term_cluster", "first_degree_term") := NULL]
+```
+
+We redefine our tables to incorporate the exclusion of post-completion
+terms, yielding our baseline data tables.
+
+``` r
+
+term_baseline <- copy(term)
+degree_baseline <- copy(degree)
+```
+
+| Table   | Original tables | Refined population | Baseline tables |
+|---------|-----------------|--------------------|-----------------|
+| student | 97,555          | 76,875             | 76,875          |
+| term    | 639,915         | 531,419            | 525,446         |
+| degree  | 49,665          | 43,903             | 43,857          |
+
+Table 1(c). Number of rows. {.table .gt_table
+quarto-disable-processing="false" quarto-bootstrap="false"}
+
+Review the results.
+
+``` r
+
+look_at(student_baseline)
+#> Classes 'data.table' and 'data.frame':   76875 obs. of  13 variables:
+#>  $ mcid          : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "M"..
+#>  $ race          : chr  "Hispanic" "Hispanic" "International" "International" ..
+#>  $ sex           : chr  "Female" "Female" "Male" "Male" ...
+#>  $ institution   : chr  "Institution B" "Institution J" "Institution B" "Inst"..
+#>  $ transfer      : chr  "First-Time Transfer" "First-Time Transfer" "First-Ti"..
+#>  $ hours_transfer: num  NA NA NA NA NA NA NA NA NA NA ...
+#>  $ age_desc      : chr  "Under 25" "Under 25" "25 and Older" "Under 25" ...
+#>  $ us_citizen    : chr  "Yes" "Yes" "Yes" "No" ...
+#>  $ home_zip      : chr  NA "22101" NA NA ...
+#>  $ high_school   : chr  NA "471395" NA NA ...
+#>  $ sat_math      : num  NA 520 NA NA NA NA NA NA NA NA ...
+#>  $ sat_verbal    : num  NA 490 NA NA NA NA NA NA NA NA ...
+#>  $ act_comp      : num  NA NA NA NA NA NA NA NA NA NA ...
+
+look_at(term_baseline)
+#> Classes 'data.table' and 'data.frame':   525446 obs. of  13 variables:
+#>  $ mcid               : chr  "MCID3111142689" "MCID3111142782" "MCID311114278"..
+#>  $ term               : chr  "19883" "19883" "19885" "19893" ...
+#>  $ cip6               : chr  "090401" "260101" "260101" "260101" ...
+#>  $ institution        : chr  "Institution B" "Institution J" "Institution J" "..
+#>  $ level              : chr  "01 First-year" "01 First-year" "02 Second-year""..
+#>  $ standing           : chr  "Good Standing" "Good Standing" "Good Standing" "..
+#>  $ coop               : chr  "No" "No" "No" "No" ...
+#>  $ hours_term         : num  9 16 4 13 4 4 10 9 18 6 ...
+#>  $ hours_term_attempt : num  9 16 4 13 4 4 10 9 18 6 ...
+#>  $ hours_cumul        : num  18 26 30 56 60 64 74 83 21 27 ...
+#>  $ hours_cumul_attempt: num  18 26 30 56 60 64 74 83 21 27 ...
+#>  $ gpa_term           : num  3.33 2.8 3 2.84 4 3.25 2.26 2.43 2.55 2.15 ...
+#>  $ gpa_cumul          : num  3.05 2.57 2.63 2.53 2.63 2.67 2.61 2.59 2.76 2.62..
+
+look_at(degree_baseline)
+#> Classes 'data.table' and 'data.frame':   43857 obs. of  5 variables:
+#>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID"..
+#>  $ term_degree: chr  "19913" "19903" "19894" "19901" ...
+#>  $ cip6       : chr  "090401" "260101" "450601" "141001" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution B" "Institu"..
+#>  $ degree     : chr  "Bachelor of Arts in Journalism" "Bachelor of Science in"..
+
+look_at(population)
+#> Classes 'data.table' and 'data.frame':   76875 obs. of  1 variable:
+#>  $ mcid: chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID3111142"..
+```
+
+The baseline tables are the starting point for most studies, independent
+of case specifics. From this point forward, anytime we need a fresh copy
+of any of the data tables, we copy the “baseline” version. Anytime we
+need a starting population, we copy `population.`
 
 ## Programs
 
-One can start an analysis with program data or with student record
-data—the choice is arbitrary. We start with programs and set the results
-aside until needed when constructing our blocs.
+In this section, we begin the procedures that transform our baseline
+records and population into case-specific programs, blocs, metrics, and
+groupings.
 
 Our goal in this section is to search the CIP data table for the 6-digit
 codes for our programs. The `cip` dataset loads with midfieldr.
@@ -319,470 +761,9 @@ using 4 program labels. This data frame can sit in memory (or written to
 file) until we’re ready to filter the blocs by program, joining data
 frames by matching on the `cip6` variable.
 
-## Records
-
-For this study we load three of the midfielddata data tables.
-
-``` r
-
-data(student, term, degree)
-```
-
-We make copies of the original data sets, giving them new names
-`{student_source, term_source, degree_source}` and new locations in
-memory. This step allows us to use the more convenient names
-`{student, term, degree}` to do our work without updating the source
-tables “by reference.” Reference semantics in data.table is documented
-in ([*Reference Semantics* 2026](#ref-reference-semantics:2026)).
-
-``` r
-
-student_source <- copy(student)
-term_source <- copy(term)
-degree_source <- copy(degree)
-```
-
-Our approach is to apply the data sufficiency and degree-seeking
-criteria to refine the population. The “source” tables are then filtered
-to match this population, followed by a filter to exclude
-post-completion terms.
-
-### `select_basic_cols()`
-
-In the next few steps, we do not require all of the columns in our data
-tables. We can (optionally) minimize the number of columns we see during
-an interactive session using `select_basic_cols().`
-
-``` r
-
-student <- select_basic_cols(student)
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
-
-student
-#>                  mcid          race    sex
-#>                <char>        <char> <char>
-#>     1: MCID3111142225         Asian   Male
-#>     2: MCID3111142283         Asian Female
-#>     3: MCID3111142290         Asian   Male
-#>    ---                                    
-#> 97553: MCID3112898894         White Female
-#> 97554: MCID3112898895         White Female
-#> 97555: MCID3112898940 Other/Unknown   Male
-
-term
-#>                   mcid   term   cip6   institution         level
-#>                 <char> <char> <char>        <char>        <char>
-#>      1: MCID3111142225  19881 140901 Institution B 01 First-year
-#>      2: MCID3111142283  19881 240102 Institution J 01 First-year
-#>      3: MCID3111142283  19883 240102 Institution J 01 First-year
-#>     ---                                                         
-#> 639913: MCID3112898894  20181 451001 Institution B 01 First-year
-#> 639914: MCID3112898895  20181 302001 Institution B 01 First-year
-#> 639915: MCID3112898940  20181 050103 Institution B 01 First-year
-
-degree
-#>                  mcid term_degree   cip6
-#>                <char>      <char> <char>
-#>     1: MCID3111142225       19881 141001
-#>     2: MCID3111142290       19921 141001
-#>     3: MCID3111142294       19903 141001
-#>    ---                                  
-#> 49663: MCID3112839623       20181 160102
-#> 49664: MCID3112845220       20181 270101
-#> 49665: MCID3112845673       20174 090101
-```
-
-For comparison as we refine the population, we start with the following
-number of rows in the original data frames.
-
-| Table   | Original tables |
-|---------|-----------------|
-| student | 97,555          |
-| term    | 639,915         |
-| degree  | 49,665          |
-
-Table 1(a). Number of rows. {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
-
-### *Terminology*
-
-Definitions critical to understanding our data manipulation process.
-
-- Students in a study population are usually expected to be
-  *degree-seeking,* i.e., attempting to complete a program.
-
-- Program *completion* means satisfying the requirements for a first
-  baccalaureate degree.
-
-- Completion *status* is “timely” if accomplished within a set time
-  span, typically 4, 6, or 8 years after admission depending on the
-  definition one adopts. The *timely-completion term* is the term at the
-  end of that span.
-
-- The *data sufficiency* test identifies students whose actual admission
-  term and projected timely completion term both lie within their
-  institution’s data range. These are the students for whom completion
-  status—timely or otherwise—can be positively asserted, and are
-  therefore the only students included a population.
-
-The associated midfieldr functions are:
-
-- [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)  
-- [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)  
-- [`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
-
-### *Data sufficiency*
-
-Per the terminology discussion above, only those records passing the
-data sufficiency test are included in a population study. We start with
-the full set of unique student IDs.
-
-``` r
-
-DT <- term[, .(mcid)]
-DT <- unique(DT)
-DT
-#>                  mcid
-#>                <char>
-#>     1: MCID3111142225
-#>     2: MCID3111142283
-#>     3: MCID3111142290
-#>    ---               
-#> 97553: MCID3112898894
-#> 97554: MCID3112898895
-#> 97555: MCID3112898940
-```
-
-We use
-[`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
-to determine the timely completion term for every student and add
-columns to the data frame to support those findings.
-
-``` r
-
-DT <- timely_term(DT, midf_table = term)
-DT
-#>                  mcid term_i       level_i adj_span timely_term
-#>                <char> <char>        <char>    <num>      <char>
-#>     1: MCID3111142225  19881 01 First-year        6       19933
-#>     2: MCID3111142283  19881 01 First-year        6       19933
-#>     3: MCID3111142290  19881 01 First-year        6       19933
-#>    ---                                                         
-#> 97553: MCID3112898894  20181 01 First-year        6       20233
-#> 97554: MCID3112898895  20181 01 First-year        6       20233
-#> 97555: MCID3112898940  20181 01 First-year        6       20233
-```
-
-Next, we can (optionally) reduce the number of columns to just those
-needed in the next step.
-
-``` r
-
-DT <- DT[, .(mcid, term_i, timely_term)]
-DT
-#>                  mcid term_i timely_term
-#>                <char> <char>      <char>
-#>     1: MCID3111142225  19881       19933
-#>     2: MCID3111142283  19881       19933
-#>     3: MCID3111142290  19881       19933
-#>    ---                                  
-#> 97553: MCID3112898894  20181       20233
-#> 97554: MCID3112898895  20181       20233
-#> 97555: MCID3112898940  20181       20233
-```
-
-We operate on this output with
-[`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
-to identify records that pass the data sufficiency test and those that
-do not and add columns to the data frame to support those findings.
-
-``` r
-
-DT <- data_sufficiency(DT, midf_table = term)
-DT
-#>                  mcid term_i timely_term   institution lower_limit upper_limit
-#>                <char> <char>      <char>        <char>      <char>      <char>
-#>     1: MCID3111142225  19881       19933 Institution B       19881       20181
-#>     2: MCID3111142283  19881       19933 Institution J       19881       20096
-#>     3: MCID3111142290  19881       19933 Institution J       19881       20096
-#>    ---                                                                        
-#> 97553: MCID3112898894  20181       20233 Institution B       19881       20181
-#> 97554: MCID3112898895  20181       20233 Institution B       19881       20181
-#> 97555: MCID3112898940  20181       20233 Institution B       19881       20181
-#>        data_sufficiency
-#>                  <char>
-#>     1:    exclude-lower
-#>     2:    exclude-lower
-#>     3:    exclude-lower
-#>    ---                 
-#> 97553:    exclude-upper
-#> 97554:    exclude-upper
-#> 97555:    exclude-upper
-```
-
-*Summary check.*   A brief aside to summarize the numbers of students
-identified to include and exclude. We run a similar summary at a number
-of points in the analysis as a credibility check.
-
-``` r
-
-DT[, .N, by = c("data_sufficiency")][order(-N)]
-#>    data_sufficiency     N
-#>              <char> <int>
-#> 1:          include 76875
-#> 2:    exclude-upper 17934
-#> 3:    exclude-lower  2746
-```
-
-We filter to retain rows labeled “include” and drop all but the ID
-column.
-
-``` r
-
-DT <- DT[data_sufficiency == "include", .(mcid)]
-DT
-#>                  mcid
-#>                <char>
-#>     1: MCID3111142689
-#>     2: MCID3111142782
-#>     3: MCID3111142881
-#>    ---               
-#> 76873: MCID3112785480
-#> 76874: MCID3112800920
-#> 76875: MCID3112870009
-```
-
-### *Degree seeking*
-
-We require all students in our study to be degree-seeking. By design,
-the `student` table contains only degree-seeking students. We inner-join
-the ID column from the `student` table, matching on `mcid`. In effect,
-the inner join filters our population to remove any non-degree-seeking
-students.
-
-``` r
-
-student_cols <- student[, .(mcid)]
-DT <- student_cols[DT, on = "mcid", nomatch = NULL]
-DT
-#>                  mcid
-#>                <char>
-#>     1: MCID3111142689
-#>     2: MCID3111142782
-#>     3: MCID3111142881
-#>    ---               
-#> 76873: MCID3112785480
-#> 76874: MCID3112800920
-#> 76875: MCID3112870009
-```
-
-It happens that all students in this case are degree-seeking, so this
-step did not reduce the size of our population. Still, we include the
-step to illustrate our complete process.
-
-### *Population*
-
-Filtering for data sufficiency and degree-seeking yields the baseline
-population for this (and nearly every) case study.
-
-``` r
-
-population <- copy(DT)
-```
-
-We use this population to filter the source records using an inner join,
-matching on ID. The inner join retains those IDs common to both data
-frames.
-
-``` r
-
-student_source <- population[student_source, on = "mcid", nomatch = NULL]
-term_source <- population[term_source, on = "mcid", nomatch = NULL]
-degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
-```
-
-| Table   | Original tables | Baseline population |
-|---------|-----------------|---------------------|
-| student | 97,555          | 76,875              |
-| term    | 639,915         | 531,419             |
-| degree  | 49,665          | 43,903              |
-
-Table 1(b). Number of rows {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
-
-### *Post-completion terms*
-
-We are not generally interested in terms beyond the first degree term,
-so we identify and exclude terms later than the first degree term in all
-the source data frames. Here, we retrieve the source tables that have
-term variables.
-
-``` r
-
-term <- copy(term_source)
-degree <- copy(degree_source)
-```
-
-For each student and term in a data frame,
-[`post_completion_terms()`](https://midfieldr.github.io/midfieldr/reference/post_completion_terms.md)
-identifies terms that are before, equal to, or after the student’s first
-degree term and adds columns to the data frame to support those
-findings.
-
-``` r
-
-term <- post_completion_terms(term, midf_table = degree)
-degree <- post_completion_terms(degree, midf_table = degree)
-
-term
-#>                   mcid   term   cip6   institution          level      standing
-#>                 <char> <char> <char>        <char>         <char>        <char>
-#>      1: MCID3111142689  19883 090401 Institution B  01 First-year Good Standing
-#>      2: MCID3111142782  19883 260101 Institution J  01 First-year Good Standing
-#>      3: MCID3111142782  19885 260101 Institution J 02 Second-year Good Standing
-#>     ---                                                                        
-#> 531417: MCID3112870009  19953 240102 Institution B  01 First-year Good Standing
-#> 531418: MCID3112870009  19954 240102 Institution B  01 First-year Good Standing
-#> 531419: MCID3112870009  19983 240102 Institution B 02 Second-year Good Standing
-#>           coop hours_term hours_term_attempt hours_cumul hours_cumul_attempt
-#>         <char>      <num>              <num>       <num>               <num>
-#>      1:     No          9                  9          18                  18
-#>      2:     No         16                 16          26                  26
-#>      3:     No          4                  4          30                  30
-#>     ---                                                                     
-#> 531417:     No         12                 12          24                  24
-#> 531418:     No          1                  1          25                  25
-#> 531419:     No          7                  7          53                  53
-#>         gpa_term gpa_cumul first_degree_term term_cluster
-#>            <num>     <num>            <char>       <char>
-#>      1:     3.33      3.05             19913   pre-degree
-#>      2:     2.80      2.57             19903   pre-degree
-#>      3:     3.00      2.63             19903   pre-degree
-#>     ---                                                  
-#> 531417:     3.57      3.71              <NA>   pre-degree
-#> 531418:     4.00      3.72              <NA>   pre-degree
-#> 531419:     4.00      3.87              <NA>   pre-degree
-```
-
-*Summary check.*   Numbers of students in each term cluster.
-
-``` r
-
-term[, .N, by = c("term_cluster")][order(-N)]
-#>         term_cluster      N
-#>               <char>  <int>
-#> 1:        pre-degree 495563
-#> 2:      first-degree  29883
-#> 3: post-first-degree   5973
-
-degree[, .N, by = c("term_cluster")][order(-N)]
-#>         term_cluster     N
-#>               <char> <int>
-#> 1:      first-degree 43857
-#> 2: post-first-degree    46
-```
-
-We exclude the rows labeled “post-first-degree.” Note that we are
-dropping *terms* without affecting the number of student IDs.
-
-``` r
-
-term <- term[term_cluster != "post-first-degree"]
-degree <- degree[term_cluster != "post-first-degree"]
-```
-
-We drop the temporary columns.
-
-``` r
-
-term[, c("term_cluster", "first_degree_term") := NULL]
-degree[, c("term_cluster", "first_degree_term") := NULL]
-```
-
-We redefine our source material to incorporate the exclusion of
-post-completion terms, yielding our baseline source tables.
-
-``` r
-
-term_source <- copy(term)
-degree_source <- copy(degree)
-```
-
-| Table   | Original tables | Baseline population | Omit post-completion terms |
-|---------|-----------------|---------------------|----------------------------|
-| student | 97,555          | 76,875              | 76,875                     |
-| term    | 639,915         | 531,419             | 525,446                    |
-| degree  | 49,665          | 43,903              | 43,857                     |
-
-Table 1(c). Number of rows. {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
-
-Review the results.
-
-``` r
-
-look_at(student_source)
-#> Classes 'data.table' and 'data.frame':   76875 obs. of  13 variables:
-#>  $ mcid          : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "M"..
-#>  $ race          : chr  "Hispanic" "Hispanic" "International" "International" ..
-#>  $ sex           : chr  "Female" "Female" "Male" "Male" ...
-#>  $ institution   : chr  "Institution B" "Institution J" "Institution B" "Inst"..
-#>  $ transfer      : chr  "First-Time Transfer" "First-Time Transfer" "First-Ti"..
-#>  $ hours_transfer: num  NA NA NA NA NA NA NA NA NA NA ...
-#>  $ age_desc      : chr  "Under 25" "Under 25" "25 and Older" "Under 25" ...
-#>  $ us_citizen    : chr  "Yes" "Yes" "Yes" "No" ...
-#>  $ home_zip      : chr  NA "22101" NA NA ...
-#>  $ high_school   : chr  NA "471395" NA NA ...
-#>  $ sat_math      : num  NA 520 NA NA NA NA NA NA NA NA ...
-#>  $ sat_verbal    : num  NA 490 NA NA NA NA NA NA NA NA ...
-#>  $ act_comp      : num  NA NA NA NA NA NA NA NA NA NA ...
-
-look_at(term_source)
-#> Classes 'data.table' and 'data.frame':   525446 obs. of  13 variables:
-#>  $ mcid               : chr  "MCID3111142689" "MCID3111142782" "MCID311114278"..
-#>  $ term               : chr  "19883" "19883" "19885" "19893" ...
-#>  $ cip6               : chr  "090401" "260101" "260101" "260101" ...
-#>  $ institution        : chr  "Institution B" "Institution J" "Institution J" "..
-#>  $ level              : chr  "01 First-year" "01 First-year" "02 Second-year""..
-#>  $ standing           : chr  "Good Standing" "Good Standing" "Good Standing" "..
-#>  $ coop               : chr  "No" "No" "No" "No" ...
-#>  $ hours_term         : num  9 16 4 13 4 4 10 9 18 6 ...
-#>  $ hours_term_attempt : num  9 16 4 13 4 4 10 9 18 6 ...
-#>  $ hours_cumul        : num  18 26 30 56 60 64 74 83 21 27 ...
-#>  $ hours_cumul_attempt: num  18 26 30 56 60 64 74 83 21 27 ...
-#>  $ gpa_term           : num  3.33 2.8 3 2.84 4 3.25 2.26 2.43 2.55 2.15 ...
-#>  $ gpa_cumul          : num  3.05 2.57 2.63 2.53 2.63 2.67 2.61 2.59 2.76 2.62..
-
-look_at(degree_source)
-#> Classes 'data.table' and 'data.frame':   43857 obs. of  5 variables:
-#>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID"..
-#>  $ term_degree: chr  "19913" "19903" "19894" "19901" ...
-#>  $ cip6       : chr  "090401" "260101" "450601" "141001" ...
-#>  $ institution: chr  "Institution B" "Institution J" "Institution B" "Institu"..
-#>  $ degree     : chr  "Bachelor of Arts in Journalism" "Bachelor of Science in"..
-
-look_at(population)
-#> Classes 'data.table' and 'data.frame':   76875 obs. of  1 variable:
-#>  $ mcid: chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID3111142"..
-```
-
-From this point forward, anytime we need a fresh copy of any of the data
-tables, we copy the “source” version. Anytime we need a starting
-population, we copy `population.`
-
 ## Blocs and groupings
 
-The process up to this point is applicable to most research studies. In
-summary, we have configured our:
-
-- `programs` 6-digit program codes, names, and custom labels
-- `student, term,` and `degree` records with post-completion terms
-  removed and filtered for data sufficiency and degree seeking
-- `population` the unique IDs in these records
-
-The next steps depend on the metric and the groupings we assigned at the
-beginning. The stickiness metric requires these blocs:
+The stickiness metric requires these blocs:
 
 - students with timely completion from the study programs
 - students ever enrolled in these programs
@@ -798,20 +779,20 @@ blocs and groupings, so what follows is only one of several effective
 solutions. Our approach here is to construct a bloc, filter by program,
 join the demographics, and repeat for the next bloc.
 
-First, we copy so our work will not affect the source material by
+First, we copy so our work will not affect the baseline material by
 reference.
 
 ``` r
 
-student <- copy(student_source)
-term <- copy(term_source)
-degree <- copy(degree_source)
+student <- copy(student_baseline)
+term <- copy(term_baseline)
+degree <- copy(degree_baseline)
 ```
 
 ## Timely graduates
 
 We start with the baseline population. Like we did with the original
-source data files, we copy it to protect `population` from changes by
+data files, we copy it to protect `population` from changes by
 reference.
 
 ``` r
@@ -934,15 +915,15 @@ late compared to their timely completion term (or NA for no completion).
 
 DT <- completion_status(DT)
 DT
-#>                 mcid program timely_term term_degree completion_status
-#>               <char>  <char>      <char>      <char>            <char>
-#>    1: MCID3111142965      EE       19941       19901            timely
-#>    2: MCID3111145102      EE       19941       19893            timely
-#>    3: MCID3111146537      EE       19931       19913            timely
-#>   ---                                                                 
-#> 3429: MCID3112618976      ME       20181       20153            timely
-#> 3430: MCID3112619484      EE       20181       20133            timely
-#> 3431: MCID3112641535      ME       20173       20143            timely
+#>                 mcid program timely_term completion_term completion_status
+#>               <char>  <char>      <char>          <char>            <char>
+#>    1: MCID3111142965      EE       19941           19901            timely
+#>    2: MCID3111145102      EE       19941           19893            timely
+#>    3: MCID3111146537      EE       19931           19913            timely
+#>   ---                                                                     
+#> 3429: MCID3112618976      ME       20181           20153            timely
+#> 3430: MCID3112619484      EE       20181           20133            timely
+#> 3431: MCID3112641535      ME       20173           20143            timely
 ```
 
 *Summary check.*   Numbers of students by completion status.
@@ -1188,7 +1169,7 @@ structure we need for grouping and summarizing.
 
 ``` r
 
-DT <- rbindlist(list(graduates, ever_enrolled), use.names = TRUE)
+DT <- rbindlist(list(graduates, ever_enrolled))
 DT
 #>                 mcid          race    sex program   bloc
 #>               <char>        <char> <char>  <char> <char>

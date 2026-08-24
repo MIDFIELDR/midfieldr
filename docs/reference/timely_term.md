@@ -79,53 +79,110 @@ added to their initial term at an institution to create the
 ## Examples
 
 ``` r
+# Assign toy data sets
+student <- toy_student
 term <- toy_term
+degree <- toy_degree
 
-# Start with a selected population. 
-x <- toy_student[c(51:55, 346:350), .(mcid, sex)]
+# Start with a selected population
+x <- student[c(9:11, 21:30, 344:345), .(mcid)]
 x
-#>               mcid    sex
-#>             <char> <char>
-#>  1: MCID3111412771   Male
-#>  2: MCID3111413518   Male
-#>  3: MCID3111417249   Male
-#>  4: MCID3111417990 Female
-#>  5: MCID3111418880 Female
-#>  6: MCID3112799709   Male
-#>  7: MCID3112815901 Female
-#>  8: MCID3112839623 Female
-#>  9: MCID3112868072   Male
-#> 10: MCID3112869843 Female
+#>               mcid
+#>             <char>
+#>  1: MCID3111169729
+#>  2: MCID3111170852
+#>  3: MCID3111173999
+#>  4: MCID3111257807
+#>  5: MCID3111258275
+#>  6: MCID3111258347
+#>  7: MCID3111259642
+#>  8: MCID3111262210
+#>  9: MCID3111265287
+#> 10: MCID3111269576
+#> 11: MCID3111272691
+#> 12: MCID3111272880
+#> 13: MCID3111277081
+#> 14: MCID3112751130
+#> 15: MCID3112754537
 
-# Add timely term columns. Unrelated columns (sex) are unaffected.
+# Add timely term columns
 x <- timely_term(x, midf_table = term)
 x
-#>               mcid    sex term_i        level_i adj_span timely_term
-#>             <char> <char> <char>         <char>    <num>      <char>
-#>  1: MCID3111412771   Male  19931  01 First-year        6       19983
-#>  2: MCID3111413518   Male  19931  01 First-year        6       19983
-#>  3: MCID3111417249   Male  19941 02 Second-year        5       19983
-#>  4: MCID3111417990 Female  19931  01 First-year        6       19983
-#>  5: MCID3111418880 Female  19931  01 First-year        6       19983
-#>  6: MCID3112799709   Male  20161  01 First-year        6       20213
-#>  7: MCID3112815901 Female  20161  01 First-year        6       20213
-#>  8: MCID3112839623 Female  20171  01 First-year        6       20223
-#>  9: MCID3112868072   Male  20171  01 First-year        6       20223
-#> 10: MCID3112869843 Female  20173  01 First-year        6       20231
+#>               mcid term_i       level_i adj_span timely_term
+#>             <char> <char>        <char>    <num>      <char>
+#>  1: MCID3111169729  19881 01 First-year        6       19933
+#>  2: MCID3111170852  19881 01 First-year        6       19933
+#>  3: MCID3111173999  19881 01 First-year        6       19933
+#>  4: MCID3111257807  19901 01 First-year        6       19953
+#>  5: MCID3111258275  19901 01 First-year        6       19953
+#>  6: MCID3111258347  19901 01 First-year        6       19953
+#>  7: MCID3111259642  19901 01 First-year        6       19953
+#>  8: MCID3111262210  19901 01 First-year        6       19953
+#>  9: MCID3111265287  19901 01 First-year        6       19953
+#> 10: MCID3111269576  19901 01 First-year        6       19953
+#> 11: MCID3111272691  19901 01 First-year        6       19953
+#> 12: MCID3111272880  19901 01 First-year        6       19953
+#> 13: MCID3111277081  19903 01 First-year        6       19961
+#> 14: MCID3112751130  20151 01 First-year        6       20203
+#> 15: MCID3112754537  20151 01 First-year        6       20203
 
-# Repeat. New columns silently replace existing columns of the same name.
-y <- timely_term(x, midf_table = term)
-y
-#>               mcid    sex term_i        level_i adj_span timely_term
-#>             <char> <char> <char>         <char>    <num>      <char>
-#>  1: MCID3111412771   Male  19931  01 First-year        6       19983
-#>  2: MCID3111413518   Male  19931  01 First-year        6       19983
-#>  3: MCID3111417249   Male  19941 02 Second-year        5       19983
-#>  4: MCID3111417990 Female  19931  01 First-year        6       19983
-#>  5: MCID3111418880 Female  19931  01 First-year        6       19983
-#>  6: MCID3112799709   Male  20161  01 First-year        6       20213
-#>  7: MCID3112815901 Female  20161  01 First-year        6       20213
-#>  8: MCID3112839623 Female  20171  01 First-year        6       20223
-#>  9: MCID3112868072   Male  20171  01 First-year        6       20223
-#> 10: MCID3112869843 Female  20173  01 First-year        6       20231
+# If you repeat, the new columns are overwritten
+timely_term(x, midf_table = term)
+#>               mcid term_i       level_i adj_span timely_term
+#>             <char> <char>        <char>    <num>      <char>
+#>  1: MCID3111169729  19881 01 First-year        6       19933
+#>  2: MCID3111170852  19881 01 First-year        6       19933
+#>  3: MCID3111173999  19881 01 First-year        6       19933
+#>  4: MCID3111257807  19901 01 First-year        6       19953
+#>  5: MCID3111258275  19901 01 First-year        6       19953
+#>  6: MCID3111258347  19901 01 First-year        6       19953
+#>  7: MCID3111259642  19901 01 First-year        6       19953
+#>  8: MCID3111262210  19901 01 First-year        6       19953
+#>  9: MCID3111265287  19901 01 First-year        6       19953
+#> 10: MCID3111269576  19901 01 First-year        6       19953
+#> 11: MCID3111272691  19901 01 First-year        6       19953
+#> 12: MCID3111272880  19901 01 First-year        6       19953
+#> 13: MCID3111277081  19903 01 First-year        6       19961
+#> 14: MCID3112751130  20151 01 First-year        6       20203
+#> 15: MCID3112754537  20151 01 First-year        6       20203
+
+# Application: data_sufficiency() requires term_i and timely_term
+data_sufficiency(x[, .(mcid, term_i, timely_term)], midf_table = term)
+#>               mcid term_i timely_term  data_range data_sufficiency
+#>             <char> <char>      <char>      <char>           <char>
+#>  1: MCID3111169729  19881       19933 19881-20181    exclude-lower
+#>  2: MCID3111170852  19881       19933 19881-20181    exclude-lower
+#>  3: MCID3111173999  19881       19933 19881-20181    exclude-lower
+#>  4: MCID3111257807  19901       19953 19881-20181          include
+#>  5: MCID3111258275  19901       19953 19881-20181          include
+#>  6: MCID3111258347  19901       19953 19881-20181          include
+#>  7: MCID3111259642  19901       19953 19901-20153    exclude-lower
+#>  8: MCID3111262210  19901       19953 19881-20181          include
+#>  9: MCID3111265287  19901       19953 19881-20181          include
+#> 10: MCID3111269576  19901       19953 19881-20181          include
+#> 11: MCID3111272691  19901       19953 19881-20181          include
+#> 12: MCID3111272880  19901       19953 19881-20181          include
+#> 13: MCID3111277081  19903       19961 19881-20181          include
+#> 14: MCID3112751130  20151       20203 19881-20181    exclude-upper
+#> 15: MCID3112754537  20151       20203 19881-20181    exclude-upper
+
+# Application: completion_status() requires timely_term
+completion_status(x[, .(mcid, timely_term)], midf_table = degree)
+#>               mcid timely_term completion_term completion_status
+#>             <char>      <char>          <char>            <char>
+#>  1: MCID3111169729       19933           19901            timely
+#>  2: MCID3111170852       19933            <NA>              <NA>
+#>  3: MCID3111173999       19933            <NA>              <NA>
+#>  4: MCID3111257807       19953           19964              late
+#>  5: MCID3111258275       19953           19921            timely
+#>  6: MCID3111258347       19953           19923            timely
+#>  7: MCID3111259642       19953           19934            timely
+#>  8: MCID3111262210       19953           19951            timely
+#>  9: MCID3111265287       19953           19904            timely
+#> 10: MCID3111269576       19953           19943            timely
+#> 11: MCID3111272691       19953           19914            timely
+#> 12: MCID3111272880       19953           19934            timely
+#> 13: MCID3111277081       19961           19963              late
+#> 14: MCID3112751130       20203           20171            timely
+#> 15: MCID3112754537       20203            <NA>              <NA>
 ```

@@ -51,7 +51,7 @@ library("midfieldr")
 packageVersion("midfieldr")
 #> [1] '1.0.3.9023'
 Sys.Date()
-#> [1] "2026-08-19"
+#> [1] "2026-08-23"
 ```
 
 ## Installation

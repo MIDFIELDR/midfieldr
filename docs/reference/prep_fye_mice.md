@@ -1,39 +1,42 @@
 # Prepare FYE data for imputation
 
-Constructs a data frame of students enrolled in First-Year Engineering
-(FYE) programs keyed by student ID. Conditions the data for use as an
-input to the mice R package for multiple imputation. Sets up three
-variables as predictors (institution, race/ethnicity, and sex) and one
-variable to be imputed (program CIP code).
+Constructs a data frame of students ever enrolled in First-Year
+Engineering (FYE) programs at their institutions based on information in
+the MIDFIELD (or equivalent) `student` and `term` data tables.
+Conditions the data for use as an input to the mice R package for
+multiple imputation. Sets up three variables as predictors (institution,
+race/ethnicity, and sex) and one variable to be imputed (program CIP
+code) keyed by student ID.
 
 ## Usage
 
 ``` r
-prep_fye_mice(midf_student = student, midf_term = term, ..., fye_codes = NULL)
+prep_fye_mice(m_student, m_term, fye_cip = NULL)
 ```
 
 ## Arguments
 
-- midf_student:
+- m_student:
 
-  `student` data frame with required variables `{mcid, race, sex}.`
+  Data frame or data frame extension (e.g., data.table or tibble) with
+  required character variables `{mcid, race, sex}.` Typically based on
+  one's original, unfiltered `student` source data without regard to
+  data sufficiency.
 
-- midf_term:
+- m_term:
 
-  `term` data frame with required variables
-  `{mcid, term, cip6, institution}.`
+  Data frame or data frame extension (e.g., data.table or tibble) with
+  required character variables `{mcid, term, cip6, institution}.`
+  Typically based on one's original, unfiltered `term` source data
+  without regard to data sufficiency.
 
-- ...:
+- fye_cip:
 
-  Not used for passing values; forces subsequent arguments to be
-  referable only by name.
-
-- fye_codes:
-
-  Optional character vector of 6-digit CIP codes to identify FYE
-  programs, default "140102". Codes must be 6-digit strings of numbers;
-  regular expressions are prohibited. Non-engineering codes—those that
-  do not start with 14—produce an error.
+  Data frame or data frame extension (e.g., data.table or tibble) with
+  required character variables `{institution, fye_cip6}.` Default has
+  one institution value (`"Institution J"`) and one CIP code value
+  (`"140102"`), compatible with midfielddata practice data and the
+  midfieldr "toy" datasets.
 
 ## Value
 
@@ -41,7 +44,7 @@ Data frame with the following properties:
 
 - Data frame class is preserved. Groups and keys are not preserved.
 
-- Rows: One row for every FYE student from the `term` input data frame.
+- Rows: One row for every degree-seeking FYE student.
 
 - Columns: Conditioned for later use as an input to the mice R package
   for multiple imputation as follows:
@@ -57,124 +60,252 @@ Data frame with the following properties:
   - `institution`   Factor, anonymized institution name from the `term`
     data frame. An imputation predictor variable.
 
-  - `proxy`   Factor, 6-digit CIP code of a student's known, post-FYE
-    engineering program or NA representing missing values to be imputed.
+  - `proxy`   Factor, 6-digit CIP code of a student's known, first
+    degree-granting engineering program or NA representing missing
+    values to be imputed.
 
-## Details
+## Background
 
 At some US institutions, engineering students are required to complete a
 First-Year Engineering (FYE) program as a prerequisite for declaring an
-engineering major. Administratively, degree-granting engineering
-programs such as Electrical Engineering or Mechanical Engineering treat
-their incoming post-FYE students as their "starting" cohorts. However,
-when computing a metric that requires a count of starters—graduation
-rate, for example—FYE records must be treated with special care to avoid
-a miscount.
+engineering major. FYE students who then transition to a degree-granting
+engineering program are typically counted as "starters" in that program
+for purposes of calculating, for example, graduation rates.
 
-To illustrate the potential for miscounting starters, suppose we wish to
-calculate a Mechanical Engineering (ME) graduation rate. Students
-starting in ME constitute the starting pool and the fraction of that
-pool graduating in ME is the graduation rate. At FYE institutions, an ME
-program would typically define their starting pool as the post-FYE
-cohort entering their program. This may be the best information
-available, but it invariably undercounts starters by failing to account
-for FYE students who do not transition (post-FYE) to degree-granting
-engineering programs—students who may have left the institution or
-switched to non-engineering majors. In either case, in the absence of
-the FYE requirement, some of these students would have been ME starters.
-By neglecting these students, the count of ME starters is artificially
-low resulting in an ME graduation rate that is artificially high. The
-same is true for every degree-granting engineering discipline in an FYE
-institution.
+This approach invariably undercounts starters and over-estimates
+associated metrics because it fails to account for FYE students who
+change majors (never enrolling in an engineering major) or drop out of
+the database altogether. Had the FYE program not been required, they
+would have enrolled in their preferred engineering program—the count of
+starters would have increased and a metric such as graduation rate would
+have decreased.
 
-Therefore, to avoid miscounting starters at FYE institutions, we have to
-estimate an "FYE proxy", that is, the 6-digit CIP codes of the
-degree-granting engineering programs that FYE students would have
-declared had they not been required to enroll in FYE. The purpose of
-\`prep_fye_mice()“ is to prepare the data for making that estimation.
-
-After running `prep_fye_mice()` but before running `mice()`, one can
-edit variables or add variables to create a custom set of predictors.
-The mice package expects all predictors and the proxy variables to be
-factors. Do not delete the institution variable because it ensures that
-a student's imputed program is available at their institution.
-
-In addition, ensure that the only missing values are in the proxy
-column. Other variables are expected to be complete (no NA values). A
-value of "unknown" in a predictor column, e.g., race/ethnicity or sex,
-is an acceptable value, not missing data. Observations with missing or
-unknown values in the ID or institution columns (if any) should be
-removed.
+To include FYE students when a count of starters is needed, we estimate
+an "FYE proxy", that is, the 6-digit CIP codes of the degree-granting
+engineering programs that FYE students would have declared had they not
+been required to enroll in FYE. The purpose of `prep_fye_mice()` is to
+prepare the data for imputing the unknown CIP codes.
 
 ## Method
 
-The function extracts all terms for all FYE students, including those
-who migrate to enter Engineering after their first term, and identifies
-the first post-FYE program in which they enroll, if any. This treatment
-yields two possible outcomes for values returned in the `proxy` column:
+The function extracts all terms for all FYE students and identifies all
+engineering programs in which they were ever enrolled. A `proxy`
+variable is added with one of the following values:
 
-1.  The student completes FYE and enrolls in an engineering major. For
-    this outcome, we know that at the student's first opportunity, they
-    enrolled in an engineering program of their choosing. The CIP code
-    of that program is returned as the student's FYE proxy.
+1.  If a student record includes at least one, non-FYE, degree-granting
+    engineering program, the CIP code of the first such program is
+    returned as the student's FYE proxy.
 
-2.  The student does not enroll post-FYE in an engineering major. Such
-    students have no further records in the database or switched from
-    Engineering to another program. For this outcome, the data provide
-    no information regarding what engineering program the student would
-    have declared originally had the institution not required them to
-    enroll in FYE. For these students a proxy value of NA is returned.
-    These are the data treated as missing values to be imputed by
-    `mice()`.
+2.  If not, the proxy is NA and is treated as a missing value to be
+    imputed by `mice()`.
 
-In cases where students enter FYE, change programs, and re-enter FYE,
-only the first group of FYE terms is considered. Any programs before FYE
-are ignored.
+Notes:
 
-The resulting data frame is ready for use as input for the mice package,
-with all variables except `mcid` returned as factors.
+- Missing values (NA) in the required columns are removed. However, a
+  value of "unknown" in a predictor column, e.g., race/ethnicity or sex,
+  is acceptable.
+
+- After running `prep_fye_mice()` but before running `mice()`, one can
+  edit the predictor variables if desired. The institution variable
+  should remain to ensure that a student's imputed program is available
+  at their institution.
+
+- The resulting data frame is ready for use as input for the mice
+  package, with all variables except `mcid` returned as factors.
 
 ## Examples
 
 ``` r
-# Using toy data
-prep_fye_mice(toy_student, toy_term)
-#>                mcid          race    sex   institution  proxy
-#>              <char>        <fctr> <fctr>        <fctr> <fctr>
-#>   1: MCID3112328521         Asian Female Institution J   <NA>
-#>   2: MCID3111452065         Black Female Institution J   <NA>
-#>   3: MCID3111566004         Black Female Institution J   <NA>
-#>   4: MCID3111992957 International Female Institution J   <NA>
-#>   5: MCID3112266585 Other/Unknown Female Institution J   <NA>
-#>  ---                                                         
-#> 114: MCID3112168643 Other/Unknown   Male Institution J 142101
-#> 115: MCID3112267788         White   Male Institution J 143301
-#> 116: MCID3112321615         White   Male Institution J 143301
-#> 117: MCID3112265788         Asian Female Institution J 143501
-#> 118: MCID3112321979         White   Male Institution J 143501
+library(data.table)
+#> 
+#> Attaching package: 'data.table'
+#> The following object is masked from 'package:base':
+#> 
+#>     %notin%
 
-# Other columns, if any, are dropped
-colnames(toy_student)
-#>  [1] "mcid"           "race"           "sex"            "institution"   
-#>  [5] "transfer"       "hours_transfer" "age_desc"       "us_citizen"    
-#>  [9] "home_zip"       "high_school"    "sat_math"       "sat_verbal"    
-#> [13] "act_comp"      
-colnames(prep_fye_mice(toy_student, toy_term))
-#> [1] "mcid"        "race"        "sex"         "institution" "proxy"      
+# Subset student and term data using selected IDs
+IDs <- c("MCID3112319668", "MCID3112214437", "MCID3112328548", 
+         "MCID3111447797", "MCID3111566004", "MCID3111697452", 
+         "MCID3112268500", "MCID3112320295")
+student <- select_basic_cols(toy_student[mcid %chin% IDs])
+term <- select_basic_cols(toy_term[mcid %chin% IDs])
 
-# Optional argument permits multiple CIP codes for FYE
-prep_fye_mice(toy_student, toy_term, fye_codes = c("140101", "140102"))
-#>                mcid          race    sex   institution  proxy
-#>              <char>        <fctr> <fctr>        <fctr> <fctr>
-#>   1: MCID3112328521         Asian Female Institution J   <NA>
-#>   2: MCID3111452065         Black Female Institution J   <NA>
-#>   3: MCID3111566004         Black Female Institution J   <NA>
-#>   4: MCID3111992957 International Female Institution J   <NA>
-#>   5: MCID3112266585 Other/Unknown Female Institution J   <NA>
-#>  ---                                                         
-#> 114: MCID3112168643 Other/Unknown   Male Institution J 142101
-#> 115: MCID3112267788         White   Male Institution J 143301
-#> 116: MCID3112321615         White   Male Institution J 143301
-#> 117: MCID3112265788         Asian Female Institution J 143501
-#> 118: MCID3112321979         White   Male Institution J 143501
+# Obtain results
+proxy <- prep_fye_mice(student, term)
+proxy
+#>              mcid   institution          race    sex  proxy
+#>            <char>        <fctr>        <fctr> <fctr> <fctr>
+#> 1: MCID3111447797 Institution J         White   Male 141901
+#> 2: MCID3111566004 Institution J         Black Female   <NA>
+#> 3: MCID3111697452 Institution J         Asian   Male   <NA>
+#> 4: MCID3112214437 Institution J Other/Unknown   Male 140901
+#> 5: MCID3112268500 Institution J         White   Male   <NA>
+#> 6: MCID3112319668 Institution J         Asian Female 140701
+#> 7: MCID3112320295 Institution J      Hispanic   Male   <NA>
+#> 8: MCID3112328548 Institution J      Hispanic Female 141001
+
+# ---------- Examine details
+# Note: the CIP code and name for FYE is 140102 Pre-Engineering
+
+# Join program names to term data for display
+term_seq <- cip[term, .(mcid, term, cip6, cip6name), on = "cip6", nomatch = NULL]
+
+# Function to display results for individual students
+f <- function(IDs, i) {
+    cat(paste("Student", i, "record\n"))
+    print(term_seq[mcid == IDs[i]])
+    cat("\nprep_fye_mice() results\n")
+    print(proxy[mcid == IDs[i]])
+}
+
+# Example 1: Non-Engineering -> FYE -> Engineering
+# 400501 (Chemistry) -> FYE -> 140701 (Chemical Engng)
+# FYE proxy is 140701
+f(IDs, 1)
+#> Student 1 record
+#>              mcid   term   cip6             cip6name
+#>            <char> <char> <char>               <char>
+#> 1: MCID3112319668  20081 400501   Chemistry, General
+#> 2: MCID3112319668  20083 400501   Chemistry, General
+#> 3: MCID3112319668  20091 140102      Pre-Engineering
+#> 4: MCID3112319668  20093 140701 Chemical Engineering
+#> 
+#> prep_fye_mice() results
+#>              mcid   institution   race    sex  proxy
+#>            <char>        <fctr> <fctr> <fctr> <fctr>
+#> 1: MCID3112319668 Institution J  Asian Female 140701
+
+# Example 2: FYE -> Engineering -> Non-Engineering
+# FYE -> 140901 (Computer Engng) -> 450601 (Economics)
+# FYE proxy is 140901
+f(IDs, 2)
+#> Student 2 record
+#>              mcid   term   cip6                      cip6name
+#>            <char> <char> <char>                        <char>
+#> 1: MCID3112214437  20061 140102               Pre-Engineering
+#> 2: MCID3112214437  20063 140102               Pre-Engineering
+#> 3: MCID3112214437  20073 140102               Pre-Engineering
+#> 4: MCID3112214437  20091 140901 Computer Engineering, General
+#> 5: MCID3112214437  20093 450601            Economics, General
+#> 
+#> prep_fye_mice() results
+#>              mcid   institution          race    sex  proxy
+#>            <char>        <fctr>        <fctr> <fctr> <fctr>
+#> 1: MCID3112214437 Institution J Other/Unknown   Male 140901
+
+# Example 3: FYE -> Engineering
+# FYE -> 141001 (Electrical Engng)
+# FYE proxy is 141001
+f(IDs, 3)
+#> Student 3 record
+#>              mcid   term   cip6
+#>            <char> <char> <char>
+#> 1: MCID3112328548  20076 140102
+#> 2: MCID3112328548  20081 140102
+#> 3: MCID3112328548  20085 140102
+#> 4: MCID3112328548  20091 141001
+#> 5: MCID3112328548  20093 141001
+#>                                                  cip6name
+#>                                                    <char>
+#> 1:                                        Pre-Engineering
+#> 2:                                        Pre-Engineering
+#> 3:                                        Pre-Engineering
+#> 4: Electrical, Electronics and Communications Engineering
+#> 5: Electrical, Electronics and Communications Engineering
+#> 
+#> prep_fye_mice() results
+#>              mcid   institution     race    sex  proxy
+#>            <char>        <fctr>   <fctr> <fctr> <fctr>
+#> 1: MCID3112328548 Institution J Hispanic Female 141001
+
+# Example 4: FYE -> Engineering -> Engineering
+# FYE -> 141901 (Mechanical Engng) -> 143501 (Industrial Engng)
+# FYE proxy is 141901 
+f(IDs, 4)
+#> Student 4 record
+#>              mcid   term   cip6               cip6name
+#>            <char> <char> <char>                 <char>
+#> 1: MCID3111447797  19941 140102        Pre-Engineering
+#> 2: MCID3111447797  19943 141901 Mechanical Engineering
+#> 3: MCID3111447797  19945 141901 Mechanical Engineering
+#> 4: MCID3111447797  19946 141901 Mechanical Engineering
+#> 5: MCID3111447797  19971 141901 Mechanical Engineering
+#> 6: MCID3111447797  19973 141901 Mechanical Engineering
+#> 7: MCID3111447797  19976 143501 Industrial Engineering
+#> 8: MCID3111447797  19981 143501 Industrial Engineering
+#> 9: MCID3111447797  19983 143501 Industrial Engineering
+#> 
+#> prep_fye_mice() results
+#>              mcid   institution   race    sex  proxy
+#>            <char>        <fctr> <fctr> <fctr> <fctr>
+#> 1: MCID3111447797 Institution J  White   Male 141901
+
+# Example 5: Non-Engineering -> FYE -> Leaves the database
+# 240102 (General Studies) -> FYE
+# FYE proxy is NA 
+f(IDs, 5)
+#> Student 5 record
+#>              mcid   term   cip6        cip6name
+#>            <char> <char> <char>          <char>
+#> 1: MCID3111566004  19961 240102 General Studies
+#> 2: MCID3111566004  19963 140102 Pre-Engineering
+#> 3: MCID3111566004  19965 140102 Pre-Engineering
+#> 4: MCID3111566004  19966 140102 Pre-Engineering
+#> 
+#> prep_fye_mice() results
+#>              mcid   institution   race    sex  proxy
+#>            <char>        <fctr> <fctr> <fctr> <fctr>
+#> 1: MCID3111566004 Institution J  Black Female   <NA>
+
+# Example 6: FYE -> Leaves the database
+# FYE proxy is NA 
+f(IDs, 6)
+#> Student 6 record
+#>              mcid   term   cip6        cip6name
+#>            <char> <char> <char>          <char>
+#> 1: MCID3111697452  19985 140102 Pre-Engineering
+#> 2: MCID3111697452  19986 140102 Pre-Engineering
+#> 3: MCID3111697452  19991 140102 Pre-Engineering
+#> 4: MCID3111697452  19996 140102 Pre-Engineering
+#> 
+#> prep_fye_mice() results
+#>              mcid   institution   race    sex  proxy
+#>            <char>        <fctr> <fctr> <fctr> <fctr>
+#> 1: MCID3111697452 Institution J  Asian   Male   <NA>
+
+# Example 7: Non-Engineering -> FYE -> Non-Engineering
+# 240102 (General Studies) -> FYE -> 110101 (Computer Science)
+# FYE proxy is NA 
+f(IDs, 7)
+#> Student 7 record
+#>              mcid   term   cip6         cip6name
+#>            <char> <char> <char>           <char>
+#> 1: MCID3112268500  20071 240102  General Studies
+#> 2: MCID3112268500  20073 140102  Pre-Engineering
+#> 3: MCID3112268500  20081 110101 Computer Science
+#> 4: MCID3112268500  20083 110101 Computer Science
+#> 5: MCID3112268500  20091 110101 Computer Science
+#> 6: MCID3112268500  20093 110101 Computer Science
+#> 
+#> prep_fye_mice() results
+#>              mcid   institution   race    sex  proxy
+#>            <char>        <fctr> <fctr> <fctr> <fctr>
+#> 1: MCID3112268500 Institution J  White   Male   <NA>
+
+# Example 8: FYE -> Non-Engineering
+# FYE -> 230101 (English Literature)
+# FYE proxy is NA 
+f(IDs, 8)
+#> Student 8 record
+#>              mcid   term   cip6                                 cip6name
+#>            <char> <char> <char>                                   <char>
+#> 1: MCID3112320295  20081 140102                          Pre-Engineering
+#> 2: MCID3112320295  20083 140102                          Pre-Engineering
+#> 3: MCID3112320295  20091 230101 English Language and Literature, General
+#> 4: MCID3112320295  20093 230101 English Language and Literature, General
+#> 
+#> prep_fye_mice() results
+#>              mcid   institution     race    sex  proxy
+#>            <char>        <fctr>   <fctr> <fctr> <fctr>
+#> 1: MCID3112320295 Institution J Hispanic   Male   <NA>
 ```

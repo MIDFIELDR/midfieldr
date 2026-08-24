@@ -1,90 +1,65 @@
 library(data.table)
 
-# Student A enrolls in FYE (140102) followed by Mechanical Engng 
-# (141901). The FYE proxy is Mechanical Engng (141901), abbreviated "ME".
-one_student <- data.table(mcid = "A", race = "unknown", sex = "unknown")
-term_excerpt <- data.table(
-    mcid = "A", 
-    institution = "Institution J",
-    term = c("20013", "20021"), 
-    program = c("FYE", "ME"),
-    cip6 = c("140102", "141901")
-)
-one_student
-term_excerpt
-prep_fye_mice(one_student, term_excerpt)
+# Subset student and term data using selected IDs
+IDs <- c("MCID3112319668", "MCID3112214437", "MCID3112328548", 
+         "MCID3111447797", "MCID3111566004", "MCID3111697452", 
+         "MCID3112268500", "MCID3112320295")
+student <- select_basic_cols(toy_student[mcid %chin% IDs])
+term <- select_basic_cols(toy_term[mcid %chin% IDs])
 
-# Student B enrolls in FYE (140102) followed by History (540101). 
-# The FYE proxy is NA.
-one_student <- data.table(mcid = "B", race = "unknown", sex = "unknown")
-term_excerpt <- data.table(
-    mcid = "B", 
-    institution = "Institution J",
-    term = c("20013", "20021"), 
-    program = c("FYE", "History"),
-    cip6 = c("140102", "540101")
-)
-one_student
-term_excerpt
-prep_fye_mice(one_student, term_excerpt)
+# Obtain results
+proxy <- prep_fye_mice(student, term)
+proxy
 
-# Student C enrolls in FYE (140102) but drops out of the database.
-# The FYE proxy is NA.
-one_student <- data.table(mcid = "C", race = "unknown", sex = "unknown")
-term_excerpt <- data.table(
-    mcid = "C", 
-    institution = "Institution J",
-    term = c("20013", "20021"), 
-    program = c("FYE", "FYE"),
-    cip6 = c("140102", "140102")
-)
-one_student
-term_excerpt
-prep_fye_mice(one_student, term_excerpt)
+# ---------- Examine details
+# Note: the CIP code and name for FYE is 140102 Pre-Engineering
 
-# Student D starts in History (540101), switches to FYE for two terms, 
-# followed by ME (141901). The FYE proxy is ME (141901).
-one_student <- data.table(mcid = "D", race = "unknown", sex = "unknown")
-term_excerpt <- data.table(mcid = "D", 
-                           institution = "Institution J",
-                           term = c("20013", "20021", "20023", "20031"), 
-                           program = c("History", "FYE", "FYE", "ME"),
-                           cip6 = c("540101", "140102", "140102", "141901"))
-one_student
-term_excerpt
-prep_fye_mice(one_student, term_excerpt)
+# Join program names to term data for display
+term_seq <- cip[term, .(mcid, term, cip6, cip6name), on = "cip6", nomatch = NULL]
 
-# Student E is similar to Student D except they switched out of FYE 
-# (140102) to History (540101), then returned to FYE followed by ME
-# (141901). The FYE proxy is ME (141901).
-one_student <- data.table(mcid = "E", race = "unknown", sex = "unknown")
-term_excerpt <- data.table(
-    mcid = "E", 
-    institution = "Institution J",
-    term = c("20011", "20013", "20021", "20023", "20031"), 
-    program = c("FYE", "History", "History", "FYE", "ME"),
-    cip6 = c("140102", "540101", "540101", "140102", "141901")
-)
-one_student
-term_excerpt
-prep_fye_mice(one_student, term_excerpt)
+# Function to display results for individual students
+f <- function(IDs, i) {
+    cat(paste("Student", i, "record\n"))
+    print(term_seq[mcid == IDs[i]])
+    cat("\nprep_fye_mice() results\n")
+    print(proxy[mcid == IDs[i]])
+}
 
-# Student F enrolls in FYE at Institution C that uses an alternate CIP
-# code (140101), followed by ME (141901), so we have to specify a 
-# non-default FYE CIP code. The FYE proxy is ME (141901).
-one_student <- data.table(mcid = "F", race = "unknown", sex = "unknown")
-term_excerpt <- data.table(
-    mcid = "F", 
-    institution = "Univ ABC",
-    term = c("20013", "20021"), 
-    program = c("FYE", "ME"),
-    cip6 = c("140101", "141901")
-)
-fye_cip <- data.table(institution = "Univ ABC", fye_cip6 = "140101")
-one_student
-term_excerpt
-fye_cip
-prep_fye_mice(one_student, term_excerpt, fye_cip)
+# Example 1: Non-Engineering -> FYE -> Engineering
+# 400501 (Chemistry) -> FYE -> 140701 (Chemical Engng)
+# FYE proxy is 140701
+f(IDs, 1)
 
-# Using datasets with multiple students
-prep_fye_mice(toy_student, toy_term)[order(proxy)]
+# Example 2: FYE -> Engineering -> Non-Engineering
+# FYE -> 140901 (Computer Engng) -> 450601 (Economics)
+# FYE proxy is 140901
+f(IDs, 2)
+
+# Example 3: FYE -> Engineering
+# FYE -> 141001 (Electrical Engng)
+# FYE proxy is 141001
+f(IDs, 3)
+
+# Example 4: FYE -> Engineering -> Engineering
+# FYE -> 141901 (Mechanical Engng) -> 143501 (Industrial Engng)
+# FYE proxy is 141901 
+f(IDs, 4)
+
+# Example 5: Non-Engineering -> FYE -> Leaves the database
+# 240102 (General Studies) -> FYE
+# FYE proxy is NA 
+f(IDs, 5)
+
+# Example 6: FYE -> Leaves the database
+# FYE proxy is NA 
+f(IDs, 6)
+
+# Example 7: Non-Engineering -> FYE -> Non-Engineering
+# 240102 (General Studies) -> FYE -> 110101 (Computer Science)
+# FYE proxy is NA 
+f(IDs, 7)
+
+# Example 8: FYE -> Non-Engineering
+# FYE -> 230101 (English Literature)
+# FYE proxy is NA 
+f(IDs, 8)

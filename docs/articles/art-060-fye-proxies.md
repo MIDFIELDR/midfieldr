@@ -231,18 +231,13 @@ results.
 ``` r
 
 # Required arguments in order and explicitly named
-x <- prep_fye_mice(midf_student = student, midf_term = term)
+x <- prep_fye_mice(m_student = student, m_term = term)
 
 # Required arguments in order, but not named
 y <- prep_fye_mice(student, term)
 
-# Using the implicit defaults
-z <- prep_fye_mice()
-
 # Demonstrate equivalence
 check_equiv_frames(x, y)
-#> [1] TRUE
-check_equiv_frames(x, z)
 #> [1] TRUE
 ```
 
@@ -255,15 +250,15 @@ requirements of [`mice()`](https://amices.org/mice/reference/mice.html).
 # Working data frame
 DT <- prep_fye_mice(student, term)
 DT
-#>                 mcid   race    sex   institution  proxy
-#>               <char> <fctr> <fctr>        <fctr> <fctr>
-#>    1: MCID3111190643  Asian Female Institution J   <NA>
-#>    2: MCID3111190747  Asian Female Institution J   <NA>
-#>    3: MCID3111288144  Asian Female Institution J   <NA>
-#>   ---                                                  
-#> 5787: MCID3112328635  White   Male Institution J 143501
-#> 5788: MCID3112328655  White   Male Institution J 143501
-#> 5789: MCID3112382784  White   Male Institution J 143501
+#>                 mcid   institution          race    sex  proxy
+#>               <char>        <fctr>        <fctr> <fctr> <fctr>
+#>    1: MCID3111142290 Institution J         Asian   Male 141001
+#>    2: MCID3111142294 Institution J         Asian   Male 141001
+#>    3: MCID3111142961 Institution J International   Male 142101
+#>   ---                                                         
+#> 5787: MCID3112447659 Institution J         White   Male   <NA>
+#> 5788: MCID3112447663 Institution J         White   Male   <NA>
+#> 5789: MCID3112447664 Institution J         White   Male   <NA>
 ```
 
 ## Missing data
@@ -295,11 +290,11 @@ Number of missing observations in `proxy`.
 
 # Number NAs in proxy
 sum(is.na(DT$proxy))
-#> [1] 2152
+#> [1] 2129
 
 # Percentage NAs in proxy
 100 * round(sum(is.na(DT$proxy)) / nrow(DT), 3)
-#> [1] 37.2
+#> [1] 36.8
 ```
 
 *Missing at random (MAR).*   These missing `proxy` data are caused by a
@@ -323,7 +318,7 @@ recommends having as many imputations as the percentage of missing data.
 
 # Number of proxies to be imputed
 (N_impute <- sum(is.na(DT$proxy)))
-#> [1] 2152
+#> [1] 2129
 
 # Number of observations with complete predictor information
 (N_complete <- sum(complete.cases(DT[, .(mcid, race, sex, institution)])))
@@ -331,10 +326,10 @@ recommends having as many imputations as the percentage of missing data.
 
 # Percent missing proxies
 (percent_missing <- round(100 * N_impute / N_complete, 3))
-#> [1] 37.174
+#> [1] 36.777
 ```
 
-As shown here, the overall percentage of missing data is 37.17%,
+As shown here, the overall percentage of missing data is 36.78%,
 suggesting we set the number of imputations to 37.
 
 ``` r
@@ -382,15 +377,15 @@ framework
 #> Class: mids
 #> Number of multiple imputations:  5 
 #> Imputation methods:
-#>        mcid        race         sex institution       proxy 
+#>        mcid institution        race         sex       proxy 
 #>          ""          ""          ""          ""   "polyreg" 
 #> PredictorMatrix:
-#>             mcid race sex institution proxy
-#> mcid           0    1   1           0     1
-#> race           0    0   1           0     1
-#> sex            0    1   0           0     1
-#> institution    0    1   1           0     1
-#> proxy          0    1   1           0     0
+#>             mcid institution race sex proxy
+#> mcid           0           0    1   1     1
+#> institution    0           0    1   1     1
+#> race           0           0    0   1     1
+#> sex            0           0    1   0     1
+#> proxy          0           0    1   1     0
 #> Number of logged events:  2 
 #>   it im dep     meth         out
 #> 1  0  0     constant        mcid
@@ -427,7 +422,7 @@ framework. The first is the imputation method vector.
 # Imputation method
 method_vector <- framework[["method"]]
 method_vector
-#>        mcid        race         sex institution       proxy 
+#>        mcid institution        race         sex       proxy 
 #>          ""          ""          ""          ""   "polyreg"
 ```
 
@@ -448,7 +443,7 @@ method_vector[c("proxy")] <- "polyreg"
 # Manually assign the variable(s) not being imputed
 method_vector[c("mcid", "institution", "race", "sex")] <- ""
 method_vector
-#>        mcid        race         sex institution       proxy 
+#>        mcid institution        race         sex       proxy 
 #>          ""          ""          ""          ""   "polyreg"
 ```
 
@@ -461,12 +456,12 @@ indicate the predictor variables.
 # Imputation predictor matrix
 predictor_matrix <- framework[["predictorMatrix"]]
 predictor_matrix
-#>             mcid race sex institution proxy
-#> mcid           0    1   1           0     1
-#> race           0    0   1           0     1
-#> sex            0    1   0           0     1
-#> institution    0    1   1           0     1
-#> proxy          0    1   1           0     0
+#>             mcid institution race sex proxy
+#> mcid           0           0    1   1     1
+#> institution    0           0    1   1     1
+#> race           0           0    0   1     1
+#> sex            0           0    1   0     1
+#> proxy          0           0    1   1     0
 ```
 
 However, only those variables assigned a method are imputed. In our
@@ -477,8 +472,8 @@ this matrix that gets used is the last row.
 
 # Predictor row for this example
 predictor_matrix["proxy", ]
-#>        mcid        race         sex institution       proxy 
-#>           0           1           1           0           0
+#>        mcid institution        race         sex       proxy 
+#>           0           0           1           1           0
 ```
 
 The zeros and ones tell us that `proxy` is going to be predicted by race
@@ -498,12 +493,12 @@ predictor_matrix[, c("mcid", "proxy", "institution")] <- 0
 # Manually assign predictor columns
 predictor_matrix[, c("race", "sex")] <- c(0, 0, 0, 0, 1)
 predictor_matrix
-#>             mcid race sex institution proxy
-#> mcid           0    0   0           0     0
-#> race           0    0   0           0     0
-#> sex            0    0   0           0     0
-#> institution    0    0   0           0     0
-#> proxy          0    1   1           0     0
+#>             mcid institution race sex proxy
+#> mcid           0           0    0   0     0
+#> institution    0           0    0   0     0
+#> race           0           0    0   0     0
+#> sex            0           0    0   0     0
+#> proxy          0           0    1   1     0
 ```
 
 If the data included more than one FYE institution, the manual
@@ -570,15 +565,15 @@ opt_DT[, c("race", "sex", "origin") := NULL]
 # Display result
 setcolorder(opt_DT, c("mcid", "people", "institution", "proxy"))
 opt_DT
-#>                 mcid          people   institution  proxy
-#>               <char>          <fctr>        <fctr> <fctr>
-#>    1: MCID3111190643 Domestic Female Institution J   <NA>
-#>    2: MCID3111190747 Domestic Female Institution J   <NA>
-#>    3: MCID3111288144 Domestic Female Institution J   <NA>
-#>   ---                                                    
-#> 5569: MCID3112328635   Domestic Male Institution J 143501
-#> 5570: MCID3112328655   Domestic Male Institution J 143501
-#> 5571: MCID3112382784   Domestic Male Institution J 143501
+#>                 mcid             people   institution  proxy
+#>               <char>             <fctr>        <fctr> <fctr>
+#>    1: MCID3111142290      Domestic Male Institution J 141001
+#>    2: MCID3111142294      Domestic Male Institution J 141001
+#>    3: MCID3111142961 International Male Institution J 142101
+#>   ---                                                       
+#> 5569: MCID3112447659      Domestic Male Institution J   <NA>
+#> 5570: MCID3112447663      Domestic Male Institution J   <NA>
+#> 5571: MCID3112447664      Domestic Male Institution J   <NA>
 ```
 
 Check the unique values.

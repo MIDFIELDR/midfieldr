@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9023</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9024</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,362 +93,105 @@
     
     
 <p>A complete case study illustrating how we work with longitudinal data
-and how midfieldr supports our process. Many of the topics introduced
-here are developed in depth in subsequent articles.</p>
+and how midfieldr supports the process. In subsequent articles, many of
+the topics introduced here are more fully developed.</p>
 <div class="section level2">
-<h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
+<h2 id="outline">Outline<a class="anchor" aria-label="anchor" href="#outline"></a>
 </h2>
-<p><em>Data.</em>   Program CIP codes from midfieldr <code>cip.</code>
-Student records from the practice data in midfielddata:
-<code>student, term,</code> and <code>degree.</code></p>
+<p>The work is organized in three major sections.</p>
+<ol style="list-style-type: decimal">
+<li>Refining the student records—generally independent of the case
+specifics</li>
+<li>Obtaining the metric—depends on one’s programs, metrics, and
+groupings.</li>
+<li>Conditioning the results for dissemination—depends on one’s audience
+and rhetorical goals.</li>
+</ol>
+<div class="section level3">
+<h3 id="scope">
+<em>Scope</em><a class="anchor" aria-label="anchor" href="#scope"></a>
+</h3>
+<p><em>Records.</em>   Data: <code>student, term,</code> and
+<code>degree</code> from midfielddata. Filter for data sufficiency and
+degree seeking; exclude records later than a student’s first degree
+term.</p>
+<p><em>Population.</em>   The set of unique IDs from the above
+records.</p>
+<p><em>Programs.</em>   Data: <code>cip</code> from midfieldr. We study
+four Engineering majors: Civil, Electrical, Industrial/Systems, and
+Mechanical.</p>
 <p><em>Metric.</em>   Program <em>stickiness:</em> the ratio <span class="math inline">\small (S)</span> of the number of graduates of a
 program <span class="math inline">\small (N_\textrm{grad})</span> to the
 number ever enrolled in the program <span class="math inline">\small
-(N_\textrm{ever})</span>, including part-time students, migrators,
-transfers, and students admitted in any term <span class="citation">(<a href="#ref-Ohland+Orr+others:2012">Ohland et al. 2012</a>)</span>.</p>
+(N_\textrm{ever})</span>.</p>
 <p><span class="math display">
   \small S = \frac{\small N_\textrm{grad}}{\small N_\textrm{ever}} =
 \frac{\small\mathrm{number\ of\ graduates\ of\ a\
 program}}{\small\mathrm{number\ ever\ enrolled\ in\ the\ program}}
 </span></p>
-<p><em>Programs.</em>   Civil, Electrical, Industrial/Systems, and
-Mechanical Engineering.</p>
-<p><em>Records.</em>   Filter for data sufficiency and degree seeking;
-no exclusions due to part-time status, transfer status, admission term,
-or starting program; exclude records later than a student’s first degree
-term.</p>
-<p><em>Population.</em>   The set of unique IDs from the above
-records.</p>
+<p>“Ever-enrolled” means that students at some point decided to seek a
+degree in that program. Stickiness reports the likelihood that such
+students will “stick to” and graduate from that program <span class="citation">(<a href="#ref-Ohland+Orr+others:2012">Ohland et al.
+2012</a>)</span>.</p>
 <p><em>Blocs.</em>   The metric requires two blocs: students ever
 enrolled in the programs; and timely graduates of the programs.</p>
-<p><em>Groupings.</em>   The metric will be grouped by program,
-race/ethnicity, and sex.</p>
-<p><em>Outcome.</em>   A data frame with columns for each grouping
-variable and bloc summary counts <span class="math inline">\small
-N_\textrm{grad}</span> and <span class="math inline">\small
-N_\textrm{ever}</span> from which the metric <span class="math inline">\small S</span> is calculated. The grouping
-variables are a composite key to the numerical results.</p>
+<p><em>Groupings.</em>   Group the findings by program, race/ethnicity,
+and sex.</p>
 <p><em>Dissemination.</em>   Exclude groupings too small to preserve
 anonymity. Edit column names to suit the audience. Condition/transform
 data as needed for tables or charts.</p>
-<p>We use these packages:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfieldr/">"midfieldr"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfielddata/" class="external-link">"midfielddata"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://gt.rstudio.com" class="external-link">"gt"</a></span><span class="op">)</span> <span class="co"># for tables</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span> <span class="co"># for charts</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="programs">Programs<a class="anchor" aria-label="anchor" href="#programs"></a>
-</h2>
-<p>One can start an analysis with program data or with student record
-data—the choice is arbitrary. We start with programs and set the results
-aside until needed when constructing our blocs.</p>
-<p>Our goal in this section is to search the CIP data table for the
-6-digit codes for our programs. The <code>cip</code> dataset loads with
-midfieldr.</p>
 <div class="section level3">
-<h3 id="search-for-program-codes">
-<em>Search for program codes</em><a class="anchor" aria-label="anchor" href="#search-for-program-codes"></a>
+<h3 id="terminology">
+<em>Terminology</em><a class="anchor" aria-label="anchor" href="#terminology"></a>
 </h3>
-<p><code><a href="../reference/filter_programs.html">filter_programs()</a></code> searches <code>dframe</code> for
-string patterns. Searching for “engineering” yields 2-digit CIP codes
-14, 15, 29, and 51. From the program names, the 2-digit code we want is
-14.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">cip</span>, pattern <span class="op">=</span> <span class="st">"engineering"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                                                              cip6name   cip6</span></span>
-<span><span class="co">#&gt;                                                                &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;   1:                                             Engineering, General 140101</span></span>
-<span><span class="co">#&gt;   2:                                                  Pre-Engineering 140102</span></span>
-<span><span class="co">#&gt;   3:     Aerospace, Aeronautical and Astronautical, Space Engineering 140201</span></span>
-<span><span class="co">#&gt;   4:          Agricultural, Biological Engineering and Bioengineering 140301</span></span>
-<span><span class="co">#&gt;   5:                                        Architectural Engineering 140401</span></span>
-<span><span class="co">#&gt;   6:                                  Biomedical, Medical Engineering 140501</span></span>
-<span><span class="co">#&gt;  ---                                                                        </span></span>
-<span><span class="co">#&gt; 114:                                Engineering-Related Fields, Other 151599</span></span>
-<span><span class="co">#&gt; 115:                                                   Nanotechnology 151601</span></span>
-<span><span class="co">#&gt; 116:             Engineering Related Technologies, Technicians, Other 159999</span></span>
-<span><span class="co">#&gt; 117:                                       Combat Systems Engineering 290301</span></span>
-<span><span class="co">#&gt; 118:                                            Engineering Acoustics 290303</span></span>
-<span><span class="co">#&gt; 119: Assistive, Augmentative Technology and Rehabiliation Engineering 512312</span></span>
-<span><span class="co">#&gt;                                                     cip4name   cip4</span></span>
-<span><span class="co">#&gt;                                                       &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;   1:                                    Engineering, General   1401</span></span>
-<span><span class="co">#&gt;   2:                                    Engineering, General   1401</span></span>
-<span><span class="co">#&gt;   3:   Aerospace, Aeronautical and Astronautical Engineering   1402</span></span>
-<span><span class="co">#&gt;   4: Agricultural, Biological Engineering and Bioengineering   1403</span></span>
-<span><span class="co">#&gt;   5:                               Architectural Engineering   1404</span></span>
-<span><span class="co">#&gt;   6:                         Biomedical, Medical Engineering   1405</span></span>
-<span><span class="co">#&gt;  ---                                                               </span></span>
-<span><span class="co">#&gt; 114:                              Engineering-Related Fields   1515</span></span>
-<span><span class="co">#&gt; 115:                                          Nanotechnology   1516</span></span>
-<span><span class="co">#&gt; 116:    Engineering-Related Technologies, Technicians, Other   1599</span></span>
-<span><span class="co">#&gt; 117:                               Military Applied Sciences   2903</span></span>
-<span><span class="co">#&gt; 118:                               Military Applied Sciences   2903</span></span>
-<span><span class="co">#&gt; 119:              Rehabilitation and Therapeutic Professions   5123</span></span>
-<span><span class="co">#&gt;                                              cip2name   cip2</span></span>
-<span><span class="co">#&gt;                                                &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;   1:                                      Engineering     14</span></span>
-<span><span class="co">#&gt;   2:                                      Engineering     14</span></span>
-<span><span class="co">#&gt;   3:                                      Engineering     14</span></span>
-<span><span class="co">#&gt;   4:                                      Engineering     14</span></span>
-<span><span class="co">#&gt;   5:                                      Engineering     14</span></span>
-<span><span class="co">#&gt;   6:                                      Engineering     14</span></span>
-<span><span class="co">#&gt;  ---                                                        </span></span>
-<span><span class="co">#&gt; 114:                           Engineering Technology     15</span></span>
-<span><span class="co">#&gt; 115:                           Engineering Technology     15</span></span>
-<span><span class="co">#&gt; 116:                           Engineering Technology     15</span></span>
-<span><span class="co">#&gt; 117:                            Military Technologies     29</span></span>
-<span><span class="co">#&gt; 118:                            Military Technologies     29</span></span>
-<span><span class="co">#&gt; 119: Health Professions and Related Clinical Sciences     51</span></span></code></pre></div>
-<p>Subset the full <code>cip</code> for the Engineering code 14 and
-search that result for “civil”. We find that Civil Engineering is
-encoded by the 4-digit code 1408.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">engr_cip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"^14"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">engr_cip</span>, <span class="st">"civil"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                                  cip6name   cip6          cip4name   cip4</span></span>
-<span><span class="co">#&gt;                                    &lt;char&gt; &lt;char&gt;            &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:             Civil Engineering, General 140801 Civil Engineering   1408</span></span>
-<span><span class="co">#&gt; 2:               Geotechnical Engineering 140802 Civil Engineering   1408</span></span>
-<span><span class="co">#&gt; 3:                 Structural Engineering 140803 Civil Engineering   1408</span></span>
-<span><span class="co">#&gt; 4: Transportation and Highway Engineering 140804 Civil Engineering   1408</span></span>
-<span><span class="co">#&gt; 5:            Water Resources Engineering 140805 Civil Engineering   1408</span></span>
-<span><span class="co">#&gt; 6:               Civil Engineering, Other 140899 Civil Engineering   1408</span></span>
-<span><span class="co">#&gt;       cip2name   cip2</span></span>
-<span><span class="co">#&gt;         &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1: Engineering     14</span></span>
-<span><span class="co">#&gt; 2: Engineering     14</span></span>
-<span><span class="co">#&gt; 3: Engineering     14</span></span>
-<span><span class="co">#&gt; 4: Engineering     14</span></span>
-<span><span class="co">#&gt; 5: Engineering     14</span></span>
-<span><span class="co">#&gt; 6: Engineering     14</span></span></code></pre></div>
-<p>Repeat for “electrical” and obtain the 4-digit code 1410.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">engr_cip</span>, <span class="st">"electrical"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                                                         cip6name   cip6</span></span>
-<span><span class="co">#&gt;                                                           &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:        Electrical, Electronics and Communications Engineering 141001</span></span>
-<span><span class="co">#&gt; 2:                                 Laser and Optical Engineering 141003</span></span>
-<span><span class="co">#&gt; 3:                                Telecommunications Engineering 141004</span></span>
-<span><span class="co">#&gt; 4: Electrical, Electronics and Communications Engineering, Other 141099</span></span>
-<span><span class="co">#&gt;                                                  cip4name   cip4    cip2name</span></span>
-<span><span class="co">#&gt;                                                    &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1: Electrical, Electronics and Communications Engineering   1410 Engineering</span></span>
-<span><span class="co">#&gt; 2: Electrical, Electronics and Communications Engineering   1410 Engineering</span></span>
-<span><span class="co">#&gt; 3: Electrical, Electronics and Communications Engineering   1410 Engineering</span></span>
-<span><span class="co">#&gt; 4: Electrical, Electronics and Communications Engineering   1410 Engineering</span></span>
-<span><span class="co">#&gt;      cip2</span></span>
-<span><span class="co">#&gt;    &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:     14</span></span>
-<span><span class="co">#&gt; 2:     14</span></span>
-<span><span class="co">#&gt; 3:     14</span></span>
-<span><span class="co">#&gt; 4:     14</span></span></code></pre></div>
-<p>Continuing in a similar fashion, we find that our programs have the
-following 4-digit codes.</p>
+<p>Definitions critical to understanding our data manipulation
+process.</p>
 <ul>
-<li>Civil Engineering 1408</li>
-<li>Electrical Engineering 1410</li>
-<li>Mechanical Engineering 1419<br>
-</li>
-<li>Industrial/Systems Engineering 1427, 1435, 1436, and 1437.</li>
+<li><p>The population is usually expected to be <em>degree-seeking,</em>
+i.e., attempting to complete a program.</p></li>
+<li><p><em>Program completion</em> means satisfying the requirements for
+a first baccalaureate degree.</p></li>
+<li><p>The <em>timely-completion term</em> is the term by which we would
+consider their completion “timely”, default 6 years after
+admission.</p></li>
+<li><p>The <em>data sufficiency</em> test identifies students whose
+admission term and projected timely completion term lie within the range
+of data available from their institution—a necessary and sufficient
+condition for determining completion status.</p></li>
+<li><p><em>Completion status</em> is “timely” for students graduating no
+later than their timely-completion term; “late” if they graduate after
+that term; and “NA” for non-completion.</p></li>
 </ul>
-<p>Note that in general an accredited engineering degree-granting
-program is encoded by a single 4-digit CIP code, but not always. In
-addition, the code or codes used by a degree-granting program can vary
-over time and by institution.</p>
-</div>
-<div class="section level3">
-<h3 id="construct-the-programs-table">
-<em>Construct the programs table</em><a class="anchor" aria-label="anchor" href="#construct-the-programs-table"></a>
-</h3>
-<p>We create a search string of the desired 4-digit codes.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">codes_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1427"</span>, <span class="st">"^1435"</span>, <span class="st">"^1436"</span>, <span class="st">"^1437"</span><span class="op">)</span></span>
-<span><span class="va">programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">engr_cip</span>, <span class="va">codes_we_want</span><span class="op">)</span></span>
-<span><span class="va">programs</span></span>
-<span><span class="co">#&gt;                                                          cip6name   cip6</span></span>
-<span><span class="co">#&gt;                                                            &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;  1:                                    Civil Engineering, General 140801</span></span>
-<span><span class="co">#&gt;  2:                                      Geotechnical Engineering 140802</span></span>
-<span><span class="co">#&gt;  3:                                        Structural Engineering 140803</span></span>
-<span><span class="co">#&gt;  4:                        Transportation and Highway Engineering 140804</span></span>
-<span><span class="co">#&gt;  5:                                   Water Resources Engineering 140805</span></span>
-<span><span class="co">#&gt;  6:                                      Civil Engineering, Other 140899</span></span>
-<span><span class="co">#&gt; ---                                                                     </span></span>
-<span><span class="co">#&gt; 10: Electrical, Electronics and Communications Engineering, Other 141099</span></span>
-<span><span class="co">#&gt; 11:                                        Mechanical Engineering 141901</span></span>
-<span><span class="co">#&gt; 12:                                           Systems Engineering 142701</span></span>
-<span><span class="co">#&gt; 13:                                        Industrial Engineering 143501</span></span>
-<span><span class="co">#&gt; 14:                                     Manufacturing Engineering 143601</span></span>
-<span><span class="co">#&gt; 15:                                           Operations Research 143701</span></span>
-<span><span class="co">#&gt;                                                   cip4name   cip4    cip2name</span></span>
-<span><span class="co">#&gt;                                                     &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt;  1:                                      Civil Engineering   1408 Engineering</span></span>
-<span><span class="co">#&gt;  2:                                      Civil Engineering   1408 Engineering</span></span>
-<span><span class="co">#&gt;  3:                                      Civil Engineering   1408 Engineering</span></span>
-<span><span class="co">#&gt;  4:                                      Civil Engineering   1408 Engineering</span></span>
-<span><span class="co">#&gt;  5:                                      Civil Engineering   1408 Engineering</span></span>
-<span><span class="co">#&gt;  6:                                      Civil Engineering   1408 Engineering</span></span>
-<span><span class="co">#&gt; ---                                                                          </span></span>
-<span><span class="co">#&gt; 10: Electrical, Electronics and Communications Engineering   1410 Engineering</span></span>
-<span><span class="co">#&gt; 11:                                 Mechanical Engineering   1419 Engineering</span></span>
-<span><span class="co">#&gt; 12:                                    Systems Engineering   1427 Engineering</span></span>
-<span><span class="co">#&gt; 13:                                 Industrial Engineering   1435 Engineering</span></span>
-<span><span class="co">#&gt; 14:                              Manufacturing Engineering   1436 Engineering</span></span>
-<span><span class="co">#&gt; 15:                                    Operations Research   1437 Engineering</span></span>
-<span><span class="co">#&gt;       cip2</span></span>
-<span><span class="co">#&gt;     &lt;char&gt;</span></span>
-<span><span class="co">#&gt;  1:     14</span></span>
-<span><span class="co">#&gt;  2:     14</span></span>
-<span><span class="co">#&gt;  3:     14</span></span>
-<span><span class="co">#&gt;  4:     14</span></span>
-<span><span class="co">#&gt;  5:     14</span></span>
-<span><span class="co">#&gt;  6:     14</span></span>
-<span><span class="co">#&gt; ---       </span></span>
-<span><span class="co">#&gt; 10:     14</span></span>
-<span><span class="co">#&gt; 11:     14</span></span>
-<span><span class="co">#&gt; 12:     14</span></span>
-<span><span class="co">#&gt; 13:     14</span></span>
-<span><span class="co">#&gt; 14:     14</span></span>
-<span><span class="co">#&gt; 15:     14</span></span></code></pre></div>
-<p>While we searched <code>cip</code> using 4-digit codes, it is the
-6-digit codes that we want for matching to the student records later.
-Here we drop all but the 6-digit information.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">programs</span> <span class="op">&lt;-</span> <span class="va">programs</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6name</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">programs</span></span>
-<span><span class="co">#&gt;                                                          cip6name   cip6</span></span>
-<span><span class="co">#&gt;                                                            &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;  1:                                    Civil Engineering, General 140801</span></span>
-<span><span class="co">#&gt;  2:                                      Geotechnical Engineering 140802</span></span>
-<span><span class="co">#&gt;  3:                                        Structural Engineering 140803</span></span>
-<span><span class="co">#&gt;  4:                        Transportation and Highway Engineering 140804</span></span>
-<span><span class="co">#&gt;  5:                                   Water Resources Engineering 140805</span></span>
-<span><span class="co">#&gt;  6:                                      Civil Engineering, Other 140899</span></span>
-<span><span class="co">#&gt;  7:        Electrical, Electronics and Communications Engineering 141001</span></span>
-<span><span class="co">#&gt;  8:                                 Laser and Optical Engineering 141003</span></span>
-<span><span class="co">#&gt;  9:                                Telecommunications Engineering 141004</span></span>
-<span><span class="co">#&gt; 10: Electrical, Electronics and Communications Engineering, Other 141099</span></span>
-<span><span class="co">#&gt; 11:                                        Mechanical Engineering 141901</span></span>
-<span><span class="co">#&gt; 12:                                           Systems Engineering 142701</span></span>
-<span><span class="co">#&gt; 13:                                        Industrial Engineering 143501</span></span>
-<span><span class="co">#&gt; 14:                                     Manufacturing Engineering 143601</span></span>
-<span><span class="co">#&gt; 15:                                           Operations Research 143701</span></span></code></pre></div>
-<p>The program names in <code>cip</code> are usually too long for
-effective use—user-defined names are nearly always required. So we add a
-<code>program</code> variable with values “CE” (Civil Engineering), “EE”
-(electrical), “ME” (Mechanical), and “ISE” (Industrial/Systems
-Engineering).</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">programs</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>,</span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^1410"</span>, <span class="st">"EE"</span>,</span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^1419"</span>, <span class="st">"ME"</span>,</span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1427|^1435|^1436|^1437"</span><span class="op">)</span>, <span class="st">"ISE"</span>,</span>
-<span>  default <span class="op">=</span> <span class="cn">NA_character_</span></span>
-<span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<p>While we don’t use the original 6-digit program names, we can
-preserve them for reference. Here we abbreviate some of them for a more
-compact display.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">programs</span><span class="op">[</span>, <span class="va">cip6name</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"Engineering"</span>, <span class="st">"Engng"</span>, <span class="va">cip6name</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">programs</span><span class="op">[</span>, <span class="va">cip6name</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"Communications"</span>, <span class="st">"Commns"</span>, <span class="va">cip6name</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">programs</span><span class="op">[</span>, <span class="va">cip6name</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"Electrical, Electronics"</span>, <span class="st">"Elec, Electr,"</span>, <span class="va">cip6name</span><span class="op">)</span><span class="op">]</span></span>
-<span></span>
-<span><span class="va">programs</span></span>
-<span><span class="co">#&gt;                                  cip6name   cip6 program</span></span>
-<span><span class="co">#&gt;                                    &lt;char&gt; &lt;char&gt;  &lt;char&gt;</span></span>
-<span><span class="co">#&gt;  1:                  Civil Engng, General 140801      CE</span></span>
-<span><span class="co">#&gt;  2:                    Geotechnical Engng 140802      CE</span></span>
-<span><span class="co">#&gt;  3:                      Structural Engng 140803      CE</span></span>
-<span><span class="co">#&gt;  4:      Transportation and Highway Engng 140804      CE</span></span>
-<span><span class="co">#&gt;  5:                 Water Resources Engng 140805      CE</span></span>
-<span><span class="co">#&gt;  6:                    Civil Engng, Other 140899      CE</span></span>
-<span><span class="co">#&gt;  7:        Elec, Electr, and Commns Engng 141001      EE</span></span>
-<span><span class="co">#&gt;  8:               Laser and Optical Engng 141003      EE</span></span>
-<span><span class="co">#&gt;  9:              Telecommunications Engng 141004      EE</span></span>
-<span><span class="co">#&gt; 10: Elec, Electr, and Commns Engng, Other 141099      EE</span></span>
-<span><span class="co">#&gt; 11:                      Mechanical Engng 141901      ME</span></span>
-<span><span class="co">#&gt; 12:                         Systems Engng 142701     ISE</span></span>
-<span><span class="co">#&gt; 13:                      Industrial Engng 143501     ISE</span></span>
-<span><span class="co">#&gt; 14:                   Manufacturing Engng 143601     ISE</span></span>
-<span><span class="co">#&gt; 15:                   Operations Research 143701     ISE</span></span></code></pre></div>
-<p>Our programs data frame is complete: 15 six-digit codes are encoded
-using 4 program labels. This data frame can sit in memory (or written to
-file) until we’re ready to filter the blocs by program, joining data
-frames by matching on the <code>cip6</code> variable.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="records">Records<a class="anchor" aria-label="anchor" href="#records"></a>
+<h2 id="refining-the-records">Refining the records<a class="anchor" aria-label="anchor" href="#refining-the-records"></a>
 </h2>
-<p>For this study we load three of the midfielddata data tables.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># packages</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfieldr/">"midfieldr"</a></span><span class="op">)</span>    <span class="co"># working with student records</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfielddata/" class="external-link">"midfielddata"</a></span><span class="op">)</span> <span class="co"># practice data</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span>   <span class="co"># data manipulation</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://gt.rstudio.com" class="external-link">"gt"</a></span><span class="op">)</span>           <span class="co"># tables</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span>      <span class="co"># charts</span></span></code></pre></div>
+<p>We load three of the midfielddata data tables. This study does not
+require the <code>course</code> data table. If it had been required, it
+would be included here and in similar steps throughout the article.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span>, <span class="va">degree</span><span class="op">)</span></span></code></pre></div>
-<p>We make copies of the original data sets, giving them new names
+<p>We copy the original data sets, giving them new names
 <code>{student_source, term_source, degree_source}</code> and new
 locations in memory. This step allows us to use the more convenient
 names <code>{student, term, degree}</code> to do our work without
 updating the source tables “by reference.” Reference semantics in
 data.table is documented in <span class="citation">(<a href="#ref-reference-semantics:2026"><em>Reference Semantics</em>
 2026</a>)</span>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">student_source</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
 <span><span class="va">term_source</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
 <span><span class="va">degree_source</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span></code></pre></div>
-<p>Our approach is to apply the data sufficiency and degree-seeking
-criteria to refine the population. The “source” tables are then filtered
-to match this population, followed by a filter to exclude
-post-completion terms.</p>
-<div class="section level3">
-<h3 id="select_basic_cols">
-<code>select_basic_cols()</code><a class="anchor" aria-label="anchor" href="#select_basic_cols"></a>
-</h3>
-<p>In the next few steps, we do not require all of the columns in our
-data tables. We can (optionally) minimize the number of columns we see
-during an interactive session using
-<code>select_basic_cols().</code></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">student</span></span>
-<span><span class="co">#&gt;                  mcid          race    sex</span></span>
-<span><span class="co">#&gt;                &lt;char&gt;        &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1: MCID3111142225         Asian   Male</span></span>
-<span><span class="co">#&gt;     2: MCID3111142283         Asian Female</span></span>
-<span><span class="co">#&gt;     3: MCID3111142290         Asian   Male</span></span>
-<span><span class="co">#&gt;    ---                                    </span></span>
-<span><span class="co">#&gt; 97553: MCID3112898894         White Female</span></span>
-<span><span class="co">#&gt; 97554: MCID3112898895         White Female</span></span>
-<span><span class="co">#&gt; 97555: MCID3112898940 Other/Unknown   Male</span></span>
-<span></span>
-<span><span class="va">term</span></span>
-<span><span class="co">#&gt;                   mcid   term   cip6   institution         level</span></span>
-<span><span class="co">#&gt;                 &lt;char&gt; &lt;char&gt; &lt;char&gt;        &lt;char&gt;        &lt;char&gt;</span></span>
-<span><span class="co">#&gt;      1: MCID3111142225  19881 140901 Institution B 01 First-year</span></span>
-<span><span class="co">#&gt;      2: MCID3111142283  19881 240102 Institution J 01 First-year</span></span>
-<span><span class="co">#&gt;      3: MCID3111142283  19883 240102 Institution J 01 First-year</span></span>
-<span><span class="co">#&gt;     ---                                                         </span></span>
-<span><span class="co">#&gt; 639913: MCID3112898894  20181 451001 Institution B 01 First-year</span></span>
-<span><span class="co">#&gt; 639914: MCID3112898895  20181 302001 Institution B 01 First-year</span></span>
-<span><span class="co">#&gt; 639915: MCID3112898940  20181 050103 Institution B 01 First-year</span></span>
-<span></span>
-<span><span class="va">degree</span></span>
-<span><span class="co">#&gt;                  mcid term_degree   cip6</span></span>
-<span><span class="co">#&gt;                &lt;char&gt;      &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1: MCID3111142225       19881 141001</span></span>
-<span><span class="co">#&gt;     2: MCID3111142290       19921 141001</span></span>
-<span><span class="co">#&gt;     3: MCID3111142294       19903 141001</span></span>
-<span><span class="co">#&gt;    ---                                  </span></span>
-<span><span class="co">#&gt; 49663: MCID3112839623       20181 160102</span></span>
-<span><span class="co">#&gt; 49664: MCID3112845220       20181 270101</span></span>
-<span><span class="co">#&gt; 49665: MCID3112845673       20174 090101</span></span></code></pre></div>
-<p>For comparison as we refine the population, we start with the
+<p>For comparing results as we refine the population, we start with the
 following number of rows in the original data frames.</p>
 <div id="mwlefoodfi" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#mwlefoodfi table {
@@ -921,39 +664,52 @@ following number of rows in the original data frames.</p>
 </tbody>
 </table>
 </div>
-</div>
 <div class="section level3">
-<h3 id="terminology">
-<em>Terminology</em><a class="anchor" aria-label="anchor" href="#terminology"></a>
+<h3 id="minimum-necessary-columns">
+<em>Minimum necessary columns</em><a class="anchor" aria-label="anchor" href="#minimum-necessary-columns"></a>
 </h3>
-<p>Definitions critical to understanding our data manipulation
-process.</p>
-<ul>
-<li><p>Students in a study population are usually expected to be
-<em>degree-seeking,</em> i.e., attempting to complete a
-program.</p></li>
-<li><p>Program <em>completion</em> means satisfying the requirements for
-a first baccalaureate degree.</p></li>
-<li><p>Completion <em>status</em> is “timely” if accomplished within a
-set time span, typically 4, 6, or 8 years after admission depending on
-the definition one adopts. The <em>timely-completion term</em> is the
-term at the end of that span.</p></li>
-<li><p>The <em>data sufficiency</em> test identifies students whose
-actual admission term and projected timely completion term both lie
-within their institution’s data range. These are the students for whom
-completion status—timely or otherwise—can be positively asserted, and
-are therefore the only students included a population.</p></li>
-</ul>
-<p>The associated midfieldr functions are:</p>
-<ul>
-<li>
-<code><a href="../reference/timely_term.html">timely_term()</a></code><br>
-</li>
-<li>
-<code><a href="../reference/data_sufficiency.html">data_sufficiency()</a></code><br>
-</li>
-<li><code><a href="../reference/completion_status.html">completion_status()</a></code></li>
-</ul>
+<p>In the next few steps, we do not require all of the columns in our
+data tables. We can (optionally) minimize the number of columns we see
+during an interactive session using <code>select_basic_cols().</code>
+The columns returned are those required by other midfieldr
+functions.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">student</span></span>
+<span><span class="co">#&gt;                  mcid          race    sex</span></span>
+<span><span class="co">#&gt;                &lt;char&gt;        &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MCID3111142225         Asian   Male</span></span>
+<span><span class="co">#&gt;     2: MCID3111142283         Asian Female</span></span>
+<span><span class="co">#&gt;     3: MCID3111142290         Asian   Male</span></span>
+<span><span class="co">#&gt;    ---                                    </span></span>
+<span><span class="co">#&gt; 97553: MCID3112898894         White Female</span></span>
+<span><span class="co">#&gt; 97554: MCID3112898895         White Female</span></span>
+<span><span class="co">#&gt; 97555: MCID3112898940 Other/Unknown   Male</span></span>
+<span></span>
+<span><span class="va">term</span></span>
+<span><span class="co">#&gt;                   mcid   term   cip6   institution         level</span></span>
+<span><span class="co">#&gt;                 &lt;char&gt; &lt;char&gt; &lt;char&gt;        &lt;char&gt;        &lt;char&gt;</span></span>
+<span><span class="co">#&gt;      1: MCID3111142225  19881 140901 Institution B 01 First-year</span></span>
+<span><span class="co">#&gt;      2: MCID3111142283  19881 240102 Institution J 01 First-year</span></span>
+<span><span class="co">#&gt;      3: MCID3111142283  19883 240102 Institution J 01 First-year</span></span>
+<span><span class="co">#&gt;     ---                                                         </span></span>
+<span><span class="co">#&gt; 639913: MCID3112898894  20181 451001 Institution B 01 First-year</span></span>
+<span><span class="co">#&gt; 639914: MCID3112898895  20181 302001 Institution B 01 First-year</span></span>
+<span><span class="co">#&gt; 639915: MCID3112898940  20181 050103 Institution B 01 First-year</span></span>
+<span></span>
+<span><span class="va">degree</span></span>
+<span><span class="co">#&gt;                  mcid term_degree   cip6</span></span>
+<span><span class="co">#&gt;                &lt;char&gt;      &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MCID3111142225       19881 141001</span></span>
+<span><span class="co">#&gt;     2: MCID3111142290       19921 141001</span></span>
+<span><span class="co">#&gt;     3: MCID3111142294       19903 141001</span></span>
+<span><span class="co">#&gt;    ---                                  </span></span>
+<span><span class="co">#&gt; 49663: MCID3112839623       20181 160102</span></span>
+<span><span class="co">#&gt; 49664: MCID3112845220       20181 270101</span></span>
+<span><span class="co">#&gt; 49665: MCID3112845673       20174 090101</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="data-sufficiency">
@@ -962,7 +718,7 @@ are therefore the only students included a population.</p></li>
 <p>Per the terminology discussion above, only those records passing the
 data sufficiency test are included in a population study. We start with
 the full set of unique student IDs.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
@@ -978,7 +734,7 @@ the full set of unique student IDs.</p>
 <p>We use <code><a href="../reference/timely_term.html">timely_term()</a></code> to determine the timely completion
 term for every student and add columns to the data frame to support
 those findings.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span>, midf_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid term_i       level_i adj_span timely_term</span></span>
@@ -992,7 +748,7 @@ those findings.</p>
 <span><span class="co">#&gt; 97555: MCID3112898940  20181 01 First-year        6       20233</span></span></code></pre></div>
 <p>Next, we can (optionally) reduce the number of columns to just those
 needed in the next step.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term_i</span>, <span class="va">timely_term</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid term_i timely_term</span></span>
@@ -1007,31 +763,22 @@ needed in the next step.</p>
 <p>We operate on this output with <code><a href="../reference/data_sufficiency.html">data_sufficiency()</a></code> to
 identify records that pass the data sufficiency test and those that do
 not and add columns to the data frame to support those findings.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_sufficiency.html">data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, midf_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
-<span><span class="co">#&gt;                  mcid term_i timely_term   institution lower_limit upper_limit</span></span>
-<span><span class="co">#&gt;                &lt;char&gt; &lt;char&gt;      &lt;char&gt;        &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1: MCID3111142225  19881       19933 Institution B       19881       20181</span></span>
-<span><span class="co">#&gt;     2: MCID3111142283  19881       19933 Institution J       19881       20096</span></span>
-<span><span class="co">#&gt;     3: MCID3111142290  19881       19933 Institution J       19881       20096</span></span>
-<span><span class="co">#&gt;    ---                                                                        </span></span>
-<span><span class="co">#&gt; 97553: MCID3112898894  20181       20233 Institution B       19881       20181</span></span>
-<span><span class="co">#&gt; 97554: MCID3112898895  20181       20233 Institution B       19881       20181</span></span>
-<span><span class="co">#&gt; 97555: MCID3112898940  20181       20233 Institution B       19881       20181</span></span>
-<span><span class="co">#&gt;        data_sufficiency</span></span>
-<span><span class="co">#&gt;                  &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1:    exclude-lower</span></span>
-<span><span class="co">#&gt;     2:    exclude-lower</span></span>
-<span><span class="co">#&gt;     3:    exclude-lower</span></span>
-<span><span class="co">#&gt;    ---                 </span></span>
-<span><span class="co">#&gt; 97553:    exclude-upper</span></span>
-<span><span class="co">#&gt; 97554:    exclude-upper</span></span>
-<span><span class="co">#&gt; 97555:    exclude-upper</span></span></code></pre></div>
+<span><span class="co">#&gt;                  mcid term_i timely_term  data_range data_sufficiency</span></span>
+<span><span class="co">#&gt;                &lt;char&gt; &lt;char&gt;      &lt;char&gt;      &lt;char&gt;           &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MCID3111142225  19881       19933 19881-20181    exclude-lower</span></span>
+<span><span class="co">#&gt;     2: MCID3111142283  19881       19933 19881-20096    exclude-lower</span></span>
+<span><span class="co">#&gt;     3: MCID3111142290  19881       19933 19881-20096    exclude-lower</span></span>
+<span><span class="co">#&gt;    ---                                                               </span></span>
+<span><span class="co">#&gt; 97553: MCID3112898894  20181       20233 19881-20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 97554: MCID3112898895  20181       20233 19881-20181    exclude-upper</span></span>
+<span><span class="co">#&gt; 97555: MCID3112898940  20181       20233 19881-20181    exclude-upper</span></span></code></pre></div>
 <p><em>Summary check.</em>   A brief aside to summarize the numbers of
 students identified to include and exclude. We run a similar summary at
 a number of points in the analysis as a credibility check.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"data_sufficiency"</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;    data_sufficiency     N</span></span>
 <span><span class="co">#&gt;              &lt;char&gt; &lt;int&gt;</span></span>
@@ -1040,7 +787,7 @@ a number of points in the analysis as a credibility check.</p>
 <span><span class="co">#&gt; 3:    exclude-lower  2746</span></span></code></pre></div>
 <p>We filter to retain rows labeled “include” and drop all but the ID
 column.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid</span></span>
@@ -1062,7 +809,7 @@ the <code>student</code> table contains only degree-seeking students. We
 inner-join the ID column from the <code>student</code> table, matching
 on <code>mcid</code>. In effect, the inner join filters our population
 to remove any non-degree-seeking students.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">student_cols</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student_cols</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
@@ -1084,16 +831,17 @@ step to illustrate our complete process.</p>
 <em>Population</em><a class="anchor" aria-label="anchor" href="#population"></a>
 </h3>
 <p>Filtering for data sufficiency and degree-seeking yields the baseline
-population for this (and nearly every) case study.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+population for this study.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">population</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span></code></pre></div>
 <p>We use this population to filter the source records using an inner
 join, matching on ID. The inner join retains those IDs common to both
-data frames.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">student_source</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">student_source</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">term_source</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">term_source</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">degree_source</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">degree_source</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span></code></pre></div>
+data frames. The results are our first iteration of our “baseline” data
+tables.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">student_baseline</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">student_source</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">term_baseline</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">term_source</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">degree_baseline</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">degree_source</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span></code></pre></div>
 <div id="eexombwkke" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#eexombwkke table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -1548,23 +1296,23 @@ data frames.</p>
   <thead><tr class="gt_col_headings">
 <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="Table">Table</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="Original-tables">Original tables</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="Baseline-population">Baseline population</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="Refined-population">Refined population</th>
     </tr></thead>
 <tbody class="gt_table_body">
 <tr>
 <td headers="Table" class="gt_row gt_left">student</td>
 <td headers="Original tables" class="gt_row gt_right">97,555</td>
-<td headers="Baseline population" class="gt_row gt_right">76,875</td>
+<td headers="Refined population" class="gt_row gt_right">76,875</td>
 </tr>
 <tr>
 <td headers="Table" class="gt_row gt_left gt_striped">term</td>
 <td headers="Original tables" class="gt_row gt_right gt_striped">639,915</td>
-<td headers="Baseline population" class="gt_row gt_right gt_striped">531,419</td>
+<td headers="Refined population" class="gt_row gt_right gt_striped">531,419</td>
 </tr>
 <tr>
 <td headers="Table" class="gt_row gt_left">degree</td>
 <td headers="Original tables" class="gt_row gt_right">49,665</td>
-<td headers="Baseline population" class="gt_row gt_right">43,903</td>
+<td headers="Refined population" class="gt_row gt_right">43,903</td>
 </tr>
 </tbody>
 </table>
@@ -1576,16 +1324,17 @@ data frames.</p>
 </h3>
 <p>We are not generally interested in terms beyond the first degree
 term, so we identify and exclude terms later than the first degree term
-in all the source data frames. Here, we retrieve the source tables that
-have term variables.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term_source</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">degree_source</span><span class="op">)</span></span></code></pre></div>
+in all the source data frames. Here, we retrieve our source tables with
+term variables. (A study that used the <code>course</code> data table
+would be included in this step too.)</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term_baseline</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">degree_baseline</span><span class="op">)</span></span></code></pre></div>
 <p>For each student and term in a data frame,
 <code><a href="../reference/post_completion_terms.html">post_completion_terms()</a></code> identifies terms that are before,
 equal to, or after the student’s first degree term and adds columns to
 the data frame to support those findings.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/post_completion_terms.html">post_completion_terms</a></span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
 <span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/post_completion_terms.html">post_completion_terms</a></span><span class="op">(</span><span class="va">degree</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
 <span></span>
@@ -1619,7 +1368,7 @@ the data frame to support those findings.</p>
 <span><span class="co">#&gt; 531419:     4.00      3.87              &lt;NA&gt;   pre-degree</span></span></code></pre></div>
 <p><em>Summary check.</em>   Numbers of students in each term
 cluster.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">term</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"term_cluster"</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;         term_cluster      N</span></span>
 <span><span class="co">#&gt;               &lt;char&gt;  &lt;int&gt;</span></span>
@@ -1634,18 +1383,18 @@ cluster.</p>
 <span><span class="co">#&gt; 2: post-first-degree    46</span></span></code></pre></div>
 <p>We exclude the rows labeled “post-first-degree.” Note that we are
 dropping <em>terms</em> without affecting the number of student IDs.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">term_cluster</span> <span class="op">!=</span> <span class="st">"post-first-degree"</span><span class="op">]</span></span>
 <span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">term_cluster</span> <span class="op">!=</span> <span class="st">"post-first-degree"</span><span class="op">]</span></span></code></pre></div>
 <p>We drop the temporary columns.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">term</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"term_cluster"</span>, <span class="st">"first_degree_term"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="va">degree</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"term_cluster"</span>, <span class="st">"first_degree_term"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span></code></pre></div>
-<p>We redefine our source material to incorporate the exclusion of
-post-completion terms, yielding our baseline source tables.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">term_source</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
-<span><span class="va">degree_source</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span></code></pre></div>
+<p>We redefine our tables to incorporate the exclusion of
+post-completion terms, yielding our baseline data tables.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">term_baseline</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">degree_baseline</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span></code></pre></div>
 <div id="ulbfdpbcyv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#ulbfdpbcyv table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -2100,34 +1849,34 @@ post-completion terms, yielding our baseline source tables.</p>
   <thead><tr class="gt_col_headings">
 <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="Table">Table</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="Original-tables">Original tables</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="Baseline-population">Baseline population</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="Omit-post-completion-terms">Omit post-completion terms</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="Refined-population">Refined population</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="Baseline-tables">Baseline tables</th>
     </tr></thead>
 <tbody class="gt_table_body">
 <tr>
 <td headers="Table" class="gt_row gt_left">student</td>
 <td headers="Original tables" class="gt_row gt_right">97,555</td>
-<td headers="Baseline population" class="gt_row gt_right">76,875</td>
-<td headers="Omit post-completion terms" class="gt_row gt_right">76,875</td>
+<td headers="Refined population" class="gt_row gt_right">76,875</td>
+<td headers="Baseline tables" class="gt_row gt_right">76,875</td>
 </tr>
 <tr>
 <td headers="Table" class="gt_row gt_left gt_striped">term</td>
 <td headers="Original tables" class="gt_row gt_right gt_striped">639,915</td>
-<td headers="Baseline population" class="gt_row gt_right gt_striped">531,419</td>
-<td headers="Omit post-completion terms" class="gt_row gt_right gt_striped">525,446</td>
+<td headers="Refined population" class="gt_row gt_right gt_striped">531,419</td>
+<td headers="Baseline tables" class="gt_row gt_right gt_striped">525,446</td>
 </tr>
 <tr>
 <td headers="Table" class="gt_row gt_left">degree</td>
 <td headers="Original tables" class="gt_row gt_right">49,665</td>
-<td headers="Baseline population" class="gt_row gt_right">43,903</td>
-<td headers="Omit post-completion terms" class="gt_row gt_right">43,857</td>
+<td headers="Refined population" class="gt_row gt_right">43,903</td>
+<td headers="Baseline tables" class="gt_row gt_right">43,857</td>
 </tr>
 </tbody>
 </table>
 </div>
 <p>Review the results.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">student_source</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">student_baseline</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   76875 obs. of  13 variables:</span></span>
 <span><span class="co">#&gt;  $ mcid          : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "M"..</span></span>
 <span><span class="co">#&gt;  $ race          : chr  "Hispanic" "Hispanic" "International" "International" ..</span></span>
@@ -2143,7 +1892,7 @@ post-completion terms, yielding our baseline source tables.</p>
 <span><span class="co">#&gt;  $ sat_verbal    : num  NA 490 NA NA NA NA NA NA NA NA ...</span></span>
 <span><span class="co">#&gt;  $ act_comp      : num  NA NA NA NA NA NA NA NA NA NA ...</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">term_source</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">term_baseline</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   525446 obs. of  13 variables:</span></span>
 <span><span class="co">#&gt;  $ mcid               : chr  "MCID3111142689" "MCID3111142782" "MCID311114278"..</span></span>
 <span><span class="co">#&gt;  $ term               : chr  "19883" "19883" "19885" "19893" ...</span></span>
@@ -2159,7 +1908,7 @@ post-completion terms, yielding our baseline source tables.</p>
 <span><span class="co">#&gt;  $ gpa_term           : num  3.33 2.8 3 2.84 4 3.25 2.26 2.43 2.55 2.15 ...</span></span>
 <span><span class="co">#&gt;  $ gpa_cumul          : num  3.05 2.57 2.63 2.53 2.63 2.67 2.61 2.59 2.76 2.62..</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">degree_source</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">degree_baseline</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   43857 obs. of  5 variables:</span></span>
 <span><span class="co">#&gt;  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID"..</span></span>
 <span><span class="co">#&gt;  $ term_degree: chr  "19913" "19903" "19894" "19901" ...</span></span>
@@ -2170,29 +1919,260 @@ post-completion terms, yielding our baseline source tables.</p>
 <span><span class="fu"><a href="../reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">population</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   76875 obs. of  1 variable:</span></span>
 <span><span class="co">#&gt;  $ mcid: chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID3111142"..</span></span></code></pre></div>
-<p>From this point forward, anytime we need a fresh copy of any of the
-data tables, we copy the “source” version. Anytime we need a starting
-population, we copy <code>population.</code></p>
+<p>The baseline tables are the starting point for most studies,
+independent of case specifics. From this point forward, anytime we need
+a fresh copy of any of the data tables, we copy the “baseline” version.
+Anytime we need a starting population, we copy
+<code>population.</code></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="programs">Programs<a class="anchor" aria-label="anchor" href="#programs"></a>
+</h2>
+<p>In this section, we begin the procedures that transform our baseline
+records and population into case-specific programs, blocs, metrics, and
+groupings.</p>
+<p>Our goal in this section is to search the CIP data table for the
+6-digit codes for our programs. The <code>cip</code> dataset loads with
+midfieldr.</p>
+<div class="section level3">
+<h3 id="search-for-program-codes">
+<em>Search for program codes</em><a class="anchor" aria-label="anchor" href="#search-for-program-codes"></a>
+</h3>
+<p><code><a href="../reference/filter_programs.html">filter_programs()</a></code> searches <code>dframe</code> for
+string patterns. Searching for “engineering” yields 2-digit CIP codes
+14, 15, 29, and 51. From the program names, the 2-digit code we want is
+14.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">cip</span>, pattern <span class="op">=</span> <span class="st">"engineering"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                                                              cip6name   cip6</span></span>
+<span><span class="co">#&gt;                                                                &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1:                                             Engineering, General 140101</span></span>
+<span><span class="co">#&gt;   2:                                                  Pre-Engineering 140102</span></span>
+<span><span class="co">#&gt;   3:     Aerospace, Aeronautical and Astronautical, Space Engineering 140201</span></span>
+<span><span class="co">#&gt;   4:          Agricultural, Biological Engineering and Bioengineering 140301</span></span>
+<span><span class="co">#&gt;   5:                                        Architectural Engineering 140401</span></span>
+<span><span class="co">#&gt;   6:                                  Biomedical, Medical Engineering 140501</span></span>
+<span><span class="co">#&gt;  ---                                                                        </span></span>
+<span><span class="co">#&gt; 114:                                Engineering-Related Fields, Other 151599</span></span>
+<span><span class="co">#&gt; 115:                                                   Nanotechnology 151601</span></span>
+<span><span class="co">#&gt; 116:             Engineering Related Technologies, Technicians, Other 159999</span></span>
+<span><span class="co">#&gt; 117:                                       Combat Systems Engineering 290301</span></span>
+<span><span class="co">#&gt; 118:                                            Engineering Acoustics 290303</span></span>
+<span><span class="co">#&gt; 119: Assistive, Augmentative Technology and Rehabiliation Engineering 512312</span></span>
+<span><span class="co">#&gt;                                                     cip4name   cip4</span></span>
+<span><span class="co">#&gt;                                                       &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1:                                    Engineering, General   1401</span></span>
+<span><span class="co">#&gt;   2:                                    Engineering, General   1401</span></span>
+<span><span class="co">#&gt;   3:   Aerospace, Aeronautical and Astronautical Engineering   1402</span></span>
+<span><span class="co">#&gt;   4: Agricultural, Biological Engineering and Bioengineering   1403</span></span>
+<span><span class="co">#&gt;   5:                               Architectural Engineering   1404</span></span>
+<span><span class="co">#&gt;   6:                         Biomedical, Medical Engineering   1405</span></span>
+<span><span class="co">#&gt;  ---                                                               </span></span>
+<span><span class="co">#&gt; 114:                              Engineering-Related Fields   1515</span></span>
+<span><span class="co">#&gt; 115:                                          Nanotechnology   1516</span></span>
+<span><span class="co">#&gt; 116:    Engineering-Related Technologies, Technicians, Other   1599</span></span>
+<span><span class="co">#&gt; 117:                               Military Applied Sciences   2903</span></span>
+<span><span class="co">#&gt; 118:                               Military Applied Sciences   2903</span></span>
+<span><span class="co">#&gt; 119:              Rehabilitation and Therapeutic Professions   5123</span></span>
+<span><span class="co">#&gt;                                              cip2name   cip2</span></span>
+<span><span class="co">#&gt;                                                &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1:                                      Engineering     14</span></span>
+<span><span class="co">#&gt;   2:                                      Engineering     14</span></span>
+<span><span class="co">#&gt;   3:                                      Engineering     14</span></span>
+<span><span class="co">#&gt;   4:                                      Engineering     14</span></span>
+<span><span class="co">#&gt;   5:                                      Engineering     14</span></span>
+<span><span class="co">#&gt;   6:                                      Engineering     14</span></span>
+<span><span class="co">#&gt;  ---                                                        </span></span>
+<span><span class="co">#&gt; 114:                           Engineering Technology     15</span></span>
+<span><span class="co">#&gt; 115:                           Engineering Technology     15</span></span>
+<span><span class="co">#&gt; 116:                           Engineering Technology     15</span></span>
+<span><span class="co">#&gt; 117:                            Military Technologies     29</span></span>
+<span><span class="co">#&gt; 118:                            Military Technologies     29</span></span>
+<span><span class="co">#&gt; 119: Health Professions and Related Clinical Sciences     51</span></span></code></pre></div>
+<p>Subset the full <code>cip</code> for the Engineering code 14 and
+search that result for “civil”. We find that Civil Engineering is
+encoded by the 4-digit code 1408.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">engr_cip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"^14"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">engr_cip</span>, <span class="st">"civil"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                                  cip6name   cip6          cip4name   cip4</span></span>
+<span><span class="co">#&gt;                                    &lt;char&gt; &lt;char&gt;            &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1:             Civil Engineering, General 140801 Civil Engineering   1408</span></span>
+<span><span class="co">#&gt; 2:               Geotechnical Engineering 140802 Civil Engineering   1408</span></span>
+<span><span class="co">#&gt; 3:                 Structural Engineering 140803 Civil Engineering   1408</span></span>
+<span><span class="co">#&gt; 4: Transportation and Highway Engineering 140804 Civil Engineering   1408</span></span>
+<span><span class="co">#&gt; 5:            Water Resources Engineering 140805 Civil Engineering   1408</span></span>
+<span><span class="co">#&gt; 6:               Civil Engineering, Other 140899 Civil Engineering   1408</span></span>
+<span><span class="co">#&gt;       cip2name   cip2</span></span>
+<span><span class="co">#&gt;         &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1: Engineering     14</span></span>
+<span><span class="co">#&gt; 2: Engineering     14</span></span>
+<span><span class="co">#&gt; 3: Engineering     14</span></span>
+<span><span class="co">#&gt; 4: Engineering     14</span></span>
+<span><span class="co">#&gt; 5: Engineering     14</span></span>
+<span><span class="co">#&gt; 6: Engineering     14</span></span></code></pre></div>
+<p>Repeat for “electrical” and obtain the 4-digit code 1410.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">engr_cip</span>, <span class="st">"electrical"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                                                         cip6name   cip6</span></span>
+<span><span class="co">#&gt;                                                           &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1:        Electrical, Electronics and Communications Engineering 141001</span></span>
+<span><span class="co">#&gt; 2:                                 Laser and Optical Engineering 141003</span></span>
+<span><span class="co">#&gt; 3:                                Telecommunications Engineering 141004</span></span>
+<span><span class="co">#&gt; 4: Electrical, Electronics and Communications Engineering, Other 141099</span></span>
+<span><span class="co">#&gt;                                                  cip4name   cip4    cip2name</span></span>
+<span><span class="co">#&gt;                                                    &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1: Electrical, Electronics and Communications Engineering   1410 Engineering</span></span>
+<span><span class="co">#&gt; 2: Electrical, Electronics and Communications Engineering   1410 Engineering</span></span>
+<span><span class="co">#&gt; 3: Electrical, Electronics and Communications Engineering   1410 Engineering</span></span>
+<span><span class="co">#&gt; 4: Electrical, Electronics and Communications Engineering   1410 Engineering</span></span>
+<span><span class="co">#&gt;      cip2</span></span>
+<span><span class="co">#&gt;    &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1:     14</span></span>
+<span><span class="co">#&gt; 2:     14</span></span>
+<span><span class="co">#&gt; 3:     14</span></span>
+<span><span class="co">#&gt; 4:     14</span></span></code></pre></div>
+<p>Continuing in a similar fashion, we find that our programs have the
+following 4-digit codes.</p>
+<ul>
+<li>Civil Engineering 1408</li>
+<li>Electrical Engineering 1410</li>
+<li>Mechanical Engineering 1419<br>
+</li>
+<li>Industrial/Systems Engineering 1427, 1435, 1436, and 1437.</li>
+</ul>
+<p>Note that in general an accredited engineering degree-granting
+program is encoded by a single 4-digit CIP code, but not always. In
+addition, the code or codes used by a degree-granting program can vary
+over time and by institution.</p>
+</div>
+<div class="section level3">
+<h3 id="construct-the-programs-table">
+<em>Construct the programs table</em><a class="anchor" aria-label="anchor" href="#construct-the-programs-table"></a>
+</h3>
+<p>We create a search string of the desired 4-digit codes.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">codes_we_want</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1408"</span>, <span class="st">"^1410"</span>, <span class="st">"^1419"</span>, <span class="st">"^1427"</span>, <span class="st">"^1435"</span>, <span class="st">"^1436"</span>, <span class="st">"^1437"</span><span class="op">)</span></span>
+<span><span class="va">programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">engr_cip</span>, <span class="va">codes_we_want</span><span class="op">)</span></span>
+<span><span class="va">programs</span></span>
+<span><span class="co">#&gt;                                                          cip6name   cip6</span></span>
+<span><span class="co">#&gt;                                                            &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:                                    Civil Engineering, General 140801</span></span>
+<span><span class="co">#&gt;  2:                                      Geotechnical Engineering 140802</span></span>
+<span><span class="co">#&gt;  3:                                        Structural Engineering 140803</span></span>
+<span><span class="co">#&gt;  4:                        Transportation and Highway Engineering 140804</span></span>
+<span><span class="co">#&gt;  5:                                   Water Resources Engineering 140805</span></span>
+<span><span class="co">#&gt;  6:                                      Civil Engineering, Other 140899</span></span>
+<span><span class="co">#&gt; ---                                                                     </span></span>
+<span><span class="co">#&gt; 10: Electrical, Electronics and Communications Engineering, Other 141099</span></span>
+<span><span class="co">#&gt; 11:                                        Mechanical Engineering 141901</span></span>
+<span><span class="co">#&gt; 12:                                           Systems Engineering 142701</span></span>
+<span><span class="co">#&gt; 13:                                        Industrial Engineering 143501</span></span>
+<span><span class="co">#&gt; 14:                                     Manufacturing Engineering 143601</span></span>
+<span><span class="co">#&gt; 15:                                           Operations Research 143701</span></span>
+<span><span class="co">#&gt;                                                   cip4name   cip4    cip2name</span></span>
+<span><span class="co">#&gt;                                                     &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:                                      Civil Engineering   1408 Engineering</span></span>
+<span><span class="co">#&gt;  2:                                      Civil Engineering   1408 Engineering</span></span>
+<span><span class="co">#&gt;  3:                                      Civil Engineering   1408 Engineering</span></span>
+<span><span class="co">#&gt;  4:                                      Civil Engineering   1408 Engineering</span></span>
+<span><span class="co">#&gt;  5:                                      Civil Engineering   1408 Engineering</span></span>
+<span><span class="co">#&gt;  6:                                      Civil Engineering   1408 Engineering</span></span>
+<span><span class="co">#&gt; ---                                                                          </span></span>
+<span><span class="co">#&gt; 10: Electrical, Electronics and Communications Engineering   1410 Engineering</span></span>
+<span><span class="co">#&gt; 11:                                 Mechanical Engineering   1419 Engineering</span></span>
+<span><span class="co">#&gt; 12:                                    Systems Engineering   1427 Engineering</span></span>
+<span><span class="co">#&gt; 13:                                 Industrial Engineering   1435 Engineering</span></span>
+<span><span class="co">#&gt; 14:                              Manufacturing Engineering   1436 Engineering</span></span>
+<span><span class="co">#&gt; 15:                                    Operations Research   1437 Engineering</span></span>
+<span><span class="co">#&gt;       cip2</span></span>
+<span><span class="co">#&gt;     &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:     14</span></span>
+<span><span class="co">#&gt;  2:     14</span></span>
+<span><span class="co">#&gt;  3:     14</span></span>
+<span><span class="co">#&gt;  4:     14</span></span>
+<span><span class="co">#&gt;  5:     14</span></span>
+<span><span class="co">#&gt;  6:     14</span></span>
+<span><span class="co">#&gt; ---       </span></span>
+<span><span class="co">#&gt; 10:     14</span></span>
+<span><span class="co">#&gt; 11:     14</span></span>
+<span><span class="co">#&gt; 12:     14</span></span>
+<span><span class="co">#&gt; 13:     14</span></span>
+<span><span class="co">#&gt; 14:     14</span></span>
+<span><span class="co">#&gt; 15:     14</span></span></code></pre></div>
+<p>While we searched <code>cip</code> using 4-digit codes, it is the
+6-digit codes that we want for matching to the student records later.
+Here we drop all but the 6-digit information.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">programs</span> <span class="op">&lt;-</span> <span class="va">programs</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6name</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">programs</span></span>
+<span><span class="co">#&gt;                                                          cip6name   cip6</span></span>
+<span><span class="co">#&gt;                                                            &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:                                    Civil Engineering, General 140801</span></span>
+<span><span class="co">#&gt;  2:                                      Geotechnical Engineering 140802</span></span>
+<span><span class="co">#&gt;  3:                                        Structural Engineering 140803</span></span>
+<span><span class="co">#&gt;  4:                        Transportation and Highway Engineering 140804</span></span>
+<span><span class="co">#&gt;  5:                                   Water Resources Engineering 140805</span></span>
+<span><span class="co">#&gt;  6:                                      Civil Engineering, Other 140899</span></span>
+<span><span class="co">#&gt;  7:        Electrical, Electronics and Communications Engineering 141001</span></span>
+<span><span class="co">#&gt;  8:                                 Laser and Optical Engineering 141003</span></span>
+<span><span class="co">#&gt;  9:                                Telecommunications Engineering 141004</span></span>
+<span><span class="co">#&gt; 10: Electrical, Electronics and Communications Engineering, Other 141099</span></span>
+<span><span class="co">#&gt; 11:                                        Mechanical Engineering 141901</span></span>
+<span><span class="co">#&gt; 12:                                           Systems Engineering 142701</span></span>
+<span><span class="co">#&gt; 13:                                        Industrial Engineering 143501</span></span>
+<span><span class="co">#&gt; 14:                                     Manufacturing Engineering 143601</span></span>
+<span><span class="co">#&gt; 15:                                           Operations Research 143701</span></span></code></pre></div>
+<p>The program names in <code>cip</code> are usually too long for
+effective use—user-defined names are nearly always required. So we add a
+<code>program</code> variable with values “CE” (Civil Engineering), “EE”
+(electrical), “ME” (Mechanical), and “ISE” (Industrial/Systems
+Engineering).</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">programs</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^1410"</span>, <span class="st">"EE"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^1419"</span>, <span class="st">"ME"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1427|^1435|^1436|^1437"</span><span class="op">)</span>, <span class="st">"ISE"</span>,</span>
+<span>  default <span class="op">=</span> <span class="cn">NA_character_</span></span>
+<span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<p>While we don’t use the original 6-digit program names, we can
+preserve them for reference. Here we abbreviate some of them for a more
+compact display.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">programs</span><span class="op">[</span>, <span class="va">cip6name</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"Engineering"</span>, <span class="st">"Engng"</span>, <span class="va">cip6name</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">programs</span><span class="op">[</span>, <span class="va">cip6name</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"Communications"</span>, <span class="st">"Commns"</span>, <span class="va">cip6name</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">programs</span><span class="op">[</span>, <span class="va">cip6name</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"Electrical, Electronics"</span>, <span class="st">"Elec, Electr,"</span>, <span class="va">cip6name</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">programs</span></span>
+<span><span class="co">#&gt;                                  cip6name   cip6 program</span></span>
+<span><span class="co">#&gt;                                    &lt;char&gt; &lt;char&gt;  &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:                  Civil Engng, General 140801      CE</span></span>
+<span><span class="co">#&gt;  2:                    Geotechnical Engng 140802      CE</span></span>
+<span><span class="co">#&gt;  3:                      Structural Engng 140803      CE</span></span>
+<span><span class="co">#&gt;  4:      Transportation and Highway Engng 140804      CE</span></span>
+<span><span class="co">#&gt;  5:                 Water Resources Engng 140805      CE</span></span>
+<span><span class="co">#&gt;  6:                    Civil Engng, Other 140899      CE</span></span>
+<span><span class="co">#&gt;  7:        Elec, Electr, and Commns Engng 141001      EE</span></span>
+<span><span class="co">#&gt;  8:               Laser and Optical Engng 141003      EE</span></span>
+<span><span class="co">#&gt;  9:              Telecommunications Engng 141004      EE</span></span>
+<span><span class="co">#&gt; 10: Elec, Electr, and Commns Engng, Other 141099      EE</span></span>
+<span><span class="co">#&gt; 11:                      Mechanical Engng 141901      ME</span></span>
+<span><span class="co">#&gt; 12:                         Systems Engng 142701     ISE</span></span>
+<span><span class="co">#&gt; 13:                      Industrial Engng 143501     ISE</span></span>
+<span><span class="co">#&gt; 14:                   Manufacturing Engng 143601     ISE</span></span>
+<span><span class="co">#&gt; 15:                   Operations Research 143701     ISE</span></span></code></pre></div>
+<p>Our programs data frame is complete: 15 six-digit codes are encoded
+using 4 program labels. This data frame can sit in memory (or written to
+file) until we’re ready to filter the blocs by program, joining data
+frames by matching on the <code>cip6</code> variable.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="blocs-and-groupings">Blocs and groupings<a class="anchor" aria-label="anchor" href="#blocs-and-groupings"></a>
 </h2>
-<p>The process up to this point is applicable to most research studies.
-In summary, we have configured our:</p>
-<ul>
-<li>
-<code>programs</code> 6-digit program codes, names, and custom
-labels</li>
-<li>
-<code>student, term,</code> and <code>degree</code> records with
-post-completion terms removed and filtered for data sufficiency and
-degree seeking</li>
-<li>
-<code>population</code> the unique IDs in these records</li>
-</ul>
-<p>The next steps depend on the metric and the groupings we assigned at
-the beginning. The stickiness metric requires these blocs:</p>
+<p>The stickiness metric requires these blocs:</p>
 <ul>
 <li>students with timely completion from the study programs</li>
 <li>students ever enrolled in these programs</li>
@@ -2207,19 +2187,19 @@ the beginning. The stickiness metric requires these blocs:</p>
 blocs and groupings, so what follows is only one of several effective
 solutions. Our approach here is to construct a bloc, filter by program,
 join the demographics, and repeat for the next bloc.</p>
-<p>First, we copy so our work will not affect the source material by
+<p>First, we copy so our work will not affect the baseline material by
 reference.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">student_source</span><span class="op">)</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term_source</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">degree_source</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">student_baseline</span><span class="op">)</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term_baseline</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">degree_baseline</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="timely-graduates">Timely graduates<a class="anchor" aria-label="anchor" href="#timely-graduates"></a>
 </h2>
 <p>We start with the baseline population. Like we did with the original
-source data files, we copy it to protect <code>population</code> from
-changes by reference.</p>
+data files, we copy it to protect <code>population</code> from changes
+by reference.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">population</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
@@ -2320,15 +2300,15 @@ term (or NA for no completion).</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/completion_status.html">completion_status</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
-<span><span class="co">#&gt;                 mcid program timely_term term_degree completion_status</span></span>
-<span><span class="co">#&gt;               &lt;char&gt;  &lt;char&gt;      &lt;char&gt;      &lt;char&gt;            &lt;char&gt;</span></span>
-<span><span class="co">#&gt;    1: MCID3111142965      EE       19941       19901            timely</span></span>
-<span><span class="co">#&gt;    2: MCID3111145102      EE       19941       19893            timely</span></span>
-<span><span class="co">#&gt;    3: MCID3111146537      EE       19931       19913            timely</span></span>
-<span><span class="co">#&gt;   ---                                                                 </span></span>
-<span><span class="co">#&gt; 3429: MCID3112618976      ME       20181       20153            timely</span></span>
-<span><span class="co">#&gt; 3430: MCID3112619484      EE       20181       20133            timely</span></span>
-<span><span class="co">#&gt; 3431: MCID3112641535      ME       20173       20143            timely</span></span></code></pre></div>
+<span><span class="co">#&gt;                 mcid program timely_term completion_term completion_status</span></span>
+<span><span class="co">#&gt;               &lt;char&gt;  &lt;char&gt;      &lt;char&gt;          &lt;char&gt;            &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MCID3111142965      EE       19941           19901            timely</span></span>
+<span><span class="co">#&gt;    2: MCID3111145102      EE       19941           19893            timely</span></span>
+<span><span class="co">#&gt;    3: MCID3111146537      EE       19931           19913            timely</span></span>
+<span><span class="co">#&gt;   ---                                                                     </span></span>
+<span><span class="co">#&gt; 3429: MCID3112618976      ME       20181           20153            timely</span></span>
+<span><span class="co">#&gt; 3430: MCID3112619484      EE       20181           20133            timely</span></span>
+<span><span class="co">#&gt; 3431: MCID3112641535      ME       20173           20143            timely</span></span></code></pre></div>
 <p><em>Summary check.</em>   Numbers of students by completion
 status.</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
@@ -2542,7 +2522,7 @@ program.</p>
 <p>Combining the two data frames (blocs) by rows, we obtain the data
 structure we need for grouping and summarizing.</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">graduates</span>, <span class="va">ever_enrolled</span><span class="op">)</span>, use.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">graduates</span>, <span class="va">ever_enrolled</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                 mcid          race    sex program   bloc</span></span>
 <span><span class="co">#&gt;               &lt;char&gt;        &lt;char&gt; &lt;char&gt;  &lt;char&gt; &lt;char&gt;</span></span>

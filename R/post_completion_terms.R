@@ -85,7 +85,7 @@ post_completion_terms <- function(dframe, midf_table = degree) {
   }
   dframe <- psi(dframe, reqd_dframe_vars)
   midf_table <- psi(midf_table, reqd_table_vars)
-  
+
   # ---------- do the work
 
   # dframe columns to retain and return
@@ -95,7 +95,7 @@ post_completion_terms <- function(dframe, midf_table = degree) {
   # select columns
   dframe <- dframe[, .SD, .SDcols = keep_dframe_vars]
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
-  
+
   # filter NAs in reqd vars
   phi <- function(x, reqd_vars) {
     x <- na.omit(x, cols = reqd_vars)

@@ -85,7 +85,7 @@ data_sufficiency <- function(dframe, midf_table = term) {
   # convert class for analysis
   setDT(dframe)
   setDT(midf_table)
-  
+
   # ensure character vars
   psi <- function(x, sel_cols) {
     x[, names(.SD) := lapply(.SD, as.character), .SDcols = sel_cols]
@@ -102,7 +102,7 @@ data_sufficiency <- function(dframe, midf_table = term) {
   # select columns
   dframe <- dframe[, .SD, .SDcols = keep_dframe_vars]
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
-  
+
   # filter NAs in reqd vars
   phi <- function(x, reqd_vars) {
     x <- na.omit(x, cols = reqd_vars)
