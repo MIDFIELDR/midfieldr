@@ -78,6 +78,7 @@ order_multiway <- function(dframe,
 
   # ---------- declarations
 
+  # optional variable defaults
   method <- method %?% "median"
 
   # bind names for R CMD check
@@ -104,15 +105,15 @@ order_multiway <- function(dframe,
   assert_names(colnames(dframe), must.include = c(quantity, categories))
 
   # class of column values
-  f1 <- function(x) {
+  phi <- function(x) {
     assert_subset(class(x),
       choices = c("character", "factor"),
       empty.ok = FALSE,
       .var.name = "categories"
     )
   }
-  f1(dframe[[categories[1]]])
-  f1(dframe[[categories[2]]])
+  phi(dframe[[categories[1]]])
+  phi(dframe[[categories[2]]])
   qassert(dframe[[quantity]], "n+") # numeric, length 1 or more
 
   # method class, string, length 1, missing prohibited
@@ -133,7 +134,7 @@ order_multiway <- function(dframe,
       empty.ok = FALSE,
       .var.name = "ratio_of"
     )
-    f2 <- function(x) { # the two columns are numeric
+    psi <- function(x) { # the two columns are numeric
       assert_subset(
         class(x),
         choices = c("numeric", "double", "integer"),
@@ -141,8 +142,8 @@ order_multiway <- function(dframe,
         .var.name = "ratio_of"
       )
     }
-    f2(dframe[[ratio_of[1]]])
-    f2(dframe[[ratio_of[2]]])
+    psi(dframe[[ratio_of[1]]])
+    psi(dframe[[ratio_of[2]]])
   }
 
   # ---------- preparation
@@ -160,7 +161,7 @@ order_multiway <- function(dframe,
 
   # prevent overwriting by temporary columns
   temp_vars <- c("idx")
-  temp_vars <- edit_new_col_names(dframe, temp_vars)
+  temp_vars <- utils_edit_colnames(dframe, temp_vars)
   idx <- temp_vars[1]
 
   # add temporary column to restore row order
@@ -198,35 +199,28 @@ order_multiway <- function(dframe,
     by = CATEGORY,
     env = list(
       METHOD_ORDER = method_order[jj],
-      QUANTITY = quantity,
       CATEGORY = categories[jj],
       NUM = ratio_of[1],
-      DEN = ratio_of[2]
+      DEN = ratio_of[2],
+      QUANTITY = quantity
     )
     ]
     # order the factor levels
     dframe[, CATEGORY := reorder(CATEGORY, METHOD_ORDER),
       env = list(
-        CATEGORY = categories[jj],
-        METHOD_ORDER = method_order[jj]
+        METHOD_ORDER = method_order[jj],
+        CATEGORY = categories[jj]
       )
     ]
   }
 
   # ---------- prepare to return
-
-  # restore row order
-  setkeyv(dframe, idx)
-
-  # drop temporary columns
-  dframe[, IDX := NULL, env = list(IDX = idx)]
-
-  # ensure unique rows
-  dframe <- unique(dframe)
-
-  # restore class
-  setattr(dframe, "class", prior_class)
-
+  # restore row and column order, select return columns, restore class
+  dframe <- utils_prepare_return(dframe,
+    idx,
+    returned_vars = NULL,
+    prior_class
+  )
   # done
   dframe[]
 }

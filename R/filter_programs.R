@@ -65,13 +65,12 @@ filter_programs <- function(dframe, pattern, ..., negate = FALSE) {
   }), ]
 
   # ---------- prepare to return
-
-  # ensure unique rows
-  dframe <- unique(dframe)
-
-  # restore class
-  setattr(dframe, "class", prior_class)
-
+  # restore row and column order, select return columns, restore class
+  dframe <- utils_prepare_return(dframe,
+    idx = NULL,
+    returned_vars = NULL,
+    prior_class
+  )
   # done
   dframe[]
 }

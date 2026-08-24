@@ -75,11 +75,11 @@ Definitions critical to understanding our data manipulation process.
 ``` r
 
 # packages
-library("midfieldr")    # working with student records
+library("midfieldr") # working with student records
 library("midfielddata") # practice data
-library("data.table")   # data manipulation
-library("gt")           # tables
-library("ggplot2")      # charts
+library("data.table") # data manipulation
+library("gt") # tables
+library("ggplot2") # charts
 ```
 
 We load three of the midfielddata data tables. This study does not

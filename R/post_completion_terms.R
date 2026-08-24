@@ -56,16 +56,6 @@ post_completion_terms <- function(dframe, midf_table = degree) {
   IDX <- NULL
   TERM_VAR <- NULL
 
-  # ---------- base R checks (all data frame classes)
-
-  # required columns exist
-  assert_names(colnames(dframe), must.include = reqd_dframe_vars)
-  assert_names(colnames(midf_table), must.include = reqd_table_vars)
-
-  # class of required columns
-  for (var in reqd_dframe_vars) qassert(dframe[[var]], c("s+", "f+"))
-  for (var in reqd_table_vars) qassert(midf_table[[var]], c("s+", "f+"))
-
   # ---------- preparation
 
   # to restore class except grouped tibbles
@@ -75,38 +65,23 @@ post_completion_terms <- function(dframe, midf_table = degree) {
   dframe <- copy(dframe)
   midf_table <- copy(midf_table)
 
-  # convert class for analysis
-  setDT(dframe)
-  setDT(midf_table)
-
-  # ensure character vars
-  psi <- function(x, sel_cols) {
-    x[, names(.SD) := lapply(.SD, as.character), .SDcols = sel_cols]
-  }
-  dframe <- psi(dframe, reqd_dframe_vars)
-  midf_table <- psi(midf_table, reqd_table_vars)
+  # setup with setDT() and unique() plus checks on required variables
+  dframe <- utils_reqd_variables(dframe, reqd_dframe_vars)
+  midf_table <- utils_reqd_variables(midf_table, reqd_table_vars)
 
   # ---------- do the work
 
-  # dframe columns to retain and return
-  keep_dframe_vars <- setdiff(colnames(dframe), added_vars)
-  return_vars <- c(keep_dframe_vars, added_vars)
+  # dframe columns to protect and return
+  protected_vars <- setdiff(colnames(dframe), added_vars)
+  returned_vars <- c(protected_vars, added_vars)
 
   # select columns
-  dframe <- dframe[, .SD, .SDcols = keep_dframe_vars]
+  dframe <- dframe[, .SD, .SDcols = protected_vars]
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
-
-  # filter NAs in reqd vars
-  phi <- function(x, reqd_vars) {
-    x <- na.omit(x, cols = reqd_vars)
-    x <- unique(x)
-  }
-  dframe <- phi(dframe, reqd_dframe_vars)
-  midf_table <- phi(midf_table, reqd_table_vars)
 
   # prevent overwriting by temporary columns
   temp_vars <- c("idx")
-  temp_vars <- edit_new_col_names(dframe, temp_vars)
+  temp_vars <- utils_edit_colnames(dframe, temp_vars)
   idx <- temp_vars[1]
 
   # add temporary column to restore row order
@@ -133,18 +108,8 @@ post_completion_terms <- function(dframe, midf_table = degree) {
   ]
 
   # ---------- prepare to return
-
-  # restore row order
-  setkeyv(dframe, idx)
-
-  # drop temporary cols, restore original col order
-  dframe <- dframe[, .SD, .SDcols = return_vars]
-
-  # ensure unique rows
-  dframe <- unique(dframe)
-
-  # restore class
-  setattr(dframe, "class", prior_class)
+  # restore row and column order, select return columns, restore class
+  dframe <- utils_prepare_return(dframe, idx, returned_vars, prior_class)
 
   # done
   dframe[]

@@ -97,7 +97,7 @@ prep_fye_mice <- function(m_student, m_term, fye_cip = NULL) {
   reqd_student_vars <- c("mcid", "race", "sex")
   reqd_term_vars <- c("mcid", "institution", "term", "cip6")
   reqd_fye_cip_vars <- c("institution", "fye_cip6")
-  return_vars <- c("mcid", "institution", "race", "sex", "proxy")
+  returned_vars <- c("mcid", "institution", "race", "sex", "proxy")
 
   # bind names for R CMD check
   fye_cip6 <- NULL
@@ -107,16 +107,6 @@ prep_fye_mice <- function(m_student, m_term, fye_cip = NULL) {
 
   # data frame with at least one column, missing values prohibited
   qassert(fye_cip, "D+")
-
-  # required columns are present
-  assert_names(colnames(m_student), must.include = reqd_student_vars)
-  assert_names(colnames(m_term), must.include = reqd_term_vars)
-  assert_names(colnames(fye_cip), must.include = reqd_fye_cip_vars)
-
-  # class of required columns, string or factor OK
-  for (var in reqd_student_vars) qassert(m_student[[var]], c("s+", "f+"))
-  for (var in reqd_term_vars) qassert(m_term[[var]], c("s+", "f+"))
-  for (var in reqd_fye_cip_vars) qassert(fye_cip[[var]], c("s+", "f+"))
 
   # FYE CIP codes
   codes_var <- unique(fye_cip[["fye_cip6"]])
@@ -147,18 +137,10 @@ prep_fye_mice <- function(m_student, m_term, fye_cip = NULL) {
   m_term <- copy(m_term)
   fye_cip <- copy(fye_cip)
 
-  # convert class for analysis
-  setDT(m_student)
-  setDT(m_term)
-  setDT(fye_cip)
-
-  # ensure character vars
-  psi <- function(x, sel_cols) {
-    x[, names(.SD) := lapply(.SD, as.character), .SDcols = sel_cols]
-  }
-  m_student <- psi(m_student, reqd_student_vars)
-  m_term <- psi(m_term, reqd_term_vars)
-  fye_cip <- psi(fye_cip, reqd_fye_cip_vars)
+  # setup with setDT() and unique() plus checks on required variables
+  m_student <- utils_reqd_variables(m_student, reqd_student_vars)
+  m_term <- utils_reqd_variables(m_term, reqd_term_vars)
+  fye_cip <- utils_reqd_variables(fye_cip, reqd_fye_cip_vars)
 
   # ---------- do the work
 
@@ -166,15 +148,6 @@ prep_fye_mice <- function(m_student, m_term, fye_cip = NULL) {
   m_student <- m_student[, .SD, .SDcols = reqd_student_vars]
   m_term <- m_term[, .SD, .SDcols = reqd_term_vars]
   fye_cip <- fye_cip[, .SD, .SDcols = reqd_fye_cip_vars]
-
-  # filter NAs in reqd vars
-  phi <- function(x, reqd_vars) {
-    x <- na.omit(x, cols = reqd_vars)
-    x <- unique(x)
-  }
-  m_student <- phi(m_student, reqd_student_vars)
-  m_term <- phi(m_term, reqd_term_vars)
-  fye_cip <- phi(fye_cip, reqd_fye_cip_vars)
 
   # limit to degree-seeking
   m_term <- m_student[m_term, on = "mcid", nomatch = NULL]
@@ -208,16 +181,12 @@ prep_fye_mice <- function(m_student, m_term, fye_cip = NULL) {
   fye[, names(.SD) := lapply(.SD, factor), .SDcols = factor_cols]
 
   # ---------- prepare to return
-
-  # order columns, drop key
-  fye <- fye[, .SD, .SDcols = return_vars]
-
-  # ensure unique rows
-  fye <- unique(fye)
-
-  # restore class
-  setattr(fye, "class", prior_class)
-
+  # restore row and column order, select return columns, restore class
+  fye <- utils_prepare_return(fye,
+    idx = NULL,
+    returned_vars,
+    prior_class
+  )
   # done
   fye[]
 }

@@ -28,6 +28,9 @@
 #'
 select_basic_cols <- function(dframe) {
   #
+  # class of required data frames, at least one column, missing values OK
+  qassert(dframe, "d+")
+
   # ---------- declarations
 
   # variables, by table, required by one or more midfieldr functions
@@ -55,11 +58,6 @@ select_basic_cols <- function(dframe) {
   # bind names for R CMD check
   # NA
 
-  # ---------- base R checks (all data frame classes)
-
-  # data frame assessment
-  qassert(dframe, "d+")
-
   # ---------- preparation
 
   # to restore class except grouped tibbles
@@ -73,6 +71,7 @@ select_basic_cols <- function(dframe) {
 
   # ---------- do the work
 
+  # determine which table we are working with
   input_cols <- colnames(dframe)
 
   # number of dframe column names in common with the unique sets
@@ -100,16 +99,15 @@ select_basic_cols <- function(dframe) {
   }
 
   # determine the required columns that exist in dframe
-  return_vars <- intersect(input_cols, reqd_var_set)
-
-  # select the columns
-  dframe <- dframe[, .SD, .SDcols = return_vars]
+  returned_vars <- intersect(input_cols, reqd_var_set)
 
   # ---------- prepare to return
-
-  # restore class
-  setattr(dframe, "class", prior_class)
-
+  # restore row and column order, select return columns, restore class
+  dframe <- utils_prepare_return(dframe,
+    idx = NULL,
+    returned_vars,
+    prior_class
+  )
   # done
   dframe[]
 }
