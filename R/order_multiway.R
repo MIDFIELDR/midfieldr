@@ -73,9 +73,17 @@ order_multiway <- function(dframe,
                            method = NULL,
                            ratio_of = NULL) {
   #
-  # class of required data frames, at least one column, missing values OK
+  # ---------- initial assertions
+  
+  # data frames
   qassert(dframe, "d+")
 
+  # arguments after ... must be named
+  wrapr::stop_if_dot_args(
+    substitute(list(...)),
+    "Arguments after ... must be named, as in arg = val."
+  )
+  
   # ---------- declarations
 
   # optional variable defaults
@@ -89,13 +97,7 @@ order_multiway <- function(dframe,
   METHOD_ORDER <- NULL
   QUANTITY <- NULL
 
-  # ---------- base R checks (all data frame classes)
-
-  # arguments after ... must be named
-  wrapr::stop_if_dot_args(
-    substitute(list(...)),
-    "Arguments after ... must be named, as in arg = val."
-  )
+  # ---------- variable assertions
 
   # class of required arguments
   qassert(quantity, "S1") # string, length 1, missing prohibited
@@ -156,17 +158,17 @@ order_multiway <- function(dframe,
 
   # convert class for analysis
   setDT(dframe)
-
-  # ---------- do the work
-
+  
   # prevent overwriting by temporary columns
   temp_vars <- c("idx")
   temp_vars <- utils_edit_colnames(dframe, temp_vars)
   idx <- temp_vars[1]
 
-  # add temporary column to restore row order
+  # for restoring row order
   dframe[, IDX := .I, env = list(IDX = idx)]
 
+  # ---------- do the work
+  
   # convert categories to factors
   dframe[, (categories) := lapply(.SD, as.factor), .SDcols = categories]
 
@@ -221,6 +223,7 @@ order_multiway <- function(dframe,
     returned_vars = NULL,
     prior_class
   )
+  
   # done
   dframe[]
 }

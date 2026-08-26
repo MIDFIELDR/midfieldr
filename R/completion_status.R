@@ -31,7 +31,9 @@
 #'
 completion_status <- function(dframe, midf_table = degree) {
   #
-  # class of required data frames, at least one column, missing values OK
+  # ---------- initial assertions
+  
+  # data frames
   qassert(dframe, "d+")
   qassert(midf_table, "d+")
 
@@ -45,21 +47,24 @@ completion_status <- function(dframe, midf_table = degree) {
   # bind names for R CMD check
   completion_term <- NULL
   IDX <- NULL
+  
+  # ---------- variable assertions
+  
+  utils_check_reqd_vars(dframe, reqd_dframe_vars)
+  utils_check_reqd_vars(midf_table, reqd_table_vars)
 
   # ---------- preparation
 
-  # to restore class except grouped tibbles
+  # for restoring class except grouped tibbles
   prior_class <- setdiff(class(dframe), "grouped_df")
 
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   midf_table <- copy(midf_table)
 
-  # setup with setDT() and unique() plus checks on required variables
-  dframe <- utils_reqd_variables(dframe, reqd_dframe_vars)
-  midf_table <- utils_reqd_variables(midf_table, reqd_table_vars)
-
-  # ---------- do the work
+  # setDT then reqd_vars as.char, na.omit, unique
+  dframe <- utils_prep_DT(dframe, reqd_dframe_vars)
+  midf_table <- utils_prep_DT(midf_table, reqd_table_vars)
 
   # dframe columns to protect and return
   protected_vars <- setdiff(colnames(dframe), added_vars)
@@ -74,9 +79,11 @@ completion_status <- function(dframe, midf_table = degree) {
   temp_vars <- utils_edit_colnames(dframe, temp_vars)
   idx <- temp_vars[1]
 
-  # add temporary column to restore row order
+  # for restoring row order
   dframe[, IDX := .I, env = list(IDX = idx)]
 
+  # ---------- do the work
+  
   # edit name before join
   setnames(midf_table, old = "term_degree", new = "completion_term")
   dframe <- midf_table[dframe, on = "mcid"]

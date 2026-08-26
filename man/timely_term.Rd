@@ -49,18 +49,18 @@ Determine the \emph{timely completion term} for each student in a data frame
 and add columns that support the findings.
 }
 \details{
-Completing an academic program in a timely manner means that a student
+Completing an academic program in a "timely" manner means that a student
 completes the requirements for a degree within a set time span, typically
 4, 6, or 8 years after admission depending on the definition adopted in a
-particular study. The term at the end of that span is the
+particular study. The final term of that span is the
 \emph{timely completion term.}
 
-Our heuristic assigns a time span for timely completion to every student
-(default is 6 academic years). For students admitted at second-year level
-or higher, the span is reduced by one academic year for each full year the
-student is assumed to have completed. The adjusted span is added to their
-initial term at an institution to create the \code{timely_term} value for each
-observation.
+Our heuristic assigns a time span of 6 academic years for timely completion
+(other values can be assigned via the \code{span} argument). For students
+admitted at second-year level or higher, the span value is reduced by
+one academic year for each full year the student is assumed to have
+completed. The adjusted span is added to their initial term at an
+institution to create the \code{timely_term} value for each observation.
 }
 \examples{
 # Assign toy data sets

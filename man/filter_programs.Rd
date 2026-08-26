@@ -4,7 +4,7 @@
 \alias{filter_programs}
 \title{Choose rows of CIP data}
 \usage{
-filter_programs(dframe, pattern, ..., negate = FALSE)
+filter_programs(dframe, pattern, ..., negate = NULL)
 }
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) with CIP program names and codes, e.g., the

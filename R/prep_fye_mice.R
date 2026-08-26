@@ -93,10 +93,18 @@ prep_fye_mice <- function(m_student,
                           ...,
                           alt_fye = NULL) {
   #
-  # data frame with at least one column, missing values acceptable
+  # ---------- initial assertions
+  
+  # data frames
   qassert(m_student, "d+")
   qassert(m_term, "d+")
 
+  # arguments after ... must be named
+  wrapr::stop_if_dot_args(
+    substitute(list(...)),
+    "Arguments after ... must be named, as in arg = val."
+  )
+  
   # ---------- declarations
 
   # active column names
@@ -105,28 +113,24 @@ prep_fye_mice <- function(m_student,
   reqd_fye_alt_vars <- c("institution", "alt_cip")
   returned_vars <- c("mcid", "institution", "race", "sex", "proxy")
 
-  # bind names for R CMD check
-  alt_cip <- NULL
-  proxy <- NULL
-
-  # optional arguments
+  # optional defaults
   fye_cip <- fye_cip %?% "140102"
   alt_fye <- alt_fye %?% data.frame(
     institution = character(),
     alt_cip = character()
   )
-
-  # ---------- base R checks (all data frame classes)
-
-  # arguments after ... must be named
-  wrapr::stop_if_dot_args(
-    substitute(list(...)),
-    "Arguments after ... must be named, as in arg = val."
-  )
-
-  # optional variables
-  qassert(fye_cip, "s+")
-  qassert(alt_fye, "D+")
+  
+  # bind names for R CMD check
+  fye_code <- NULL
+  proxy <- NULL
+  
+  # ---------- variable assertions
+  
+  utils_check_reqd_vars(m_student, reqd_student_vars)
+  utils_check_reqd_vars(m_term, reqd_term_vars)
+  utils_check_reqd_vars(alt_fye, reqd_fye_alt_vars)
+  qassert(fye_cip, "s1") # string, length 1
+  qassert(alt_fye, "d*") # data frame, any length
 
   # FYE CIP codes
   codes_var <- unique(c(fye_cip, alt_fye[["alt_cip"]]))
@@ -148,57 +152,54 @@ prep_fye_mice <- function(m_student,
 
   # ---------- preparation
 
-  # to restore class except grouped tibbles
+  # for restoring class except grouped tibbles
   prior_class <- setdiff(class(m_student), "grouped_df")
 
   # prevent by-ref changes propagating to global env
   m_student <- copy(m_student)
   m_term <- copy(m_term)
-
-  # setup with setDT() and unique() plus checks on required variables
-  m_student <- utils_reqd_variables(m_student, reqd_student_vars)
-  m_term <- utils_reqd_variables(m_term, reqd_term_vars)
-
-  # alt_fye only if user supplied rows
-  if (nrow(alt_fye) > 0) {
-    alt_fye <- copy(alt_fye)
-    alt_fye <- utils_reqd_variables(alt_fye, reqd_fye_alt_vars)
-    alt_fye <- alt_fye[, .SD, .SDcols = reqd_fye_alt_vars]
-  }
-  setDT(alt_fye)
-
-  # ---------- do the work
+  alt_fye <- copy(alt_fye)
+  
+  # setDT then reqd_vars as.char, na.omit, unique
+  m_student <- utils_prep_DT(m_student, reqd_student_vars)
+  m_term <- utils_prep_DT(m_term, reqd_term_vars)
+  alt_fye <- utils_prep_DT(alt_fye, reqd_fye_alt_vars)
 
   # select columns
   m_student <- m_student[, .SD, .SDcols = reqd_student_vars]
   m_term <- m_term[, .SD, .SDcols = reqd_term_vars]
-
+  alt_fye <- alt_fye[, .SD, .SDcols = reqd_fye_alt_vars]
+  
+  # ---------- do the work
+  
   # limit to degree-seeking
   m_term <- m_student[m_term, on = "mcid", nomatch = NULL]
 
   # construct data frame of institutions
-  m_inst <- unique(m_term[["institution"]])
+  m_inst <- m_term[, .(institution)]
+  m_inst <- unique(m_inst)
 
-  # left-join alt_fye CIPs to institutions
+  # left-join, add fye_code column to institutions
   m_inst <- alt_fye[m_inst, on = "institution"]
-
+  setnames(m_inst, old = "alt_cip", new = "fye_code")
+  
   # replace CIP NAs with standard FYE code
-  m_inst[is.na(alt_cip), alt_cip := fye_cip]
-
+  m_inst[is.na(fye_code), fye_code := fye_cip]
+  
   # construct ever in engineering
   ever_engr <- m_term[cip6 %like% "^14"]
 
-  # join alt_cip by institution
+  # join fye_code by institution
   ever_engr <- m_inst[ever_engr, on = "institution"]
 
-  # ever in FYE, one row per ID
-  ever_fye <- ever_engr[cip6 == alt_cip, .(mcid, race, sex, institution)]
+  # ever in FYE, one row per ID (drop term and cip codes)
+  ever_fye <- ever_engr[cip6 == fye_code, .(mcid, race, sex, institution)]
   ever_fye <- unique(ever_fye)
 
-  # fye IDs ever in another engineering program
+  # fye ever in a non-FYE engr major
   ever_fye_ID <- ever_fye[, .(mcid)]
   fye_engr <- ever_fye_ID[ever_engr, on = "mcid", nomatch = NULL]
-  fye_engr <- fye_engr[cip6 != alt_cip, .(mcid, term, cip6)]
+  fye_engr <- fye_engr[cip6 != fye_code, .(mcid, term, cip6)]
 
   # proxy is first non-FYE engr major
   setkeyv(fye_engr, c("mcid", "term"))
@@ -210,7 +211,7 @@ prep_fye_mice <- function(m_student,
   fye <- engr_proxy[ever_fye, on = "mcid"]
 
   # convert to factors to prepare for mice()
-  factor_cols <- c("race", "sex", "institution", "proxy")
+  factor_cols <- setdiff(returned_vars, "mcid")
   fye[, names(.SD) := lapply(.SD, factor), .SDcols = factor_cols]
 
   # ---------- prepare to return

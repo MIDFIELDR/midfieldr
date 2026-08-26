@@ -49,6 +49,7 @@ test_timely_term <- function() {
     test_DT <- wrapr::build_frame(
         "mcid"        , "term" , "level"              |
             "A1_OK"     , "19881", "01 First-year"      |
+            "termA"     , "1988A", "01 First-year"      |
             "A1_OK"     , "19891", "02 Second-year"     |
             "A1_OK"     , "19901", "03 Third-year"      |
             "A1_OK"     , "19913", "04 Fourth-year"     |
@@ -56,6 +57,7 @@ test_timely_term <- function() {
             "A2_OK_tfr" , "19891", "03 Third-year"      |
             "A2_OK_tfr" , "19903", "04 Fourth-year"     |
             "A3_OK_tfr" , "19891", "03 Third-year"      |
+            "termB"     , "19891", "03 Third-year"      |
             "A3_OK_tfr" , "19903", "04 Fourth-year"     |
             "A4_OK_late", "19891", "01 First-year"      |
             "A4_OK_late", "19901", "02 Second-year"     |
@@ -103,6 +105,8 @@ test_timely_term <- function() {
     expect_equal("19993", DT[mcid %like% "B3", (tt)])
     expect_equal("19893", DT[mcid %like% "C1", (tt)])
     expect_equal("19913", DT[mcid %like% "C2", (tt)])
+    expect_equal("19933", DT[mcid %like% "termA", (tt)])
+    expect_equal("19923", DT[mcid %like% "termB", (tt)])
     
     # correct answers with different span
     DT <- timely_term(dframe, term, span = 5)
@@ -156,6 +160,9 @@ test_timely_term <- function() {
     x <- timely_term(dframe = dframe, midf_table = term)
     y <- timely_term(dframe, term)
     expect_equal(x, y)
+    
+    # correct when term = A, B, C, etc. 
+    
     
     # ---------- ensuring unique names of internal columns
     

@@ -25,25 +25,33 @@
 #' @example man/examples/exa_filter_programs.R
 #' @export
 #'
-filter_programs <- function(dframe, pattern, ..., negate = FALSE) {
+filter_programs <- function(dframe, pattern, ..., negate = NULL) {
   #
-  # class of required data frame, at least one column, missing values OK
+  # ---------- initial assertions
+  
+  # data frames
   qassert(dframe, "d+")
-
-  # ---------- base R checks (all data frame classes)
-
+  
+  # arguments after ... must be named
   wrapr::stop_if_dot_args(
     substitute(list(...)),
-    "Arguments after ... must be named, e.g., arg = val."
+    "Arguments after ... must be named, as in arg = val."
   )
+  
+  # ---------- declarations
+  
+  # optional defaults
+  negate <- negate %?% FALSE
+  
+  # ---------- variable assertions
 
-  # class of required arguments, missing not allowed
+  # class, missing not allowed
   qassert(pattern, "S+") # character, length at least 1
   qassert(negate, "B1") # Boolean, length = 1
 
   # ---------- preparation
 
-  # to restore class except grouped tibbles
+  # for restoring class except grouped tibbles
   prior_class <- setdiff(class(dframe), "grouped_df")
 
   # prevent by-ref changes propagating to global env
@@ -71,6 +79,7 @@ filter_programs <- function(dframe, pattern, ..., negate = FALSE) {
     returned_vars = NULL,
     prior_class
   )
+  
   # done
   dframe[]
 }

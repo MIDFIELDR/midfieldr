@@ -45,7 +45,9 @@
 #'
 data_sufficiency <- function(dframe, midf_table = term) {
   #
-  # class of required data frames, at least one column, missing values OK
+  # ---------- initial assertions
+  
+  # data frames
   qassert(dframe, "d+")
   qassert(midf_table, "d+")
 
@@ -63,6 +65,11 @@ data_sufficiency <- function(dframe, midf_table = term) {
   LOWER_LIMIT <- NULL
   UPPER_LIMIT <- NULL
 
+  # ---------- variable assertions
+  
+  utils_check_reqd_vars(dframe, reqd_dframe_vars)
+  utils_check_reqd_vars(midf_table, reqd_table_vars)
+  
   # ---------- preparation
 
   # to restore class except grouped tibbles
@@ -72,11 +79,9 @@ data_sufficiency <- function(dframe, midf_table = term) {
   dframe <- copy(dframe)
   midf_table <- copy(midf_table)
 
-  # setup with setDT() and unique() plus checks on required variables
-  dframe <- utils_reqd_variables(dframe, reqd_dframe_vars)
-  midf_table <- utils_reqd_variables(midf_table, reqd_table_vars)
-
-  # ---------- do the work
+  # setDT then reqd_vars as.char, na.omit, unique
+  dframe <- utils_prep_DT(dframe, reqd_dframe_vars)
+  midf_table <- utils_prep_DT(midf_table, reqd_table_vars)
 
   # dframe columns to protect and return
   protected_vars <- setdiff(colnames(dframe), added_vars)
@@ -94,9 +99,11 @@ data_sufficiency <- function(dframe, midf_table = term) {
   upper_limit <- temp_vars[3]
   institution <- temp_vars[4]
 
-  # add temporary column to restore row order
+  # for restoring row order
   dframe[, IDX := .I, env = list(IDX = idx)]
 
+  # ---------- do the work
+  
   # add institution data range limits
   midf_table[, `:=`(
     LOWER_LIMIT = min(term),

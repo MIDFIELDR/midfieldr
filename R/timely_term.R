@@ -5,18 +5,18 @@
 #' Determine the *timely completion term* for each student in a data frame
 #' and add columns that support the findings.
 #'
-#' Completing an academic program in a timely manner means that a student
+#' Completing an academic program in a "timely" manner means that a student
 #' completes the requirements for a degree within a set time span, typically
 #' 4, 6, or 8 years after admission depending on the definition adopted in a
-#' particular study. The term at the end of that span is the
+#' particular study. The final term of that span is the
 #' *timely completion term.*
 #'
-#' Our heuristic assigns a time span for timely completion to every student
-#' (default is 6 academic years). For students admitted at second-year level
-#' or higher, the span is reduced by one academic year for each full year the
-#' student is assumed to have completed. The adjusted span is added to their
-#' initial term at an institution to create the `timely_term` value for each
-#' observation.
+#' Our heuristic assigns a time span of 6 academic years for timely completion 
+#' (other values can be assigned via the `span` argument). For students 
+#' admitted at second-year level or higher, the span value is reduced by 
+#' one academic year for each full year the student is assumed to have 
+#' completed. The adjusted span is added to their initial term at an 
+#' institution to create the `timely_term` value for each observation.
 #'
 #' @param dframe `r dframe` with required variable `{mcid}.`
 #' @param midf_table `r midfield_x("term")` with required variables
@@ -39,20 +39,27 @@
 #'      completion adjusted for a student's initial level.
 #'   - `timely_term` &nbsp; Character. Latest term by which program completion
 #'      would be considered timely. Encoded `YYYYT.`
-#'
 #' @example man/examples/exa_timely_term.R
 #' @export
-#'
+#' 
 timely_term <- function(dframe,
                         midf_table = term,
                         ...,
                         sched_span = NULL,
                         span = NULL) {
   #
-  # class of required data frames, at least one column, missing values OK
+  # ---------- initial assertions
+  
+  # data frames
   qassert(dframe, "d+")
   qassert(midf_table, "d+")
 
+  # arguments after ... must be named
+  wrapr::stop_if_dot_args(
+    substitute(list(...)),
+    "Arguments after ... must be named, as in arg = val."
+  )
+  
   # ---------- declarations
 
   # active column names
@@ -60,7 +67,11 @@ timely_term <- function(dframe,
   reqd_table_vars <- c("mcid", "term", "level")
   added_vars <- c("term_i", "level_i", "adj_span", "timely_term")
 
-  # bind names due to NSE notes in R CMD check
+  # optional defaults
+  span <- span %?% 6
+  sched_span <- sched_span %?% 4
+  
+  # bind names for R CMD check
   adj_span <- NULL
   level_i <- NULL
   term_i <- NULL
@@ -68,37 +79,26 @@ timely_term <- function(dframe,
   IDX <- NULL
   TERM_CODE <- NULL
   YYYY <- NULL
-
-  # optional variable defaults
-  span <- span %?% 6
-  sched_span <- sched_span %?% 4
-
-  # ---------- base R checks (all data frame classes)
-
-  # arguments after ... must be named
-  wrapr::stop_if_dot_args(
-    substitute(list(...)),
-    "Arguments after ... must be named, as in arg = val."
-  )
-
-  # optional variables
+  
+  # ---------- variable assertions
+  
+  utils_check_reqd_vars(dframe, reqd_dframe_vars)
+  utils_check_reqd_vars(midf_table, reqd_table_vars)
   assert_int(sched_span, lower = 0)
   assert_int(span, lower = sched_span)
-
+  
   # ---------- preparation
 
-  # to restore class except grouped tibbles
+  # for restoring class except grouped tibbles
   prior_class <- setdiff(class(dframe), "grouped_df")
 
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   midf_table <- copy(midf_table)
 
-  # setup with setDT() and unique() plus checks on required variables
-  dframe <- utils_reqd_variables(dframe, reqd_dframe_vars)
-  midf_table <- utils_reqd_variables(midf_table, reqd_table_vars)
-
-  # ---------- do the work
+  # setDT then reqd_vars as.char, na.omit, unique
+  dframe <- utils_prep_DT(dframe, reqd_dframe_vars)
+  midf_table <- utils_prep_DT(midf_table, reqd_table_vars)
 
   # dframe columns to protect and return
   protected_vars <- setdiff(colnames(dframe), added_vars)
@@ -108,7 +108,7 @@ timely_term <- function(dframe,
   dframe <- dframe[, .SD, .SDcols = protected_vars]
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
 
-  # make temporary colnames unique to prevent overwriting
+  # prevent overwriting by temporary columns
   temp_vars <- c("idx", "yyyy", "term_code", "delta")
   temp_vars <- utils_edit_colnames(dframe, temp_vars)
   idx <- temp_vars[1]
@@ -116,9 +116,11 @@ timely_term <- function(dframe,
   term_code <- temp_vars[3]
   delta <- temp_vars[4]
 
-  # add temporary column to restore row order
+  # for restoring row order
   dframe[, IDX := .I, env = list(IDX = idx)]
 
+  # ---------- do the work
+  
   # edit names before joining
   setnames(midf_table,
     old = c("term", "level"),
@@ -149,10 +151,10 @@ timely_term <- function(dframe,
   ]
 
   # for month terms, (letters A, B, ..., a, b, ...), set first term to zero
-  dframe <- dframe[TERM_CODE %chin% c(LETTERS, letters), TERM_CODE := "0",
+  dframe[TERM_CODE %chin% c(LETTERS, letters), TERM_CODE := "0",
     env = list(TERM_CODE = term_code)
   ]
-
+  
   # make year and term numeric
   dframe[, names(.SD) := lapply(.SD, as.numeric), .SDcols = c(yyyy, term_code)]
 

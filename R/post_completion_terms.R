@@ -34,17 +34,18 @@
 #'
 post_completion_terms <- function(dframe, midf_table = degree) {
   #
-  # class of required data frames, at least one column, missing values OK
+  # ---------- initial assertions
+  
+  # data frames
   qassert(dframe, "d+")
   qassert(midf_table, "d+")
+
+  # ---------- declarations
 
   # determine name of term variable
   term_var_choices <- c("term", "term_course", "term_degree")
   term_var <- intersect(colnames(dframe), term_var_choices)
-  qassert(term_var, "s1")
-
-  # ---------- declarations
-
+  
   # active column names
   reqd_dframe_vars <- c("mcid", term_var)
   reqd_table_vars <- c("mcid", "term_degree")
@@ -56,20 +57,24 @@ post_completion_terms <- function(dframe, midf_table = degree) {
   IDX <- NULL
   TERM_VAR <- NULL
 
+  # ---------- variable assertions
+  
+  utils_check_reqd_vars(dframe, reqd_dframe_vars)
+  utils_check_reqd_vars(midf_table, reqd_table_vars)
+  qassert(term_var, "s1")
+  
   # ---------- preparation
 
-  # to restore class except grouped tibbles
+  # for restoring class except grouped tibbles
   prior_class <- setdiff(class(dframe), "grouped_df")
 
   # prevent by-ref changes propagating to global env
   dframe <- copy(dframe)
   midf_table <- copy(midf_table)
 
-  # setup with setDT() and unique() plus checks on required variables
-  dframe <- utils_reqd_variables(dframe, reqd_dframe_vars)
-  midf_table <- utils_reqd_variables(midf_table, reqd_table_vars)
-
-  # ---------- do the work
+  # setDT then reqd_vars as.char, na.omit, unique
+  dframe <- utils_prep_DT(dframe, reqd_dframe_vars)
+  midf_table <- utils_prep_DT(midf_table, reqd_table_vars)
 
   # dframe columns to protect and return
   protected_vars <- setdiff(colnames(dframe), added_vars)
@@ -84,9 +89,11 @@ post_completion_terms <- function(dframe, midf_table = degree) {
   temp_vars <- utils_edit_colnames(dframe, temp_vars)
   idx <- temp_vars[1]
 
-  # add temporary column to restore row order
+  # for restoring row order
   dframe[, IDX := .I, env = list(IDX = idx)]
 
+  # ---------- do the work
+  
   # edit name before join
   setnames(midf_table, old = "term_degree", new = "first_degree_term")
   DT <- midf_table[dframe[, .(mcid)], on = "mcid", nomatch = NULL]

@@ -28,7 +28,7 @@
 #'
 select_basic_cols <- function(dframe) {
   #
-  # class of required data frames, at least one column, missing values OK
+  # ---------- initial assertions
   qassert(dframe, "d+")
 
   # ---------- declarations
@@ -60,7 +60,7 @@ select_basic_cols <- function(dframe) {
 
   # ---------- preparation
 
-  # to restore class except grouped tibbles
+  # for restoring class except grouped tibbles
   prior_class <- setdiff(class(dframe), "grouped_df")
 
   # prevent by-ref changes propagating to global env
