@@ -49,9 +49,9 @@ Convenience
 ``` r
 library("midfieldr")
 packageVersion("midfieldr")
-#> [1] '1.0.3.9024'
+#> [1] '1.0.3.9025'
 Sys.Date()
-#> [1] "2026-08-24"
+#> [1] "2026-08-25"
 ```
 
 ## Installation

@@ -1,44 +1,40 @@
 
 # function used in the test
-expect_class_preserved <- function(df1, df2, df3, fnc) {
+expect_class_preserved <- function(df1, df2, fnc) {
     
-    run_check <- function(w, x, y, fnc) {
-        z <- fnc(w, x, y)
-        expect_equal(class(w), class(z))
+    run_check <- function(x, y, fnc) {
+        z <- fnc(x, y)
         expect_equal(class(x), class(z))
         expect_equal(class(y), class(z))
     }
-
-    w <- copy(df1)
-    x <- copy(df2)
-    y <- copy(df3)
+    
+    x <- copy(df1)
+    y <- copy(df2)
     
     # run check 3 times: data.frame, tibble, data.table
-    w <- as.data.frame(w)
     x <- as.data.frame(x)
     y <- as.data.frame(y)
-    run_check(w, x, y, fnc)
+    run_check(x, y, fnc)
     
-    setattr(w, "class", c("tbl_df", "tbl", "data.frame"))
     setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
     setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
-    run_check(w, x, y, fnc)
+    run_check(x, y, fnc)
     
-    w <- as.data.table(w)
     x <- as.data.table(x)
     y <- as.data.table(y)
-    run_check(w, x, y, fnc)
+    run_check(x, y, fnc)
     
     # done
-    rm(w, x, y)
+    rm(x, y)
 }
 
 test_prep_fye_mice <- function() {
     
-    # usage
-    # prep_fye_mice(midf_student,     # mcid, race, sex
-    #               midf_term,        # mcid, term, institution, cip6
-    #               fye_codes = NULL) # institution, fye_cip6
+    # usage: prep_fye_mice(m_student,
+    #                      m_term,
+    #                      fye_cip = NULL,
+    #                      ..., 
+    #                      alt_fye = NULL)
     
     # Needed for tinytest::build_install_test()
     require("data.table")
@@ -78,42 +74,58 @@ test_prep_fye_mice <- function() {
     
     m_student <- test_data[, .(mcid, race, sex)] |> unique()
     m_term    <- test_data[, .(mcid, institution, term, cip6)] |> unique()
-    fye_cip   <- data.frame(institution = c("A", "B"), 
-                            fye_cip6 = c("140102", "140101"))
+    fye_cip   <- "140102"
+    alt_fye   <- data.frame(institution = c("B"), 
+                            alt_cip = c("140101"))
+    
+    # check that class is preserved
+    expect_class_preserved(m_student, m_term, prep_fye_mice)
+    
+    # answer is correct with alternate FYE CIP codes
     correct_ans <- test_data[!proxy %like% "omit", 
                              .(mcid, 
                                institution = factor(institution), 
                                race = factor(race), 
                                sex = factor(sex), 
                                proxy = factor(proxy))] |> unique()
-    
-    # answer is correct using two FYE CIP codes
     expect_equal(
         correct_ans,
-        prep_fye_mice(m_student, m_term, fye_cip)
+        prep_fye_mice(m_student, m_term, alt_fye = alt_fye)
     )
     
-    # check that class is preserved function
-    expect_class_preserved(m_student, m_term, fye_cip, prep_fye_mice)
+    # ---------- for remaining tests, change "140101" to "140102"
+    m_term <- copy(m_term)
+    m_term[cip6 == "140101", cip6 := "140102"]
+    
+    # answer is correct with all standard CIP codes
+    expect_equal(
+        correct_ans,
+        prep_fye_mice(m_student, m_term)
+    )
+    
+    # ans is correct for all FYE codes changed
+    temp_alt_fye <- data.frame(institution = c("A", "B", "C"), 
+                               alt_cip = c("140101"))
+    temp_m_term <- copy(m_term)[cip6 == "140102", cip6 := "140101"]
+    expect_equal(
+        correct_ans,
+        prep_fye_mice(m_student, temp_m_term, alt_fye = temp_alt_fye)
+    )
+    
+    # institution in alt_fye not present in term, no effect
+    x <- data.frame(institution = c("X"), alt_cip = c("140101"))
+    expect_equal(
+        correct_ans,
+        prep_fye_mice(m_student, m_term, alt_fye = x)
+    )
     
     # Results are factors except for ID
-    DT <- prep_fye_mice(m_student, m_term, fye_cip)
+    DT <- prep_fye_mice(m_student, m_term)
     expect_equal(class(DT[, mcid]), "character")
     expect_equal(class(DT[, institution]), "factor")
     expect_equal(class(DT[, race]), "factor")
     expect_equal(class(DT[, sex]), "factor")
     expect_equal(class(DT[, proxy]), "factor")
-    
-    # change Inst from A to J to test default FYE codes
-    m_term_2 <- copy(m_term)
-    m_term_2[institution == "A", institution := "Institution J"]
-    correct_ans_2 <- copy(correct_ans)
-    correct_ans_2 <- correct_ans_2[institution != "B"]
-    correct_ans_2[, institution := "Institution J"]
-    expect_equal(
-        correct_ans_2,
-        prep_fye_mice(m_student, m_term_2)
-    )
     
     # Missing student variable, that ID is dropped
     x <- copy(m_student)
@@ -122,75 +134,91 @@ test_prep_fye_mice <- function() {
     z <- copy(correct_ans)
     expect_equal(
         z[mcid != "A-to-ME"],
-        prep_fye_mice(x, y, fye_cip)
+        prep_fye_mice(x, y)
     )
     
-    # Missing term variable no effect if contains a duplicated CIP
+    # Missing term value no effect if its CIP is duplicated in another row
     x <- copy(m_student)
     y <- copy(m_term)
     y$term[2] <- NA_character_
     expect_equal(
         correct_ans,
-        prep_fye_mice(x, y, fye_cip)
+        prep_fye_mice(x, y)
     )
     
-    # Missing term variable for FYE terms, that ID is dropped
+    # Missing term value for FYE terms, that ID is dropped
     x <- copy(m_student)
     y <- copy(m_term)
     y$term[1:2] <- NA_character_
     z <- copy(correct_ans)
     expect_equal(
         z[mcid != "A-to-ME"],
-        prep_fye_mice(x, y, fye_cip)
+        prep_fye_mice(x, y)
     )
     
-    # Missing term variable for post-FYE Engng terms, proxy is NA
+    # Missing term value for post-FYE Engng terms, proxy is NA
     x <- copy(m_student)
     y <- copy(m_term)
     y$term[3] <- NA_character_
     z <- copy(correct_ans)
     expect_equal(
         z[1, proxy := NA_character_],
-        prep_fye_mice(x, y, fye_cip)
+        prep_fye_mice(x, y)
     )
-
+    
     # Required variables as factors OK, converted to character
     x <- copy(m_student)
     y <- copy(m_term)
     x$race <- as.factor(x$race)
     expect_equal(
         correct_ans,
-        prep_fye_mice(x, y, fye_cip)
+        prep_fye_mice(x, y)
     )
     
     # ---------- error checks
     
     # Arguments required as data frames
-    expect_error(prep_fye_mice(1, m_term, fye_cip))
-    expect_error(prep_fye_mice(m_student, 1, fye_cip))
-    expect_error(prep_fye_mice(m_student, m_term, 1))
+    expect_error(prep_fye_mice(1, m_term))
+    expect_error(prep_fye_mice(m_student, 1))
+    expect_error(prep_fye_mice(m_student, m_term, fye_cip = 1))
+    expect_error(prep_fye_mice(m_student, m_term, alt_fye = 1))
     
-    # Missing variables that are required
-    expect_error(prep_fye_mice(m_student[, mcid := NULL], m_term, fye_cip))
-    expect_error(prep_fye_mice(m_student, m_term[, mcid := NULL], fye_cip))
-    expect_error(prep_fye_mice(m_student, m_term, fye_cip[, institution := NULL]))
+    # Missing variables that are required in data frams
+    expect_error(prep_fye_mice(m_student[, mcid := NULL], m_term))
+    expect_error(prep_fye_mice(m_student, m_term[, mcid := NULL]))
+    expect_error(prep_fye_mice(m_student, 
+                               m_term, 
+                               alt_fye = alt_fye[, institution := NULL]))
     
     # Incorrect class of required columns
-    expect_error(prep_fye_mice(m_student[, mcid := as.factor(mcid)], m_term, fye_cip))
+    expect_error(prep_fye_mice(m_student[, mcid := as.factor(mcid)], m_term))
     
     # Checking values of CIP codes
-    # 6 digits required
+    
+    # -- 6 digits required
     y <- copy(m_term)
-    y$cip6[1] <- "14010" 
-    expect_error(prep_fye_mice(m_student, y, fye_cip))
-    # start with 14 required
+    y$cip6[1] <- "14010"
+    expect_error(prep_fye_mice(m_student, y))
+    
+    # -- start with 14 required
     y <- copy(m_term)
-    y$cip6[1] <- "120102" 
-    expect_error(prep_fye_mice(m_student, y, fye_cip))
-    # all digits required
+    y$cip6[1] <- "120102"
+    expect_error(prep_fye_mice(m_student, y))
+    
+    # -- all digits required
     y <- copy(m_term)
-    y$cip6[1] <- "14010A" 
-    expect_error(prep_fye_mice(m_student, y, fye_cip))
+    y$cip6[1] <- "14010A"
+    expect_error(prep_fye_mice(m_student, y))
+    
+    # -- error in alt CIP
+    x <- data.frame(institution = c("B"), alt_cip = c("14010"))
+    expect_error(prep_fye_mice(m_student, m_term, alt_fye = x))
+    x <- data.frame(institution = c("B"), alt_cip = c("120102"))
+    expect_error(prep_fye_mice(m_student, m_term, alt_fye = x))
+    x <- data.frame(institution = c("B"), alt_cip = c("14010A"))
+    expect_error(prep_fye_mice(m_student, m_term, alt_fye = x))
+    
+    
     
     # set.seed(NULL)
     invisible(NULL)

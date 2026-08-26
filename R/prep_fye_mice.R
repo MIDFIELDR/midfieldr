@@ -3,30 +3,30 @@
 #' Prepare FYE data for imputation
 #'
 #' Constructs a data frame of students ever enrolled in First-Year Engineering
-#' (FYE) programs at their institutions based on information in the MIDFIELD
+#' (FYE) programs based on information in the MIDFIELD
 #' (or equivalent) `student` and `term` data tables. Conditions the data for
 #' use as an input to the mice R package for multiple imputation. Sets up
 #' three variables as predictors  (institution, race/ethnicity, and sex) and
 #' one variable to be imputed (program CIP code) keyed by student ID.
 #'
 #' @section Background:  At some US institutions, engineering students are
-#' required to complete a First-Year Engineering (FYE) program as a prerequisite
-#' for declaring an engineering major. FYE students who then transition to a
-#' degree-granting engineering program are  typically counted as "starters" in
-#' that program for purposes of calculating, for example, graduation rates.
+#' required to complete a First-Year Engineering (FYE) program as a
+#' prerequisite for enrolling in an engineering major. When one of these
+#' programs calculates a metric that requires a count of starters, e.g.,
+#' graduation rate, typically only those students entering the degree-granting
+#' program post-FYE are counted.
 #'
-#' This approach invariably undercounts starters and over-estimates associated
-#' metrics because it fails to account for FYE students who change majors
-#' (never enrolling in an engineering major) or drop out of the database
-#' altogether. Had the FYE program not been required, they would have enrolled
-#' in their preferred engineering program---the count of starters would have
-#' increased and a metric such as graduation rate would have decreased.
+#' Some FYE students do not subsequently enter an engineering major---they may
+#' switch to a non-engineering program or leave the database entirely. Had FYE
+#' not been required, they would have instead been admitted to a degree-granting engineering program of their choice, increasing the count of starters in those
+#' programs resulting in a lower graduation rate when they switched majors or
+#' left the database.
 #'
-#' To include FYE students when a count of starters is needed, we estimate an
-#' "FYE proxy", that is, the 6-digit CIP codes of the degree-granting
-#' engineering programs that FYE students would have declared had they not been
-#' required to enroll in FYE. The purpose of `prep_fye_mice()` is to prepare
-#' the data for imputing the unknown CIP codes.
+#' To improve the count of starters for FYE institutions, we introduce the
+#' concept of  "FYE proxies", that is, 6-digit CIP codes of the degree-granting
+#' engineering programs that FYE students might have declared had they not
+#' been required to enroll in FYE.
+#'
 #'
 #' @section Method: The function extracts all terms for all FYE students and
 #' identifies all engineering programs in which they were ever enrolled. A
@@ -38,11 +38,16 @@
 #' \item{If not, the proxy is NA and is treated as a missing value to be
 #'       imputed by `mice()`.}
 #' }
+#' This function does not perform the imputation. It produces a data frame
+#' that is ready to be used as an input to the `mice()` function in a
+#' separate step.
+#'
 #'
 #' Notes:
 #' * Missing values (NA) in the required columns are removed. However, a
 #'   value of "unknown" in a predictor column, e.g., race/ethnicity or sex,
 #'   is acceptable.
+#' * Accommodates only one 6-digit FYE CIP code per institution.
 #' * After running `prep_fye_mice()` but before running `mice()`, one can edit
 #'   the predictor variables if desired. The institution variable should remain
 #'   to ensure that a student's imputed program is available at their
@@ -56,11 +61,14 @@
 #' @param m_term `r dframe` with required character variables
 #'        `{mcid, term, cip6, institution}.` Typically based on one's original,
 #'        unfiltered `term` source data without regard to data sufficiency.
-#' @param fye_cip `r dframe` with required character variables
-#'        `{institution, fye_cip6}.` Default has one institution
-#'        value (`"Institution J"`) and one CIP code value (`"140102"`),
-#'        compatible with midfielddata practice data and the midfieldr "toy"
-#'        datasets.
+#' @param fye_cip Character, one 6-digit CIP code used for FYE programs. Default
+#'        "140102", applied to all institutions except those (if any)
+#'        optionally defined by user in `alt_fye.`
+#' @param ... `r param_dots`
+#' @param alt_fye `r dframe` with character variables
+#'        `{institution, alt_cip}.` For users with institutions that use
+#'        a 6-digit CIP code other than the value in `fye_cip` for their FYE
+#'        programs. One FYE code per institution.
 #' @returns Data frame with the following properties:
 #' * `r df_class_preserved`
 #' * Rows: One row for every degree-seeking FYE student.
@@ -74,12 +82,16 @@
 #'   - `institution` &nbsp; Factor, anonymized institution name from the
 #'      `term` data frame. An imputation predictor variable.
 #'   - `proxy` &nbsp; Factor, 6-digit CIP code of a student's known,
-#'            first degree-granting engineering program or NA representing missing
-#'            values to be imputed.
+#'      first degree-granting engineering program or NA representing missing
+#'      values to be imputed.
 #' @example man/examples/exa_prep_fye_mice.R
 #' @export
 #'
-prep_fye_mice <- function(m_student, m_term, fye_cip = NULL) {
+prep_fye_mice <- function(m_student,
+                          m_term,
+                          fye_cip = NULL,
+                          ...,
+                          alt_fye = NULL) {
   #
   # data frame with at least one column, missing values acceptable
   qassert(m_student, "d+")
@@ -87,41 +99,48 @@ prep_fye_mice <- function(m_student, m_term, fye_cip = NULL) {
 
   # ---------- declarations
 
-  fye_cip <- fye_cip %?%
-    data.frame(
-      institution = "Institution J",
-      fye_cip6 = "140102"
-    )
-
   # active column names
   reqd_student_vars <- c("mcid", "race", "sex")
   reqd_term_vars <- c("mcid", "institution", "term", "cip6")
-  reqd_fye_cip_vars <- c("institution", "fye_cip6")
+  reqd_fye_alt_vars <- c("institution", "alt_cip")
   returned_vars <- c("mcid", "institution", "race", "sex", "proxy")
 
   # bind names for R CMD check
-  fye_cip6 <- NULL
+  alt_cip <- NULL
   proxy <- NULL
+
+  # optional arguments
+  fye_cip <- fye_cip %?% "140102"
+  alt_fye <- alt_fye %?% data.frame(
+    institution = character(),
+    alt_cip = character()
+  )
 
   # ---------- base R checks (all data frame classes)
 
-  # data frame with at least one column, missing values prohibited
-  qassert(fye_cip, "D+")
+  # arguments after ... must be named
+  wrapr::stop_if_dot_args(
+    substitute(list(...)),
+    "Arguments after ... must be named, as in arg = val."
+  )
+
+  # optional variables
+  qassert(fye_cip, "s+")
+  qassert(alt_fye, "D+")
 
   # FYE CIP codes
-  codes_var <- unique(fye_cip[["fye_cip6"]])
+  codes_var <- unique(c(fye_cip, alt_fye[["alt_cip"]]))
   cip_digits <- sort(unique(unlist(strsplit(codes_var, split = character(0)))))
 
-  # - 6 characters per code
+  # -- 6 characters per code
   qassert(unique(nchar(codes_var)), "I1[6,6]")
 
-  # - must be engineering (start with "14")
+  # -- must be engineering (start with "14")
   assert_subset(
     substr(codes_var, 1, 2),
     choices = c("14")
   )
-
-  # - string of numbers only
+  # -- string of numbers only
   assert_subset(
     cip_digits,
     choices = c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
@@ -135,37 +154,51 @@ prep_fye_mice <- function(m_student, m_term, fye_cip = NULL) {
   # prevent by-ref changes propagating to global env
   m_student <- copy(m_student)
   m_term <- copy(m_term)
-  fye_cip <- copy(fye_cip)
 
   # setup with setDT() and unique() plus checks on required variables
   m_student <- utils_reqd_variables(m_student, reqd_student_vars)
   m_term <- utils_reqd_variables(m_term, reqd_term_vars)
-  fye_cip <- utils_reqd_variables(fye_cip, reqd_fye_cip_vars)
+
+  # alt_fye only if user supplied rows
+  if (nrow(alt_fye) > 0) {
+    alt_fye <- copy(alt_fye)
+    alt_fye <- utils_reqd_variables(alt_fye, reqd_fye_alt_vars)
+    alt_fye <- alt_fye[, .SD, .SDcols = reqd_fye_alt_vars]
+  }
+  setDT(alt_fye)
 
   # ---------- do the work
 
   # select columns
   m_student <- m_student[, .SD, .SDcols = reqd_student_vars]
   m_term <- m_term[, .SD, .SDcols = reqd_term_vars]
-  fye_cip <- fye_cip[, .SD, .SDcols = reqd_fye_cip_vars]
 
   # limit to degree-seeking
   m_term <- m_student[m_term, on = "mcid", nomatch = NULL]
 
-  # ever in engineering
+  # construct data frame of institutions
+  m_inst <- unique(m_term[["institution"]])
+
+  # left-join alt_fye CIPs to institutions
+  m_inst <- alt_fye[m_inst, on = "institution"]
+
+  # replace CIP NAs with standard FYE code
+  m_inst[is.na(alt_cip), alt_cip := fye_cip]
+
+  # construct ever in engineering
   ever_engr <- m_term[cip6 %like% "^14"]
 
-  # join FYE CIP codes from fye_cip input
-  ever_engr <- fye_cip[ever_engr, on = "institution"]
+  # join alt_cip by institution
+  ever_engr <- m_inst[ever_engr, on = "institution"]
 
   # ever in FYE, one row per ID
-  ever_fye <- ever_engr[cip6 == fye_cip6, .(mcid, race, sex, institution)]
+  ever_fye <- ever_engr[cip6 == alt_cip, .(mcid, race, sex, institution)]
   ever_fye <- unique(ever_fye)
 
   # fye IDs ever in another engineering program
   ever_fye_ID <- ever_fye[, .(mcid)]
   fye_engr <- ever_fye_ID[ever_engr, on = "mcid", nomatch = NULL]
-  fye_engr <- fye_engr[cip6 != fye_cip6, .(mcid, term, cip6)]
+  fye_engr <- fye_engr[cip6 != alt_cip, .(mcid, term, cip6)]
 
   # proxy is first non-FYE engr major
   setkeyv(fye_engr, c("mcid", "term"))

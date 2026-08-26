@@ -4,7 +4,7 @@
 \alias{prep_fye_mice}
 \title{Prepare FYE data for imputation}
 \usage{
-prep_fye_mice(m_student, m_term, fye_cip = NULL)
+prep_fye_mice(m_student, m_term, fye_cip = NULL, ..., alt_fye = NULL)
 }
 \arguments{
 \item{m_student}{Data frame or data frame extension (e.g., data.table or tibble) with required character variables
@@ -15,11 +15,17 @@ unfiltered \code{student} source data without regard to data sufficiency.}
 \verb{\{mcid, term, cip6, institution\}.} Typically based on one's original,
 unfiltered \code{term} source data without regard to data sufficiency.}
 
-\item{fye_cip}{Data frame or data frame extension (e.g., data.table or tibble) with required character variables
-\verb{\{institution, fye_cip6\}.} Default has one institution
-value (\code{"Institution J"}) and one CIP code value (\code{"140102"}),
-compatible with midfielddata practice data and the midfieldr "toy"
-datasets.}
+\item{fye_cip}{Character, one 6-digit CIP code used for FYE programs. Default
+"140102", applied to all institutions except those (if any)
+optionally defined by user in \code{alt_fye.}}
+
+\item{...}{Not used for passing values; forces subsequent arguments to be
+referable only by name.}
+
+\item{alt_fye}{Data frame or data frame extension (e.g., data.table or tibble) with character variables
+\verb{\{institution, alt_cip\}.} For users with institutions that use
+a 6-digit CIP code other than the value in \code{fye_cip} for their FYE
+programs. One FYE code per institution.}
 }
 \value{
 Data frame with the following properties:
@@ -45,7 +51,7 @@ values to be imputed.
 }
 \description{
 Constructs a data frame of students ever enrolled in First-Year Engineering
-(FYE) programs at their institutions based on information in the MIDFIELD
+(FYE) programs based on information in the MIDFIELD
 (or equivalent) \code{student} and \code{term} data tables. Conditions the data for
 use as an input to the mice R package for multiple imputation. Sets up
 three variables as predictors  (institution, race/ethnicity, and sex) and
@@ -53,23 +59,22 @@ one variable to be imputed (program CIP code) keyed by student ID.
 }
 \section{Background}{
   At some US institutions, engineering students are
-required to complete a First-Year Engineering (FYE) program as a prerequisite
-for declaring an engineering major. FYE students who then transition to a
-degree-granting engineering program are  typically counted as "starters" in
-that program for purposes of calculating, for example, graduation rates.
+required to complete a First-Year Engineering (FYE) program as a
+prerequisite for enrolling in an engineering major. When one of these
+programs calculates a metric that requires a count of starters, e.g.,
+graduation rate, typically only those students entering the degree-granting
+program post-FYE are counted.
 
-This approach invariably undercounts starters and over-estimates associated
-metrics because it fails to account for FYE students who change majors
-(never enrolling in an engineering major) or drop out of the database
-altogether. Had the FYE program not been required, they would have enrolled
-in their preferred engineering program---the count of starters would have
-increased and a metric such as graduation rate would have decreased.
+Some FYE students do not subsequently enter an engineering major---they may
+switch to a non-engineering program or leave the database entirely. Had FYE
+not been required, they would have instead been admitted to a degree-granting engineering program of their choice, increasing the count of starters in those
+programs resulting in a lower graduation rate when they switched majors or
+left the database.
 
-To include FYE students when a count of starters is needed, we estimate an
-"FYE proxy", that is, the 6-digit CIP codes of the degree-granting
-engineering programs that FYE students would have declared had they not been
-required to enroll in FYE. The purpose of \code{prep_fye_mice()} is to prepare
-the data for imputing the unknown CIP codes.
+To improve the count of starters for FYE institutions, we introduce the
+concept of  "FYE proxies", that is, 6-digit CIP codes of the degree-granting
+engineering programs that FYE students might have declared had they not
+been required to enroll in FYE.
 }
 
 \section{Method}{
@@ -83,12 +88,16 @@ returned as the student's FYE proxy.}
 \item{If not, the proxy is NA and is treated as a missing value to be
 imputed by \code{mice()}.}
 }
+This function does not perform the imputation. It produces a data frame
+that is ready to be used as an input to the \code{mice()} function in a
+separate step.
 
 Notes:
 \itemize{
 \item Missing values (NA) in the required columns are removed. However, a
 value of "unknown" in a predictor column, e.g., race/ethnicity or sex,
 is acceptable.
+\item Accommodates only one 6-digit FYE CIP code per institution.
 \item After running \code{prep_fye_mice()} but before running \code{mice()}, one can edit
 the predictor variables if desired. The institution variable should remain
 to ensure that a student's imputed program is available at their
