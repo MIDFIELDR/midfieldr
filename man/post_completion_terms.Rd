@@ -23,10 +23,10 @@ of the required variables are removed. Duplicated rows are removed.
 \item New columns are added or replace existing columns of the same name (if
 any). Other columns are not modified. The following variables are added:
 \itemize{
-\item \code{first_degree_term.}    Character. Term of a student's first
+\item \code{first_term_degree}    Character. Term of a student's first
 baccalaureate, encoded \code{YYYYT} or, if no degree recorded, \code{NA}.
 Joined from the \code{term_degree} variable in \code{midf_table.}
-\item \code{term_cluster.}    Character, indicating that a term belongs
+\item \code{term_category.}    Character, indicating that a term belongs
 to one of three clusters: terms that are prior to ("pre-degree"),
 equal to ("first-degree"), or subsequent to ("post-first-degree")
 the student’s first degree term.
@@ -47,20 +47,23 @@ Any terms later than the first baccalaureate can usually be excluded from
 study.
 }
 \examples{
-# reduce number of columns
-term <- select_basic_cols(toy_term)
-degree <- select_basic_cols(toy_degree)
+# select min required columns
+term <- toy_term[, .(mcid, term)]
+course <- toy_course[, .(mcid, term_course)]
+degree <- toy_degree[, .(mcid, term_degree)]
 
-# identify term-clusters in a 'term' table
-x <- post_completion_terms(term, degree)
-x[, .N, by = "term_cluster"][order(-N)]
-x
+# labeling pre- and post-completion terms
+term <- post_completion_terms(term, midf_table = degree)
+course <- post_completion_terms(course, midf_table = degree)
+degree <- post_completion_terms(degree, midf_table = degree)
 
-# identify term-clusters in a 'degree' table
-x <- post_completion_terms(degree, degree)
-x[, .N, by = "term_cluster"][order(-N)]
-x
+# results
+term[order(-before_or_after)]
+term[, .N, by = "before_or_after"][order(-N)]
 
-# post-first-degree terms are usually dropped
-x[term_cluster != "post-first-degree"]
+course[order(-before_or_after)]
+course[, .N, by = "before_or_after"][order(-N)]
+
+degree[order(-before_or_after)]
+degree[, .N, by = "before_or_after"][order(-N)]
 }

@@ -11,11 +11,11 @@
 #' particular study. The final term of that span is the
 #' *timely completion term.*
 #'
-#' Our heuristic assigns a time span of 6 academic years for timely completion 
-#' (other values can be assigned via the `span` argument). For students 
-#' admitted at second-year level or higher, the span value is reduced by 
-#' one academic year for each full year the student is assumed to have 
-#' completed. The adjusted span is added to their initial term at an 
+#' Our heuristic assigns a time span of 6 academic years for timely completion
+#' (other values can be assigned via the `span` argument). For students
+#' admitted at second-year level or higher, the span value is reduced by
+#' one academic year for each full year the student is assumed to have
+#' completed. The adjusted span is added to their initial term at an
 #' institution to create the `timely_term` value for each observation.
 #'
 #' @param dframe `r dframe` with required variable `{mcid}.`
@@ -41,7 +41,7 @@
 #'      would be considered timely. Encoded `YYYYT.`
 #' @example man/examples/exa_timely_term.R
 #' @export
-#' 
+#'
 timely_term <- function(dframe,
                         midf_table = term,
                         ...,
@@ -49,7 +49,7 @@ timely_term <- function(dframe,
                         span = NULL) {
   #
   # ---------- initial assertions
-  
+
   # data frames
   qassert(dframe, "d+")
   qassert(midf_table, "d+")
@@ -59,7 +59,7 @@ timely_term <- function(dframe,
     substitute(list(...)),
     "Arguments after ... must be named, as in arg = val."
   )
-  
+
   # ---------- declarations
 
   # active column names
@@ -70,7 +70,7 @@ timely_term <- function(dframe,
   # optional defaults
   span <- span %?% 6
   sched_span <- sched_span %?% 4
-  
+
   # bind names for R CMD check
   adj_span <- NULL
   level_i <- NULL
@@ -79,14 +79,14 @@ timely_term <- function(dframe,
   IDX <- NULL
   TERM_CODE <- NULL
   YYYY <- NULL
-  
+
   # ---------- variable assertions
-  
+
   utils_check_reqd_vars(dframe, reqd_dframe_vars)
   utils_check_reqd_vars(midf_table, reqd_table_vars)
   assert_int(sched_span, lower = 0)
   assert_int(span, lower = sched_span)
-  
+
   # ---------- preparation
 
   # for restoring class except grouped tibbles
@@ -120,7 +120,7 @@ timely_term <- function(dframe,
   dframe[, IDX := .I, env = list(IDX = idx)]
 
   # ---------- do the work
-  
+
   # edit names before joining
   setnames(midf_table,
     old = c("term", "level"),
@@ -154,7 +154,7 @@ timely_term <- function(dframe,
   dframe[TERM_CODE %chin% c(LETTERS, letters), TERM_CODE := "0",
     env = list(TERM_CODE = term_code)
   ]
-  
+
   # make year and term numeric
   dframe[, names(.SD) := lapply(.SD, as.numeric), .SDcols = c(yyyy, term_code)]
 

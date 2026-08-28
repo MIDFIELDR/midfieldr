@@ -329,17 +329,17 @@ look_at(term)
 The possible term cluster values are given by, 
 
 ```{r}
-term[, sort(unique(term_cluster), na.last = FALSE)]
+term[, sort(unique(before_or_after), na.last = FALSE)]
 ```
 
 We filter to exclude all terms labeled "post-first-degree" and drop the temporary columns. 
 
 ```{r}
-term <- term[!"post-first-degree", on = "term_cluster"]
-degree <- degree[!"post-first-degree", on = "term_cluster"]
+term <- term["before", on = "before_or_after"]
+degree <- degree["before", on = "before_or_after"]
 
-term[, c("term_cluster", "first_degree_term") := NULL]
-degree[, c("term_cluster", "first_degree_term") := NULL]
+term[, c("before_or_after", "first_degree_term") := NULL]
+degree[, c("before_or_after", "first_degree_term") := NULL]
 
 look_at(term)
 ```

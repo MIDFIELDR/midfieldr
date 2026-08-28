@@ -74,7 +74,7 @@ order_multiway <- function(dframe,
                            ratio_of = NULL) {
   #
   # ---------- initial assertions
-  
+
   # data frames
   qassert(dframe, "d+")
 
@@ -83,7 +83,7 @@ order_multiway <- function(dframe,
     substitute(list(...)),
     "Arguments after ... must be named, as in arg = val."
   )
-  
+
   # ---------- declarations
 
   # optional variable defaults
@@ -158,7 +158,7 @@ order_multiway <- function(dframe,
 
   # convert class for analysis
   setDT(dframe)
-  
+
   # prevent overwriting by temporary columns
   temp_vars <- c("idx")
   temp_vars <- utils_edit_colnames(dframe, temp_vars)
@@ -168,7 +168,7 @@ order_multiway <- function(dframe,
   dframe[, IDX := .I, env = list(IDX = idx)]
 
   # ---------- do the work
-  
+
   # convert categories to factors
   dframe[, (categories) := lapply(.SD, as.factor), .SDcols = categories]
 
@@ -223,7 +223,7 @@ order_multiway <- function(dframe,
     returned_vars = NULL,
     prior_class
   )
-  
+
   # done
   dframe[]
 }

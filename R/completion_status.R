@@ -32,7 +32,7 @@
 completion_status <- function(dframe, midf_table = degree) {
   #
   # ---------- initial assertions
-  
+
   # data frames
   qassert(dframe, "d+")
   qassert(midf_table, "d+")
@@ -47,9 +47,9 @@ completion_status <- function(dframe, midf_table = degree) {
   # bind names for R CMD check
   completion_term <- NULL
   IDX <- NULL
-  
+
   # ---------- variable assertions
-  
+
   utils_check_reqd_vars(dframe, reqd_dframe_vars)
   utils_check_reqd_vars(midf_table, reqd_table_vars)
 
@@ -83,7 +83,7 @@ completion_status <- function(dframe, midf_table = degree) {
   dframe[, IDX := .I, env = list(IDX = idx)]
 
   # ---------- do the work
-  
+
   # edit name before join
   setnames(midf_table, old = "term_degree", new = "completion_term")
   dframe <- midf_table[dframe, on = "mcid"]

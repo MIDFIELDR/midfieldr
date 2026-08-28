@@ -102,8 +102,8 @@ For information on accessing the MIDFIELD database for research, contact the Ame
 ```{r}
 #| echo: false
 options(
-  datatable.print.topn = 5,
-  datatable.print.nrows = 10
+  datatable.print.topn = 8,
+  datatable.print.nrows = 16
 )
 ```
 
@@ -116,21 +116,25 @@ library("data.table")
 # Program codes
 look_at(cip)
 
-# Search for program 6-digit codes
-cip |>
-  filter_programs("^14") |>
-  filter_programs(c("civil", "mechanical"))
+# Search for 6-digit codes of specific programs
+filter_programs(cip, c("mechanical engineering", 
+                       "psychology, general", 
+                       "business, managerial"))
 
-# Set up program table with convenient labels
-programs <- filter_programs(cip, c("^1408", "^1419"))
+# Select specific CIP codes and add useful labels
+programs <- filter_programs(cip, c("^1419", "^4201", "^5202"))
 programs <- programs[, .(cip6name, cip6)]
-programs[, program_abbr := fcase(
-  cip6 %like% "^1408", "CE",
-  cip6 %like% "^1419", "ME"
-)]
 programs
 
-# "Toy" data sets assigned standard names
+programs[, program := fcase(
+  cip6 %like% "^1419", "Mech Engr",
+  cip6 %like% "^4201", "Genl Psych", 
+  cip6 %like% "^5202", "Business"
+)]
+programs <- programs[, .(cip6, program)]
+programs
+
+# Small sample student records
 student <- copy(toy_student)
 term <- copy(toy_term)
 course <- copy(toy_course)
@@ -145,12 +149,12 @@ look_at(course)
 
 look_at(degree)
 
-# Begin with the population
+# Begin developing the populatioon
 DT <- term[, .(mcid)]
 DT <- unique(DT)
 DT
 
-# Add timely-completion columns
+# Add timely-completion-term columns
 DT <- timely_term(DT, midf_table = term)
 DT
 
@@ -159,38 +163,31 @@ DT <- DT[, .(mcid, term_i, timely_term)]
 DT <- data_sufficiency(DT, midf_table = term)
 DT[order(data_sufficiency)]
 
-# Initial population labeled "include", drop all others
+# "include" denotes the credible initial population
 population <- DT[data_sufficiency == "include", .(mcid)]
 population <- unique(population)
 population
 
-# Inner join to restrict source data to this population
+# Inner join restricts source data to this population
 student <- population[student, on = "mcid", nomatch = NULL]
 term <- population[term, on = "mcid", nomatch = NULL]
 course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-dim(student)
-dim(term)
-dim(course)
-dim(degree)
-
-# Identify post-baccalaureate terms
+# Identify pre- and post-completion terms
 term <- post_completion_terms(term, midf_table = degree)
 course <- post_completion_terms(course, midf_table = degree)
 degree <- post_completion_terms(degree, midf_table = degree)
 
-# View partial results
-term[, .(mcid, first_degree_term, term_cluster)][order(term_cluster)]
+# View summary results
+term[order(-before_or_after), .N, by = "before_or_after"]
+course[order(-before_or_after), .N, by = "before_or_after"]
+degree[order(-before_or_after), .N, by = "before_or_after"]
 
-course[, .(mcid, first_degree_term, term_cluster)][order(term_cluster)]
-
-degree[, .(mcid, first_degree_term, term_cluster)][order(term_cluster)]
-
-# Exclude rows after the first degree term
-term <- term[term_cluster != "post-first-degree"]
-course <- course[term_cluster != "post-first-degree"]
-degree <- degree[term_cluster != "post-first-degree"]
+# Retain before terms
+term <- term[before_or_after == "before"]
+course <- course[before_or_after == "before"]
+degree <- degree[before_or_after == "before"]
 
 # Choose a minimum set of columns to proceed
 student <- select_basic_cols(student)
@@ -198,6 +195,20 @@ term <- select_basic_cols(term)
 course <- select_basic_cols(course)
 degree <- select_basic_cols(degree)
 
+# Subset population to match the programs selected earlier
+study_term <- programs[term, .(mcid, program), on = "cip6", nomatch = NULL]
+study_degree <- programs[degree, .(mcid, program), on = "cip6", nomatch = NULL]
+study_population <- unique(rbindlist(list(study_term, study_degree)))
+study_population
+study_population[, .N, by = "program"][order(-N)]
+
+# Use these IDs to subset the records
+student <- study_population[, .(mcid)][student, on = "mcid", nomatch = NULL]
+term <- study_population[, .(mcid)][term, on = "mcid", nomatch = NULL]
+course <- study_population[, .(mcid)][course, on = "mcid", nomatch = NULL]
+degree <- study_population[, .(mcid)][degree, on = "mcid", nomatch = NULL]
+
+# Abbreviated records of all students ever enrolled in one the selected programs
 student
 
 term

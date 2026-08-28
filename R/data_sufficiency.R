@@ -46,7 +46,7 @@
 data_sufficiency <- function(dframe, midf_table = term) {
   #
   # ---------- initial assertions
-  
+
   # data frames
   qassert(dframe, "d+")
   qassert(midf_table, "d+")
@@ -66,10 +66,10 @@ data_sufficiency <- function(dframe, midf_table = term) {
   UPPER_LIMIT <- NULL
 
   # ---------- variable assertions
-  
+
   utils_check_reqd_vars(dframe, reqd_dframe_vars)
   utils_check_reqd_vars(midf_table, reqd_table_vars)
-  
+
   # ---------- preparation
 
   # to restore class except grouped tibbles
@@ -103,7 +103,7 @@ data_sufficiency <- function(dframe, midf_table = term) {
   dframe[, IDX := .I, env = list(IDX = idx)]
 
   # ---------- do the work
-  
+
   # add institution data range limits
   midf_table[, `:=`(
     LOWER_LIMIT = min(term),

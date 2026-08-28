@@ -49,9 +49,9 @@ Convenience
 ``` r
 library("midfieldr")
 packageVersion("midfieldr")
-#> [1] '1.0.3.9025'
+#> [1] '1.0.3.9026'
 Sys.Date()
-#> [1] "2026-08-25"
+#> [1] "2026-08-27"
 ```
 
 ## Installation
@@ -108,50 +108,137 @@ look_at(cip)
 #>  $ cip2name: chr  "Agriculture, Agricultural Operations and Related Sciences""..
 #>  $ cip2    : chr  "01" "01" "01" "01" ...
 
-# Search for program 6-digit codes
-cip |>
-  filter_programs("^14") |>
-  filter_programs(c("civil", "mechanical"))
-#>                                  cip6name   cip6                      cip4name
-#>                                    <char> <char>                        <char>
-#> 1:             Civil Engineering, General 140801             Civil Engineering
-#> 2:               Geotechnical Engineering 140802             Civil Engineering
-#> 3:                 Structural Engineering 140803             Civil Engineering
-#> 4: Transportation and Highway Engineering 140804             Civil Engineering
-#> 5:            Water Resources Engineering 140805             Civil Engineering
-#> 6:               Civil Engineering, Other 140899             Civil Engineering
-#> 7:                 Mechanical Engineering 141901        Mechanical Engineering
-#> 8:          Electromechanical Engineering 144101 Electromechanical Engineering
-#>      cip4    cip2name   cip2
-#>    <char>      <char> <char>
-#> 1:   1408 Engineering     14
-#> 2:   1408 Engineering     14
-#> 3:   1408 Engineering     14
-#> 4:   1408 Engineering     14
-#> 5:   1408 Engineering     14
-#> 6:   1408 Engineering     14
-#> 7:   1419 Engineering     14
-#> 8:   1441 Engineering     14
+# Search for 6-digit codes of specific programs
+filter_programs(cip, c("mechanical engineering", 
+                       "psychology, general", 
+                       "business, managerial"))
+#>                                                                   cip6name
+#>                                                                     <char>
+#>  1:                                                 Mechanical Engineering
+#>  2:                                          Electromechanical Engineering
+#>  3: Electromechanical Technology, Electromechanical Engineering Technology
+#>  4:             Aeronautical, Aerospace Engineering Technology, Technician
+#>  5:                          Automotive Engineering Technology, Technician
+#>  6:              Mechanical Engineering, Mechanical Technology, Technician
+#>  7:        Mechanical Engineering Related Technologies, Technicians, Other
+#>  8:                                                    Psychology, General
+#> ---                                                                       
+#> 16:                                        E-Commerce, Electronic Commerce
+#> 17:                                    Transportation, Mobility Management
+#> 18:                                    Research and Development Management
+#> 19:                                                     Project Management
+#> 20:                                                      Retail Management
+#> 21:                                              Organizational Leadership
+#> 22:                                 Business, Managerial Operations, Other
+#> 23:                                         Business, Managerial Economics
+#>       cip6
+#>     <char>
+#>  1: 141901
+#>  2: 144101
+#>  3: 150403
+#>  4: 150801
+#>  5: 150803
+#>  6: 150805
+#>  7: 150899
+#>  8: 420101
+#> ---       
+#> 16: 520208
+#> 17: 520209
+#> 18: 520210
+#> 19: 520211
+#> 20: 520212
+#> 21: 520213
+#> 22: 520299
+#> 23: 520601
+#>                                                                        cip4name
+#>                                                                          <char>
+#>  1:                                                      Mechanical Engineering
+#>  2:                                               Electromechanical Engineering
+#>  3: Electromechanical Instrumentation and Maintenance Technologies, Technicians
+#>  4:                    Mechanical Engineering Related Technologies, Technicians
+#>  5:                    Mechanical Engineering Related Technologies, Technicians
+#>  6:                    Mechanical Engineering Related Technologies, Technicians
+#>  7:                    Mechanical Engineering Related Technologies, Technicians
+#>  8:                                                         Psychology, General
+#> ---                                                                            
+#> 16:                                             Business, Managerial Operations
+#> 17:                                             Business, Managerial Operations
+#> 18:                                             Business, Managerial Operations
+#> 19:                                             Business, Managerial Operations
+#> 20:                                             Business, Managerial Operations
+#> 21:                                             Business, Managerial Operations
+#> 22:                                             Business, Managerial Operations
+#> 23:                                              Business, Managerial Economics
+#>       cip4                                                     cip2name   cip2
+#>     <char>                                                       <char> <char>
+#>  1:   1419                                                  Engineering     14
+#>  2:   1441                                                  Engineering     14
+#>  3:   1504                                       Engineering Technology     15
+#>  4:   1508                                       Engineering Technology     15
+#>  5:   1508                                       Engineering Technology     15
+#>  6:   1508                                       Engineering Technology     15
+#>  7:   1508                                       Engineering Technology     15
+#>  8:   4201                                                   Psychology     42
+#> ---                                                                           
+#> 16:   5202 Business, Management, Marketing and Related Support Services     52
+#> 17:   5202 Business, Management, Marketing and Related Support Services     52
+#> 18:   5202 Business, Management, Marketing and Related Support Services     52
+#> 19:   5202 Business, Management, Marketing and Related Support Services     52
+#> 20:   5202 Business, Management, Marketing and Related Support Services     52
+#> 21:   5202 Business, Management, Marketing and Related Support Services     52
+#> 22:   5202 Business, Management, Marketing and Related Support Services     52
+#> 23:   5206 Business, Management, Marketing and Related Support Services     52
 
-# Set up program table with convenient labels
-programs <- filter_programs(cip, c("^1408", "^1419"))
+# Select specific CIP codes and add useful labels
+programs <- filter_programs(cip, c("^1419", "^4201", "^5202"))
 programs <- programs[, .(cip6name, cip6)]
-programs[, program_abbr := fcase(
-  cip6 %like% "^1408", "CE",
-  cip6 %like% "^1419", "ME"
-)]
 programs
-#>                                  cip6name   cip6 program_abbr
-#>                                    <char> <char>       <char>
-#> 1:             Civil Engineering, General 140801           CE
-#> 2:               Geotechnical Engineering 140802           CE
-#> 3:                 Structural Engineering 140803           CE
-#> 4: Transportation and Highway Engineering 140804           CE
-#> 5:            Water Resources Engineering 140805           CE
-#> 6:               Civil Engineering, Other 140899           CE
-#> 7:                 Mechanical Engineering 141901           ME
+#>                                                           cip6name   cip6
+#>                                                             <char> <char>
+#>  1:                                         Mechanical Engineering 141901
+#>  2:                                            Psychology, General 420101
+#>  3:                Business Administration and Management, General 520201
+#>  4: Purchasing, Procurement, Acquisitions and Contracts Management 520202
+#>  5:                             Logistics and Materials Management 520203
+#>  6:                              Office Management and Supervision 520204
+#>  7:                          Operations Management and Supervision 520205
+#>  8:                  Non-Profit, Public, Organizational Management 520206
+#>  9:                                    Customer Service Management 520207
+#> 10:                                E-Commerce, Electronic Commerce 520208
+#> 11:                            Transportation, Mobility Management 520209
+#> 12:                            Research and Development Management 520210
+#> 13:                                             Project Management 520211
+#> 14:                                              Retail Management 520212
+#> 15:                                      Organizational Leadership 520213
+#> 16:                         Business, Managerial Operations, Other 520299
 
-# "Toy" data sets assigned standard names
+programs[, program := fcase(
+  cip6 %like% "^1419", "Mech Engr",
+  cip6 %like% "^4201", "Genl Psych", 
+  cip6 %like% "^5202", "Business"
+)]
+programs <- programs[, .(cip6, program)]
+programs
+#>       cip6    program
+#>     <char>     <char>
+#>  1: 141901  Mech Engr
+#>  2: 420101 Genl Psych
+#>  3: 520201   Business
+#>  4: 520202   Business
+#>  5: 520203   Business
+#>  6: 520204   Business
+#>  7: 520205   Business
+#>  8: 520206   Business
+#>  9: 520207   Business
+#> 10: 520208   Business
+#> 11: 520209   Business
+#> 12: 520210   Business
+#> 13: 520211   Business
+#> 14: 520212   Business
+#> 15: 520213   Business
+#> 16: 520299   Business
+
+# Small sample student records
 student <- copy(toy_student)
 term <- copy(toy_term)
 course <- copy(toy_course)
@@ -213,7 +300,7 @@ look_at(degree)
 #>  $ institution: chr  "Institution B" "Institution B" "Institution B" "Institu"..
 #>  $ degree     : chr  "Bachelor of Science in Business Administration and Mana"..
 
-# Begin with the population
+# Begin developing the populatioon
 DT <- term[, .(mcid)]
 DT <- unique(DT)
 DT
@@ -224,14 +311,20 @@ DT
 #>   3: MCID3111158724
 #>   4: MCID3111163443
 #>   5: MCID3111163894
+#>   6: MCID3111164659
+#>   7: MCID3111165208
+#>   8: MCID3111169601
 #>  ---               
+#> 344: MCID3112751130
+#> 345: MCID3112754537
+#> 346: MCID3112799709
 #> 347: MCID3112815901
 #> 348: MCID3112839623
 #> 349: MCID3112868072
 #> 350: MCID3112869843
 #> 351: MCID3112885339
 
-# Add timely-completion columns
+# Add timely-completion-term columns
 DT <- timely_term(DT, midf_table = term)
 DT
 #>                mcid term_i       level_i adj_span timely_term
@@ -241,7 +334,13 @@ DT
 #>   3: MCID3111158724  19881 01 First-year        6       19933
 #>   4: MCID3111163443  19881 01 First-year        6       19933
 #>   5: MCID3111163894  19881 01 First-year        6       19933
+#>   6: MCID3111164659  19881 01 First-year        6       19933
+#>   7: MCID3111165208  19881 01 First-year        6       19933
+#>   8: MCID3111169601  19881 01 First-year        6       19933
 #>  ---                                                         
+#> 344: MCID3112751130  20151 01 First-year        6       20203
+#> 345: MCID3112754537  20151 01 First-year        6       20203
+#> 346: MCID3112799709  20161 01 First-year        6       20213
 #> 347: MCID3112815901  20161 01 First-year        6       20213
 #> 348: MCID3112839623  20171 01 First-year        6       20223
 #> 349: MCID3112868072  20171 01 First-year        6       20223
@@ -259,14 +358,20 @@ DT[order(data_sufficiency)]
 #>   3: MCID3111158724  19881       19933 19881-20096    exclude-lower
 #>   4: MCID3111163443  19881       19933 19881-20096    exclude-lower
 #>   5: MCID3111163894  19881       19933 19881-20096    exclude-lower
+#>   6: MCID3111164659  19881       19933 19881-20096    exclude-lower
+#>   7: MCID3111165208  19881       19933 19881-20096    exclude-lower
+#>   8: MCID3111169601  19881       19933 19881-20181    exclude-lower
 #>  ---                                                               
+#> 344: MCID3112471565  20101       20153 19881-20181          include
+#> 345: MCID3112474878  20101       20153 19881-20181          include
+#> 346: MCID3112485250  20101       20153 19881-20181          include
 #> 347: MCID3112486054  20101       20153 19881-20181          include
 #> 348: MCID3112587501  20121       20173 19881-20181          include
 #> 349: MCID3112592592  20121       20173 19881-20181          include
 #> 350: MCID3112593368  20121       20173 19881-20181          include
 #> 351: MCID3112617577  20123       20181 19881-20181          include
 
-# Initial population labeled "include", drop all others
+# "include" denotes the credible initial population
 population <- DT[data_sufficiency == "include", .(mcid)]
 population <- unique(population)
 population
@@ -277,83 +382,51 @@ population
 #>   3: MCID3111213539
 #>   4: MCID3111213856
 #>   5: MCID3111246563
+#>   6: MCID3111254225
+#>   7: MCID3111254412
+#>   8: MCID3111257675
 #>  ---               
+#> 233: MCID3112471565
+#> 234: MCID3112474878
+#> 235: MCID3112485250
 #> 236: MCID3112486054
 #> 237: MCID3112587501
 #> 238: MCID3112592592
 #> 239: MCID3112593368
 #> 240: MCID3112617577
 
-# Inner join to restrict source data to this population
+# Inner join restricts source data to this population
 student <- population[student, on = "mcid", nomatch = NULL]
 term <- population[term, on = "mcid", nomatch = NULL]
 course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-dim(student)
-#> [1] 240  13
-dim(term)
-#> [1] 1347   13
-dim(course)
-#> [1] 6421   12
-dim(degree)
-#> [1] 170   5
-
-# Identify post-baccalaureate terms
+# Identify pre- and post-completion terms
 term <- post_completion_terms(term, midf_table = degree)
 course <- post_completion_terms(course, midf_table = degree)
 degree <- post_completion_terms(degree, midf_table = degree)
 
-# View partial results
-term[, .(mcid, first_degree_term, term_cluster)][order(term_cluster)]
-#>                 mcid first_degree_term term_cluster
-#>               <char>            <char>       <char>
-#>    1: MCID3111213539             19923 first-degree
-#>    2: MCID3111254225             19923 first-degree
-#>    3: MCID3111254412             19933 first-degree
-#>    4: MCID3111257675             19931 first-degree
-#>    5: MCID3111257677             19923 first-degree
-#>   ---                                              
-#> 1343: MCID3112593368             20153   pre-degree
-#> 1344: MCID3112593368             20153   pre-degree
-#> 1345: MCID3112593368             20153   pre-degree
-#> 1346: MCID3112593368             20153   pre-degree
-#> 1347: MCID3112617577              <NA>   pre-degree
+# View summary results
+term[order(-term_relevance), .N, by = "term_relevance"]
+#>     term_relevance     N
+#>             <char> <int>
+#> 1:  pre-completion  1330
+#> 2: post-completion    17
+course[order(-term_relevance), .N, by = "term_relevance"]
+#>     term_relevance     N
+#>             <char> <int>
+#> 1:  pre-completion  6380
+#> 2: post-completion    41
+degree[order(-term_relevance), .N, by = "term_relevance"]
+#>     term_relevance     N
+#>             <char> <int>
+#> 1:  pre-completion   169
+#> 2: post-completion     1
 
-course[, .(mcid, first_degree_term, term_cluster)][order(term_cluster)]
-#>                 mcid first_degree_term term_cluster
-#>               <char>            <char>       <char>
-#>    1: MCID3111213539             19923 first-degree
-#>    2: MCID3111213539             19923 first-degree
-#>    3: MCID3111213539             19923 first-degree
-#>    4: MCID3111213539             19923 first-degree
-#>    5: MCID3111213539             19923 first-degree
-#>   ---                                              
-#> 6417: MCID3112617577              <NA>   pre-degree
-#> 6418: MCID3112617577              <NA>   pre-degree
-#> 6419: MCID3112617577              <NA>   pre-degree
-#> 6420: MCID3112617577              <NA>   pre-degree
-#> 6421: MCID3112617577              <NA>   pre-degree
-
-degree[, .(mcid, first_degree_term, term_cluster)][order(term_cluster)]
-#>                mcid first_degree_term      term_cluster
-#>              <char>            <char>            <char>
-#>   1: MCID3111213539             19923      first-degree
-#>   2: MCID3111213856             19911      first-degree
-#>   3: MCID3111254225             19923      first-degree
-#>   4: MCID3111254412             19933      first-degree
-#>   5: MCID3111257675             19931      first-degree
-#>  ---                                                   
-#> 166: MCID3112486054             20143      first-degree
-#> 167: MCID3112587501             20141      first-degree
-#> 168: MCID3112592592             20153      first-degree
-#> 169: MCID3112593368             20153      first-degree
-#> 170: MCID3112012180             20043 post-first-degree
-
-# Exclude rows after the first degree term
-term <- term[term_cluster != "post-first-degree"]
-course <- course[term_cluster != "post-first-degree"]
-degree <- degree[term_cluster != "post-first-degree"]
+# Retain pre-completion terms
+term <- term[term_relevance == "pre-completion"]
+course <- course[term_relevance == "pre-completion"]
+degree <- degree[term_relevance == "pre-completion"]
 
 # Choose a minimum set of columns to proceed
 student <- select_basic_cols(student)
@@ -361,65 +434,127 @@ term <- select_basic_cols(term)
 course <- select_basic_cols(course)
 degree <- select_basic_cols(degree)
 
+# Subset population to match the programs selected earlier
+study_term <- programs[term, .(mcid, program), on = "cip6", nomatch = NULL]
+study_degree <- programs[degree, .(mcid, program), on = "cip6", nomatch = NULL]
+study_population <- unique(rbindlist(list(study_term, study_degree)))
+study_population
+#>               mcid    program
+#>             <char>     <char>
+#>  1: MCID3111265287 Genl Psych
+#>  2: MCID3111312495   Business
+#>  3: MCID3111391443 Genl Psych
+#>  4: MCID3111437660   Business
+#>  5: MCID3111447797  Mech Engr
+#>  6: MCID3111460403  Mech Engr
+#>  7: MCID3111596195   Business
+#>  8: MCID3111667375 Genl Psych
+#> ---                          
+#> 38: MCID3112353024 Genl Psych
+#> 39: MCID3112363105   Business
+#> 40: MCID3112406111   Business
+#> 41: MCID3112414691   Business
+#> 42: MCID3112442814   Business
+#> 43: MCID3112467463 Genl Psych
+#> 44: MCID3112587501 Genl Psych
+#> 45: MCID3112592592   Business
+study_population[, .N, by = "program"][order(-N)]
+#>       program     N
+#>        <char> <int>
+#> 1: Genl Psych    19
+#> 2:   Business    18
+#> 3:  Mech Engr     8
+
+# Use these IDs to subset the records
+student <- study_population[, .(mcid)][student, on = "mcid", nomatch = NULL]
+term <- study_population[, .(mcid)][term, on = "mcid", nomatch = NULL]
+course <- study_population[, .(mcid)][course, on = "mcid", nomatch = NULL]
+degree <- study_population[, .(mcid)][degree, on = "mcid", nomatch = NULL]
+
+# Records of all students ever enrolled in one the selected programs
 student
-#>                mcid          race    sex
-#>              <char>        <char> <char>
-#>   1: MCID3111198701         White   Male
-#>   2: MCID3111208924         White   Male
-#>   3: MCID3111213539         White Female
-#>   4: MCID3111213856         White Female
-#>   5: MCID3111246563         White   Male
-#>  ---                                    
-#> 236: MCID3112486054         White Female
-#> 237: MCID3112587501      Hispanic Female
-#> 238: MCID3112592592         White   Male
-#> 239: MCID3112593368         White Female
-#> 240: MCID3112617577 International Female
+#>               mcid          race    sex
+#>             <char>        <char> <char>
+#>  1: MCID3111265287         White   Male
+#>  2: MCID3111312495         White   Male
+#>  3: MCID3111391443         White Female
+#>  4: MCID3111437660         White   Male
+#>  5: MCID3111447797         White   Male
+#>  6: MCID3111460403         White   Male
+#>  7: MCID3111596195         White   Male
+#>  8: MCID3111667375         White Female
+#> ---                                    
+#> 38: MCID3112353024         White Female
+#> 39: MCID3112363105         White   Male
+#> 40: MCID3112406111 Other/Unknown Female
+#> 41: MCID3112414691         White Female
+#> 42: MCID3112442814 Other/Unknown   Male
+#> 43: MCID3112467463         White Female
+#> 44: MCID3112587501      Hispanic Female
+#> 45: MCID3112592592         White   Male
 
 term
-#>                 mcid   term   cip6   institution          level
-#>               <char> <char> <char>        <char>         <char>
-#>    1: MCID3111198701  19891 240102 Institution J  01 First-year
-#>    2: MCID3111198701  19893 520301 Institution J  01 First-year
-#>    3: MCID3111208924  19891 240102 Institution J  01 First-year
-#>    4: MCID3111208924  19893 140102 Institution J  01 First-year
-#>    5: MCID3111208924  19895 140102 Institution J  01 First-year
-#>   ---                                                          
-#> 1326: MCID3112593368  20133 090101 Institution B  03 Third-year
-#> 1327: MCID3112593368  20141 090101 Institution B  03 Third-year
-#> 1328: MCID3112593368  20151 090101 Institution B  03 Third-year
-#> 1329: MCID3112593368  20153 090101 Institution B 04 Fourth-year
-#> 1330: MCID3112617577  20123 240199 Institution B  01 First-year
+#>                mcid   term   cip6   institution          level
+#>              <char> <char> <char>        <char>         <char>
+#>   1: MCID3111265287  19901 420101 Institution B  01 First-year
+#>   2: MCID3111265287  19903 420101 Institution B  01 First-year
+#>   3: MCID3111312495  19911 520201 Institution B  01 First-year
+#>   4: MCID3111312495  19913 520201 Institution B 02 Second-year
+#>   5: MCID3111312495  19921 520201 Institution B 02 Second-year
+#>   6: MCID3111312495  19923 520201 Institution B  03 Third-year
+#>   7: MCID3111312495  19931 520201 Institution B  03 Third-year
+#>   8: MCID3111312495  19933 520201 Institution B 04 Fourth-year
+#>  ---                                                          
+#> 265: MCID3112587501  20141 420101 Institution B  03 Third-year
+#> 266: MCID3112592592  20121 520201 Institution B  01 First-year
+#> 267: MCID3112592592  20123 520201 Institution B 02 Second-year
+#> 268: MCID3112592592  20131 520201 Institution B 02 Second-year
+#> 269: MCID3112592592  20133 520201 Institution B  03 Third-year
+#> 270: MCID3112592592  20141 520201 Institution B  03 Third-year
+#> 271: MCID3112592592  20143 520201 Institution B 04 Fourth-year
+#> 272: MCID3112592592  20153 520201 Institution B 04 Fourth-year
 
 course
 #>                 mcid term_course abbrev number
 #>               <char>      <char> <char> <char>
-#>    1: MCID3111198701       19891   ACCT   1504
-#>    2: MCID3111198701       19891   CHEM   1015
-#>    3: MCID3111198701       19891   CHEM   1025
-#>    4: MCID3111198701       19891   ENGL   1105
-#>    5: MCID3111198701       19891   MATH   1525
+#>    1: MCID3111265287       19901   ECON   2020
+#>    2: MCID3111265287       19901   EMUS   1832
+#>    3: MCID3111265287       19901   PSYC   2012
+#>    4: MCID3111265287       19901   PSYC   2303
+#>    5: MCID3111265287       19901   PSYC   4385
+#>    6: MCID3111265287       19903   EMUS   3642
+#>    7: MCID3111265287       19903   KINE   3420
+#>    8: MCID3111265287       19903   PSYC   4145
 #>   ---                                         
-#> 6376: MCID3112617577       20121   NCIE   4175
-#> 6377: MCID3112617577       20123   GEOG   1992
-#> 6378: MCID3112617577       20123   LING   1000
-#> 6379: MCID3112617577       20123   PSYC   1001
-#> 6380: MCID3112617577       20123   WRTG   1150
+#> 1266: MCID3112592592       20141   REAL   3000
+#> 1267: MCID3112592592       20143   CSCI   1300
+#> 1268: MCID3112592592       20143   ECON   4514
+#> 1269: MCID3112592592       20143   ENGL   3000
+#> 1270: MCID3112592592       20143   FNCE   4030
+#> 1271: MCID3112592592       20151   STDY   1001
+#> 1272: MCID3112592592       20153   ECON   4626
+#> 1273: MCID3112592592       20153   FNCE   4850
 
 degree
-#>                mcid term_degree   cip6
-#>              <char>      <char> <char>
-#>   1: MCID3111213539       19923 030103
-#>   2: MCID3111213856       19911 261399
-#>   3: MCID3111254225       19923 270101
-#>   4: MCID3111254412       19933 140901
-#>   5: MCID3111257675       19931 451001
-#>  ---                                  
-#> 165: MCID3112485250       20121 451101
-#> 166: MCID3112486054       20143 040401
-#> 167: MCID3112587501       20141 420101
-#> 168: MCID3112592592       20153 520201
-#> 169: MCID3112593368       20153 090101
+#>               mcid term_degree   cip6
+#>             <char>      <char> <char>
+#>  1: MCID3111265287       19904 420101
+#>  2: MCID3111312495       19933 520201
+#>  3: MCID3111391443       19966 400601
+#>  4: MCID3111437660       19953 520101
+#>  5: MCID3111447797       19983 143501
+#>  6: MCID3111667375       20003 420101
+#>  7: MCID3111701868       19993 141901
+#>  8: MCID3111730954       20011 141901
+#> ---                                  
+#> 34: MCID3112353024       20121 420101
+#> 35: MCID3112363105       20103 520201
+#> 36: MCID3112406111       20123 520201
+#> 37: MCID3112414691       20131 520201
+#> 38: MCID3112442814       20103 520101
+#> 39: MCID3112467463       20113 420101
+#> 40: MCID3112587501       20141 420101
+#> 41: MCID3112592592       20153 520201
 ```
 
 ## Acknowledgments

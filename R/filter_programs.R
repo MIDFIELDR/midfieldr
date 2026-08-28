@@ -28,21 +28,21 @@
 filter_programs <- function(dframe, pattern, ..., negate = NULL) {
   #
   # ---------- initial assertions
-  
+
   # data frames
   qassert(dframe, "d+")
-  
+
   # arguments after ... must be named
   wrapr::stop_if_dot_args(
     substitute(list(...)),
     "Arguments after ... must be named, as in arg = val."
   )
-  
+
   # ---------- declarations
-  
+
   # optional defaults
   negate <- negate %?% FALSE
-  
+
   # ---------- variable assertions
 
   # class, missing not allowed
@@ -79,7 +79,7 @@ filter_programs <- function(dframe, pattern, ..., negate = NULL) {
     returned_vars = NULL,
     prior_class
   )
-  
+
   # done
   dframe[]
 }

@@ -21,10 +21,10 @@
 #' * `r rows_not_modified`
 #' * New columns are added or replace existing columns of the same name (if
 #'   any). Other columns are not modified. The following variables are added:
-#'   - `first_degree_term.` &nbsp;  Character. Term of a student's first
+#'   - `first_term_degree` &nbsp;  Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA`.
 #'      Joined from the `term_degree` variable in `midf_table.`
-#'   - `term_cluster.` &nbsp;  Character, indicating that a term belongs
+#'   - `term_category.` &nbsp;  Character, indicating that a term belongs
 #'      to one of three clusters: terms that are prior to ("pre-degree"),
 #'      equal to ("first-degree"), or subsequent to ("post-first-degree")
 #'      the student’s first degree term.
@@ -35,7 +35,7 @@
 post_completion_terms <- function(dframe, midf_table = degree) {
   #
   # ---------- initial assertions
-  
+
   # data frames
   qassert(dframe, "d+")
   qassert(midf_table, "d+")
@@ -45,24 +45,24 @@ post_completion_terms <- function(dframe, midf_table = degree) {
   # determine name of term variable
   term_var_choices <- c("term", "term_course", "term_degree")
   term_var <- intersect(colnames(dframe), term_var_choices)
-  
+
   # active column names
   reqd_dframe_vars <- c("mcid", term_var)
   reqd_table_vars <- c("mcid", "term_degree")
-  added_vars <- c("first_degree_term", "term_cluster")
+  added_vars <- c("before_or_after", "first_term_degree")
 
   # bind names for R CMD check
-  first_degree_term <- NULL
-  term_cluster <- NULL
+  first_term_degree <- NULL
+  before_or_after <- NULL
   IDX <- NULL
   TERM_VAR <- NULL
 
   # ---------- variable assertions
-  
+
   utils_check_reqd_vars(dframe, reqd_dframe_vars)
   utils_check_reqd_vars(midf_table, reqd_table_vars)
   qassert(term_var, "s1")
-  
+
   # ---------- preparation
 
   # for restoring class except grouped tibbles
@@ -93,23 +93,24 @@ post_completion_terms <- function(dframe, midf_table = degree) {
   dframe[, IDX := .I, env = list(IDX = idx)]
 
   # ---------- do the work
-  
+
   # edit name before join
-  setnames(midf_table, old = "term_degree", new = "first_degree_term")
+  setnames(midf_table, old = "term_degree", new = "first_term_degree")
   DT <- midf_table[dframe[, .(mcid)], on = "mcid", nomatch = NULL]
 
   # keep the first-degree term/row
-  setorderv(DT, c("mcid", "first_degree_term"))
+  setorderv(DT, c("mcid", "first_term_degree"))
   DT <- DT[, .SD[1L], by = "mcid"]
 
-  # left-join to dframe, introduces NAs in first_degree_term col
+  # left-join to dframe, introduces NAs in first_term_degree col
   dframe <- DT[dframe, on = "mcid"]
 
   # assign term status labels
-  dframe[, term_cluster := fcase(
-    TERM_VAR == first_degree_term, "first-degree",
-    TERM_VAR > first_degree_term, "post-first-degree",
-    default = "pre-degree"
+  dframe[, before_or_after := fifelse(
+    TERM_VAR > first_term_degree,
+    "after",
+    "before",
+    na = "before"
   ),
   env = list(TERM_VAR = term_var)
   ]

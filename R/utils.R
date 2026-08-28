@@ -38,10 +38,10 @@ catch_error <- function(f) {
 #' @export
 look_at <- function(x) {
   str(x,
-      give.attr = FALSE,
-      give.length = FALSE,
-      width = 80,
-      strict.width = "cut"
+    give.attr = FALSE,
+    give.length = FALSE,
+    width = 80,
+    strict.width = "cut"
   )
 }
 
@@ -65,16 +65,16 @@ sort_uniq <- function(x,
                       na.rm = FALSE, # passed to unique()
                       decreasing = FALSE, # passed to sort()
                       na.last = FALSE) { # to sort()
-  
+
   wrapr::stop_if_dot_args(substitute(list(...)), "midfieldr::sort_uniq")
-  
+
   checkmate::check_atomic_vector(x)
-  
+
   x <- unique(x, na.rm = na.rm)
-  
+
   base::sort(x,
-             decreasing = decreasing,
-             na.last = na.last
+    decreasing = decreasing,
+    na.last = na.last
   )
 }
 
@@ -93,13 +93,13 @@ sort_uniq <- function(x,
 utils_edit_colnames <- function(dframe, proposed_new_names) {
   # prevent any possible by-ref changes (probably not necessary here)
   dframe <- copy(dframe)
-  
+
   # existing column names
   exist_names <- colnames(dframe)
-  
+
   # add suffix .1, .2, etc. to new names as needed if they match existing
   uniq_names <- make.unique(c(exist_names, proposed_new_names))
-  
+
   # return the edited new names
   new_names <- setdiff(uniq_names, exist_names)[]
 }
@@ -107,8 +107,8 @@ utils_edit_colnames <- function(dframe, proposed_new_names) {
 
 #' Check required variables in data frame
 #'
-#' Checkmate assertions on required variables. Suitable for any class data 
-#' frame. 
+#' Checkmate assertions on required variables. Suitable for any class data
+#' frame.
 #' - Required variables exist
 #' - Their class is character or factor
 #' @param dframe Data frame expected to contain the required variables
@@ -117,7 +117,7 @@ utils_edit_colnames <- function(dframe, proposed_new_names) {
 utils_check_reqd_vars <- function(dframe, reqd_vars) {
   # required variables exist
   assert_names(colnames(dframe), must.include = reqd_vars)
-  
+
   # class is string or factor, any length (including zero)
   for (var in reqd_vars) qassert(dframe[[var]], c("s*", "f*"))
 }
@@ -134,19 +134,18 @@ utils_check_reqd_vars <- function(dframe, reqd_vars) {
 #' @param reqd_vars Character vector of required column names to be checked
 #' @noRd
 utils_prep_DT <- function(dframe, reqd_vars) {
-  
   # convert class
   setDT(dframe)
-  
+
   # ensure character
   dframe[, names(.SD) := lapply(.SD, as.character), .SDcols = reqd_vars]
-  
+
   # filter NAs in required variables
   dframe <- na.omit(dframe, cols = reqd_vars)
-  
+
   # ensure unique rows
   dframe <- unique(dframe)
-  
+
   # done
   dframe[]
 }
@@ -168,25 +167,25 @@ utils_prepare_return <- function(dframe, idx, returned_vars, prior_class) {
   idx <- idx %?% NULL
   returned_vars <- returned_vars %?% NULL
   prior_class <- prior_class %?% NULL
-  
+
   # bind names for R CMD check
   IDX <- NULL
-  
+
   # restore row order
   if (!is.null(idx)) {
     setkeyv(dframe, idx)
     # drop idx column, needed for NULL returned_vars
     dframe[, IDX := NULL, env = list(IDX = idx)]
   }
-  
+
   # restore column order and drop temporary columns
   if (!is.null(returned_vars)) {
     dframe <- dframe[, .SD, .SDcols = returned_vars]
   }
-  
+
   # ensure unique rows
   dframe <- unique(dframe)
-  
+
   # restore class
   if (!is.null(prior_class)) {
     setattr(dframe, "class", prior_class)

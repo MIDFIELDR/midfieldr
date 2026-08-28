@@ -39,7 +39,7 @@ test_post_completion_terms <- function() {
   suppressPackageStartupMessages(require("data.table"))
   
   # column names to be added
-  new_cols <- c("first_degree_term", "term_cluster")
+  new_cols <- c("before_or_after", "first_term_degree")
   
   # ---------- start tests
   
@@ -116,12 +116,12 @@ test_post_completion_terms <- function() {
       "4", "20053"
   )
   setDT(x_degr)
-  ans <- post_completion_terms(x_term, x_degr)[["term_cluster"]]
-  expected_ans <- c("pre-degree", "first-degree", "post-first-degree", 
-                    "pre-degree", "first-degree", 
-                    "pre-degree", "first-degree",  
-                    "pre-degree", "first-degree", "post-first-degree", 
-                    "pre-degree", "pre-degree")
+  ans <- post_completion_terms(x_term, x_degr)[["before_or_after"]]
+  expected_ans <- c("before", "before", "after", 
+                    "before", "before", 
+                    "before", "before",  
+                    "before", "before", "after", 
+                    "before", "before")
   expect_equal(ans, expected_ans)
   
   

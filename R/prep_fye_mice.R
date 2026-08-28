@@ -94,7 +94,7 @@ prep_fye_mice <- function(m_student,
                           alt_fye = NULL) {
   #
   # ---------- initial assertions
-  
+
   # data frames
   qassert(m_student, "d+")
   qassert(m_term, "d+")
@@ -104,7 +104,7 @@ prep_fye_mice <- function(m_student,
     substitute(list(...)),
     "Arguments after ... must be named, as in arg = val."
   )
-  
+
   # ---------- declarations
 
   # active column names
@@ -119,13 +119,13 @@ prep_fye_mice <- function(m_student,
     institution = character(),
     alt_cip = character()
   )
-  
+
   # bind names for R CMD check
   fye_code <- NULL
   proxy <- NULL
-  
+
   # ---------- variable assertions
-  
+
   utils_check_reqd_vars(m_student, reqd_student_vars)
   utils_check_reqd_vars(m_term, reqd_term_vars)
   utils_check_reqd_vars(alt_fye, reqd_fye_alt_vars)
@@ -159,7 +159,7 @@ prep_fye_mice <- function(m_student,
   m_student <- copy(m_student)
   m_term <- copy(m_term)
   alt_fye <- copy(alt_fye)
-  
+
   # setDT then reqd_vars as.char, na.omit, unique
   m_student <- utils_prep_DT(m_student, reqd_student_vars)
   m_term <- utils_prep_DT(m_term, reqd_term_vars)
@@ -169,9 +169,9 @@ prep_fye_mice <- function(m_student,
   m_student <- m_student[, .SD, .SDcols = reqd_student_vars]
   m_term <- m_term[, .SD, .SDcols = reqd_term_vars]
   alt_fye <- alt_fye[, .SD, .SDcols = reqd_fye_alt_vars]
-  
+
   # ---------- do the work
-  
+
   # limit to degree-seeking
   m_term <- m_student[m_term, on = "mcid", nomatch = NULL]
 
@@ -182,10 +182,10 @@ prep_fye_mice <- function(m_student,
   # left-join, add fye_code column to institutions
   m_inst <- alt_fye[m_inst, on = "institution"]
   setnames(m_inst, old = "alt_cip", new = "fye_code")
-  
+
   # replace CIP NAs with standard FYE code
   m_inst[is.na(fye_code), fye_code := fye_cip]
-  
+
   # construct ever in engineering
   ever_engr <- m_term[cip6 %like% "^14"]
 
