@@ -26,8 +26,8 @@ Records and population
 - `timely_term()` estimates timely completion terms.  
 - `data_sufficiency()` identifies IDs to exclude due to insufficient
   data.  
-- `post_completion_terms()` identifies rows with post-baccalaureate
-  terms to exclude.
+- `undergraduate_term()` identifies rows with post-baccalaureate terms
+  to exclude.
 
 Blocs
 
@@ -49,9 +49,9 @@ Convenience
 ``` r
 library("midfieldr")
 packageVersion("midfieldr")
-#> [1] '1.0.3.9026'
+#> [1] '1.0.3.9027'
 Sys.Date()
-#> [1] "2026-08-27"
+#> [1] "2026-08-28"
 ```
 
 ## Installation
@@ -109,9 +109,11 @@ look_at(cip)
 #>  $ cip2    : chr  "01" "01" "01" "01" ...
 
 # Search for 6-digit codes of specific programs
-filter_programs(cip, c("mechanical engineering", 
-                       "psychology, general", 
-                       "business, managerial"))
+filter_programs(cip, c(
+  "mechanical engineering",
+  "psychology, general",
+  "business, managerial"
+))
 #>                                                                   cip6name
 #>                                                                     <char>
 #>  1:                                                 Mechanical Engineering
@@ -214,7 +216,7 @@ programs
 
 programs[, program := fcase(
   cip6 %like% "^1419", "Mech Engr",
-  cip6 %like% "^4201", "Genl Psych", 
+  cip6 %like% "^4201", "Genl Psych",
   cip6 %like% "^5202", "Business"
 )]
 programs <- programs[, .(cip6, program)]
@@ -402,31 +404,31 @@ course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
 # Identify pre- and post-completion terms
-term <- post_completion_terms(term, midf_table = degree)
-course <- post_completion_terms(course, midf_table = degree)
-degree <- post_completion_terms(degree, midf_table = degree)
+term <- undergraduate_terms(term, midf_table = degree)
+course <- undergraduate_terms(course, midf_table = degree)
+degree <- undergraduate_terms(degree, midf_table = degree)
 
 # View summary results
-term[order(-term_relevance), .N, by = "term_relevance"]
-#>     term_relevance     N
-#>             <char> <int>
-#> 1:  pre-completion  1330
-#> 2: post-completion    17
-course[order(-term_relevance), .N, by = "term_relevance"]
-#>     term_relevance     N
-#>             <char> <int>
-#> 1:  pre-completion  6380
-#> 2: post-completion    41
-degree[order(-term_relevance), .N, by = "term_relevance"]
-#>     term_relevance     N
-#>             <char> <int>
-#> 1:  pre-completion   169
-#> 2: post-completion     1
+term[order(-term_group), .N, by = "term_group"]
+#>    term_group     N
+#>        <char> <int>
+#> 1:  undergrad  1330
+#> 2:   graduate    17
+course[order(-term_group), .N, by = "term_group"]
+#>    term_group     N
+#>        <char> <int>
+#> 1:  undergrad  6380
+#> 2:   graduate    41
+degree[order(-term_group), .N, by = "term_group"]
+#>    term_group     N
+#>        <char> <int>
+#> 1:  undergrad   169
+#> 2:   graduate     1
 
-# Retain pre-completion terms
-term <- term[term_relevance == "pre-completion"]
-course <- course[term_relevance == "pre-completion"]
-degree <- degree[term_relevance == "pre-completion"]
+# Retain undergraduate terms
+term <- term[term_group == "undergrad"]
+course <- course[term_group == "undergrad"]
+degree <- degree[term_group == "undergrad"]
 
 # Choose a minimum set of columns to proceed
 student <- select_basic_cols(student)
@@ -471,7 +473,7 @@ term <- study_population[, .(mcid)][term, on = "mcid", nomatch = NULL]
 course <- study_population[, .(mcid)][course, on = "mcid", nomatch = NULL]
 degree <- study_population[, .(mcid)][degree, on = "mcid", nomatch = NULL]
 
-# Records of all students ever enrolled in one the selected programs
+# Abbreviated records of all students ever enrolled in one the selected programs
 student
 #>               mcid          race    sex
 #>             <char>        <char> <char>
@@ -494,67 +496,67 @@ student
 #> 45: MCID3112592592         White   Male
 
 term
-#>                mcid   term   cip6   institution          level
-#>              <char> <char> <char>        <char>         <char>
-#>   1: MCID3111265287  19901 420101 Institution B  01 First-year
-#>   2: MCID3111265287  19903 420101 Institution B  01 First-year
-#>   3: MCID3111312495  19911 520201 Institution B  01 First-year
-#>   4: MCID3111312495  19913 520201 Institution B 02 Second-year
-#>   5: MCID3111312495  19921 520201 Institution B 02 Second-year
-#>   6: MCID3111312495  19923 520201 Institution B  03 Third-year
-#>   7: MCID3111312495  19931 520201 Institution B  03 Third-year
-#>   8: MCID3111312495  19933 520201 Institution B 04 Fourth-year
+#>                mcid   cip6   institution          level   term
+#>              <char> <char>        <char>         <char> <char>
+#>   1: MCID3111265287 420101 Institution B  01 First-year  19901
+#>   2: MCID3111265287 420101 Institution B  01 First-year  19903
+#>   3: MCID3111312495 520201 Institution B  01 First-year  19911
+#>   4: MCID3111312495 520201 Institution B 02 Second-year  19913
+#>   5: MCID3111312495 520201 Institution B 02 Second-year  19921
+#>   6: MCID3111312495 520201 Institution B  03 Third-year  19923
+#>   7: MCID3111312495 520201 Institution B  03 Third-year  19931
+#>   8: MCID3111312495 520201 Institution B 04 Fourth-year  19933
 #>  ---                                                          
-#> 265: MCID3112587501  20141 420101 Institution B  03 Third-year
-#> 266: MCID3112592592  20121 520201 Institution B  01 First-year
-#> 267: MCID3112592592  20123 520201 Institution B 02 Second-year
-#> 268: MCID3112592592  20131 520201 Institution B 02 Second-year
-#> 269: MCID3112592592  20133 520201 Institution B  03 Third-year
-#> 270: MCID3112592592  20141 520201 Institution B  03 Third-year
-#> 271: MCID3112592592  20143 520201 Institution B 04 Fourth-year
-#> 272: MCID3112592592  20153 520201 Institution B 04 Fourth-year
+#> 265: MCID3112587501 420101 Institution B  03 Third-year  20141
+#> 266: MCID3112592592 520201 Institution B  01 First-year  20121
+#> 267: MCID3112592592 520201 Institution B 02 Second-year  20123
+#> 268: MCID3112592592 520201 Institution B 02 Second-year  20131
+#> 269: MCID3112592592 520201 Institution B  03 Third-year  20133
+#> 270: MCID3112592592 520201 Institution B  03 Third-year  20141
+#> 271: MCID3112592592 520201 Institution B 04 Fourth-year  20143
+#> 272: MCID3112592592 520201 Institution B 04 Fourth-year  20153
 
 course
-#>                 mcid term_course abbrev number
-#>               <char>      <char> <char> <char>
-#>    1: MCID3111265287       19901   ECON   2020
-#>    2: MCID3111265287       19901   EMUS   1832
-#>    3: MCID3111265287       19901   PSYC   2012
-#>    4: MCID3111265287       19901   PSYC   2303
-#>    5: MCID3111265287       19901   PSYC   4385
-#>    6: MCID3111265287       19903   EMUS   3642
-#>    7: MCID3111265287       19903   KINE   3420
-#>    8: MCID3111265287       19903   PSYC   4145
+#>                 mcid abbrev number term_course
+#>               <char> <char> <char>      <char>
+#>    1: MCID3111265287   ECON   2020       19901
+#>    2: MCID3111265287   EMUS   1832       19901
+#>    3: MCID3111265287   PSYC   2012       19901
+#>    4: MCID3111265287   PSYC   2303       19901
+#>    5: MCID3111265287   PSYC   4385       19901
+#>    6: MCID3111265287   EMUS   3642       19903
+#>    7: MCID3111265287   KINE   3420       19903
+#>    8: MCID3111265287   PSYC   4145       19903
 #>   ---                                         
-#> 1266: MCID3112592592       20141   REAL   3000
-#> 1267: MCID3112592592       20143   CSCI   1300
-#> 1268: MCID3112592592       20143   ECON   4514
-#> 1269: MCID3112592592       20143   ENGL   3000
-#> 1270: MCID3112592592       20143   FNCE   4030
-#> 1271: MCID3112592592       20151   STDY   1001
-#> 1272: MCID3112592592       20153   ECON   4626
-#> 1273: MCID3112592592       20153   FNCE   4850
+#> 1266: MCID3112592592   REAL   3000       20141
+#> 1267: MCID3112592592   CSCI   1300       20143
+#> 1268: MCID3112592592   ECON   4514       20143
+#> 1269: MCID3112592592   ENGL   3000       20143
+#> 1270: MCID3112592592   FNCE   4030       20143
+#> 1271: MCID3112592592   STDY   1001       20151
+#> 1272: MCID3112592592   ECON   4626       20153
+#> 1273: MCID3112592592   FNCE   4850       20153
 
 degree
-#>               mcid term_degree   cip6
-#>             <char>      <char> <char>
-#>  1: MCID3111265287       19904 420101
-#>  2: MCID3111312495       19933 520201
-#>  3: MCID3111391443       19966 400601
-#>  4: MCID3111437660       19953 520101
-#>  5: MCID3111447797       19983 143501
-#>  6: MCID3111667375       20003 420101
-#>  7: MCID3111701868       19993 141901
-#>  8: MCID3111730954       20011 141901
+#>               mcid   cip6 term_degree
+#>             <char> <char>      <char>
+#>  1: MCID3111265287 420101       19904
+#>  2: MCID3111312495 520201       19933
+#>  3: MCID3111391443 400601       19966
+#>  4: MCID3111437660 520101       19953
+#>  5: MCID3111447797 143501       19983
+#>  6: MCID3111667375 420101       20003
+#>  7: MCID3111701868 141901       19993
+#>  8: MCID3111730954 141901       20011
 #> ---                                  
-#> 34: MCID3112353024       20121 420101
-#> 35: MCID3112363105       20103 520201
-#> 36: MCID3112406111       20123 520201
-#> 37: MCID3112414691       20131 520201
-#> 38: MCID3112442814       20103 520101
-#> 39: MCID3112467463       20113 420101
-#> 40: MCID3112587501       20141 420101
-#> 41: MCID3112592592       20153 520201
+#> 34: MCID3112353024 420101       20121
+#> 35: MCID3112363105 520201       20103
+#> 36: MCID3112406111 520201       20123
+#> 37: MCID3112414691 520201       20131
+#> 38: MCID3112442814 520101       20103
+#> 39: MCID3112467463 420101       20113
+#> 40: MCID3112587501 420101       20141
+#> 41: MCID3112592592 520201       20153
 ```
 
 ## Acknowledgments

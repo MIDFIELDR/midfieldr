@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9025</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9027</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,6 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-case-study" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Case study</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-case-study">
 <li><a class="dropdown-item" href="articles/art-004-case-study.html">Case study using data.table</a></li>
-    <li><a class="dropdown-item" href="articles/art-005-case-dplyr.html">Case study using dplyr</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -106,7 +105,7 @@
 <code><a href="reference/data_sufficiency.html">data_sufficiency()</a></code> identifies IDs to exclude due to insufficient data.<br>
 </li>
 <li>
-<code><a href="reference/post_completion_terms.html">post_completion_terms()</a></code> identifies rows with post-baccalaureate terms to exclude.</li>
+<code>undergraduate_term()</code> identifies rows with post-baccalaureate terms to exclude.</li>
 </ul>
 <p>Blocs</p>
 <ul>
@@ -132,9 +131,9 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfieldr/">"midfieldr"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"midfieldr"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] '1.0.3.9024'</span></span>
+<span><span class="co">#&gt; [1] '1.0.3.9027'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "2026-08-24"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "2026-08-28"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -172,50 +171,139 @@
 <span><span class="co">#&gt;  $ cip2name: chr  "Agriculture, Agricultural Operations and Related Sciences""..</span></span>
 <span><span class="co">#&gt;  $ cip2    : chr  "01" "01" "01" "01" ...</span></span>
 <span></span>
-<span><span class="co"># Search for program 6-digit codes</span></span>
-<span><span class="va">cip</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="st">"^14"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"civil"</span>, <span class="st">"mechanical"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                                  cip6name   cip6                      cip4name</span></span>
-<span><span class="co">#&gt;                                    &lt;char&gt; &lt;char&gt;                        &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:             Civil Engineering, General 140801             Civil Engineering</span></span>
-<span><span class="co">#&gt; 2:               Geotechnical Engineering 140802             Civil Engineering</span></span>
-<span><span class="co">#&gt; 3:                 Structural Engineering 140803             Civil Engineering</span></span>
-<span><span class="co">#&gt; 4: Transportation and Highway Engineering 140804             Civil Engineering</span></span>
-<span><span class="co">#&gt; 5:            Water Resources Engineering 140805             Civil Engineering</span></span>
-<span><span class="co">#&gt; 6:               Civil Engineering, Other 140899             Civil Engineering</span></span>
-<span><span class="co">#&gt; 7:                 Mechanical Engineering 141901        Mechanical Engineering</span></span>
-<span><span class="co">#&gt; 8:          Electromechanical Engineering 144101 Electromechanical Engineering</span></span>
-<span><span class="co">#&gt;      cip4    cip2name   cip2</span></span>
-<span><span class="co">#&gt;    &lt;char&gt;      &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:   1408 Engineering     14</span></span>
-<span><span class="co">#&gt; 2:   1408 Engineering     14</span></span>
-<span><span class="co">#&gt; 3:   1408 Engineering     14</span></span>
-<span><span class="co">#&gt; 4:   1408 Engineering     14</span></span>
-<span><span class="co">#&gt; 5:   1408 Engineering     14</span></span>
-<span><span class="co">#&gt; 6:   1408 Engineering     14</span></span>
-<span><span class="co">#&gt; 7:   1419 Engineering     14</span></span>
-<span><span class="co">#&gt; 8:   1441 Engineering     14</span></span>
+<span><span class="co"># Search for 6-digit codes of specific programs</span></span>
+<span><span class="fu"><a href="reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"mechanical engineering"</span>,</span>
+<span>  <span class="st">"psychology, general"</span>,</span>
+<span>  <span class="st">"business, managerial"</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                                                                   cip6name</span></span>
+<span><span class="co">#&gt;                                                                     &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:                                                 Mechanical Engineering</span></span>
+<span><span class="co">#&gt;  2:                                          Electromechanical Engineering</span></span>
+<span><span class="co">#&gt;  3: Electromechanical Technology, Electromechanical Engineering Technology</span></span>
+<span><span class="co">#&gt;  4:             Aeronautical, Aerospace Engineering Technology, Technician</span></span>
+<span><span class="co">#&gt;  5:                          Automotive Engineering Technology, Technician</span></span>
+<span><span class="co">#&gt;  6:              Mechanical Engineering, Mechanical Technology, Technician</span></span>
+<span><span class="co">#&gt;  7:        Mechanical Engineering Related Technologies, Technicians, Other</span></span>
+<span><span class="co">#&gt;  8:                                                    Psychology, General</span></span>
+<span><span class="co">#&gt; ---                                                                       </span></span>
+<span><span class="co">#&gt; 16:                                        E-Commerce, Electronic Commerce</span></span>
+<span><span class="co">#&gt; 17:                                    Transportation, Mobility Management</span></span>
+<span><span class="co">#&gt; 18:                                    Research and Development Management</span></span>
+<span><span class="co">#&gt; 19:                                                     Project Management</span></span>
+<span><span class="co">#&gt; 20:                                                      Retail Management</span></span>
+<span><span class="co">#&gt; 21:                                              Organizational Leadership</span></span>
+<span><span class="co">#&gt; 22:                                 Business, Managerial Operations, Other</span></span>
+<span><span class="co">#&gt; 23:                                         Business, Managerial Economics</span></span>
+<span><span class="co">#&gt;       cip6</span></span>
+<span><span class="co">#&gt;     &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1: 141901</span></span>
+<span><span class="co">#&gt;  2: 144101</span></span>
+<span><span class="co">#&gt;  3: 150403</span></span>
+<span><span class="co">#&gt;  4: 150801</span></span>
+<span><span class="co">#&gt;  5: 150803</span></span>
+<span><span class="co">#&gt;  6: 150805</span></span>
+<span><span class="co">#&gt;  7: 150899</span></span>
+<span><span class="co">#&gt;  8: 420101</span></span>
+<span><span class="co">#&gt; ---       </span></span>
+<span><span class="co">#&gt; 16: 520208</span></span>
+<span><span class="co">#&gt; 17: 520209</span></span>
+<span><span class="co">#&gt; 18: 520210</span></span>
+<span><span class="co">#&gt; 19: 520211</span></span>
+<span><span class="co">#&gt; 20: 520212</span></span>
+<span><span class="co">#&gt; 21: 520213</span></span>
+<span><span class="co">#&gt; 22: 520299</span></span>
+<span><span class="co">#&gt; 23: 520601</span></span>
+<span><span class="co">#&gt;                                                                        cip4name</span></span>
+<span><span class="co">#&gt;                                                                          &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:                                                      Mechanical Engineering</span></span>
+<span><span class="co">#&gt;  2:                                               Electromechanical Engineering</span></span>
+<span><span class="co">#&gt;  3: Electromechanical Instrumentation and Maintenance Technologies, Technicians</span></span>
+<span><span class="co">#&gt;  4:                    Mechanical Engineering Related Technologies, Technicians</span></span>
+<span><span class="co">#&gt;  5:                    Mechanical Engineering Related Technologies, Technicians</span></span>
+<span><span class="co">#&gt;  6:                    Mechanical Engineering Related Technologies, Technicians</span></span>
+<span><span class="co">#&gt;  7:                    Mechanical Engineering Related Technologies, Technicians</span></span>
+<span><span class="co">#&gt;  8:                                                         Psychology, General</span></span>
+<span><span class="co">#&gt; ---                                                                            </span></span>
+<span><span class="co">#&gt; 16:                                             Business, Managerial Operations</span></span>
+<span><span class="co">#&gt; 17:                                             Business, Managerial Operations</span></span>
+<span><span class="co">#&gt; 18:                                             Business, Managerial Operations</span></span>
+<span><span class="co">#&gt; 19:                                             Business, Managerial Operations</span></span>
+<span><span class="co">#&gt; 20:                                             Business, Managerial Operations</span></span>
+<span><span class="co">#&gt; 21:                                             Business, Managerial Operations</span></span>
+<span><span class="co">#&gt; 22:                                             Business, Managerial Operations</span></span>
+<span><span class="co">#&gt; 23:                                              Business, Managerial Economics</span></span>
+<span><span class="co">#&gt;       cip4                                                     cip2name   cip2</span></span>
+<span><span class="co">#&gt;     &lt;char&gt;                                                       &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:   1419                                                  Engineering     14</span></span>
+<span><span class="co">#&gt;  2:   1441                                                  Engineering     14</span></span>
+<span><span class="co">#&gt;  3:   1504                                       Engineering Technology     15</span></span>
+<span><span class="co">#&gt;  4:   1508                                       Engineering Technology     15</span></span>
+<span><span class="co">#&gt;  5:   1508                                       Engineering Technology     15</span></span>
+<span><span class="co">#&gt;  6:   1508                                       Engineering Technology     15</span></span>
+<span><span class="co">#&gt;  7:   1508                                       Engineering Technology     15</span></span>
+<span><span class="co">#&gt;  8:   4201                                                   Psychology     42</span></span>
+<span><span class="co">#&gt; ---                                                                           </span></span>
+<span><span class="co">#&gt; 16:   5202 Business, Management, Marketing and Related Support Services     52</span></span>
+<span><span class="co">#&gt; 17:   5202 Business, Management, Marketing and Related Support Services     52</span></span>
+<span><span class="co">#&gt; 18:   5202 Business, Management, Marketing and Related Support Services     52</span></span>
+<span><span class="co">#&gt; 19:   5202 Business, Management, Marketing and Related Support Services     52</span></span>
+<span><span class="co">#&gt; 20:   5202 Business, Management, Marketing and Related Support Services     52</span></span>
+<span><span class="co">#&gt; 21:   5202 Business, Management, Marketing and Related Support Services     52</span></span>
+<span><span class="co">#&gt; 22:   5202 Business, Management, Marketing and Related Support Services     52</span></span>
+<span><span class="co">#&gt; 23:   5206 Business, Management, Marketing and Related Support Services     52</span></span>
 <span></span>
-<span><span class="co"># Set up program table with convenient labels</span></span>
-<span><span class="va">programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1408"</span>, <span class="st">"^1419"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Select specific CIP codes and add useful labels</span></span>
+<span><span class="va">programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1419"</span>, <span class="st">"^4201"</span>, <span class="st">"^5202"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">programs</span> <span class="op">&lt;-</span> <span class="va">programs</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6name</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">programs</span><span class="op">[</span>, <span class="va">program_abbr</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^1408"</span>, <span class="st">"CE"</span>,</span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^1419"</span>, <span class="st">"ME"</span></span>
-<span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">programs</span></span>
-<span><span class="co">#&gt;                                  cip6name   cip6 program_abbr</span></span>
-<span><span class="co">#&gt;                                    &lt;char&gt; &lt;char&gt;       &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:             Civil Engineering, General 140801           CE</span></span>
-<span><span class="co">#&gt; 2:               Geotechnical Engineering 140802           CE</span></span>
-<span><span class="co">#&gt; 3:                 Structural Engineering 140803           CE</span></span>
-<span><span class="co">#&gt; 4: Transportation and Highway Engineering 140804           CE</span></span>
-<span><span class="co">#&gt; 5:            Water Resources Engineering 140805           CE</span></span>
-<span><span class="co">#&gt; 6:               Civil Engineering, Other 140899           CE</span></span>
-<span><span class="co">#&gt; 7:                 Mechanical Engineering 141901           ME</span></span>
+<span><span class="co">#&gt;                                                           cip6name   cip6</span></span>
+<span><span class="co">#&gt;                                                             &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1:                                         Mechanical Engineering 141901</span></span>
+<span><span class="co">#&gt;  2:                                            Psychology, General 420101</span></span>
+<span><span class="co">#&gt;  3:                Business Administration and Management, General 520201</span></span>
+<span><span class="co">#&gt;  4: Purchasing, Procurement, Acquisitions and Contracts Management 520202</span></span>
+<span><span class="co">#&gt;  5:                             Logistics and Materials Management 520203</span></span>
+<span><span class="co">#&gt;  6:                              Office Management and Supervision 520204</span></span>
+<span><span class="co">#&gt;  7:                          Operations Management and Supervision 520205</span></span>
+<span><span class="co">#&gt;  8:                  Non-Profit, Public, Organizational Management 520206</span></span>
+<span><span class="co">#&gt;  9:                                    Customer Service Management 520207</span></span>
+<span><span class="co">#&gt; 10:                                E-Commerce, Electronic Commerce 520208</span></span>
+<span><span class="co">#&gt; 11:                            Transportation, Mobility Management 520209</span></span>
+<span><span class="co">#&gt; 12:                            Research and Development Management 520210</span></span>
+<span><span class="co">#&gt; 13:                                             Project Management 520211</span></span>
+<span><span class="co">#&gt; 14:                                              Retail Management 520212</span></span>
+<span><span class="co">#&gt; 15:                                      Organizational Leadership 520213</span></span>
+<span><span class="co">#&gt; 16:                         Business, Managerial Operations, Other 520299</span></span>
 <span></span>
-<span><span class="co"># "Toy" data sets assigned standard names</span></span>
+<span><span class="va">programs</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^1419"</span>, <span class="st">"Mech Engr"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^4201"</span>, <span class="st">"Genl Psych"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^5202"</span>, <span class="st">"Business"</span></span>
+<span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">programs</span> <span class="op">&lt;-</span> <span class="va">programs</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">program</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">programs</span></span>
+<span><span class="co">#&gt;       cip6    program</span></span>
+<span><span class="co">#&gt;     &lt;char&gt;     &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1: 141901  Mech Engr</span></span>
+<span><span class="co">#&gt;  2: 420101 Genl Psych</span></span>
+<span><span class="co">#&gt;  3: 520201   Business</span></span>
+<span><span class="co">#&gt;  4: 520202   Business</span></span>
+<span><span class="co">#&gt;  5: 520203   Business</span></span>
+<span><span class="co">#&gt;  6: 520204   Business</span></span>
+<span><span class="co">#&gt;  7: 520205   Business</span></span>
+<span><span class="co">#&gt;  8: 520206   Business</span></span>
+<span><span class="co">#&gt;  9: 520207   Business</span></span>
+<span><span class="co">#&gt; 10: 520208   Business</span></span>
+<span><span class="co">#&gt; 11: 520209   Business</span></span>
+<span><span class="co">#&gt; 12: 520210   Business</span></span>
+<span><span class="co">#&gt; 13: 520211   Business</span></span>
+<span><span class="co">#&gt; 14: 520212   Business</span></span>
+<span><span class="co">#&gt; 15: 520213   Business</span></span>
+<span><span class="co">#&gt; 16: 520299   Business</span></span>
+<span></span>
+<span><span class="co"># Small sample student records</span></span>
 <span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">toy_student</span><span class="op">)</span></span>
 <span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">toy_term</span><span class="op">)</span></span>
 <span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">toy_course</span><span class="op">)</span></span>
@@ -277,7 +365,7 @@
 <span><span class="co">#&gt;  $ institution: chr  "Institution B" "Institution B" "Institution B" "Institu"..</span></span>
 <span><span class="co">#&gt;  $ degree     : chr  "Bachelor of Science in Business Administration and Mana"..</span></span>
 <span></span>
-<span><span class="co"># Begin with the population</span></span>
+<span><span class="co"># Begin developing the populatioon</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
@@ -288,14 +376,20 @@
 <span><span class="co">#&gt;   3: MCID3111158724</span></span>
 <span><span class="co">#&gt;   4: MCID3111163443</span></span>
 <span><span class="co">#&gt;   5: MCID3111163894</span></span>
+<span><span class="co">#&gt;   6: MCID3111164659</span></span>
+<span><span class="co">#&gt;   7: MCID3111165208</span></span>
+<span><span class="co">#&gt;   8: MCID3111169601</span></span>
 <span><span class="co">#&gt;  ---               </span></span>
+<span><span class="co">#&gt; 344: MCID3112751130</span></span>
+<span><span class="co">#&gt; 345: MCID3112754537</span></span>
+<span><span class="co">#&gt; 346: MCID3112799709</span></span>
 <span><span class="co">#&gt; 347: MCID3112815901</span></span>
 <span><span class="co">#&gt; 348: MCID3112839623</span></span>
 <span><span class="co">#&gt; 349: MCID3112868072</span></span>
 <span><span class="co">#&gt; 350: MCID3112869843</span></span>
 <span><span class="co">#&gt; 351: MCID3112885339</span></span>
 <span></span>
-<span><span class="co"># Add timely-completion columns</span></span>
+<span><span class="co"># Add timely-completion-term columns</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span>, midf_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                mcid term_i       level_i adj_span timely_term</span></span>
@@ -305,7 +399,13 @@
 <span><span class="co">#&gt;   3: MCID3111158724  19881 01 First-year        6       19933</span></span>
 <span><span class="co">#&gt;   4: MCID3111163443  19881 01 First-year        6       19933</span></span>
 <span><span class="co">#&gt;   5: MCID3111163894  19881 01 First-year        6       19933</span></span>
+<span><span class="co">#&gt;   6: MCID3111164659  19881 01 First-year        6       19933</span></span>
+<span><span class="co">#&gt;   7: MCID3111165208  19881 01 First-year        6       19933</span></span>
+<span><span class="co">#&gt;   8: MCID3111169601  19881 01 First-year        6       19933</span></span>
 <span><span class="co">#&gt;  ---                                                         </span></span>
+<span><span class="co">#&gt; 344: MCID3112751130  20151 01 First-year        6       20203</span></span>
+<span><span class="co">#&gt; 345: MCID3112754537  20151 01 First-year        6       20203</span></span>
+<span><span class="co">#&gt; 346: MCID3112799709  20161 01 First-year        6       20213</span></span>
 <span><span class="co">#&gt; 347: MCID3112815901  20161 01 First-year        6       20213</span></span>
 <span><span class="co">#&gt; 348: MCID3112839623  20171 01 First-year        6       20223</span></span>
 <span><span class="co">#&gt; 349: MCID3112868072  20171 01 First-year        6       20223</span></span>
@@ -323,14 +423,20 @@
 <span><span class="co">#&gt;   3: MCID3111158724  19881       19933 19881-20096    exclude-lower</span></span>
 <span><span class="co">#&gt;   4: MCID3111163443  19881       19933 19881-20096    exclude-lower</span></span>
 <span><span class="co">#&gt;   5: MCID3111163894  19881       19933 19881-20096    exclude-lower</span></span>
+<span><span class="co">#&gt;   6: MCID3111164659  19881       19933 19881-20096    exclude-lower</span></span>
+<span><span class="co">#&gt;   7: MCID3111165208  19881       19933 19881-20096    exclude-lower</span></span>
+<span><span class="co">#&gt;   8: MCID3111169601  19881       19933 19881-20181    exclude-lower</span></span>
 <span><span class="co">#&gt;  ---                                                               </span></span>
+<span><span class="co">#&gt; 344: MCID3112471565  20101       20153 19881-20181          include</span></span>
+<span><span class="co">#&gt; 345: MCID3112474878  20101       20153 19881-20181          include</span></span>
+<span><span class="co">#&gt; 346: MCID3112485250  20101       20153 19881-20181          include</span></span>
 <span><span class="co">#&gt; 347: MCID3112486054  20101       20153 19881-20181          include</span></span>
 <span><span class="co">#&gt; 348: MCID3112587501  20121       20173 19881-20181          include</span></span>
 <span><span class="co">#&gt; 349: MCID3112592592  20121       20173 19881-20181          include</span></span>
 <span><span class="co">#&gt; 350: MCID3112593368  20121       20173 19881-20181          include</span></span>
 <span><span class="co">#&gt; 351: MCID3112617577  20123       20181 19881-20181          include</span></span>
 <span></span>
-<span><span class="co"># Initial population labeled "include", drop all others</span></span>
+<span><span class="co"># "include" denotes the credible initial population</span></span>
 <span><span class="va">population</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">data_sufficiency</span> <span class="op">==</span> <span class="st">"include"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">population</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">population</span><span class="op">)</span></span>
 <span><span class="va">population</span></span>
@@ -341,83 +447,51 @@
 <span><span class="co">#&gt;   3: MCID3111213539</span></span>
 <span><span class="co">#&gt;   4: MCID3111213856</span></span>
 <span><span class="co">#&gt;   5: MCID3111246563</span></span>
+<span><span class="co">#&gt;   6: MCID3111254225</span></span>
+<span><span class="co">#&gt;   7: MCID3111254412</span></span>
+<span><span class="co">#&gt;   8: MCID3111257675</span></span>
 <span><span class="co">#&gt;  ---               </span></span>
+<span><span class="co">#&gt; 233: MCID3112471565</span></span>
+<span><span class="co">#&gt; 234: MCID3112474878</span></span>
+<span><span class="co">#&gt; 235: MCID3112485250</span></span>
 <span><span class="co">#&gt; 236: MCID3112486054</span></span>
 <span><span class="co">#&gt; 237: MCID3112587501</span></span>
 <span><span class="co">#&gt; 238: MCID3112592592</span></span>
 <span><span class="co">#&gt; 239: MCID3112593368</span></span>
 <span><span class="co">#&gt; 240: MCID3112617577</span></span>
 <span></span>
-<span><span class="co"># Inner join to restrict source data to this population</span></span>
+<span><span class="co"># Inner join restricts source data to this population</span></span>
 <span><span class="va">student</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">student</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">term</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="va">course</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">course</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">degree</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 240  13</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1347   13</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">course</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 6421   12</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 170   5</span></span>
+<span><span class="co"># Identify pre- and post-completion terms</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/undergraduate_terms.html">undergraduate_terms</a></span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/undergraduate_terms.html">undergraduate_terms</a></span><span class="op">(</span><span class="va">course</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/undergraduate_terms.html">undergraduate_terms</a></span><span class="op">(</span><span class="va">degree</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Identify post-baccalaureate terms</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/post_completion_terms.html">post_completion_terms</a></span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/post_completion_terms.html">post_completion_terms</a></span><span class="op">(</span><span class="va">course</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/post_completion_terms.html">post_completion_terms</a></span><span class="op">(</span><span class="va">degree</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="co"># View summary results</span></span>
+<span><span class="va">term</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">term_group</span><span class="op">)</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"term_group"</span><span class="op">]</span></span>
+<span><span class="co">#&gt;    term_group     N</span></span>
+<span><span class="co">#&gt;        &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:  undergrad  1330</span></span>
+<span><span class="co">#&gt; 2:   graduate    17</span></span>
+<span><span class="va">course</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">term_group</span><span class="op">)</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"term_group"</span><span class="op">]</span></span>
+<span><span class="co">#&gt;    term_group     N</span></span>
+<span><span class="co">#&gt;        &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:  undergrad  6380</span></span>
+<span><span class="co">#&gt; 2:   graduate    41</span></span>
+<span><span class="va">degree</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">term_group</span><span class="op">)</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"term_group"</span><span class="op">]</span></span>
+<span><span class="co">#&gt;    term_group     N</span></span>
+<span><span class="co">#&gt;        &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:  undergrad   169</span></span>
+<span><span class="co">#&gt; 2:   graduate     1</span></span>
 <span></span>
-<span><span class="co"># View partial results</span></span>
-<span><span class="va">term</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">first_degree_term</span>, <span class="va">term_cluster</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">term_cluster</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                 mcid first_degree_term term_cluster</span></span>
-<span><span class="co">#&gt;               &lt;char&gt;            &lt;char&gt;       &lt;char&gt;</span></span>
-<span><span class="co">#&gt;    1: MCID3111213539             19923 first-degree</span></span>
-<span><span class="co">#&gt;    2: MCID3111254225             19923 first-degree</span></span>
-<span><span class="co">#&gt;    3: MCID3111254412             19933 first-degree</span></span>
-<span><span class="co">#&gt;    4: MCID3111257675             19931 first-degree</span></span>
-<span><span class="co">#&gt;    5: MCID3111257677             19923 first-degree</span></span>
-<span><span class="co">#&gt;   ---                                              </span></span>
-<span><span class="co">#&gt; 1343: MCID3112593368             20153   pre-degree</span></span>
-<span><span class="co">#&gt; 1344: MCID3112593368             20153   pre-degree</span></span>
-<span><span class="co">#&gt; 1345: MCID3112593368             20153   pre-degree</span></span>
-<span><span class="co">#&gt; 1346: MCID3112593368             20153   pre-degree</span></span>
-<span><span class="co">#&gt; 1347: MCID3112617577              &lt;NA&gt;   pre-degree</span></span>
-<span></span>
-<span><span class="va">course</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">first_degree_term</span>, <span class="va">term_cluster</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">term_cluster</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                 mcid first_degree_term term_cluster</span></span>
-<span><span class="co">#&gt;               &lt;char&gt;            &lt;char&gt;       &lt;char&gt;</span></span>
-<span><span class="co">#&gt;    1: MCID3111213539             19923 first-degree</span></span>
-<span><span class="co">#&gt;    2: MCID3111213539             19923 first-degree</span></span>
-<span><span class="co">#&gt;    3: MCID3111213539             19923 first-degree</span></span>
-<span><span class="co">#&gt;    4: MCID3111213539             19923 first-degree</span></span>
-<span><span class="co">#&gt;    5: MCID3111213539             19923 first-degree</span></span>
-<span><span class="co">#&gt;   ---                                              </span></span>
-<span><span class="co">#&gt; 6417: MCID3112617577              &lt;NA&gt;   pre-degree</span></span>
-<span><span class="co">#&gt; 6418: MCID3112617577              &lt;NA&gt;   pre-degree</span></span>
-<span><span class="co">#&gt; 6419: MCID3112617577              &lt;NA&gt;   pre-degree</span></span>
-<span><span class="co">#&gt; 6420: MCID3112617577              &lt;NA&gt;   pre-degree</span></span>
-<span><span class="co">#&gt; 6421: MCID3112617577              &lt;NA&gt;   pre-degree</span></span>
-<span></span>
-<span><span class="va">degree</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">first_degree_term</span>, <span class="va">term_cluster</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">term_cluster</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                mcid first_degree_term      term_cluster</span></span>
-<span><span class="co">#&gt;              &lt;char&gt;            &lt;char&gt;            &lt;char&gt;</span></span>
-<span><span class="co">#&gt;   1: MCID3111213539             19923      first-degree</span></span>
-<span><span class="co">#&gt;   2: MCID3111213856             19911      first-degree</span></span>
-<span><span class="co">#&gt;   3: MCID3111254225             19923      first-degree</span></span>
-<span><span class="co">#&gt;   4: MCID3111254412             19933      first-degree</span></span>
-<span><span class="co">#&gt;   5: MCID3111257675             19931      first-degree</span></span>
-<span><span class="co">#&gt;  ---                                                   </span></span>
-<span><span class="co">#&gt; 166: MCID3112486054             20143      first-degree</span></span>
-<span><span class="co">#&gt; 167: MCID3112587501             20141      first-degree</span></span>
-<span><span class="co">#&gt; 168: MCID3112592592             20153      first-degree</span></span>
-<span><span class="co">#&gt; 169: MCID3112593368             20153      first-degree</span></span>
-<span><span class="co">#&gt; 170: MCID3112012180             20043 post-first-degree</span></span>
-<span></span>
-<span><span class="co"># Exclude rows after the first degree term</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">term_cluster</span> <span class="op">!=</span> <span class="st">"post-first-degree"</span><span class="op">]</span></span>
-<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="va">course</span><span class="op">[</span><span class="va">term_cluster</span> <span class="op">!=</span> <span class="st">"post-first-degree"</span><span class="op">]</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">term_cluster</span> <span class="op">!=</span> <span class="st">"post-first-degree"</span><span class="op">]</span></span>
+<span><span class="co"># Retain undergraduate terms</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">term_group</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span>
+<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="va">course</span><span class="op">[</span><span class="va">term_group</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">term_group</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Choose a minimum set of columns to proceed</span></span>
 <span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
@@ -425,65 +499,127 @@
 <span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">course</span><span class="op">)</span></span>
 <span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Subset population to match the programs selected earlier</span></span>
+<span><span class="va">study_term</span> <span class="op">&lt;-</span> <span class="va">programs</span><span class="op">[</span><span class="va">term</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="st">"cip6"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">study_degree</span> <span class="op">&lt;-</span> <span class="va">programs</span><span class="op">[</span><span class="va">degree</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">program</span><span class="op">)</span>, on <span class="op">=</span> <span class="st">"cip6"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">study_population</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">study_term</span>, <span class="va">study_degree</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">study_population</span></span>
+<span><span class="co">#&gt;               mcid    program</span></span>
+<span><span class="co">#&gt;             &lt;char&gt;     &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1: MCID3111265287 Genl Psych</span></span>
+<span><span class="co">#&gt;  2: MCID3111312495   Business</span></span>
+<span><span class="co">#&gt;  3: MCID3111391443 Genl Psych</span></span>
+<span><span class="co">#&gt;  4: MCID3111437660   Business</span></span>
+<span><span class="co">#&gt;  5: MCID3111447797  Mech Engr</span></span>
+<span><span class="co">#&gt;  6: MCID3111460403  Mech Engr</span></span>
+<span><span class="co">#&gt;  7: MCID3111596195   Business</span></span>
+<span><span class="co">#&gt;  8: MCID3111667375 Genl Psych</span></span>
+<span><span class="co">#&gt; ---                          </span></span>
+<span><span class="co">#&gt; 38: MCID3112353024 Genl Psych</span></span>
+<span><span class="co">#&gt; 39: MCID3112363105   Business</span></span>
+<span><span class="co">#&gt; 40: MCID3112406111   Business</span></span>
+<span><span class="co">#&gt; 41: MCID3112414691   Business</span></span>
+<span><span class="co">#&gt; 42: MCID3112442814   Business</span></span>
+<span><span class="co">#&gt; 43: MCID3112467463 Genl Psych</span></span>
+<span><span class="co">#&gt; 44: MCID3112587501 Genl Psych</span></span>
+<span><span class="co">#&gt; 45: MCID3112592592   Business</span></span>
+<span><span class="va">study_population</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"program"</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;       program     N</span></span>
+<span><span class="co">#&gt;        &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1: Genl Psych    19</span></span>
+<span><span class="co">#&gt; 2:   Business    18</span></span>
+<span><span class="co">#&gt; 3:  Mech Engr     8</span></span>
+<span></span>
+<span><span class="co"># Use these IDs to subset the records</span></span>
+<span><span class="va">student</span> <span class="op">&lt;-</span> <span class="va">study_population</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="va">student</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">study_population</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="va">term</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="va">study_population</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="va">course</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">study_population</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="va">degree</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Abbreviated records of all students ever enrolled in one the selected programs</span></span>
 <span><span class="va">student</span></span>
-<span><span class="co">#&gt;                mcid          race    sex</span></span>
-<span><span class="co">#&gt;              &lt;char&gt;        &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;   1: MCID3111198701         White   Male</span></span>
-<span><span class="co">#&gt;   2: MCID3111208924         White   Male</span></span>
-<span><span class="co">#&gt;   3: MCID3111213539         White Female</span></span>
-<span><span class="co">#&gt;   4: MCID3111213856         White Female</span></span>
-<span><span class="co">#&gt;   5: MCID3111246563         White   Male</span></span>
-<span><span class="co">#&gt;  ---                                    </span></span>
-<span><span class="co">#&gt; 236: MCID3112486054         White Female</span></span>
-<span><span class="co">#&gt; 237: MCID3112587501      Hispanic Female</span></span>
-<span><span class="co">#&gt; 238: MCID3112592592         White   Male</span></span>
-<span><span class="co">#&gt; 239: MCID3112593368         White Female</span></span>
-<span><span class="co">#&gt; 240: MCID3112617577 International Female</span></span>
+<span><span class="co">#&gt;               mcid          race    sex</span></span>
+<span><span class="co">#&gt;             &lt;char&gt;        &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1: MCID3111265287         White   Male</span></span>
+<span><span class="co">#&gt;  2: MCID3111312495         White   Male</span></span>
+<span><span class="co">#&gt;  3: MCID3111391443         White Female</span></span>
+<span><span class="co">#&gt;  4: MCID3111437660         White   Male</span></span>
+<span><span class="co">#&gt;  5: MCID3111447797         White   Male</span></span>
+<span><span class="co">#&gt;  6: MCID3111460403         White   Male</span></span>
+<span><span class="co">#&gt;  7: MCID3111596195         White   Male</span></span>
+<span><span class="co">#&gt;  8: MCID3111667375         White Female</span></span>
+<span><span class="co">#&gt; ---                                    </span></span>
+<span><span class="co">#&gt; 38: MCID3112353024         White Female</span></span>
+<span><span class="co">#&gt; 39: MCID3112363105         White   Male</span></span>
+<span><span class="co">#&gt; 40: MCID3112406111 Other/Unknown Female</span></span>
+<span><span class="co">#&gt; 41: MCID3112414691         White Female</span></span>
+<span><span class="co">#&gt; 42: MCID3112442814 Other/Unknown   Male</span></span>
+<span><span class="co">#&gt; 43: MCID3112467463         White Female</span></span>
+<span><span class="co">#&gt; 44: MCID3112587501      Hispanic Female</span></span>
+<span><span class="co">#&gt; 45: MCID3112592592         White   Male</span></span>
 <span></span>
 <span><span class="va">term</span></span>
-<span><span class="co">#&gt;                 mcid   term   cip6   institution          level</span></span>
-<span><span class="co">#&gt;               &lt;char&gt; &lt;char&gt; &lt;char&gt;        &lt;char&gt;         &lt;char&gt;</span></span>
-<span><span class="co">#&gt;    1: MCID3111198701  19891 240102 Institution J  01 First-year</span></span>
-<span><span class="co">#&gt;    2: MCID3111198701  19893 520301 Institution J  01 First-year</span></span>
-<span><span class="co">#&gt;    3: MCID3111208924  19891 240102 Institution J  01 First-year</span></span>
-<span><span class="co">#&gt;    4: MCID3111208924  19893 140102 Institution J  01 First-year</span></span>
-<span><span class="co">#&gt;    5: MCID3111208924  19895 140102 Institution J  01 First-year</span></span>
-<span><span class="co">#&gt;   ---                                                          </span></span>
-<span><span class="co">#&gt; 1326: MCID3112593368  20133 090101 Institution B  03 Third-year</span></span>
-<span><span class="co">#&gt; 1327: MCID3112593368  20141 090101 Institution B  03 Third-year</span></span>
-<span><span class="co">#&gt; 1328: MCID3112593368  20151 090101 Institution B  03 Third-year</span></span>
-<span><span class="co">#&gt; 1329: MCID3112593368  20153 090101 Institution B 04 Fourth-year</span></span>
-<span><span class="co">#&gt; 1330: MCID3112617577  20123 240199 Institution B  01 First-year</span></span>
+<span><span class="co">#&gt;                mcid   cip6   institution          level   term</span></span>
+<span><span class="co">#&gt;              &lt;char&gt; &lt;char&gt;        &lt;char&gt;         &lt;char&gt; &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1: MCID3111265287 420101 Institution B  01 First-year  19901</span></span>
+<span><span class="co">#&gt;   2: MCID3111265287 420101 Institution B  01 First-year  19903</span></span>
+<span><span class="co">#&gt;   3: MCID3111312495 520201 Institution B  01 First-year  19911</span></span>
+<span><span class="co">#&gt;   4: MCID3111312495 520201 Institution B 02 Second-year  19913</span></span>
+<span><span class="co">#&gt;   5: MCID3111312495 520201 Institution B 02 Second-year  19921</span></span>
+<span><span class="co">#&gt;   6: MCID3111312495 520201 Institution B  03 Third-year  19923</span></span>
+<span><span class="co">#&gt;   7: MCID3111312495 520201 Institution B  03 Third-year  19931</span></span>
+<span><span class="co">#&gt;   8: MCID3111312495 520201 Institution B 04 Fourth-year  19933</span></span>
+<span><span class="co">#&gt;  ---                                                          </span></span>
+<span><span class="co">#&gt; 265: MCID3112587501 420101 Institution B  03 Third-year  20141</span></span>
+<span><span class="co">#&gt; 266: MCID3112592592 520201 Institution B  01 First-year  20121</span></span>
+<span><span class="co">#&gt; 267: MCID3112592592 520201 Institution B 02 Second-year  20123</span></span>
+<span><span class="co">#&gt; 268: MCID3112592592 520201 Institution B 02 Second-year  20131</span></span>
+<span><span class="co">#&gt; 269: MCID3112592592 520201 Institution B  03 Third-year  20133</span></span>
+<span><span class="co">#&gt; 270: MCID3112592592 520201 Institution B  03 Third-year  20141</span></span>
+<span><span class="co">#&gt; 271: MCID3112592592 520201 Institution B 04 Fourth-year  20143</span></span>
+<span><span class="co">#&gt; 272: MCID3112592592 520201 Institution B 04 Fourth-year  20153</span></span>
 <span></span>
 <span><span class="va">course</span></span>
-<span><span class="co">#&gt;                 mcid term_course abbrev number</span></span>
-<span><span class="co">#&gt;               &lt;char&gt;      &lt;char&gt; &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;    1: MCID3111198701       19891   ACCT   1504</span></span>
-<span><span class="co">#&gt;    2: MCID3111198701       19891   CHEM   1015</span></span>
-<span><span class="co">#&gt;    3: MCID3111198701       19891   CHEM   1025</span></span>
-<span><span class="co">#&gt;    4: MCID3111198701       19891   ENGL   1105</span></span>
-<span><span class="co">#&gt;    5: MCID3111198701       19891   MATH   1525</span></span>
+<span><span class="co">#&gt;                 mcid abbrev number term_course</span></span>
+<span><span class="co">#&gt;               &lt;char&gt; &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt;    1: MCID3111265287   ECON   2020       19901</span></span>
+<span><span class="co">#&gt;    2: MCID3111265287   EMUS   1832       19901</span></span>
+<span><span class="co">#&gt;    3: MCID3111265287   PSYC   2012       19901</span></span>
+<span><span class="co">#&gt;    4: MCID3111265287   PSYC   2303       19901</span></span>
+<span><span class="co">#&gt;    5: MCID3111265287   PSYC   4385       19901</span></span>
+<span><span class="co">#&gt;    6: MCID3111265287   EMUS   3642       19903</span></span>
+<span><span class="co">#&gt;    7: MCID3111265287   KINE   3420       19903</span></span>
+<span><span class="co">#&gt;    8: MCID3111265287   PSYC   4145       19903</span></span>
 <span><span class="co">#&gt;   ---                                         </span></span>
-<span><span class="co">#&gt; 6376: MCID3112617577       20121   NCIE   4175</span></span>
-<span><span class="co">#&gt; 6377: MCID3112617577       20123   GEOG   1992</span></span>
-<span><span class="co">#&gt; 6378: MCID3112617577       20123   LING   1000</span></span>
-<span><span class="co">#&gt; 6379: MCID3112617577       20123   PSYC   1001</span></span>
-<span><span class="co">#&gt; 6380: MCID3112617577       20123   WRTG   1150</span></span>
+<span><span class="co">#&gt; 1266: MCID3112592592   REAL   3000       20141</span></span>
+<span><span class="co">#&gt; 1267: MCID3112592592   CSCI   1300       20143</span></span>
+<span><span class="co">#&gt; 1268: MCID3112592592   ECON   4514       20143</span></span>
+<span><span class="co">#&gt; 1269: MCID3112592592   ENGL   3000       20143</span></span>
+<span><span class="co">#&gt; 1270: MCID3112592592   FNCE   4030       20143</span></span>
+<span><span class="co">#&gt; 1271: MCID3112592592   STDY   1001       20151</span></span>
+<span><span class="co">#&gt; 1272: MCID3112592592   ECON   4626       20153</span></span>
+<span><span class="co">#&gt; 1273: MCID3112592592   FNCE   4850       20153</span></span>
 <span></span>
 <span><span class="va">degree</span></span>
-<span><span class="co">#&gt;                mcid term_degree   cip6</span></span>
-<span><span class="co">#&gt;              &lt;char&gt;      &lt;char&gt; &lt;char&gt;</span></span>
-<span><span class="co">#&gt;   1: MCID3111213539       19923 030103</span></span>
-<span><span class="co">#&gt;   2: MCID3111213856       19911 261399</span></span>
-<span><span class="co">#&gt;   3: MCID3111254225       19923 270101</span></span>
-<span><span class="co">#&gt;   4: MCID3111254412       19933 140901</span></span>
-<span><span class="co">#&gt;   5: MCID3111257675       19931 451001</span></span>
-<span><span class="co">#&gt;  ---                                  </span></span>
-<span><span class="co">#&gt; 165: MCID3112485250       20121 451101</span></span>
-<span><span class="co">#&gt; 166: MCID3112486054       20143 040401</span></span>
-<span><span class="co">#&gt; 167: MCID3112587501       20141 420101</span></span>
-<span><span class="co">#&gt; 168: MCID3112592592       20153 520201</span></span>
-<span><span class="co">#&gt; 169: MCID3112593368       20153 090101</span></span></code></pre></div>
+<span><span class="co">#&gt;               mcid   cip6 term_degree</span></span>
+<span><span class="co">#&gt;             &lt;char&gt; &lt;char&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1: MCID3111265287 420101       19904</span></span>
+<span><span class="co">#&gt;  2: MCID3111312495 520201       19933</span></span>
+<span><span class="co">#&gt;  3: MCID3111391443 400601       19966</span></span>
+<span><span class="co">#&gt;  4: MCID3111437660 520101       19953</span></span>
+<span><span class="co">#&gt;  5: MCID3111447797 143501       19983</span></span>
+<span><span class="co">#&gt;  6: MCID3111667375 420101       20003</span></span>
+<span><span class="co">#&gt;  7: MCID3111701868 141901       19993</span></span>
+<span><span class="co">#&gt;  8: MCID3111730954 141901       20011</span></span>
+<span><span class="co">#&gt; ---                                  </span></span>
+<span><span class="co">#&gt; 34: MCID3112353024 420101       20121</span></span>
+<span><span class="co">#&gt; 35: MCID3112363105 520201       20103</span></span>
+<span><span class="co">#&gt; 36: MCID3112406111 520201       20123</span></span>
+<span><span class="co">#&gt; 37: MCID3112414691 520201       20131</span></span>
+<span><span class="co">#&gt; 38: MCID3112442814 520101       20103</span></span>
+<span><span class="co">#&gt; 39: MCID3112467463 420101       20113</span></span>
+<span><span class="co">#&gt; 40: MCID3112587501 420101       20141</span></span>
+<span><span class="co">#&gt; 41: MCID3112592592 520201       20153</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>

@@ -38,7 +38,7 @@ Records and population
 
 - `timely_term()` estimates timely completion terms.  
 - `data_sufficiency()` identifies IDs to exclude due to insufficient data.  
-- `post_completion_terms()` identifies rows with post-baccalaureate terms to exclude.  
+- `undergraduate_term()` identifies rows with post-baccalaureate terms to exclude.  
 
 Blocs  
 
@@ -117,9 +117,11 @@ library("data.table")
 look_at(cip)
 
 # Search for 6-digit codes of specific programs
-filter_programs(cip, c("mechanical engineering", 
-                       "psychology, general", 
-                       "business, managerial"))
+filter_programs(cip, c(
+  "mechanical engineering",
+  "psychology, general",
+  "business, managerial"
+))
 
 # Select specific CIP codes and add useful labels
 programs <- filter_programs(cip, c("^1419", "^4201", "^5202"))
@@ -128,7 +130,7 @@ programs
 
 programs[, program := fcase(
   cip6 %like% "^1419", "Mech Engr",
-  cip6 %like% "^4201", "Genl Psych", 
+  cip6 %like% "^4201", "Genl Psych",
   cip6 %like% "^5202", "Business"
 )]
 programs <- programs[, .(cip6, program)]
@@ -175,19 +177,19 @@ course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
 # Identify pre- and post-completion terms
-term <- post_completion_terms(term, midf_table = degree)
-course <- post_completion_terms(course, midf_table = degree)
-degree <- post_completion_terms(degree, midf_table = degree)
+term <- undergraduate_terms(term, midf_table = degree)
+course <- undergraduate_terms(course, midf_table = degree)
+degree <- undergraduate_terms(degree, midf_table = degree)
 
 # View summary results
-term[order(-before_or_after), .N, by = "before_or_after"]
-course[order(-before_or_after), .N, by = "before_or_after"]
-degree[order(-before_or_after), .N, by = "before_or_after"]
+term[order(-term_group), .N, by = "term_group"]
+course[order(-term_group), .N, by = "term_group"]
+degree[order(-term_group), .N, by = "term_group"]
 
-# Retain before terms
-term <- term[before_or_after == "before"]
-course <- course[before_or_after == "before"]
-degree <- degree[before_or_after == "before"]
+# Retain undergraduate terms
+term <- term[term_group == "undergrad"]
+course <- course[term_group == "undergrad"]
+degree <- degree[term_group == "undergrad"]
 
 # Choose a minimum set of columns to proceed
 student <- select_basic_cols(student)

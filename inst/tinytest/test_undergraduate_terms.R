@@ -28,10 +28,10 @@ expect_class_preserved <- function(x, y, fnc) {
   rm(x, y)
 }
 
-test_post_completion_terms <- function() {
+test_undergraduate_terms <- function() {
   
   # usage
-  # post_completion_terms(dframe, midf_table = degree)
+  # undergraduate_terms(dframe, midf_table = degree)
   
   # ---------- setup
   
@@ -39,46 +39,46 @@ test_post_completion_terms <- function() {
   suppressPackageStartupMessages(require("data.table"))
   
   # column names to be added
-  new_cols <- c("before_or_after", "first_term_degree")
+  new_cols <- c("first_degree", "term_group")
   
   # ---------- start tests
   
   # check that class is preserved function
-  expect_class_preserved(toy_term, toy_degree, post_completion_terms)
+  expect_class_preserved(toy_term, toy_degree, undergraduate_terms)
   
   # check for incorrect input class / required variables
-  expect_error(post_completion_terms(1))
-  expect_error(post_completion_terms(toy_term, "sat"))
-  expect_error(post_completion_terms(toy_student, toy_degree))
-  expect_error(post_completion_terms(toy_degree, toy_student))
+  expect_error(undergraduate_terms(1))
+  expect_error(undergraduate_terms(toy_term, "sat"))
+  expect_error(undergraduate_terms(toy_student, toy_degree))
+  expect_error(undergraduate_terms(toy_degree, toy_student))
   
   # term added columns correct
   x <- copy(toy_term)
   y <- copy(toy_degree)
-  z <- post_completion_terms(x, y)
+  z <- undergraduate_terms(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
 
   # course added columns correct
   x <- copy(toy_course)
-  z <- post_completion_terms(x, y)
+  z <- undergraduate_terms(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
    
   # degree added columns correct
   x <- copy(toy_degree)
-  z <- post_completion_terms(x, y)
+  z <- undergraduate_terms(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
   
   # confirm NO changes by reference
   term <- copy(toy_term)
   degr <- copy(toy_degree)
-  z <- post_completion_terms(term, degr)
+  z <- undergraduate_terms(term, degr)
   expect_true(check_equiv_frames(term, toy_term))
   expect_true(check_equiv_frames(degr, toy_degree))
   
   # overwrite prevention works
   x <- copy(toy_term)
   x[, idx := as.character(.I)]
-  y <- post_completion_terms(x, toy_degree)
+  y <- undergraduate_terms(x, toy_degree)
   expect_equal(x[["idx"]], y[["idx"]])
   expect_equal(new_cols, setdiff(colnames(y), colnames(x)))
   
@@ -116,12 +116,12 @@ test_post_completion_terms <- function() {
       "4", "20053"
   )
   setDT(x_degr)
-  ans <- post_completion_terms(x_term, x_degr)[["before_or_after"]]
-  expected_ans <- c("before", "before", "after", 
-                    "before", "before", 
-                    "before", "before",  
-                    "before", "before", "after", 
-                    "before", "before")
+  ans <- undergraduate_terms(x_term, x_degr)[["term_group"]]
+  expected_ans <- c("undergrad", "undergrad", "graduate", 
+                    "undergrad", "undergrad", 
+                    "undergrad", "undergrad",  
+                    "undergrad", "undergrad", "graduate", 
+                    "undergrad", "undergrad")
   expect_equal(ans, expected_ans)
   
   
@@ -133,7 +133,7 @@ test_post_completion_terms <- function() {
   invisible(NULL)
 }
 
-test_post_completion_terms()
+test_undergraduate_terms()
 
 
 

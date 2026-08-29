@@ -21,18 +21,18 @@
 #' * `r rows_not_modified`
 #' * New columns are added or replace existing columns of the same name (if
 #'   any). Other columns are not modified. The following variables are added:
-#'   - `first_term_degree` &nbsp;  Character. Term of a student's first
+#'   - `first_degree` &nbsp;  Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA`.
 #'      Joined from the `term_degree` variable in `midf_table.`
-#'   - `term_category.` &nbsp;  Character, indicating that a term belongs
-#'      to one of three clusters: terms that are prior to ("pre-degree"),
-#'      equal to ("first-degree"), or subsequent to ("post-first-degree")
-#'      the student’s first degree term.
+#'   - `term_group` &nbsp;  Character, indicating that a term belongs
+#'      to one of two categories: "undergrad" terms are those leading up to
+#'      and including the term in which s a student completes their first
+#'      degree; and "grad" for all terms after the first degree.
 #' * `r not_preserved`
-#' @example man/examples/exa_post_completion_terms.R
+#' @example man/examples/exa_undergraduate_terms.R
 #' @export
 #'
-post_completion_terms <- function(dframe, midf_table = degree) {
+undergraduate_terms <- function(dframe, midf_table = degree) {
   #
   # ---------- initial assertions
 
@@ -49,11 +49,11 @@ post_completion_terms <- function(dframe, midf_table = degree) {
   # active column names
   reqd_dframe_vars <- c("mcid", term_var)
   reqd_table_vars <- c("mcid", "term_degree")
-  added_vars <- c("before_or_after", "first_term_degree")
+  added_vars <- c("first_degree", "term_group")
 
   # bind names for R CMD check
-  first_term_degree <- NULL
-  before_or_after <- NULL
+  first_degree <- NULL
+  term_group <- NULL
   IDX <- NULL
   TERM_VAR <- NULL
 
@@ -78,6 +78,8 @@ post_completion_terms <- function(dframe, midf_table = degree) {
 
   # dframe columns to protect and return
   protected_vars <- setdiff(colnames(dframe), added_vars)
+  subset_protected_vars <- setdiff(protected_vars, term_var)
+  protected_vars <- c(subset_protected_vars, term_var)
   returned_vars <- c(protected_vars, added_vars)
 
   # select columns
@@ -95,22 +97,22 @@ post_completion_terms <- function(dframe, midf_table = degree) {
   # ---------- do the work
 
   # edit name before join
-  setnames(midf_table, old = "term_degree", new = "first_term_degree")
+  setnames(midf_table, old = "term_degree", new = "first_degree")
   DT <- midf_table[dframe[, .(mcid)], on = "mcid", nomatch = NULL]
 
   # keep the first-degree term/row
-  setorderv(DT, c("mcid", "first_term_degree"))
+  setorderv(DT, c("mcid", "first_degree"))
   DT <- DT[, .SD[1L], by = "mcid"]
 
-  # left-join to dframe, introduces NAs in first_term_degree col
+  # left-join to dframe, introduces NAs in first_degree col
   dframe <- DT[dframe, on = "mcid"]
 
   # assign term status labels
-  dframe[, before_or_after := fifelse(
-    TERM_VAR > first_term_degree,
-    "after",
-    "before",
-    na = "before"
+  dframe[, term_group := fifelse(
+    TERM_VAR > first_degree,
+    "graduate",
+    "undergrad",
+    na = "undergrad"
   ),
   env = list(TERM_VAR = term_var)
   ]

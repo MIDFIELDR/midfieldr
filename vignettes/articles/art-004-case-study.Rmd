@@ -21,7 +21,7 @@ path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
 ```{r child = paste0(path_to_rmd, "/common-setup.Rmd")}
 ```
 
-How to work with longitudinal student data using midfieldr, focusing on the overall  *process* rather than software details. The work is organized in three major topics: 
+We illustrate using midfieldr and other R packages to work with longitudinal student data, focusing on the overall process (leaving R package details to subsequent articles). The work is organized in three major topics: 
 
 1. Obtaining a credible population and filtering the records to match.
 2. Manipulating the data to produce the desired metric and groupings. 
@@ -30,7 +30,7 @@ How to work with longitudinal student data using midfieldr, focusing on the over
 
 ### *Scope*    
 
-*Records.* &nbsp; Data: `student, term,` and `degree` from midfielddata, excluding records later than a student's first degree term (if any), restricted to degree-seeking students, and filtered for data sufficiency. 
+*Records.* &nbsp; Data: `student, term,` and `degree` from midfielddata, filtered for data sufficiency, restricted to degree-seeking students, and excluding post-baccalaureate records.
 
 *Population.* &nbsp; The set of unique student IDs from the above records. 
 
@@ -108,8 +108,6 @@ make_table <- function(x, cap) {
     ) |>
     fmt_number(use_seps = TRUE, decimals = 0)
 }
-
-
 Ncompare <- wrapr::build_frame(
   "Table", "Source" |
     "student", eval(nrow(student_source)) |
@@ -228,25 +226,25 @@ setnames(Ncompare, old = "Population", new = "Refined population")
 make_table(Ncompare, "Table 1(b). Number of rows")
 ```
 
-### *Post-completion terms*
+### *Undergraduate terms*
 
-We are generally not interested in data past the first degree term, so we identify and exclude post-first-degree terms in the source data frames. The procedure applies to the data tables  having columns of term values `{term$term, course$term_course, degree$term_degree}.`
+Students in the US are *undergraduates* before their first degree completion and *graduates* afterwards. Usually, we are interested in their undergraduate records only, that is, terms that occur up to and including their first program completion. In this step we work with all columns. 
 
 ```{r}
 term <- copy(term_refined)
 degree <- copy(degree_refined)
 ```
 
-Every term value occurs before or after a student completes their first degree. We use `post_completion_terms()` to label each term "before" or "after" relative to a student's first completion (if any) and add columns to the data frame to support those findings.
+We use `undergraduate_terms()` to label each term "undergrad" or "graduate" and add columns to the data frame to support those findings. The function applies to the  data tables having columns with term values, i.e., `term, course,` or `degree.`
 
 ```{r}
-term <- post_completion_terms(term, midf_table = degree)
-degree <- post_completion_terms(degree, midf_table = degree)
+term <- undergraduate_terms(term, midf_table = degree)
+degree <- undergraduate_terms(degree, midf_table = degree)
 
 # View relevant columns
-term[order(-before_or_after), .(mcid, term, before_or_after, first_term_degree)]
+term[order(-term_group), .(mcid, term, first_degree, term_group)]
 
-degree[order(-before_or_after), .(mcid, term_degree, before_or_after, first_term_degree)]
+degree[order(-term_group), .(mcid, term_degree, first_degree, term_group)]
 ```
 
 
@@ -255,20 +253,20 @@ degree[order(-before_or_after), .(mcid, term_degree, before_or_after, first_term
 *Summary check.* &nbsp; Numbers of students in each category.
 
 ```{r}
-term[, .N, by = c("before_or_after")][order(-N)]
+term[, .N, by = c("term_group")][order(-N)]
 
-degree[, .N, by = c("before_or_after")][order(-N)]
+degree[, .N, by = c("term_group")][order(-N)]
 ```
 
-We keep the rows labeled "before." Note that we are dropping rows by values in the *term* variable without affecting the number of students in the *population.*  
+We keep the rows labeled "undergrad." Note that we are dropping rows by values in the *term* variable without affecting the number of students in the *population.*  
 
 ```{r}
-term <- term[before_or_after == "before"]
-degree <- degree[before_or_after == "before"]
+term <- term[term_group == "undergrad"]
+degree <- degree[term_group == "undergrad"]
 
 # drop temporary columns
-term[, c("before_or_after", "first_term_degree") := NULL]
-degree[, c("before_or_after", "first_term_degree") := NULL]
+term[, c("first_degree", "term_group") := NULL]
+degree[, c("first_degree", "term_group") := NULL]
 ```
 
 With this step, we conclude the development of what we are calling our `_baseline` tables, filtered for data sufficiency and  degree-seeking and excluding post-first-degree terms.  
@@ -316,8 +314,8 @@ From this point forward, anytime we need a fresh copy of any of the data tables,
 ```{r}
 #| echo: false
 options(
-  datatable.print.nrows = 12,
-  datatable.print.topn = 6
+  datatable.print.nrows = 16,
+  datatable.print.topn = 8
 )
 ```
 
@@ -663,6 +661,14 @@ DT
 
 ### *Reshape*
 
+```{r}
+#| echo: false
+options(
+  datatable.print.nrows = 28,
+  datatable.print.topn = 14
+)
+```
+
 *Reshaping the data frame to calculate the metric.*
 
 We want to separate the $\small N$ column into two columns---one for the number of graduates and the other for the number of ever enrolled. This operation is  known by a number of different names, e.g., pivot, crosstab, unstack, spread, or widen [@Mount+Zumel:2019:fluid-data]. 
@@ -673,7 +679,8 @@ The data.table package uses `dcast()` for this operation. The key columns `progr
 DT <- dcast(DT,
   program + sex + race ~ bloc,
   value.var = "N",
-  fill = 0
+  drop = FALSE, # keep all combinations
+  fill = NA_real_ # NA if no value
 )
 setkey(DT, NULL)
 DT
@@ -692,20 +699,16 @@ These data are in block-record form with three keys and two value columns. This 
 
 *Completes the analysis.*
 
-Before calculating the metric, we have to omit rows in which `ever` (the denominator of the metric) is zero. In this example, no rows are removed. 
+Before calculating the metric, we address possible "divide by zero" errors by converting any zero values of `ever` to NA. Not required in this case, but included for completeness. 
   
 ```{r}
-DT <- DT[ever != 0]
-setorderv(DT, c("program", "sex", "race"))
-DT
+DT[ever == 0, ever := NA_real_]
 ```
 
-
-Stickiness is the ratio of the number of graduates to the number ever enrolled, expressed as a percentage. Stickiness is calculated for each combination of program, race/ethnicity, and sex. 
+Stickiness is calculated for each combination of program, race/ethnicity, and sex. 
 
 ```{r}
 DT[, stick := round(100 * grad / ever, 1)]
-setkey(DT, NULL)
 DT
 ```
 
@@ -729,10 +732,10 @@ options(datatable.print.nrows = 15)
 head(DT[order(grad, ever)], 15L)
 ```
 
-When dealing with the full MIDFIELD research data, we typically use $\small N > 10$, but for these practice data we illustrate the procedure using  $\small N > 3$ in the graduate column. 
+When dealing with the full MIDFIELD research data, we typically omit rows in which $\small N_\mathrm{grad}\leq 10$, but for these practice data we illustrate the process using $\small N_\mathrm{grad}\leq 3$. 
 
 ```{r}
-DT <- DT[grad > 3]
+DT[grad <= 3, c("ever", "grad", "stick") := NA_real_]
 DT
 ```
 
@@ -780,25 +783,25 @@ Transform the data to row-record form. The key column `{people}` remains in plac
 DT_table <- dcast(DT_table,
   people ~ program,
   value.var = "stick",
-  fill = NA
+  fill = NA_real_
 )
 setnames(DT_table, old = "people", new = "People")
 setkey(DT_table, NULL)
 DT_table
 ```
 
-Format the table for publication. The `sub_missing()` argument replaces NAs with an em-dash to improve readability. 
+Format the table for publication. An em-dash indicates the number of graduates is too small to ensure confidentiality.
 
 ```{r}
 DT_table |>
   gt() |>
-  sub_missing() |>
   tab_caption("Table 1. Engineering program stickiness (%)") |>
   tab_options(table.font.size = "small") |>
   opt_stylize(style = 1, color = "gray") |>
+  sub_missing() |>
   tab_style(
-    style = list(cell_fill(color = "#c7eae5")),
-    locations = cells_column_labels(columns = everything())
+    locations = cells_column_labels(columns = everything()),
+    style = list(cell_fill(color = "#c7eae5"))
   )
 ```
 
@@ -810,11 +813,12 @@ options(datatable.print.nrows = 5)
 
 ### *Chart*
 
-To use `ggplot()`, we want the data in its original block-record form with one value column (stickiness). We can drop two columns as well.
+To use `ggplot()`, we want the data in its original block-record form with one value column (stickiness). We can drop the unused `race` and `sex` columns. And from the table above we see we have no values for Native American students to disseminate so we can omit those rows as well. 
 
 ```{r}
 DT_chart <- copy(DT)
 DT_chart[, c("race", "sex") := NULL]
+DT_chart <- DT_chart[!people %ilike% "Native"]
 ```
 
 We (optionally) rearrange the order of columns and rows.
@@ -856,7 +860,7 @@ ggplot(DT_chart, aes(x = stick, y = people)) +
     linetype = 2,
     color = "gray60"
   ) +
-  geom_point(size = 1.8) +
+  geom_point(size = 1.8, na.rm = TRUE) +
   labs(x = "Stickiness (%)", y = "") +
   theme_light(base_size = 10)
 ```
@@ -867,7 +871,7 @@ In the next chart, we swap the roles of panels and rows.
 
 ```{r}
 #| label: fig02
-#| fig-asp: 0.7
+#| fig-asp: 0.75
 #| fig-cap: "Figure 2: Program stickiness."
 ggplot(DT_chart, aes(x = stick, y = program)) +
   facet_wrap(vars(people),
@@ -878,7 +882,7 @@ ggplot(DT_chart, aes(x = stick, y = program)) +
     linetype = 2,
     color = "gray60"
   ) +
-  geom_point(size = 1.8) +
+  geom_point(size = 1.8, na.rm = TRUE) +
   labs(x = "Stickiness (%)", y = "") +
   theme_light(base_size = 10)
 ```
@@ -888,18 +892,9 @@ In this version, the vertical dashed line in each panel represents the overall s
 
 ## Summary
 
-We have presented a complete study, from a sample of registrar's data to graphically comparing a quantitative metric grouped by people and programs. 
+We have presented a complete study, from a sample of registrar's data to charts comparing a quantitative metric, illustrating how we use midfieldr and other R packages to work with longitudinal student records. Details of specific midfieldr functions are covered in subsequent articles.
 
-
-
-This study illustrates our process but the results cannot be used for drawing inferences about people or programs. The data in midfielddata are for *practice*, not *research*. 
-
-
-
-
-
-
-
+Please note that these results cannot be used for drawing inferences about people or programs. The data in midfielddata are for *practice*, not *research*. 
 
 ```{r child = paste0(path_to_rmd, "/common-closing.Rmd")}
 ```
