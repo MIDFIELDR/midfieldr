@@ -55,7 +55,7 @@ Records and population
 
 - `timely_term()`  &nbsp; estimates timely completion terms.  
 - `data_sufficiency()`  &nbsp; identifies IDs to exclude due to insufficient data.  
-- `undergraduate_terms()`  &nbsp; identifies rows with post-baccalaureate terms to exclude.  
+- `undergrad_terms()`  &nbsp; identifies rows with post-baccalaureate terms to exclude.  
 
 Blocs  
 
@@ -216,7 +216,7 @@ In midfieldr:
 
 - `timely_term()` yields the timely-completion term for every student. 
 - `data_sufficiency()` tests for data sufficiency for every student .
-- `undergraduate_terms()` identifies post-baccalaureate terms to exclude.
+- `undergrad_terms()` identifies post-baccalaureate terms to exclude.
 - `completion_status()` yields the completion status for every student passing the data sufficiency test. 
 
 
@@ -307,39 +307,39 @@ all.equal(population$mcid, unique(term_source$mcid))
 ```
 
 
-## `undergraduate_terms()`
+## `record_bracket()`
 
 *Identify rows of post-baccalaureate terms to exclude.*
 
 In most cases, we are not generally interested in academic terms beyond the first degree term, so we use the results of this function to exclude post-first-degree terms from the source data. 
 
-`undergraduate_terms()` identifies terms later than the first baccalaureate, if any.  
+`record_bracket()` identifies terms later than the first baccalaureate, if any.  
 
 ```{r}
-term <- undergraduate_terms(term_source, midf_table = degree)
-degree <- undergraduate_terms(degree_source, midf_table = degree)
+term <- record_bracket(term_source, midf_table = degree)
+degree <- record_bracket(degree_source, midf_table = degree)
 ```
 
-`undergraduate_terms()` adds a column indicating the group a term belongs to with respect to the first degree term.
+`record_bracket()` adds a column indicating the bracket a term belongs to with respect to the first degree term.
 
 ```{r}
 look_at(term)
 ```
 
-The possible term group values are given by, 
+The possible bracket values are given by, 
 
 ```{r}
-term[, sort(unique(term_group), na.last = FALSE)]
+term[, sort(unique(bracket), na.last = FALSE)]
 ```
 
-We filter to exclude all terms labeled "graduate" and drop the temporary columns. 
+We filter to exclude all terms labeled "post-bacc" and drop the temporary columns. 
 
 ```{r}
-term <- term["undergrad", on = "term_group"]
-degree <- degree["undergrad", on = "term_group"]
+term <- term["undergrad", on = "bracket"]
+degree <- degree["undergrad", on = "bracket"]
 
-term[, c("term_group", "first_degree") := NULL]
-degree[, c("term_group", "first_degree") := NULL]
+term[, c("term_1st_degree", "bracket") := NULL]
+degree[, c("term_1st_degree", "bracket") := NULL]
 
 look_at(term)
 ```

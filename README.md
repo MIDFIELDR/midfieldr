@@ -49,9 +49,9 @@ Convenience
 ``` r
 library("midfieldr")
 packageVersion("midfieldr")
-#> [1] '1.0.3.9027'
+#> [1] '1.0.3.9028'
 Sys.Date()
-#> [1] "2026-08-28"
+#> [1] "2026-08-29"
 ```
 
 ## Installation
@@ -404,31 +404,31 @@ course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
 # Identify pre- and post-completion terms
-term <- undergraduate_terms(term, midf_table = degree)
-course <- undergraduate_terms(course, midf_table = degree)
-degree <- undergraduate_terms(degree, midf_table = degree)
+term <- record_bracket(term, midf_table = degree)
+course <- record_bracket(course, midf_table = degree)
+degree <- record_bracket(degree, midf_table = degree)
 
 # View summary results
-term[order(-term_group), .N, by = "term_group"]
-#>    term_group     N
-#>        <char> <int>
-#> 1:  undergrad  1330
-#> 2:   graduate    17
-course[order(-term_group), .N, by = "term_group"]
-#>    term_group     N
-#>        <char> <int>
-#> 1:  undergrad  6380
-#> 2:   graduate    41
-degree[order(-term_group), .N, by = "term_group"]
-#>    term_group     N
-#>        <char> <int>
-#> 1:  undergrad   169
-#> 2:   graduate     1
+term[order(-bracket), .N, by = "bracket"]
+#>      bracket     N
+#>       <char> <int>
+#> 1: undergrad  1330
+#> 2: post-bacc    17
+course[order(-bracket), .N, by = "bracket"]
+#>      bracket     N
+#>       <char> <int>
+#> 1: undergrad  6380
+#> 2: post-bacc    41
+degree[order(-bracket), .N, by = "bracket"]
+#>      bracket     N
+#>       <char> <int>
+#> 1: undergrad   169
+#> 2: post-bacc     1
 
 # Retain undergraduate terms
-term <- term[term_group == "undergrad"]
-course <- course[term_group == "undergrad"]
-degree <- degree[term_group == "undergrad"]
+term <- term[bracket == "undergrad"]
+course <- course[bracket == "undergrad"]
+degree <- degree[bracket == "undergrad"]
 
 # Choose a minimum set of columns to proceed
 student <- select_basic_cols(student)

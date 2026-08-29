@@ -177,19 +177,19 @@ course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
 # Identify pre- and post-completion terms
-term <- undergraduate_terms(term, midf_table = degree)
-course <- undergraduate_terms(course, midf_table = degree)
-degree <- undergraduate_terms(degree, midf_table = degree)
+term <- record_bracket(term, midf_table = degree)
+course <- record_bracket(course, midf_table = degree)
+degree <- record_bracket(degree, midf_table = degree)
 
 # View summary results
-term[order(-term_group), .N, by = "term_group"]
-course[order(-term_group), .N, by = "term_group"]
-degree[order(-term_group), .N, by = "term_group"]
+term[order(-bracket), .N, by = "bracket"]
+course[order(-bracket), .N, by = "bracket"]
+degree[order(-bracket), .N, by = "bracket"]
 
 # Retain undergraduate terms
-term <- term[term_group == "undergrad"]
-course <- course[term_group == "undergrad"]
-degree <- degree[term_group == "undergrad"]
+term <- term[bracket == "undergrad"]
+course <- course[bracket == "undergrad"]
+degree <- degree[bracket == "undergrad"]
 
 # Choose a minimum set of columns to proceed
 student <- select_basic_cols(student)

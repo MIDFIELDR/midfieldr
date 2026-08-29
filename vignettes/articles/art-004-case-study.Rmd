@@ -123,9 +123,9 @@ make_table(Ncompare, "Table 1(a). Number of rows.")
 
 
 
-### *Required variables*
+### *Select basic variables*
 
-For this first section of the work, we (optionally) use `select_basic_cols()` to subset the data tables, retaining only those variables needed by  midfieldr functions. 
+For this first section of the work, we (optionally) use `select_basic_cols()` to subset the data tables, retaining the minimum set of columns required by midfieldr functions.
 
 ```{r}
 student <- select_basic_cols(student)
@@ -210,41 +210,34 @@ population <- copy(DT)
 We use an inner join, matching on `mcid,` to subset the data tables to retain records for this population only.  
 
 ```{r}
-student_refined <- population[student_source, on = "mcid", nomatch = NULL]
-term_refined <- population[term_source, on = "mcid", nomatch = NULL]
-degree_refined <- population[degree_source, on = "mcid", nomatch = NULL]
+student <- population[student_source, on = "mcid", nomatch = NULL]
+term <- population[term_source, on = "mcid", nomatch = NULL]
+degree <- population[degree_source, on = "mcid", nomatch = NULL]
 ```
 
 ```{r}
 #| echo: false
 Ncompare[, Population := c(
-  nrow(student_refined),
-  nrow(term_refined),
-  nrow(degree_refined)
+  nrow(student),
+  nrow(term),
+  nrow(degree)
 )]
-setnames(Ncompare, old = "Population", new = "Refined population")
+setnames(Ncompare, old = "Population", new = "Baseline population")
 make_table(Ncompare, "Table 1(b). Number of rows")
 ```
 
 ### *Undergraduate terms*
 
-Students in the US are *undergraduates* before their first degree completion and *graduates* afterwards. Usually, we are interested in their undergraduate records only, that is, terms that occur up to and including their first program completion. In this step we work with all columns. 
+We are usually interested in only those records leading to a student's first degree (if any). `record_bracket()` assigns the label "undergrad" to the bracket of terms before a first degree and "post-bacc" (for post-baccalaureate) to all terms after a degree. The function applies to the `term, course,` and `degree` data tables because they have columns of term values. 
 
 ```{r}
-term <- copy(term_refined)
-degree <- copy(degree_refined)
-```
-
-We use `undergraduate_terms()` to label each term "undergrad" or "graduate" and add columns to the data frame to support those findings. The function applies to the  data tables having columns with term values, i.e., `term, course,` or `degree.`
-
-```{r}
-term <- undergraduate_terms(term, midf_table = degree)
-degree <- undergraduate_terms(degree, midf_table = degree)
+term <- record_bracket(term, midf_table = degree)
+degree <- record_bracket(degree, midf_table = degree)
 
 # View relevant columns
-term[order(-term_group), .(mcid, term, first_degree, term_group)]
+term[order(-bracket), .(mcid, term, term_1st_degree, bracket)]
 
-degree[order(-term_group), .(mcid, term_degree, first_degree, term_group)]
+degree[order(-bracket), .(mcid, term_degree, term_1st_degree, bracket)]
 ```
 
 
@@ -253,26 +246,26 @@ degree[order(-term_group), .(mcid, term_degree, first_degree, term_group)]
 *Summary check.* &nbsp; Numbers of students in each category.
 
 ```{r}
-term[, .N, by = c("term_group")][order(-N)]
+term[, .N, by = c("bracket")][order(-N)]
 
-degree[, .N, by = c("term_group")][order(-N)]
+degree[, .N, by = c("bracket")][order(-N)]
 ```
 
 We keep the rows labeled "undergrad." Note that we are dropping rows by values in the *term* variable without affecting the number of students in the *population.*  
 
 ```{r}
-term <- term[term_group == "undergrad"]
-degree <- degree[term_group == "undergrad"]
+term <- term[bracket == "undergrad"]
+degree <- degree[bracket == "undergrad"]
 
 # drop temporary columns
-term[, c("first_degree", "term_group") := NULL]
-degree[, c("first_degree", "term_group") := NULL]
+term[, c("term_1st_degree", "bracket") := NULL]
+degree[, c("term_1st_degree", "bracket") := NULL]
 ```
 
-With this step, we conclude the development of what we are calling our `_baseline` tables, filtered for data sufficiency and  degree-seeking and excluding post-first-degree terms.  
+With this step, we conclude the development of what we are calling our `*_baseline` tables, filtered for data sufficiency and  degree-seeking and excluding post-baccalaureate terms.  
 
 ```{r}
-student_baseline <- copy(student_refined)
+student_baseline <- copy(student)
 term_baseline <- copy(term)
 degree_baseline <- copy(degree)
 ```
@@ -302,7 +295,7 @@ make_table(Ncompare, "Table 1(c). Number of rows.")
 ```
 
 
-From this point forward, anytime we need a fresh copy of any of the data tables, we copy the `_baseline` version. Anytime we need a starting population, we copy  `population.`
+From this point forward, anytime we need a fresh copy of any of the data tables, we copy the `*_baseline` version. Anytime we need a starting population, we copy  `population.`
 
 
 
@@ -649,10 +642,11 @@ DT
 
 ### *Group and summarize*
 
-Count the numbers of observations for each combination of the grouping variables. These data are in block-record form with four keys, one value column, and one row per value.
+Count the numbers of observations for each combination of the grouping variables. These data are in block-record form with four keys, one value column `N`, and one row per value. We convert the count from integer to double. 
 
 ```{r}
 DT <- DT[, .N, by = c("bloc", "program", "race", "sex")]
+DT[, N := as.double(N)]
 DT
 ```
 
@@ -673,7 +667,7 @@ options(
 
 We want to separate the $\small N$ column into two columns---one for the number of graduates and the other for the number of ever enrolled. This operation is  known by a number of different names, e.g., pivot, crosstab, unstack, spread, or widen [@Mount+Zumel:2019:fluid-data]. 
 
-The data.table package uses `dcast()` for this operation. The key columns `program, race,` and `sex` remain in place, the `bloc` column yields the new key columns `ever` and `grad,` and the values in the new columns are taken from the `N` column. The `fill` argument replaces missing values with zero. 
+The data.table package uses `dcast()` for this operation. The key columns `program, race,` and `sex` remain in place. The existing `bloc` column yields the new key columns `ever` and `grad` with values taken from the `N` column.
 
 ```{r}
 DT <- dcast(DT,
@@ -777,12 +771,13 @@ setorderv(DT_table, c("people", "program"))
 DT_table
 ```
 
-Transform the data to row-record form. The key column `{people}` remains in place, the `{program}` column yields the new key columns `{Civil, Electrical, etc.}`, and the values in the new columns are taken from the `{stick}` column. The `fill` argument replaces missing values with NA.  
+Transform the data to row-record form. The key column `people` remains in place.  The existing `program` column yields the new key columns `Civil, Electrical,` etc., with values taken from the `stick` column. 
 
 ```{r}
 DT_table <- dcast(DT_table,
   people ~ program,
   value.var = "stick",
+  drop = FALSE,
   fill = NA_real_
 )
 setnames(DT_table, old = "people", new = "People")

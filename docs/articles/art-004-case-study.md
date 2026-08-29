@@ -114,12 +114,12 @@ following number of rows in the original data frames.
 Table 1(a). Number of rows. {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
 
-### *Required variables*
+### *Select basic variables*
 
 For this first section of the work, we (optionally) use
 [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
-to subset the data tables, retaining only those variables needed by
-midfieldr functions.
+to subset the data tables, retaining the minimum set of columns required
+by midfieldr functions.
 
 ``` r
 
@@ -314,84 +314,74 @@ retain records for this population only.
 
 ``` r
 
-student_refined <- population[student_source, on = "mcid", nomatch = NULL]
-term_refined <- population[term_source, on = "mcid", nomatch = NULL]
-degree_refined <- population[degree_source, on = "mcid", nomatch = NULL]
+student <- population[student_source, on = "mcid", nomatch = NULL]
+term <- population[term_source, on = "mcid", nomatch = NULL]
+degree <- population[degree_source, on = "mcid", nomatch = NULL]
 ```
 
-| Table   | Original tables | Refined population |
-|---------|-----------------|--------------------|
-| student | 97,555          | 76,875             |
-| term    | 639,915         | 531,419            |
-| degree  | 49,665          | 43,903             |
+| Table   | Original tables | Baseline population |
+|---------|-----------------|---------------------|
+| student | 97,555          | 76,875              |
+| term    | 639,915         | 531,419             |
+| degree  | 49,665          | 43,903              |
 
 Table 1(b). Number of rows {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
 
 ### *Undergraduate terms*
 
-Students in the US are *undergraduates* before their first degree
-completion and *graduates* afterwards. Usually, we are interested in
-their undergraduate records only, that is, terms that occur up to and
-including their first program completion. In this step we work with all
-columns.
+We are usually interested in only those records leading to a student’s
+first degree (if any).
+[`record_bracket()`](https://midfieldr.github.io/midfieldr/reference/record_bracket.md)
+assigns the label “undergrad” to the bracket of terms before a first
+degree and “post-bacc” (for post-baccalaureate) to all terms after a
+degree. The function applies to the `term, course,` and `degree` data
+tables because they have columns of term values.
 
 ``` r
 
-term <- copy(term_refined)
-degree <- copy(degree_refined)
-```
-
-We use
-[`undergraduate_terms()`](https://midfieldr.github.io/midfieldr/reference/undergraduate_terms.md)
-to label each term “undergrad” or “graduate” and add columns to the data
-frame to support those findings. The function applies to the data tables
-having columns with term values, i.e., `term, course,` or `degree.`
-
-``` r
-
-term <- undergraduate_terms(term, midf_table = degree)
-degree <- undergraduate_terms(degree, midf_table = degree)
+term <- record_bracket(term, midf_table = degree)
+degree <- record_bracket(degree, midf_table = degree)
 
 # View relevant columns
-term[order(-term_group), .(mcid, term, first_degree, term_group)]
-#>                   mcid   term first_degree term_group
-#>                 <char> <char>       <char>     <char>
-#>      1: MCID3111142689  19883        19913  undergrad
-#>      2: MCID3111142782  19883        19903  undergrad
-#>      3: MCID3111142782  19885        19903  undergrad
-#>     ---                                              
-#> 531417: MCID3112501004  20161        20133   graduate
-#> 531418: MCID3112595308  20161        20154   graduate
-#> 531419: MCID3112619703  20161        20154   graduate
+term[order(-bracket), .(mcid, term, term_1st_degree, bracket)]
+#>                   mcid   term term_1st_degree   bracket
+#>                 <char> <char>          <char>    <char>
+#>      1: MCID3111142689  19883           19913 undergrad
+#>      2: MCID3111142782  19883           19903 undergrad
+#>      3: MCID3111142782  19885           19903 undergrad
+#>     ---                                                
+#> 531417: MCID3112501004  20161           20133 post-bacc
+#> 531418: MCID3112595308  20161           20154 post-bacc
+#> 531419: MCID3112619703  20161           20154 post-bacc
 
-degree[order(-term_group), .(mcid, term_degree, first_degree, term_group)]
-#>                  mcid term_degree first_degree term_group
-#>                <char>      <char>       <char>     <char>
-#>     1: MCID3111142689       19913        19913  undergrad
-#>     2: MCID3111142782       19903        19903  undergrad
-#>     3: MCID3111142881       19894        19894  undergrad
-#>    ---                                                   
-#> 43901: MCID3112290406       20143        20111   graduate
-#> 43902: MCID3112347391       20133        20101   graduate
-#> 43903: MCID3112407729       20133        20123   graduate
+degree[order(-bracket), .(mcid, term_degree, term_1st_degree, bracket)]
+#>                  mcid term_degree term_1st_degree   bracket
+#>                <char>      <char>          <char>    <char>
+#>     1: MCID3111142689       19913           19913 undergrad
+#>     2: MCID3111142782       19903           19903 undergrad
+#>     3: MCID3111142881       19894           19894 undergrad
+#>    ---                                                     
+#> 43901: MCID3112290406       20143           20111 post-bacc
+#> 43902: MCID3112347391       20133           20101 post-bacc
+#> 43903: MCID3112407729       20133           20123 post-bacc
 ```
 
 *Summary check.*   Numbers of students in each category.
 
 ``` r
 
-term[, .N, by = c("term_group")][order(-N)]
-#>    term_group      N
-#>        <char>  <int>
-#> 1:  undergrad 525446
-#> 2:   graduate   5973
+term[, .N, by = c("bracket")][order(-N)]
+#>      bracket      N
+#>       <char>  <int>
+#> 1: undergrad 525446
+#> 2: post-bacc   5973
 
-degree[, .N, by = c("term_group")][order(-N)]
-#>    term_group     N
-#>        <char> <int>
-#> 1:  undergrad 43857
-#> 2:   graduate    46
+degree[, .N, by = c("bracket")][order(-N)]
+#>      bracket     N
+#>       <char> <int>
+#> 1: undergrad 43857
+#> 2: post-bacc    46
 ```
 
 We keep the rows labeled “undergrad.” Note that we are dropping rows by
@@ -400,21 +390,21 @@ in the *population.*
 
 ``` r
 
-term <- term[term_group == "undergrad"]
-degree <- degree[term_group == "undergrad"]
+term <- term[bracket == "undergrad"]
+degree <- degree[bracket == "undergrad"]
 
 # drop temporary columns
-term[, c("first_degree", "term_group") := NULL]
-degree[, c("first_degree", "term_group") := NULL]
+term[, c("term_1st_degree", "bracket") := NULL]
+degree[, c("term_1st_degree", "bracket") := NULL]
 ```
 
 With this step, we conclude the development of what we are calling our
-`_baseline` tables, filtered for data sufficiency and degree-seeking and
-excluding post-first-degree terms.
+`*_baseline` tables, filtered for data sufficiency and degree-seeking
+and excluding post-baccalaureate terms.
 
 ``` r
 
-student_baseline <- copy(student_refined)
+student_baseline <- copy(student)
 term_baseline <- copy(term)
 degree_baseline <- copy(degree)
 ```
@@ -468,17 +458,17 @@ look_at(population)
 #>  $ mcid: chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID3111142"..
 ```
 
-| Table   | Original tables | Refined population | Baseline tables |
-|---------|-----------------|--------------------|-----------------|
-| student | 97,555          | 76,875             | 76,875          |
-| term    | 639,915         | 531,419            | 525,446         |
-| degree  | 49,665          | 43,903             | 43,857          |
+| Table   | Original tables | Baseline population | Baseline tables |
+|---------|-----------------|---------------------|-----------------|
+| student | 97,555          | 76,875              | 76,875          |
+| term    | 639,915         | 531,419             | 525,446         |
+| degree  | 49,665          | 43,903              | 43,857          |
 
 Table 1(c). Number of rows. {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
 
 From this point forward, anytime we need a fresh copy of any of the data
-tables, we copy the `_baseline` version. Anytime we need a starting
+tables, we copy the `*_baseline` version. Anytime we need a starting
 population, we copy `population.`
 
 ## Programs
@@ -1187,14 +1177,16 @@ DT
 
 Count the numbers of observations for each combination of the grouping
 variables. These data are in block-record form with four keys, one value
-column, and one row per value.
+column `N`, and one row per value. We convert the count from integer to
+double.
 
 ``` r
 
 DT <- DT[, .N, by = c("bloc", "program", "race", "sex")]
+DT[, N := as.double(N)]
 DT
 #>       bloc program            race    sex     N
-#>     <char>  <char>          <char> <char> <int>
+#>     <char>  <char>          <char> <char> <num>
 #>  1:   grad      EE   International   Male    90
 #>  2:   grad      EE           White   Male   439
 #>  3:   grad      EE           Asian Female    12
@@ -1217,9 +1209,8 @@ crosstab, unstack, spread, or widen ([Mount and Zumel
 The data.table package uses
 [`dcast()`](https://rdrr.io/pkg/data.table/man/dcast.data.table.html)
 for this operation. The key columns `program, race,` and `sex` remain in
-place, the `bloc` column yields the new key columns `ever` and `grad,`
-and the values in the new columns are taken from the `N` column. The
-`fill` argument replaces missing values with zero.
+place. The existing `bloc` column yields the new key columns `ever` and
+`grad` with values taken from the `N` column.
 
 ``` r
 
@@ -1232,7 +1223,7 @@ DT <- dcast(DT,
 setkey(DT, NULL)
 DT
 #>     program    sex            race  ever  grad
-#>      <char> <char>          <char> <int> <int>
+#>      <char> <char>          <char> <num> <num>
 #>  1:      CE Female           Asian    14    10
 #>  2:      CE Female           Black     4     1
 #>  3:      CE Female        Hispanic    13     6
@@ -1290,7 +1281,7 @@ DT[, stick := round(100 * grad / ever, 1)]
 DT
 #> Index: <ever>
 #>     program    sex            race  ever  grad stick
-#>      <char> <char>          <char> <int> <int> <num>
+#>      <char> <char>          <char> <num> <num> <num>
 #>  1:      CE Female           Asian    14    10  71.4
 #>  2:      CE Female           Black     4     1  25.0
 #>  3:      CE Female        Hispanic    13     6  46.2
@@ -1337,7 +1328,7 @@ student anonymity can no longer be assured. Here, for example, we have
 
 head(DT[order(grad, ever)], 15L)
 #>     program    sex            race  ever  grad stick
-#>      <char> <char>          <char> <int> <int> <num>
+#>      <char> <char>          <char> <num> <num> <num>
 #>  1:      CE Female Native American     1     1 100.0
 #>  2:      CE   Male Native American     3     1  33.3
 #>  3:      CE Female           Black     4     1  25.0
@@ -1364,7 +1355,7 @@ data we illustrate the process using \small N\_\mathrm{grad}\leq 3.
 DT[grad <= 3, c("ever", "grad", "stick") := NA_real_]
 DT
 #>     program    sex            race  ever  grad stick
-#>      <char> <char>          <char> <int> <int> <num>
+#>      <char> <char>          <char> <num> <num> <num>
 #>  1:      CE Female           Asian    14    10  71.4
 #>  2:      CE Female           Black    NA    NA    NA
 #>  3:      CE Female        Hispanic    13     6  46.2
@@ -1405,7 +1396,7 @@ DT[, people := paste(race, sex)]
 setcolorder(DT)
 DT
 #>     program    sex            race  ever  grad stick                 people
-#>      <char> <char>          <char> <int> <int> <num>                 <char>
+#>      <char> <char>          <char> <num> <num> <num>                 <char>
 #>  1:      CE Female           Asian    14    10  71.4           Asian Female
 #>  2:      CE Female           Black    NA    NA    NA           Black Female
 #>  3:      CE Female        Hispanic    13     6  46.2        Hispanic Female
@@ -1450,7 +1441,7 @@ DT[, program := fcase(
 )]
 DT
 #>        program    sex            race  ever  grad stick                 people
-#>         <char> <char>          <char> <int> <int> <num>                 <char>
+#>         <char> <char>          <char> <num> <num> <num>                 <char>
 #>  1:      Civil Female           Asian    14    10  71.4           Asian Female
 #>  2:      Civil Female           Black    NA    NA    NA           Black Female
 #>  3:      Civil Female        Hispanic    13     6  46.2        Hispanic Female
@@ -1509,17 +1500,16 @@ DT_table
 #> 56:   White Male         Mechanical  60.0
 ```
 
-Transform the data to row-record form. The key column `{people}` remains
-in place, the `{program}` column yields the new key columns
-`{Civil, Electrical, etc.}`, and the values in the new columns are taken
-from the `{stick}` column. The `fill` argument replaces missing values
-with NA.
+Transform the data to row-record form. The key column `people` remains
+in place. The existing `program` column yields the new key columns
+`Civil, Electrical,` etc., with values taken from the `stick` column.
 
 ``` r
 
 DT_table <- dcast(DT_table,
   people ~ program,
   value.var = "stick",
+  drop = FALSE,
   fill = NA_real_
 )
 setnames(DT_table, old = "people", new = "People")
@@ -1605,7 +1595,7 @@ setkeyv(DT_chart, c("people", "program"))
 setkey(DT_chart, NULL)
 DT_chart
 #>           people            program  ever  grad stick
-#>           <char>             <char> <int> <int> <num>
+#>           <char>             <char> <num> <num> <num>
 #>  1: Asian Female              Civil    14    10  71.4
 #>  2: Asian Female         Electrical    21    12  57.1
 #>  3: Asian Female Industrial/Systems    15    10  66.7

@@ -45,8 +45,8 @@ Records and population
     estimates timely completion terms.  
 - [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
     identifies IDs to exclude due to insufficient data.  
-- [`undergraduate_terms()`](https://midfieldr.github.io/midfieldr/reference/undergraduate_terms.md)
-    identifies rows with post-baccalaureate terms to exclude.
+- `undergrad_terms()`   identifies rows with post-baccalaureate terms to
+  exclude.
 
 Blocs
 
@@ -384,9 +384,9 @@ degree_source <- copy(degree)
 
 # demonstrate that memory addresses are different
 address(student)
-#> [1] "0000021616016fd8"
+#> [1] "0000017d3b0626b8"
 address(student_source)
-#> [1] "000002161724da60"
+#> [1] "0000017d3c276060"
 ```
 
 Then we can use the shorter names such as `term` and `degree` as we
@@ -419,8 +419,7 @@ In midfieldr:
   yields the timely-completion term for every student.
 - [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
   tests for data sufficiency for every student .
-- [`undergraduate_terms()`](https://midfieldr.github.io/midfieldr/reference/undergraduate_terms.md)
-  identifies post-baccalaureate terms to exclude.
+- `undergrad_terms()` identifies post-baccalaureate terms to exclude.
 - [`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
   yields the completion status for every student passing the data
   sufficiency test.
@@ -583,7 +582,7 @@ all.equal(population$mcid, unique(term_source$mcid))
 #> [1] TRUE
 ```
 
-## `undergraduate_terms()`
+## `record_bracket()`
 
 *Identify rows of post-baccalaureate terms to exclude.*
 
@@ -591,18 +590,18 @@ In most cases, we are not generally interested in academic terms beyond
 the first degree term, so we use the results of this function to exclude
 post-first-degree terms from the source data.
 
-[`undergraduate_terms()`](https://midfieldr.github.io/midfieldr/reference/undergraduate_terms.md)
+[`record_bracket()`](https://midfieldr.github.io/midfieldr/reference/record_bracket.md)
 identifies terms later than the first baccalaureate, if any.
 
 ``` r
 
-term <- undergraduate_terms(term_source, midf_table = degree)
-degree <- undergraduate_terms(degree_source, midf_table = degree)
+term <- record_bracket(term_source, midf_table = degree)
+degree <- record_bracket(degree_source, midf_table = degree)
 ```
 
-[`undergraduate_terms()`](https://midfieldr.github.io/midfieldr/reference/undergraduate_terms.md)
-adds a column indicating the group a term belongs to with respect to the
-first degree term.
+[`record_bracket()`](https://midfieldr.github.io/midfieldr/reference/record_bracket.md)
+adds a column indicating the bracket a term belongs to with respect to
+the first degree term.
 
 ``` r
 
@@ -621,28 +620,28 @@ look_at(term)
 #>  $ gpa_term           : num  3.33 2.8 3 2.84 4 3.25 2.26 2.43 2.55 2.15 ...
 #>  $ gpa_cumul          : num  3.05 2.57 2.63 2.53 2.63 2.67 2.61 2.59 2.76 2.62..
 #>  $ term               : chr  "19883" "19883" "19885" "19893" ...
-#>  $ first_degree       : chr  "19913" "19903" "19903" "19903" ...
-#>  $ term_group         : chr  "undergrad" "undergrad" "undergrad" "undergrad" ...
+#>  $ term_1st_degree    : chr  "19913" "19903" "19903" "19903" ...
+#>  $ bracket            : chr  "undergrad" "undergrad" "undergrad" "undergrad" ...
 ```
 
-The possible term group values are given by,
+The possible bracket values are given by,
 
 ``` r
 
-term[, sort(unique(term_group), na.last = FALSE)]
-#> [1] "graduate"  "undergrad"
+term[, sort(unique(bracket), na.last = FALSE)]
+#> [1] "post-bacc" "undergrad"
 ```
 
-We filter to exclude all terms labeled “graduate” and drop the temporary
-columns.
+We filter to exclude all terms labeled “post-bacc” and drop the
+temporary columns.
 
 ``` r
 
-term <- term["undergrad", on = "term_group"]
-degree <- degree["undergrad", on = "term_group"]
+term <- term["undergrad", on = "bracket"]
+degree <- degree["undergrad", on = "bracket"]
 
-term[, c("term_group", "first_degree") := NULL]
-degree[, c("term_group", "first_degree") := NULL]
+term[, c("term_1st_degree", "bracket") := NULL]
+degree[, c("term_1st_degree", "bracket") := NULL]
 
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   525446 obs. of  13 variables:

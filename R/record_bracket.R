@@ -21,18 +21,19 @@
 #' * `r rows_not_modified`
 #' * New columns are added or replace existing columns of the same name (if
 #'   any). Other columns are not modified. The following variables are added:
-#'   - `first_degree` &nbsp;  Character. Term of a student's first
+#'   - `term_1st_degree` &nbsp;  Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA`.
 #'      Joined from the `term_degree` variable in `midf_table.`
-#'   - `term_group` &nbsp;  Character, indicating that a term belongs
-#'      to one of two categories: "undergrad" terms are those leading up to
-#'      and including the term in which s a student completes their first
-#'      degree; and "grad" for all terms after the first degree.
+#'   - `bracket` &nbsp;  Character, indicating that a term belongs
+#'      to one of two groups: "undergrad" terms are those leading up to
+#'      and including the term in which a student completes their first
+#'      degree; and "post-bacc" (post-baccalaureate) for all terms after the
+#'      first degree.
 #' * `r not_preserved`
-#' @example man/examples/exa_undergraduate_terms.R
+#' @example man/examples/exa_record_bracket.R
 #' @export
 #'
-undergraduate_terms <- function(dframe, midf_table = degree) {
+record_bracket <- function(dframe, midf_table = degree) {
   #
   # ---------- initial assertions
 
@@ -49,11 +50,11 @@ undergraduate_terms <- function(dframe, midf_table = degree) {
   # active column names
   reqd_dframe_vars <- c("mcid", term_var)
   reqd_table_vars <- c("mcid", "term_degree")
-  added_vars <- c("first_degree", "term_group")
+  added_vars <- c("term_1st_degree", "bracket")
 
   # bind names for R CMD check
-  first_degree <- NULL
-  term_group <- NULL
+  term_1st_degree <- NULL
+  bracket <- NULL
   IDX <- NULL
   TERM_VAR <- NULL
 
@@ -97,20 +98,20 @@ undergraduate_terms <- function(dframe, midf_table = degree) {
   # ---------- do the work
 
   # edit name before join
-  setnames(midf_table, old = "term_degree", new = "first_degree")
+  setnames(midf_table, old = "term_degree", new = "term_1st_degree")
   DT <- midf_table[dframe[, .(mcid)], on = "mcid", nomatch = NULL]
 
   # keep the first-degree term/row
-  setorderv(DT, c("mcid", "first_degree"))
+  setorderv(DT, c("mcid", "term_1st_degree"))
   DT <- DT[, .SD[1L], by = "mcid"]
 
-  # left-join to dframe, introduces NAs in first_degree col
+  # left-join to dframe, introduces NAs in term_1st_degree col
   dframe <- DT[dframe, on = "mcid"]
 
   # assign term status labels
-  dframe[, term_group := fifelse(
-    TERM_VAR > first_degree,
-    "graduate",
+  dframe[, bracket := fifelse(
+    TERM_VAR > term_1st_degree,
+    "post-bacc",
     "undergrad",
     na = "undergrad"
   ),
