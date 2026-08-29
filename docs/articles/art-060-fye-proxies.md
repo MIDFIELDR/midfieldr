@@ -822,7 +822,8 @@ DT
 
 *Filtering.*   Proxies are substitutes for students *starting* in FYE.
 Thus we filter to remove migrators, retaining the proxies of first-term
-FYE students only.
+FYE students only. (This step could be omitted, leaving the definition
+of starters to a bloc-defining step elsewhere in one’s analysis.)
 
 ``` r
 

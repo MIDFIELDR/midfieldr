@@ -1,56 +1,51 @@
 # Case study
 
-A complete case study illustrating how we work with longitudinal data
-and how midfieldr supports the process. In subsequent articles, many of
-the topics introduced here are more fully developed.
+We illustrate using midfieldr and other R packages to work with
+longitudinal student data, focusing on the overall process (leaving R
+package details to subsequent articles). The work is organized in three
+major topics:
 
-## Outline
-
-The work is organized in three major sections.
-
-1.  Refining the student records—generally independent of the case
-    specifics
-2.  Obtaining the metric—depends on one’s programs, metrics, and
-    groupings.
-3.  Conditioning the results for dissemination—depends on one’s audience
-    and rhetorical goals.
+1.  Obtaining a credible population and filtering the records to match.
+2.  Manipulating the data to produce the desired metric and groupings.
+3.  Conditioning the results for dissemination in tables and charts.
 
 ### *Scope*
 
-*Records.*   Data: `student, term,` and `degree` from midfielddata.
-Filter for data sufficiency and degree seeking; exclude records later
-than a student’s first degree term.
+*Records.*   Data: `student, term,` and `degree` from midfielddata,
+filtered for data sufficiency, restricted to degree-seeking students,
+and excluding post-baccalaureate records.
 
-*Population.*   The set of unique IDs from the above records.
+*Population.*   The set of unique student IDs from the above records.
 
 *Programs.*   Data: `cip` from midfieldr. We study four Engineering
 majors: Civil, Electrical, Industrial/Systems, and Mechanical.
 
-*Metric.*   Program *stickiness:* the ratio \small (S) of the number of
-graduates of a program \small (N\_\textrm{grad}) to the number ever
-enrolled in the program \small (N\_\textrm{ever}).
+*Quantitative metric.*   Program *stickiness:* the ratio \small (S) of
+the number of graduates of a program \small (N\_\textrm{grad}) to the
+number ever enrolled in the program \small (N\_\textrm{ever}).
 
 \small S = \frac{\small N\_\textrm{grad}}{\small N\_\textrm{ever}} =
 \frac{\small\mathrm{number\\ of\\ graduates\\ of\\ a\\
 program}}{\small\mathrm{number\\ ever\\ enrolled\\ in\\ the\\ program}}
 
-“Ever-enrolled” means that students at some point decided to seek a
-degree in that program. Stickiness reports the likelihood that such
-students will “stick to” and graduate from that program ([Ohland et al.
-2012](#ref-Ohland+Orr+others:2012)).
+However a student finds their way to a program (just entering college,
+transferring, or switching majors), the program has an opportunity to
+see the student through to graduation. Stickiness is the fraction of
+students a program entices to “stick to” it through completion ([Ohland
+et al. 2012](#ref-Ohland+Orr+others:2012)).
 
 *Blocs.*   The metric requires two blocs: students ever enrolled in the
 programs; and timely graduates of the programs.
 
 *Groupings.*   Group the findings by program, race/ethnicity, and sex.
 
-*Dissemination.*   Exclude groupings too small to preserve anonymity.
-Edit column names to suit the audience. Condition/transform data as
+*Dissemination.*   Exclude groupings too small to preserve anonymity;
+edit column names to suit the audience; condition/transform data as
 needed for tables or charts.
 
-### *Terminology*
+### *Definitions*
 
-Definitions critical to understanding our data manipulation process.
+For understanding our data manipulation process.
 
 - The population is usually expected to be *degree-seeking,* i.e.,
   attempting to complete a program.
@@ -66,21 +61,22 @@ Definitions critical to understanding our data manipulation process.
   available from their institution—a necessary and sufficient condition
   for determining completion status.
 
-- *Completion status* is “timely” for students graduating no later than
-  their timely-completion term; “late” if they graduate after that term;
-  and “NA” for non-completion.
+- *Completion status* is “NA” for non-completion; “timely” for students
+  graduating no later than their timely-completion term; and “late”
+  otherwise.
 
-## Refining the records
+### *R packages*
 
 ``` r
 
-# packages
 library("midfieldr") # working with student records
 library("midfielddata") # practice data
 library("data.table") # data manipulation
 library("gt") # tables
 library("ggplot2") # charts
 ```
+
+## Refining the records
 
 We load three of the midfielddata data tables. This study does not
 require the `course` data table. If it had been required, it would be
@@ -94,9 +90,10 @@ data(student, term, degree)
 We copy the original data sets, giving them new names
 `{student_source, term_source, degree_source}` and new locations in
 memory. This step allows us to use the more convenient names
-`{student, term, degree}` to do our work without updating the source
-tables “by reference.” Reference semantics in data.table is documented
-in ([*Reference Semantics* 2026](#ref-reference-semantics:2026)).
+`{student, term, degree}` for our “working” data tables without updating
+the source tables “by reference.” Reference semantics in data.table is
+documented in ([*Reference Semantics*
+2026](#ref-reference-semantics:2026)).
 
 ``` r
 
@@ -117,12 +114,12 @@ following number of rows in the original data frames.
 Table 1(a). Number of rows. {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
 
-### *Minimum necessary columns*
+### *Required variables*
 
-In the next few steps, we do not require all of the columns in our data
-tables. We can (optionally) minimize the number of columns we see during
-an interactive session using `select_basic_cols().` The columns returned
-are those required by other midfieldr functions.
+For this first section of the work, we (optionally) use
+[`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
+to subset the data tables, retaining only those variables needed by
+midfieldr functions.
 
 ``` r
 
@@ -166,9 +163,8 @@ degree
 
 ### *Data sufficiency*
 
-Per the terminology discussion above, only those records passing the
-data sufficiency test are included in a population study. We start with
-the full set of unique student IDs.
+Only those records passing the data sufficiency test are included in a
+population study. We start with the full set of unique student IDs.
 
 ``` r
 
@@ -226,8 +222,8 @@ DT
 
 We operate on this output with
 [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
-to identify records that pass the data sufficiency test and those that
-do not and add columns to the data frame to support those findings.
+to identify records that pass or fail the data sufficiency test and add
+columns to the data frame to support those findings.
 
 ``` r
 
@@ -280,14 +276,13 @@ DT
 
 We require all students in our study to be degree-seeking. By design,
 the `student` table contains only degree-seeking students. We inner-join
-the ID column from the `student` table, matching on `mcid`. In effect,
-the inner join filters our population to remove any non-degree-seeking
-students.
+the ID column from the `student` table with our working data frame `DT`,
+matching on `mcid`, to remove any non-degree-seeking students.
 
 ``` r
 
-student_cols <- student[, .(mcid)]
-DT <- student_cols[DT, on = "mcid", nomatch = NULL]
+student_col <- student[, .(mcid)]
+DT <- student_col[DT, on = "mcid", nomatch = NULL]
 DT
 #>                  mcid
 #>                <char>
@@ -300,30 +295,28 @@ DT
 #> 76875: MCID3112870009
 ```
 
-It happens that all students in this case are degree-seeking, so this
-step did not reduce the size of our population. Still, we include the
-step to illustrate our complete process.
+In this instance, no students were removed because the midfielddata
+practice data contains only degree-seeking students. However, our
+process would not be complete without this step.
 
 ### *Population*
 
-Filtering for data sufficiency and degree-seeking yields the baseline
-population for this study.
+The steps above—filtering for data sufficiency and degree-seeking—yield
+the baseline population for this study.
 
 ``` r
 
 population <- copy(DT)
 ```
 
-We use this population to filter the source records using an inner join,
-matching on ID. The inner join retains those IDs common to both data
-frames. The results are our first iteration of our “baseline” data
-tables.
+We use an inner join, matching on `mcid,` to subset the data tables to
+retain records for this population only.
 
 ``` r
 
-student_baseline <- population[student_source, on = "mcid", nomatch = NULL]
-term_baseline <- population[term_source, on = "mcid", nomatch = NULL]
-degree_baseline <- population[degree_source, on = "mcid", nomatch = NULL]
+student_refined <- population[student_source, on = "mcid", nomatch = NULL]
+term_refined <- population[term_source, on = "mcid", nomatch = NULL]
+degree_refined <- population[degree_source, on = "mcid", nomatch = NULL]
 ```
 
 | Table   | Original tables | Refined population |
@@ -335,113 +328,96 @@ degree_baseline <- population[degree_source, on = "mcid", nomatch = NULL]
 Table 1(b). Number of rows {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
 
-### *Post-completion terms*
+### *Undergraduate terms*
 
-We are not generally interested in terms beyond the first degree term,
-so we identify and exclude terms later than the first degree term in all
-the source data frames. Here, we retrieve our source tables with term
-variables. (A study that used the `course` data table would be included
-in this step too.)
+Students in the US are *undergraduates* before their first degree
+completion and *graduates* afterwards. Usually, we are interested in
+their undergraduate records only, that is, terms that occur up to and
+including their first program completion. In this step we work with all
+columns.
 
 ``` r
 
-term <- copy(term_baseline)
-degree <- copy(degree_baseline)
+term <- copy(term_refined)
+degree <- copy(degree_refined)
 ```
 
-For each student and term in a data frame,
-[`post_completion_terms()`](https://midfieldr.github.io/midfieldr/reference/post_completion_terms.md)
-identifies terms that are before, equal to, or after the student’s first
-degree term and adds columns to the data frame to support those
-findings.
+We use
+[`undergraduate_terms()`](https://midfieldr.github.io/midfieldr/reference/undergraduate_terms.md)
+to label each term “undergrad” or “graduate” and add columns to the data
+frame to support those findings. The function applies to the data tables
+having columns with term values, i.e., `term, course,` or `degree.`
 
 ``` r
 
-term <- post_completion_terms(term, midf_table = degree)
-degree <- post_completion_terms(degree, midf_table = degree)
+term <- undergraduate_terms(term, midf_table = degree)
+degree <- undergraduate_terms(degree, midf_table = degree)
 
-term
-#>                   mcid   term   cip6   institution          level      standing
-#>                 <char> <char> <char>        <char>         <char>        <char>
-#>      1: MCID3111142689  19883 090401 Institution B  01 First-year Good Standing
-#>      2: MCID3111142782  19883 260101 Institution J  01 First-year Good Standing
-#>      3: MCID3111142782  19885 260101 Institution J 02 Second-year Good Standing
-#>     ---                                                                        
-#> 531417: MCID3112870009  19953 240102 Institution B  01 First-year Good Standing
-#> 531418: MCID3112870009  19954 240102 Institution B  01 First-year Good Standing
-#> 531419: MCID3112870009  19983 240102 Institution B 02 Second-year Good Standing
-#>           coop hours_term hours_term_attempt hours_cumul hours_cumul_attempt
-#>         <char>      <num>              <num>       <num>               <num>
-#>      1:     No          9                  9          18                  18
-#>      2:     No         16                 16          26                  26
-#>      3:     No          4                  4          30                  30
-#>     ---                                                                     
-#> 531417:     No         12                 12          24                  24
-#> 531418:     No          1                  1          25                  25
-#> 531419:     No          7                  7          53                  53
-#>         gpa_term gpa_cumul first_degree_term term_cluster
-#>            <num>     <num>            <char>       <char>
-#>      1:     3.33      3.05             19913   pre-degree
-#>      2:     2.80      2.57             19903   pre-degree
-#>      3:     3.00      2.63             19903   pre-degree
-#>     ---                                                  
-#> 531417:     3.57      3.71              <NA>   pre-degree
-#> 531418:     4.00      3.72              <NA>   pre-degree
-#> 531419:     4.00      3.87              <NA>   pre-degree
+# View relevant columns
+term[order(-term_group), .(mcid, term, first_degree, term_group)]
+#>                   mcid   term first_degree term_group
+#>                 <char> <char>       <char>     <char>
+#>      1: MCID3111142689  19883        19913  undergrad
+#>      2: MCID3111142782  19883        19903  undergrad
+#>      3: MCID3111142782  19885        19903  undergrad
+#>     ---                                              
+#> 531417: MCID3112501004  20161        20133   graduate
+#> 531418: MCID3112595308  20161        20154   graduate
+#> 531419: MCID3112619703  20161        20154   graduate
+
+degree[order(-term_group), .(mcid, term_degree, first_degree, term_group)]
+#>                  mcid term_degree first_degree term_group
+#>                <char>      <char>       <char>     <char>
+#>     1: MCID3111142689       19913        19913  undergrad
+#>     2: MCID3111142782       19903        19903  undergrad
+#>     3: MCID3111142881       19894        19894  undergrad
+#>    ---                                                   
+#> 43901: MCID3112290406       20143        20111   graduate
+#> 43902: MCID3112347391       20133        20101   graduate
+#> 43903: MCID3112407729       20133        20123   graduate
 ```
 
-*Summary check.*   Numbers of students in each term cluster.
+*Summary check.*   Numbers of students in each category.
 
 ``` r
 
-term[, .N, by = c("term_cluster")][order(-N)]
-#>         term_cluster      N
-#>               <char>  <int>
-#> 1:        pre-degree 495563
-#> 2:      first-degree  29883
-#> 3: post-first-degree   5973
+term[, .N, by = c("term_group")][order(-N)]
+#>    term_group      N
+#>        <char>  <int>
+#> 1:  undergrad 525446
+#> 2:   graduate   5973
 
-degree[, .N, by = c("term_cluster")][order(-N)]
-#>         term_cluster     N
-#>               <char> <int>
-#> 1:      first-degree 43857
-#> 2: post-first-degree    46
+degree[, .N, by = c("term_group")][order(-N)]
+#>    term_group     N
+#>        <char> <int>
+#> 1:  undergrad 43857
+#> 2:   graduate    46
 ```
 
-We exclude the rows labeled “post-first-degree.” Note that we are
-dropping *terms* without affecting the number of student IDs.
+We keep the rows labeled “undergrad.” Note that we are dropping rows by
+values in the *term* variable without affecting the number of students
+in the *population.*
 
 ``` r
 
-term <- term[term_cluster != "post-first-degree"]
-degree <- degree[term_cluster != "post-first-degree"]
+term <- term[term_group == "undergrad"]
+degree <- degree[term_group == "undergrad"]
+
+# drop temporary columns
+term[, c("first_degree", "term_group") := NULL]
+degree[, c("first_degree", "term_group") := NULL]
 ```
 
-We drop the temporary columns.
+With this step, we conclude the development of what we are calling our
+`_baseline` tables, filtered for data sufficiency and degree-seeking and
+excluding post-first-degree terms.
 
 ``` r
 
-term[, c("term_cluster", "first_degree_term") := NULL]
-degree[, c("term_cluster", "first_degree_term") := NULL]
-```
-
-We redefine our tables to incorporate the exclusion of post-completion
-terms, yielding our baseline data tables.
-
-``` r
-
+student_baseline <- copy(student_refined)
 term_baseline <- copy(term)
 degree_baseline <- copy(degree)
 ```
-
-| Table   | Original tables | Refined population | Baseline tables |
-|---------|-----------------|--------------------|-----------------|
-| student | 97,555          | 76,875             | 76,875          |
-| term    | 639,915         | 531,419            | 525,446         |
-| degree  | 49,665          | 43,903             | 43,857          |
-
-Table 1(c). Number of rows. {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
 
 Review the results.
 
@@ -466,7 +442,6 @@ look_at(student_baseline)
 look_at(term_baseline)
 #> Classes 'data.table' and 'data.frame':   525446 obs. of  13 variables:
 #>  $ mcid               : chr  "MCID3111142689" "MCID3111142782" "MCID311114278"..
-#>  $ term               : chr  "19883" "19883" "19885" "19893" ...
 #>  $ cip6               : chr  "090401" "260101" "260101" "260101" ...
 #>  $ institution        : chr  "Institution B" "Institution J" "Institution J" "..
 #>  $ level              : chr  "01 First-year" "01 First-year" "02 Second-year""..
@@ -478,33 +453,40 @@ look_at(term_baseline)
 #>  $ hours_cumul_attempt: num  18 26 30 56 60 64 74 83 21 27 ...
 #>  $ gpa_term           : num  3.33 2.8 3 2.84 4 3.25 2.26 2.43 2.55 2.15 ...
 #>  $ gpa_cumul          : num  3.05 2.57 2.63 2.53 2.63 2.67 2.61 2.59 2.76 2.62..
+#>  $ term               : chr  "19883" "19883" "19885" "19893" ...
 
 look_at(degree_baseline)
 #> Classes 'data.table' and 'data.frame':   43857 obs. of  5 variables:
 #>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID"..
-#>  $ term_degree: chr  "19913" "19903" "19894" "19901" ...
 #>  $ cip6       : chr  "090401" "260101" "450601" "141001" ...
 #>  $ institution: chr  "Institution B" "Institution J" "Institution B" "Institu"..
 #>  $ degree     : chr  "Bachelor of Arts in Journalism" "Bachelor of Science in"..
+#>  $ term_degree: chr  "19913" "19903" "19894" "19901" ...
 
 look_at(population)
 #> Classes 'data.table' and 'data.frame':   76875 obs. of  1 variable:
 #>  $ mcid: chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID3111142"..
 ```
 
-The baseline tables are the starting point for most studies, independent
-of case specifics. From this point forward, anytime we need a fresh copy
-of any of the data tables, we copy the “baseline” version. Anytime we
-need a starting population, we copy `population.`
+| Table   | Original tables | Refined population | Baseline tables |
+|---------|-----------------|--------------------|-----------------|
+| student | 97,555          | 76,875             | 76,875          |
+| term    | 639,915         | 531,419            | 525,446         |
+| degree  | 49,665          | 43,903             | 43,857          |
+
+Table 1(c). Number of rows. {.table .gt_table
+quarto-disable-processing="false" quarto-bootstrap="false"}
+
+From this point forward, anytime we need a fresh copy of any of the data
+tables, we copy the `_baseline` version. Anytime we need a starting
+population, we copy `population.`
 
 ## Programs
 
-In this section, we begin the procedures that transform our baseline
-records and population into case-specific programs, blocs, metrics, and
-groupings.
-
-Our goal in this section is to search the CIP data table for the 6-digit
-codes for our programs. The `cip` dataset loads with midfieldr.
+Here we begin the procedures that transform our baseline records and
+population into case-specific programs, blocs, metrics, and groupings.
+In this section we to search the CIP data table for the 6-digit codes
+for our programs. The `cip` dataset loads with midfieldr.
 
 ### *Search for program codes*
 
@@ -524,7 +506,11 @@ filter_programs(dframe = cip, pattern = "engineering")
 #>   4:          Agricultural, Biological Engineering and Bioengineering 140301
 #>   5:                                        Architectural Engineering 140401
 #>   6:                                  Biomedical, Medical Engineering 140501
+#>   7:                                 Ceramic Sciences and Engineering 140601
+#>   8:                                             Chemical Engineering 140701
 #>  ---                                                                        
+#> 112:                                               Engineering Design 151502
+#> 113:                                                Packaging Science 151503
 #> 114:                                Engineering-Related Fields, Other 151599
 #> 115:                                                   Nanotechnology 151601
 #> 116:             Engineering Related Technologies, Technicians, Other 159999
@@ -539,7 +525,11 @@ filter_programs(dframe = cip, pattern = "engineering")
 #>   4: Agricultural, Biological Engineering and Bioengineering   1403
 #>   5:                               Architectural Engineering   1404
 #>   6:                         Biomedical, Medical Engineering   1405
+#>   7:                        Ceramic Sciences and Engineering   1406
+#>   8:                                    Chemical Engineering   1407
 #>  ---                                                               
+#> 112:                              Engineering-Related Fields   1515
+#> 113:                              Engineering-Related Fields   1515
 #> 114:                              Engineering-Related Fields   1515
 #> 115:                                          Nanotechnology   1516
 #> 116:    Engineering-Related Technologies, Technicians, Other   1599
@@ -554,7 +544,11 @@ filter_programs(dframe = cip, pattern = "engineering")
 #>   4:                                      Engineering     14
 #>   5:                                      Engineering     14
 #>   6:                                      Engineering     14
+#>   7:                                      Engineering     14
+#>   8:                                      Engineering     14
 #>  ---                                                        
+#> 112:                           Engineering Technology     15
+#> 113:                           Engineering Technology     15
 #> 114:                           Engineering Technology     15
 #> 115:                           Engineering Technology     15
 #> 116:                           Engineering Technology     15
@@ -644,7 +638,9 @@ programs
 #>  4:                        Transportation and Highway Engineering 140804
 #>  5:                                   Water Resources Engineering 140805
 #>  6:                                      Civil Engineering, Other 140899
-#> ---                                                                     
+#>  7:        Electrical, Electronics and Communications Engineering 141001
+#>  8:                                 Laser and Optical Engineering 141003
+#>  9:                                Telecommunications Engineering 141004
 #> 10: Electrical, Electronics and Communications Engineering, Other 141099
 #> 11:                                        Mechanical Engineering 141901
 #> 12:                                           Systems Engineering 142701
@@ -659,7 +655,9 @@ programs
 #>  4:                                      Civil Engineering   1408 Engineering
 #>  5:                                      Civil Engineering   1408 Engineering
 #>  6:                                      Civil Engineering   1408 Engineering
-#> ---                                                                          
+#>  7: Electrical, Electronics and Communications Engineering   1410 Engineering
+#>  8: Electrical, Electronics and Communications Engineering   1410 Engineering
+#>  9: Electrical, Electronics and Communications Engineering   1410 Engineering
 #> 10: Electrical, Electronics and Communications Engineering   1410 Engineering
 #> 11:                                 Mechanical Engineering   1419 Engineering
 #> 12:                                    Systems Engineering   1427 Engineering
@@ -674,7 +672,9 @@ programs
 #>  4:     14
 #>  5:     14
 #>  6:     14
-#> ---       
+#>  7:     14
+#>  8:     14
+#>  9:     14
 #> 10:     14
 #> 11:     14
 #> 12:     14
@@ -818,8 +818,8 @@ more than one degree in their first degree term.
 
 ``` r
 
-degree_cols <- degree[, .(mcid, cip6)]
-DT <- degree_cols[DT, on = "mcid"]
+degree_col <- degree[, .(mcid, cip6)]
+DT <- degree_col[DT, on = "mcid"]
 DT
 #>                  mcid   cip6
 #>                <char> <char>
@@ -864,8 +864,8 @@ DT
 ```
 
 We drop the `cip6` column, leaving the `program` column with our
-user-defined program labels. These students all have a degree in one of
-our four engineering programs.
+user-defined program labels. These students all have a degree in one or
+more of our four engineering programs.
 
 ``` r
 
@@ -926,7 +926,8 @@ DT
 #> 3431: MCID3112641535      ME       20173           20143            timely
 ```
 
-*Summary check.*   Numbers of students by completion status.
+*Summary check.*   Numbers of students by completion status. In this
+case, all students completed, thus no NAs.
 
 ``` r
 
@@ -978,8 +979,8 @@ DT
 
 ### *Bloc of timely graduates*
 
-This is the bloc of timely graduates required by our metric. We add a
-`bloc` variable with the value “grad” and ensure we have unique rows.
+We now have the bloc of timely graduates required by our metric. We add
+a `bloc` variable with the value “grad” and ensure we have unique rows.
 
 ``` r
 
@@ -1129,9 +1130,9 @@ DT
 
 ### *Bloc of ever-enrolled*
 
-This is the bloc of students ever enrolled in our programs required by
-our metric. We add a `bloc` variable with the value “ever” and ensure we
-have unique rows.
+We now have the bloc of students ever enrolled in our programs required
+by our metric. We add a `bloc` variable with the value “ever” and ensure
+we have unique rows.
 
 ``` r
 
@@ -1225,7 +1226,8 @@ and the values in the new columns are taken from the `N` column. The
 DT <- dcast(DT,
   program + sex + race ~ bloc,
   value.var = "N",
-  fill = 0
+  drop = FALSE, # keep all combinations
+  fill = NA_real_ # NA if no value
 )
 setkey(DT, NULL)
 DT
@@ -1234,10 +1236,32 @@ DT
 #>  1:      CE Female           Asian    14    10
 #>  2:      CE Female           Black     4     1
 #>  3:      CE Female        Hispanic    13     6
+#>  4:      CE Female   International    23    13
+#>  5:      CE Female Native American     1     1
+#>  6:      CE Female   Other/Unknown     5     3
+#>  7:      CE Female           White   261   162
+#>  8:      CE   Male           Asian    33    25
+#>  9:      CE   Male           Black     8     5
+#> 10:      CE   Male        Hispanic    66    31
+#> 11:      CE   Male   International    98    55
+#> 12:      CE   Male Native American     3     1
+#> 13:      CE   Male   Other/Unknown    27    11
+#> 14:      CE   Male           White   948   612
 #> ---                                           
-#> 48:      ME   Male Native American     5     1
-#> 49:      ME   Male   Other/Unknown    81    41
-#> 50:      ME   Male           White  1587   952
+#> 43:      ME Female           Asian     7     1
+#> 44:      ME Female           Black     3     2
+#> 45:      ME Female        Hispanic    12     8
+#> 46:      ME Female   International    20    11
+#> 47:      ME Female Native American    NA    NA
+#> 48:      ME Female   Other/Unknown     8     4
+#> 49:      ME Female           White   213   134
+#> 50:      ME   Male           Asian    77    49
+#> 51:      ME   Male           Black    29    19
+#> 52:      ME   Male        Hispanic    78    42
+#> 53:      ME   Male   International   176    89
+#> 54:      ME   Male Native American     5     1
+#> 55:      ME   Male   Other/Unknown    81    41
+#> 56:      ME   Male           White  1587   952
 ```
 
 These data are in block-record form with three keys and two value
@@ -1248,44 +1272,54 @@ description for calculating the metric.
 
 *Completes the analysis.*
 
-Before calculating the metric, we have to omit rows in which `ever` (the
-denominator of the metric) is zero. In this example, no rows are
-removed.
+Before calculating the metric, we address possible “divide by zero”
+errors by converting any zero values of `ever` to NA. Not required in
+this case, but included for completeness.
 
 ``` r
 
-DT <- DT[ever != 0]
-setorderv(DT, c("program", "sex", "race"))
-DT
-#>     program    sex            race  ever  grad
-#>      <char> <char>          <char> <int> <int>
-#>  1:      CE Female           Asian    14    10
-#>  2:      CE Female           Black     4     1
-#>  3:      CE Female        Hispanic    13     6
-#> ---                                           
-#> 48:      ME   Male Native American     5     1
-#> 49:      ME   Male   Other/Unknown    81    41
-#> 50:      ME   Male           White  1587   952
+DT[ever == 0, ever := NA_real_]
 ```
 
-Stickiness is the ratio of the number of graduates to the number ever
-enrolled, expressed as a percentage. Stickiness is calculated for each
-combination of program, race/ethnicity, and sex.
+Stickiness is calculated for each combination of program,
+race/ethnicity, and sex.
 
 ``` r
 
 DT[, stick := round(100 * grad / ever, 1)]
-setkey(DT, NULL)
 DT
+#> Index: <ever>
 #>     program    sex            race  ever  grad stick
 #>      <char> <char>          <char> <int> <int> <num>
 #>  1:      CE Female           Asian    14    10  71.4
 #>  2:      CE Female           Black     4     1  25.0
 #>  3:      CE Female        Hispanic    13     6  46.2
+#>  4:      CE Female   International    23    13  56.5
+#>  5:      CE Female Native American     1     1 100.0
+#>  6:      CE Female   Other/Unknown     5     3  60.0
+#>  7:      CE Female           White   261   162  62.1
+#>  8:      CE   Male           Asian    33    25  75.8
+#>  9:      CE   Male           Black     8     5  62.5
+#> 10:      CE   Male        Hispanic    66    31  47.0
+#> 11:      CE   Male   International    98    55  56.1
+#> 12:      CE   Male Native American     3     1  33.3
+#> 13:      CE   Male   Other/Unknown    27    11  40.7
+#> 14:      CE   Male           White   948   612  64.6
 #> ---                                                 
-#> 48:      ME   Male Native American     5     1  20.0
-#> 49:      ME   Male   Other/Unknown    81    41  50.6
-#> 50:      ME   Male           White  1587   952  60.0
+#> 43:      ME Female           Asian     7     1  14.3
+#> 44:      ME Female           Black     3     2  66.7
+#> 45:      ME Female        Hispanic    12     8  66.7
+#> 46:      ME Female   International    20    11  55.0
+#> 47:      ME Female Native American    NA    NA    NA
+#> 48:      ME Female   Other/Unknown     8     4  50.0
+#> 49:      ME Female           White   213   134  62.9
+#> 50:      ME   Male           Asian    77    49  63.6
+#> 51:      ME   Male           Black    29    19  65.5
+#> 52:      ME   Male        Hispanic    78    42  53.8
+#> 53:      ME   Male   International   176    89  50.6
+#> 54:      ME   Male Native American     5     1  20.0
+#> 55:      ME   Male   Other/Unknown    81    41  50.6
+#> 56:      ME   Male           White  1587   952  60.0
 ```
 
 These data are in block-record form with three key columns (the grouping
@@ -1304,40 +1338,62 @@ student anonymity can no longer be assured. Here, for example, we have
 head(DT[order(grad, ever)], 15L)
 #>     program    sex            race  ever  grad stick
 #>      <char> <char>          <char> <int> <int> <num>
-#>  1:      EE Female Native American     1     0   0.0
-#>  2:      EE   Male Native American     3     0   0.0
-#>  3:      CE Female Native American     1     1 100.0
-#>  4:      CE   Male Native American     3     1  33.3
-#>  5:      CE Female           Black     4     1  25.0
-#>  6:      ME   Male Native American     5     1  20.0
-#>  7:      ME Female           Asian     7     1  14.3
-#>  8:      ME Female           Black     3     2  66.7
-#>  9:     ISE Female   International     6     2  33.3
-#> 10:      CE Female   Other/Unknown     5     3  60.0
-#> 11:      EE Female           Black     6     3  50.0
-#> 12:      EE Female   Other/Unknown     7     3  42.9
-#> 13:      EE Female        Hispanic     8     3  37.5
-#> 14:     ISE   Male        Hispanic     6     4  66.7
-#> 15:      ME Female   Other/Unknown     8     4  50.0
+#>  1:      CE Female Native American     1     1 100.0
+#>  2:      CE   Male Native American     3     1  33.3
+#>  3:      CE Female           Black     4     1  25.0
+#>  4:      ME   Male Native American     5     1  20.0
+#>  5:      ME Female           Asian     7     1  14.3
+#>  6:      ME Female           Black     3     2  66.7
+#>  7:     ISE Female   International     6     2  33.3
+#>  8:      CE Female   Other/Unknown     5     3  60.0
+#>  9:      EE Female           Black     6     3  50.0
+#> 10:      EE Female   Other/Unknown     7     3  42.9
+#> 11:      EE Female        Hispanic     8     3  37.5
+#> 12:     ISE   Male        Hispanic     6     4  66.7
+#> 13:      ME Female   Other/Unknown     8     4  50.0
+#> 14:      CE   Male           Black     8     5  62.5
+#> 15:     ISE Female           Black     7     6  85.7
 ```
 
-When dealing with the full MIDFIELD research data, we typically use
-\small N \> 10, but for these practice data we illustrate the procedure
-using \small N \> 3 in the graduate column.
+When dealing with the full MIDFIELD research data, we typically omit
+rows in which \small N\_\mathrm{grad}\leq 10, but for these practice
+data we illustrate the process using \small N\_\mathrm{grad}\leq 3.
 
 ``` r
 
-DT <- DT[grad > 3]
+DT[grad <= 3, c("ever", "grad", "stick") := NA_real_]
 DT
-#>     program    sex          race  ever  grad stick
-#>      <char> <char>        <char> <int> <int> <num>
-#>  1:      CE Female         Asian    14    10  71.4
-#>  2:      CE Female      Hispanic    13     6  46.2
-#>  3:      CE Female International    23    13  56.5
-#> ---                                               
-#> 35:      ME   Male International   176    89  50.6
-#> 36:      ME   Male Other/Unknown    81    41  50.6
-#> 37:      ME   Male         White  1587   952  60.0
+#>     program    sex            race  ever  grad stick
+#>      <char> <char>          <char> <int> <int> <num>
+#>  1:      CE Female           Asian    14    10  71.4
+#>  2:      CE Female           Black    NA    NA    NA
+#>  3:      CE Female        Hispanic    13     6  46.2
+#>  4:      CE Female   International    23    13  56.5
+#>  5:      CE Female Native American    NA    NA    NA
+#>  6:      CE Female   Other/Unknown    NA    NA    NA
+#>  7:      CE Female           White   261   162  62.1
+#>  8:      CE   Male           Asian    33    25  75.8
+#>  9:      CE   Male           Black     8     5  62.5
+#> 10:      CE   Male        Hispanic    66    31  47.0
+#> 11:      CE   Male   International    98    55  56.1
+#> 12:      CE   Male Native American    NA    NA    NA
+#> 13:      CE   Male   Other/Unknown    27    11  40.7
+#> 14:      CE   Male           White   948   612  64.6
+#> ---                                                 
+#> 43:      ME Female           Asian    NA    NA    NA
+#> 44:      ME Female           Black    NA    NA    NA
+#> 45:      ME Female        Hispanic    12     8  66.7
+#> 46:      ME Female   International    20    11  55.0
+#> 47:      ME Female Native American    NA    NA    NA
+#> 48:      ME Female   Other/Unknown     8     4  50.0
+#> 49:      ME Female           White   213   134  62.9
+#> 50:      ME   Male           Asian    77    49  63.6
+#> 51:      ME   Male           Black    29    19  65.5
+#> 52:      ME   Male        Hispanic    78    42  53.8
+#> 53:      ME   Male   International   176    89  50.6
+#> 54:      ME   Male Native American    NA    NA    NA
+#> 55:      ME   Male   Other/Unknown    81    41  50.6
+#> 56:      ME   Male           White  1587   952  60.0
 ```
 
 We have found it useful to report such data with a variable that
@@ -1348,15 +1404,37 @@ combines race/ethnicity and sex.
 DT[, people := paste(race, sex)]
 setcolorder(DT)
 DT
-#>     program    sex          race  ever  grad stick               people
-#>      <char> <char>        <char> <int> <int> <num>               <char>
-#>  1:      CE Female         Asian    14    10  71.4         Asian Female
-#>  2:      CE Female      Hispanic    13     6  46.2      Hispanic Female
-#>  3:      CE Female International    23    13  56.5 International Female
-#> ---                                                                    
-#> 35:      ME   Male International   176    89  50.6   International Male
-#> 36:      ME   Male Other/Unknown    81    41  50.6   Other/Unknown Male
-#> 37:      ME   Male         White  1587   952  60.0           White Male
+#>     program    sex            race  ever  grad stick                 people
+#>      <char> <char>          <char> <int> <int> <num>                 <char>
+#>  1:      CE Female           Asian    14    10  71.4           Asian Female
+#>  2:      CE Female           Black    NA    NA    NA           Black Female
+#>  3:      CE Female        Hispanic    13     6  46.2        Hispanic Female
+#>  4:      CE Female   International    23    13  56.5   International Female
+#>  5:      CE Female Native American    NA    NA    NA Native American Female
+#>  6:      CE Female   Other/Unknown    NA    NA    NA   Other/Unknown Female
+#>  7:      CE Female           White   261   162  62.1           White Female
+#>  8:      CE   Male           Asian    33    25  75.8             Asian Male
+#>  9:      CE   Male           Black     8     5  62.5             Black Male
+#> 10:      CE   Male        Hispanic    66    31  47.0          Hispanic Male
+#> 11:      CE   Male   International    98    55  56.1     International Male
+#> 12:      CE   Male Native American    NA    NA    NA   Native American Male
+#> 13:      CE   Male   Other/Unknown    27    11  40.7     Other/Unknown Male
+#> 14:      CE   Male           White   948   612  64.6             White Male
+#> ---                                                                        
+#> 43:      ME Female           Asian    NA    NA    NA           Asian Female
+#> 44:      ME Female           Black    NA    NA    NA           Black Female
+#> 45:      ME Female        Hispanic    12     8  66.7        Hispanic Female
+#> 46:      ME Female   International    20    11  55.0   International Female
+#> 47:      ME Female Native American    NA    NA    NA Native American Female
+#> 48:      ME Female   Other/Unknown     8     4  50.0   Other/Unknown Female
+#> 49:      ME Female           White   213   134  62.9           White Female
+#> 50:      ME   Male           Asian    77    49  63.6             Asian Male
+#> 51:      ME   Male           Black    29    19  65.5             Black Male
+#> 52:      ME   Male        Hispanic    78    42  53.8          Hispanic Male
+#> 53:      ME   Male   International   176    89  50.6     International Male
+#> 54:      ME   Male Native American    NA    NA    NA   Native American Male
+#> 55:      ME   Male   Other/Unknown    81    41  50.6     Other/Unknown Male
+#> 56:      ME   Male           White  1587   952  60.0             White Male
 ```
 
 Readers can more readily interpret our charts and tables if the programs
@@ -1371,15 +1449,37 @@ DT[, program := fcase(
   program %like% "ISE", "Industrial/Systems"
 )]
 DT
-#>        program    sex          race  ever  grad stick               people
-#>         <char> <char>        <char> <int> <int> <num>               <char>
-#>  1:      Civil Female         Asian    14    10  71.4         Asian Female
-#>  2:      Civil Female      Hispanic    13     6  46.2      Hispanic Female
-#>  3:      Civil Female International    23    13  56.5 International Female
-#> ---                                                                       
-#> 35: Mechanical   Male International   176    89  50.6   International Male
-#> 36: Mechanical   Male Other/Unknown    81    41  50.6   Other/Unknown Male
-#> 37: Mechanical   Male         White  1587   952  60.0           White Male
+#>        program    sex            race  ever  grad stick                 people
+#>         <char> <char>          <char> <int> <int> <num>                 <char>
+#>  1:      Civil Female           Asian    14    10  71.4           Asian Female
+#>  2:      Civil Female           Black    NA    NA    NA           Black Female
+#>  3:      Civil Female        Hispanic    13     6  46.2        Hispanic Female
+#>  4:      Civil Female   International    23    13  56.5   International Female
+#>  5:      Civil Female Native American    NA    NA    NA Native American Female
+#>  6:      Civil Female   Other/Unknown    NA    NA    NA   Other/Unknown Female
+#>  7:      Civil Female           White   261   162  62.1           White Female
+#>  8:      Civil   Male           Asian    33    25  75.8             Asian Male
+#>  9:      Civil   Male           Black     8     5  62.5             Black Male
+#> 10:      Civil   Male        Hispanic    66    31  47.0          Hispanic Male
+#> 11:      Civil   Male   International    98    55  56.1     International Male
+#> 12:      Civil   Male Native American    NA    NA    NA   Native American Male
+#> 13:      Civil   Male   Other/Unknown    27    11  40.7     Other/Unknown Male
+#> 14:      Civil   Male           White   948   612  64.6             White Male
+#> ---                                                                           
+#> 43: Mechanical Female           Asian    NA    NA    NA           Asian Female
+#> 44: Mechanical Female           Black    NA    NA    NA           Black Female
+#> 45: Mechanical Female        Hispanic    12     8  66.7        Hispanic Female
+#> 46: Mechanical Female   International    20    11  55.0   International Female
+#> 47: Mechanical Female Native American    NA    NA    NA Native American Female
+#> 48: Mechanical Female   Other/Unknown     8     4  50.0   Other/Unknown Female
+#> 49: Mechanical Female           White   213   134  62.9           White Female
+#> 50: Mechanical   Male           Asian    77    49  63.6             Asian Male
+#> 51: Mechanical   Male           Black    29    19  65.5             Black Male
+#> 52: Mechanical   Male        Hispanic    78    42  53.8          Hispanic Male
+#> 53: Mechanical   Male   International   176    89  50.6     International Male
+#> 54: Mechanical   Male Native American    NA    NA    NA   Native American Male
+#> 55: Mechanical   Male   Other/Unknown    81    41  50.6     Other/Unknown Male
+#> 56: Mechanical   Male           White  1587   952  60.0             White Male
 ```
 
 ### *Table*
@@ -1397,16 +1497,16 @@ DT_table
 #>  1: Asian Female              Civil  71.4
 #>  2: Asian Female         Electrical  57.1
 #>  3: Asian Female Industrial/Systems  66.7
-#>  4:   Asian Male              Civil  75.8
-#>  5:   Asian Male         Electrical  58.2
-#>  6:   Asian Male Industrial/Systems  66.7
+#>  4: Asian Female         Mechanical    NA
+#>  5:   Asian Male              Civil  75.8
+#>  6:   Asian Male         Electrical  58.2
 #> ---                                      
-#> 32: White Female Industrial/Systems  74.0
-#> 33: White Female         Mechanical  62.9
-#> 34:   White Male              Civil  64.6
-#> 35:   White Male         Electrical  51.8
-#> 36:   White Male Industrial/Systems  73.0
-#> 37:   White Male         Mechanical  60.0
+#> 51: White Female Industrial/Systems  74.0
+#> 52: White Female         Mechanical  62.9
+#> 53:   White Male              Civil  64.6
+#> 54:   White Male         Electrical  51.8
+#> 55:   White Male Industrial/Systems  73.0
+#> 56:   White Male         Mechanical  60.0
 ```
 
 Transform the data to row-record form. The key column `{people}` remains
@@ -1420,59 +1520,62 @@ with NA.
 DT_table <- dcast(DT_table,
   people ~ program,
   value.var = "stick",
-  fill = NA
+  fill = NA_real_
 )
 setnames(DT_table, old = "people", new = "People")
 setkey(DT_table, NULL)
 DT_table
-#>                   People Civil Electrical Industrial/Systems Mechanical
-#>                   <char> <num>      <num>              <num>      <num>
-#>  1:         Asian Female  71.4       57.1               66.7         NA
-#>  2:           Asian Male  75.8       58.2               66.7       63.6
-#>  3:         Black Female    NA         NA               85.7         NA
-#>  4:           Black Male  62.5       58.6               66.7       65.5
-#>  5:      Hispanic Female  46.2         NA                 NA       66.7
-#>  6:        Hispanic Male  47.0       38.6               66.7       53.8
-#>  7: International Female  56.5       33.3                 NA       55.0
-#>  8:   International Male  56.1       46.2               57.1       50.6
-#>  9: Other/Unknown Female    NA         NA                 NA       50.0
-#> 10:   Other/Unknown Male  40.7       39.0                 NA       50.6
-#> 11:         White Female  62.1       47.9               74.0       62.9
-#> 12:           White Male  64.6       51.8               73.0       60.0
+#>                     People Civil Electrical Industrial/Systems Mechanical
+#>                     <char> <num>      <num>              <num>      <num>
+#>  1:           Asian Female  71.4       57.1               66.7         NA
+#>  2:             Asian Male  75.8       58.2               66.7       63.6
+#>  3:           Black Female    NA         NA               85.7         NA
+#>  4:             Black Male  62.5       58.6               66.7       65.5
+#>  5:        Hispanic Female  46.2         NA                 NA       66.7
+#>  6:          Hispanic Male  47.0       38.6               66.7       53.8
+#>  7:   International Female  56.5       33.3                 NA       55.0
+#>  8:     International Male  56.1       46.2               57.1       50.6
+#>  9: Native American Female    NA         NA                 NA         NA
+#> 10:   Native American Male    NA         NA                 NA         NA
+#> 11:   Other/Unknown Female    NA         NA                 NA       50.0
+#> 12:     Other/Unknown Male  40.7       39.0                 NA       50.6
+#> 13:           White Female  62.1       47.9               74.0       62.9
+#> 14:             White Male  64.6       51.8               73.0       60.0
 ```
 
-Format the table for publication. The
-[`sub_missing()`](https://gt.rstudio.com/reference/sub_missing.html)
-argument replaces NAs with an em-dash to improve readability.
+Format the table for publication. An em-dash indicates the number of
+graduates is too small to ensure confidentiality.
 
 ``` r
 
 DT_table |>
   gt() |>
-  sub_missing() |>
   tab_caption("Table 1. Engineering program stickiness (%)") |>
   tab_options(table.font.size = "small") |>
   opt_stylize(style = 1, color = "gray") |>
+  sub_missing() |>
   tab_style(
-    style = list(cell_fill(color = "#c7eae5")),
-    locations = cells_column_labels(columns = everything())
+    locations = cells_column_labels(columns = everything()),
+    style = list(cell_fill(color = "#c7eae5"))
   )
 ```
 
-| People               | Civil | Electrical | Industrial/Systems | Mechanical |
-|----------------------|-------|------------|--------------------|------------|
-| Asian Female         | 71.4  | 57.1       | 66.7               | —          |
-| Asian Male           | 75.8  | 58.2       | 66.7               | 63.6       |
-| Black Female         | —     | —          | 85.7               | —          |
-| Black Male           | 62.5  | 58.6       | 66.7               | 65.5       |
-| Hispanic Female      | 46.2  | —          | —                  | 66.7       |
-| Hispanic Male        | 47.0  | 38.6       | 66.7               | 53.8       |
-| International Female | 56.5  | 33.3       | —                  | 55.0       |
-| International Male   | 56.1  | 46.2       | 57.1               | 50.6       |
-| Other/Unknown Female | —     | —          | —                  | 50.0       |
-| Other/Unknown Male   | 40.7  | 39.0       | —                  | 50.6       |
-| White Female         | 62.1  | 47.9       | 74.0               | 62.9       |
-| White Male           | 64.6  | 51.8       | 73.0               | 60.0       |
+| People                 | Civil | Electrical | Industrial/Systems | Mechanical |
+|------------------------|-------|------------|--------------------|------------|
+| Asian Female           | 71.4  | 57.1       | 66.7               | —          |
+| Asian Male             | 75.8  | 58.2       | 66.7               | 63.6       |
+| Black Female           | —     | —          | 85.7               | —          |
+| Black Male             | 62.5  | 58.6       | 66.7               | 65.5       |
+| Hispanic Female        | 46.2  | —          | —                  | 66.7       |
+| Hispanic Male          | 47.0  | 38.6       | 66.7               | 53.8       |
+| International Female   | 56.5  | 33.3       | —                  | 55.0       |
+| International Male     | 56.1  | 46.2       | 57.1               | 50.6       |
+| Native American Female | —     | —          | —                  | —          |
+| Native American Male   | —     | —          | —                  | —          |
+| Other/Unknown Female   | —     | —          | —                  | 50.0       |
+| Other/Unknown Male     | 40.7  | 39.0       | —                  | 50.6       |
+| White Female           | 62.1  | 47.9       | 74.0               | 62.9       |
+| White Male             | 64.6  | 51.8       | 73.0               | 60.0       |
 
 Table 1. Engineering program stickiness (%) {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
@@ -1482,12 +1585,15 @@ quarto-disable-processing="false" quarto-bootstrap="false"}
 To use
 [`ggplot()`](https://ggplot2.tidyverse.org/reference/ggplot.html), we
 want the data in its original block-record form with one value column
-(stickiness). We can drop two columns as well.
+(stickiness). We can drop the unused `race` and `sex` columns. And from
+the table above we see we have no values for Native American students to
+disseminate so we can omit those rows as well.
 
 ``` r
 
 DT_chart <- copy(DT)
 DT_chart[, c("race", "sex") := NULL]
+DT_chart <- DT_chart[!people %ilike% "Native"]
 ```
 
 We (optionally) rearrange the order of columns and rows.
@@ -1503,16 +1609,16 @@ DT_chart
 #>  1: Asian Female              Civil    14    10  71.4
 #>  2: Asian Female         Electrical    21    12  57.1
 #>  3: Asian Female Industrial/Systems    15    10  66.7
-#>  4:   Asian Male              Civil    33    25  75.8
-#>  5:   Asian Male         Electrical   122    71  58.2
-#>  6:   Asian Male Industrial/Systems    21    14  66.7
+#>  4: Asian Female         Mechanical    NA    NA    NA
+#>  5:   Asian Male              Civil    33    25  75.8
+#>  6:   Asian Male         Electrical   122    71  58.2
 #> ---                                                  
-#> 32: White Female Industrial/Systems    73    54  74.0
-#> 33: White Female         Mechanical   213   134  62.9
-#> 34:   White Male              Civil   948   612  64.6
-#> 35:   White Male         Electrical   848   439  51.8
-#> 36:   White Male Industrial/Systems   178   130  73.0
-#> 37:   White Male         Mechanical  1587   952  60.0
+#> 43: White Female Industrial/Systems    73    54  74.0
+#> 44: White Female         Mechanical   213   134  62.9
+#> 45:   White Male              Civil   948   612  64.6
+#> 46:   White Male         Electrical   848   439  51.8
+#> 47:   White Male Industrial/Systems   178   130  73.0
+#> 48:   White Male         Mechanical  1587   952  60.0
 ```
 
 With one quantitative variable (stickiness) for every combination of the
@@ -1541,16 +1647,16 @@ DT_chart
 #>  1: Asian Female              Civil  71.4          64.0           62.4
 #>  2: Asian Female         Electrical  57.1          64.0           50.3
 #>  3: Asian Female Industrial/Systems  66.7          64.0           71.5
-#>  4:   Asian Male              Civil  75.8          62.8           62.4
-#>  5:   Asian Male         Electrical  58.2          62.8           50.3
-#>  6:   Asian Male Industrial/Systems  66.7          62.8           71.5
+#>  4: Asian Female         Mechanical    NA          64.0           59.1
+#>  5:   Asian Male              Civil  75.8          62.8           62.4
+#>  6:   Asian Male         Electrical  58.2          62.8           50.3
 #> ---                                                                   
-#> 32: White Female Industrial/Systems  74.0          61.1           71.5
-#> 33: White Female         Mechanical  62.9          61.1           59.1
-#> 34:   White Male              Civil  64.6          59.9           62.4
-#> 35:   White Male         Electrical  51.8          59.9           50.3
-#> 36:   White Male Industrial/Systems  73.0          59.9           71.5
-#> 37:   White Male         Mechanical  60.0          59.9           59.1
+#> 43: White Female Industrial/Systems  74.0          61.1           71.5
+#> 44: White Female         Mechanical  62.9          61.1           59.1
+#> 45:   White Male              Civil  64.6          59.9           62.4
+#> 46:   White Male         Electrical  51.8          59.9           50.3
+#> 47:   White Male Industrial/Systems  73.0          59.9           71.5
+#> 48:   White Male         Mechanical  60.0          59.9           59.1
 ```
 
 Format the chart for publication. No arguments for ordering the data are
@@ -1567,7 +1673,7 @@ ggplot(DT_chart, aes(x = stick, y = people)) +
     linetype = 2,
     color = "gray60"
   ) +
-  geom_point(size = 1.8) +
+  geom_point(size = 1.8, na.rm = TRUE) +
   labs(x = "Stickiness (%)", y = "") +
   theme_light(base_size = 10)
 ```
@@ -1595,7 +1701,7 @@ ggplot(DT_chart, aes(x = stick, y = program)) +
     linetype = 2,
     color = "gray60"
   ) +
-  geom_point(size = 1.8) +
+  geom_point(size = 1.8, na.rm = TRUE) +
   labs(x = "Stickiness (%)", y = "") +
   theme_light(base_size = 10)
 ```
@@ -1608,6 +1714,18 @@ In this version, the vertical dashed line in each panel represents the
 overall stickiness of the people group, calculated without regard to
 program. Panels are ordered by increasing group stickiness from left to
 right and from bottom to top.
+
+## Summary
+
+We have presented a complete study, from a sample of registrar’s data to
+charts comparing a quantitative metric, illustrating how we use
+midfieldr and other R packages to work with longitudinal student
+records. Details of specific midfieldr functions are covered in
+subsequent articles.
+
+Please note that these results cannot be used for drawing inferences
+about people or programs. The data in midfielddata are for *practice*,
+not *research*.
 
 ## References
 

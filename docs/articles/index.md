@@ -8,8 +8,6 @@
   syntax](https://midfieldr.github.io/midfieldr/articles/art-001-code-notes.md):
 - [Case
   study](https://midfieldr.github.io/midfieldr/articles/art-004-case-study.md):
-- [Case study using
-  dplyr](https://midfieldr.github.io/midfieldr/articles/art-005-case-dplyr.md):
 - [Planning a
   workflow](https://midfieldr.github.io/midfieldr/articles/art-010-planning.md):
 - [Planning](https://midfieldr.github.io/midfieldr/articles/art-011-planning.md):

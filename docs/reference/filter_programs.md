@@ -6,7 +6,7 @@ any string in a vector of character strings.
 ## Usage
 
 ``` r
-filter_programs(dframe, pattern, ..., negate = FALSE)
+filter_programs(dframe, pattern, ..., negate = NULL)
 ```
 
 ## Arguments

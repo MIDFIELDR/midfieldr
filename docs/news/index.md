@@ -6,9 +6,8 @@
 
 New features
 
-- New function
-  [`post_completion_terms()`](https://midfieldr.github.io/midfieldr/reference/post_completion_terms.md)
-  to identify rows of post-baccalaureate terms to exclude.
+- New function `post_completion_terms()` to identify rows of
+  post-baccalaureate terms to exclude.
 - New utilities
   [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md),
   [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md),

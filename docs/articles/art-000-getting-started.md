@@ -45,7 +45,7 @@ Records and population
     estimates timely completion terms.  
 - [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
     identifies IDs to exclude due to insufficient data.  
-- [`post_completion_terms()`](https://midfieldr.github.io/midfieldr/reference/post_completion_terms.md)
+- [`undergraduate_terms()`](https://midfieldr.github.io/midfieldr/reference/undergraduate_terms.md)
     identifies rows with post-baccalaureate terms to exclude.
 
 Blocs
@@ -384,9 +384,9 @@ degree_source <- copy(degree)
 
 # demonstrate that memory addresses are different
 address(student)
-#> [1] "00000149f2f8a848"
+#> [1] "0000021616016fd8"
 address(student_source)
-#> [1] "00000149f423b660"
+#> [1] "000002161724da60"
 ```
 
 Then we can use the shorter names such as `term` and `degree` as we
@@ -419,7 +419,7 @@ In midfieldr:
   yields the timely-completion term for every student.
 - [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
   tests for data sufficiency for every student .
-- [`post_completion_terms()`](https://midfieldr.github.io/midfieldr/reference/post_completion_terms.md)
+- [`undergraduate_terms()`](https://midfieldr.github.io/midfieldr/reference/undergraduate_terms.md)
   identifies post-baccalaureate terms to exclude.
 - [`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
   yields the completion status for every student passing the data
@@ -583,7 +583,7 @@ all.equal(population$mcid, unique(term_source$mcid))
 #> [1] TRUE
 ```
 
-## `post_completion_terms()`
+## `undergraduate_terms()`
 
 *Identify rows of post-baccalaureate terms to exclude.*
 
@@ -591,25 +591,24 @@ In most cases, we are not generally interested in academic terms beyond
 the first degree term, so we use the results of this function to exclude
 post-first-degree terms from the source data.
 
-[`post_completion_terms()`](https://midfieldr.github.io/midfieldr/reference/post_completion_terms.md)
+[`undergraduate_terms()`](https://midfieldr.github.io/midfieldr/reference/undergraduate_terms.md)
 identifies terms later than the first baccalaureate, if any.
 
 ``` r
 
-term <- post_completion_terms(term_source, midf_table = degree)
-degree <- post_completion_terms(degree_source, midf_table = degree)
+term <- undergraduate_terms(term_source, midf_table = degree)
+degree <- undergraduate_terms(degree_source, midf_table = degree)
 ```
 
-[`post_completion_terms()`](https://midfieldr.github.io/midfieldr/reference/post_completion_terms.md)
-adds a column indicating the cluster a term belongs to with respect to
-the first degree term.
+[`undergraduate_terms()`](https://midfieldr.github.io/midfieldr/reference/undergraduate_terms.md)
+adds a column indicating the group a term belongs to with respect to the
+first degree term.
 
 ``` r
 
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   531419 obs. of  15 variables:
 #>  $ mcid               : chr  "MCID3111142689" "MCID3111142782" "MCID311114278"..
-#>  $ term               : chr  "19883" "19883" "19885" "19893" ...
 #>  $ cip6               : chr  "090401" "260101" "260101" "260101" ...
 #>  $ institution        : chr  "Institution B" "Institution J" "Institution J" "..
 #>  $ level              : chr  "01 First-year" "01 First-year" "02 Second-year""..
@@ -621,33 +620,33 @@ look_at(term)
 #>  $ hours_cumul_attempt: num  18 26 30 56 60 64 74 83 21 27 ...
 #>  $ gpa_term           : num  3.33 2.8 3 2.84 4 3.25 2.26 2.43 2.55 2.15 ...
 #>  $ gpa_cumul          : num  3.05 2.57 2.63 2.53 2.63 2.67 2.61 2.59 2.76 2.62..
-#>  $ first_degree_term  : chr  "19913" "19903" "19903" "19903" ...
-#>  $ term_cluster       : chr  "pre-degree" "pre-degree" "pre-degree" "pre-degr"..
+#>  $ term               : chr  "19883" "19883" "19885" "19893" ...
+#>  $ first_degree       : chr  "19913" "19903" "19903" "19903" ...
+#>  $ term_group         : chr  "undergrad" "undergrad" "undergrad" "undergrad" ...
 ```
 
-The possible term cluster values are given by,
+The possible term group values are given by,
 
 ``` r
 
-term[, sort(unique(term_cluster), na.last = FALSE)]
-#> [1] "first-degree"      "post-first-degree" "pre-degree"
+term[, sort(unique(term_group), na.last = FALSE)]
+#> [1] "graduate"  "undergrad"
 ```
 
-We filter to exclude all terms labeled “post-first-degree” and drop the
-temporary columns.
+We filter to exclude all terms labeled “graduate” and drop the temporary
+columns.
 
 ``` r
 
-term <- term[!"post-first-degree", on = "term_cluster"]
-degree <- degree[!"post-first-degree", on = "term_cluster"]
+term <- term["undergrad", on = "term_group"]
+degree <- degree["undergrad", on = "term_group"]
 
-term[, c("term_cluster", "first_degree_term") := NULL]
-degree[, c("term_cluster", "first_degree_term") := NULL]
+term[, c("term_group", "first_degree") := NULL]
+degree[, c("term_group", "first_degree") := NULL]
 
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   525446 obs. of  13 variables:
 #>  $ mcid               : chr  "MCID3111142689" "MCID3111142782" "MCID311114278"..
-#>  $ term               : chr  "19883" "19883" "19885" "19893" ...
 #>  $ cip6               : chr  "090401" "260101" "260101" "260101" ...
 #>  $ institution        : chr  "Institution B" "Institution J" "Institution J" "..
 #>  $ level              : chr  "01 First-year" "01 First-year" "02 Second-year""..
@@ -659,6 +658,7 @@ look_at(term)
 #>  $ hours_cumul_attempt: num  18 26 30 56 60 64 74 83 21 27 ...
 #>  $ gpa_term           : num  3.33 2.8 3 2.84 4 3.25 2.26 2.43 2.55 2.15 ...
 #>  $ gpa_cumul          : num  3.05 2.57 2.63 2.53 2.63 2.67 2.61 2.59 2.76 2.62..
+#>  $ term               : chr  "19883" "19883" "19885" "19893" ...
 ```
 
 We redefine our source material to incorporate the exclusion of
@@ -699,26 +699,26 @@ student
 #> 76875: MCID3112870009         White   Male
 
 term
-#>                   mcid   term   cip6   institution          level
-#>                 <char> <char> <char>        <char>         <char>
-#>      1: MCID3111142689  19883 090401 Institution B  01 First-year
-#>      2: MCID3111142782  19883 260101 Institution J  01 First-year
-#>      3: MCID3111142782  19885 260101 Institution J 02 Second-year
+#>                   mcid   cip6   institution          level   term
+#>                 <char> <char>        <char>         <char> <char>
+#>      1: MCID3111142689 090401 Institution B  01 First-year  19883
+#>      2: MCID3111142782 260101 Institution J  01 First-year  19883
+#>      3: MCID3111142782 260101 Institution J 02 Second-year  19885
 #>     ---                                                          
-#> 525444: MCID3112870009  19953 240102 Institution B  01 First-year
-#> 525445: MCID3112870009  19954 240102 Institution B  01 First-year
-#> 525446: MCID3112870009  19983 240102 Institution B 02 Second-year
+#> 525444: MCID3112870009 240102 Institution B  01 First-year  19953
+#> 525445: MCID3112870009 240102 Institution B  01 First-year  19954
+#> 525446: MCID3112870009 240102 Institution B 02 Second-year  19983
 
 degree
-#>                  mcid term_degree   cip6
-#>                <char>      <char> <char>
-#>     1: MCID3111142689       19913 090401
-#>     2: MCID3111142782       19903 260101
-#>     3: MCID3111142881       19894 450601
+#>                  mcid   cip6 term_degree
+#>                <char> <char>      <char>
+#>     1: MCID3111142689 090401       19913
+#>     2: MCID3111142782 260101       19903
+#>     3: MCID3111142881 450601       19894
 #>    ---                                  
-#> 43855: MCID3112694738       20143 230101
-#> 43856: MCID3112698681       20181 110701
-#> 43857: MCID3112730841       20164 040401
+#> 43855: MCID3112694738 230101       20143
+#> 43856: MCID3112698681 110701       20181
+#> 43857: MCID3112730841 040401       20164
 ```
 
 Any variables you might need that have been dropped can always be
