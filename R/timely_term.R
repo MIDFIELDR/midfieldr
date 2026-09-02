@@ -31,9 +31,9 @@
 #' * `r df_class_preserved`
 #' * `r rows_not_modified`
 #' * `r new_cols_added`
-#'   - `term_i` &nbsp; Character. Initial term of a student's longitudinal
+#'   - `entry_term` &nbsp; Character. Initial term of a student's longitudinal
 #'      record, encoded `YYYYT`. Extracted from `midf_table.`
-#'   - `level_i` &nbsp; Character. Student level (01 Freshman, 02 Sophomore,
+#'   - `entry_level` &nbsp; Character. Student level (01 Freshman, 02 Sophomore,
 #'      etc.) in their initial term. Extracted from `midf_table.`
 #'   - `adj_span` &nbsp; Numeric. Integer span of years for timely
 #'      completion adjusted for a student's initial level.
@@ -65,7 +65,7 @@ timely_term <- function(dframe,
   # active column names
   reqd_dframe_vars <- c("mcid")
   reqd_table_vars <- c("mcid", "term", "level")
-  added_vars <- c("term_i", "level_i", "adj_span", "timely_term")
+  added_vars <- c("entry_term", "entry_level", "adj_span", "timely_term")
 
   # optional defaults
   span <- span %?% 6
@@ -73,8 +73,8 @@ timely_term <- function(dframe,
 
   # bind names for R CMD check
   adj_span <- NULL
-  level_i <- NULL
-  term_i <- NULL
+  entry_level <- NULL
+  entry_term <- NULL
   DELTA <- NULL
   IDX <- NULL
   TERM_CODE <- NULL
@@ -124,7 +124,7 @@ timely_term <- function(dframe,
   # edit names before joining
   setnames(midf_table,
     old = c("term", "level"),
-    new = c("term_i", "level_i")
+    new = c("entry_term", "entry_level")
   )
 
   # inner-join IDs, terms, levels
@@ -133,7 +133,7 @@ timely_term <- function(dframe,
   ID_term <- unique(ID_term)
 
   # keep the row of the first term by ID
-  setorderv(ID_term, c("mcid", "term_i"))
+  setorderv(ID_term, c("mcid", "entry_term"))
   ID_term <- ID_term[, .SD[1L], by = c("mcid")]
 
   # left-join the results back to dframe
@@ -141,8 +141,8 @@ timely_term <- function(dframe,
 
   # separate year and term codes
   dframe[, `:=`(
-    YYYY = substr(term_i, 1, 4),
-    TERM_CODE = substr(term_i, 5, 5)
+    YYYY = substr(entry_term, 1, 4),
+    TERM_CODE = substr(entry_term, 5, 5)
   ),
   env = list(
     TERM_CODE = term_code,
@@ -170,9 +170,9 @@ timely_term <- function(dframe,
   ]
 
   # reduce span by assumed number of completed years by level
-  dframe[, DELTA := fcase(level_i %like% "04", 3,
-    level_i %like% "03", 2,
-    level_i %like% "02", 1,
+  dframe[, DELTA := fcase(entry_level %like% "04", 3,
+    entry_level %like% "03", 2,
+    entry_level %like% "02", 1,
     default = 0
   ),
   env = list(DELTA = delta)

@@ -3,11 +3,16 @@
 When working with student-level records to develop quantitative metrics,
 midfieldr helps you refine and shape your data in these areas:
 
-- *Programs.*   Collect 6-digit program codes.
-- *Records.*   Credibly subset source data and refine the population.
-- *Blocs.*   Construct group of records for computing metrics.
+- *Population and records.* Obtaining a credible population and
+  filtering data tables to match.
+- *Metrics and groupings.* Calculating quantitative metrics
+  disaggregated by grouping variables.
+- *Dissemination.* Preparing results for dissemination in tables and
+  charts.
 
-This document introduces you to midfieldr’s basic set of tools.
+This document introduces you to midfieldr’s basic set of tools with a
+brief overview of major functions. Details are discussed at length in
+subsequent articles.
 
 ``` r
 
@@ -16,51 +21,376 @@ library("midfielddata")
 library("data.table")
 ```
 
-Before you start:
-
-1.  *On syntax:*   We use data.table syntax for data manipulation
-    throughout midfieldr and all data frames are of the `data.table`
-    class. However, if you happen to prefer tidyverse syntax, midfieldr
-    functions do attempt to preserve data frame attributes such as the
-    `tbl_df` class.
-
-2.  *On functions:*   In getting started, we provide a brief
-    introduction only. Details are discussed at length in subsequent
-    articles. You can always access the documentation, e.g.,
-    `?function_name`, for more information.
-
 ## midfieldr functions
 
-The major functions for treating student records can be categorized
-based on their contribution to a typical workflow:
+We can categorize midfieldr functions by their contribution to a typical
+workflow, as follows:
 
-Programs
+Refining a population and records
+
+- [`undergrad_focus()`](https://midfieldr.github.io/midfieldr/reference/undergrad_focus.md)
+  identifies terms to include prior to a first degree.
+- [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
+  estimates timely completion terms.
+- [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
+  identifies IDs to exclude due to insufficient data.
+
+Calculating aggregate metrics with grouping variables
 
 - [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
-    helps you find program names and CIP codes.
-
-Records and population
-
-- [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
-    estimates timely completion terms.  
-- [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
-    identifies IDs to exclude due to insufficient data.  
-- `undergrad_terms()`   identifies rows with post-baccalaureate terms to
-  exclude.
-
-Blocs
-
+  helps you find program names and CIP codes.
 - [`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
-    labels program completion as timely, late, or NA.
-
-Special data conditioning
-
+  identifies IDs to include for timely completion.
 - [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
-    for imputing the starting majors of First-Year Engineering (FYE)
-  students.
+  conditions data for imputing starting majors of FYE students.
+
+Preparing results for dissemination
 
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
-    for ordering Cleveland multiway data.
+  conditions data for Cleveland multiway charts.
+
+Helper utility functions
+
+- [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
+  minimizes the number of columns viewed for interactive sessions.
+- [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
+  for data frames, wraps base
+  [`str()`](https://rdrr.io/r/utils/str.html) with preset arguments.
+- [`sort_uniq()`](https://midfieldr.github.io/midfieldr/reference/sort_uniq.md)
+  for vectors, wraps base `sort(unique())` with preset arguments.
+- [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md)
+  wraps base [`tryCatch()`](https://rdrr.io/r/base/conditions.html) for
+  errors with preset arguments.
+- [`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
+  re-exported from the
+  [wrapr](https://winvector.github.io/wrapr/reference/check_equiv_frames.html)
+  package
+
+*Comments:*
+
+1.  Terms are encoded as character strings `YYYYT`, where `YYYY` is the
+    year at the start of the academic year and `T` encodes the semester
+    or quarter within an academic year as Fall (1), Winter (2), Spring
+    (3), and Summer (4, 5, and 6).
+
+2.  We use [data.table](https://r-datatable.com/) for its data frame
+    class and its data manipulation syntax. If you prefer tidyverse
+    syntax, midfieldr functions do attempt to preserve data frame
+    attributes such as the `tbl_df` (tibble) class.
+
+## Population and records
+
+### Data: Student records
+
+midfieldr is designed to work with the MIDFIELD database or tables with
+a similar structure. Data are structured in four tables:
+`student, term, course,` and `degree.` For this article we load three
+tables from [midfielddata](https://midfieldr.github.io/midfielddata/).
+
+``` r
+
+data(student, term, degree)
+```
+
+The data tables are linked by `mcid,` the anonymized student ID.
+[`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
+is a midfieldr convenience function that wraps base
+[`str()`](https://rdrr.io/r/utils/str.html) with preset arguments.
+
+``` r
+
+look_at(student)
+#> Classes 'data.table' and 'data.frame':   97555 obs. of  13 variables:
+#>  $ mcid          : chr  "MCID3111142225" "MCID3111142283" "MCID3111142290" "M"..
+#>  $ race          : chr  "Asian" "Asian" "Asian" "Asian" ...
+#>  $ sex           : chr  "Male" "Female" "Male" "Male" ...
+#>  $ institution   : chr  "Institution B" "Institution J" "Institution J" "Inst"..
+#>  $ transfer      : chr  "First-Time Transfer" "First-Time Transfer" "First-Ti"..
+#>  $ hours_transfer: num  NA NA NA NA NA NA NA NA NA NA ...
+#>  $ age_desc      : chr  "Under 25" "Under 25" "Under 25" "Under 25" ...
+#>  $ us_citizen    : chr  "Yes" "Yes" "Yes" "Yes" ...
+#>  $ home_zip      : chr  NA "22020" "23233" "20853" ...
+#>  $ high_school   : chr  NA NA "471872" NA ...
+#>  $ sat_math      : num  NA 560 510 640 600 570 480 NA NA NA ...
+#>  $ sat_verbal    : num  NA 230 380 460 500 530 530 NA NA NA ...
+#>  $ act_comp      : num  NA NA NA NA NA NA NA NA NA NA ...
+
+look_at(term)
+#> Classes 'data.table' and 'data.frame':   639915 obs. of  13 variables:
+#>  $ mcid               : chr  "MCID3111142225" "MCID3111142283" "MCID311114228"..
+#>  $ term               : chr  "19881" "19881" "19883" "19885" ...
+#>  $ cip6               : chr  "140901" "240102" "240102" "190601" ...
+#>  $ institution        : chr  "Institution B" "Institution J" "Institution J" "..
+#>  $ level              : chr  "01 First-year" "01 First-year" "01 First-year" "..
+#>  $ standing           : chr  "Good Standing" "Academic Probation" "Academic P"..
+#>  $ coop               : chr  "No" "No" "No" "No" ...
+#>  $ hours_term         : num  7 6 12 6 6 6 6 18 15 14 ...
+#>  $ hours_term_attempt : num  7 6 12 6 6 6 6 18 18 14 ...
+#>  $ hours_cumul        : num  7 6 18 24 30 36 42 63 78 14 ...
+#>  $ hours_cumul_attempt: num  7 6 18 24 30 36 42 63 81 14 ...
+#>  $ gpa_term           : num  2.56 1.85 1.93 2.15 1.85 1.2 1.85 2.33 2.32 2.15 ..
+#>  $ gpa_cumul          : num  2.56 1.85 1.9 1.96 1.94 1.82 1.82 1.98 2.04 2.15 ..
+
+look_at(degree)
+#> Classes 'data.table' and 'data.frame':   49665 obs. of  5 variables:
+#>  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..
+#>  $ term_degree: chr  "19881" "19921" "19903" "19921" ...
+#>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
+#>  $ degree     : chr  "Bachelor of Science in Electrical Engineering" "Bachelo"..
+```
+
+### `undergrad_focus()`
+
+*Identify terms to include prior to a first degree.* Applies to data
+tables with a term variable:
+
+- `term` in the `term` table
+- `term_course` in the `course` table
+- `term_degree` in the `degree` table
+
+Applying
+[`undergrad_focus()`](https://midfieldr.github.io/midfieldr/reference/undergrad_focus.md)
+to the `term` table, for example, we display selected columns from the
+result. The `bacc` (baccalaureate) column contains the student’s first
+degree term (if any). The `focus` column labels each term as focused on
+“undergrad” or “post-bacc” study, depending on whether a term is before
+or after the first degree.
+
+labels terms before a first degree “undergrad”; later terms are labeled
+“post-bacc.” Post-baccalaureate terms are typically excluded from a
+study.
+
+``` r
+
+DT <- undergrad_focus(term, midf_table = degree)
+DT <- DT[order(-focus), .(mcid, term, bacc, focus)]
+DT
+#>                   mcid   term   bacc     focus
+#>                 <char> <char> <char>    <char>
+#>      1: MCID3111142225  19881  19881 undergrad
+#>      2: MCID3111142283  19881   <NA> undergrad
+#>      3: MCID3111142283  19883   <NA> undergrad
+#>      4: MCID3111142283  19885   <NA> undergrad
+#>      5: MCID3111142283  19891   <NA> undergrad
+#>     ---                                       
+#> 639911: MCID3112760109  20174  20153 post-bacc
+#> 639912: MCID3112760109  20181  20153 post-bacc
+#> 639913: MCID3112760306  20181  20174 post-bacc
+#> 639914: MCID3112768322  20181  20174 post-bacc
+#> 639915: MCID3112773810  20181  20174 post-bacc
+```
+
+### `select_basic_cols()`
+
+*Minimize the number of columns viewed for interactive sessions*
+
+Operates on a MIDFIELD data table to return the minimum number of
+columns required by other midfieldr functions. Reducing the number of
+columns helps de-clutter a printout in an interactive session. The
+algorithm uses the column names present in the input data frame to
+identify the table and return the appropriate columns.
+
+``` r
+
+student <- select_basic_cols(student)
+term <- select_basic_cols(term)
+degree <- select_basic_cols(degree)
+
+student
+#>                  mcid          race    sex
+#>                <char>        <char> <char>
+#>     1: MCID3111142225         Asian   Male
+#>     2: MCID3111142283         Asian Female
+#>     3: MCID3111142290         Asian   Male
+#>     4: MCID3111142294         Asian   Male
+#>     5: MCID3111142299         Asian   Male
+#>    ---                                    
+#> 97551: MCID3112898886         White Female
+#> 97552: MCID3112898890         White Female
+#> 97553: MCID3112898894         White Female
+#> 97554: MCID3112898895         White Female
+#> 97555: MCID3112898940 Other/Unknown   Male
+
+term
+#>                   mcid   term   cip6   institution          level
+#>                 <char> <char> <char>        <char>         <char>
+#>      1: MCID3111142225  19881 140901 Institution B  01 First-year
+#>      2: MCID3111142283  19881 240102 Institution J  01 First-year
+#>      3: MCID3111142283  19883 240102 Institution J  01 First-year
+#>      4: MCID3111142283  19885 190601 Institution J  01 First-year
+#>      5: MCID3111142283  19891 190601 Institution J 02 Second-year
+#>     ---                                                          
+#> 639911: MCID3112898886  20181 500501 Institution B  01 First-year
+#> 639912: MCID3112898890  20181 451101 Institution B  01 First-year
+#> 639913: MCID3112898894  20181 451001 Institution B  01 First-year
+#> 639914: MCID3112898895  20181 302001 Institution B  01 First-year
+#> 639915: MCID3112898940  20181 050103 Institution B  01 First-year
+
+degree
+#>                  mcid term_degree   cip6
+#>                <char>      <char> <char>
+#>     1: MCID3111142225       19881 141001
+#>     2: MCID3111142290       19921 141001
+#>     3: MCID3111142294       19903 141001
+#>     4: MCID3111142299       19921 141001
+#>     5: MCID3111142689       19913 090401
+#>    ---                                  
+#> 49661: MCID3112829602       20173 451001
+#> 49662: MCID3112831015       20181 450701
+#> 49663: MCID3112839623       20181 160102
+#> 49664: MCID3112845220       20181 270101
+#> 49665: MCID3112845673       20174 090101
+```
+
+### `timely_term()`
+
+*Estimate timely completion terms*
+
+The *timely-completion term* is the term by which we would consider a
+student’s program completion “timely”, default 6 years after admission.
+[`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
+operates on any data frame with an `mcid` column.
+
+``` r
+
+DT <- term[, .(mcid)]
+DT <- unique(DT)
+
+DT
+#>                  mcid
+#>                <char>
+#>     1: MCID3111142225
+#>     2: MCID3111142283
+#>     3: MCID3111142290
+#>     4: MCID3111142294
+#>     5: MCID3111142299
+#>    ---               
+#> 97551: MCID3112898886
+#> 97552: MCID3112898890
+#> 97553: MCID3112898894
+#> 97554: MCID3112898895
+#> 97555: MCID3112898940
+```
+
+Columns are added indicating a student’s entry term and level. The span
+for timely completion is reduced by one academic year for each year the
+student has completed based on their level at entry. The
+timely-completion term results from adding the adjusted span to the
+entry term.
+
+``` r
+
+timely_term(DT, midf_table = term)
+#>                  mcid entry_term   entry_level adj_span timely_term
+#>                <char>     <char>        <char>    <num>      <char>
+#>     1: MCID3111142225      19881 01 First-year        6       19933
+#>     2: MCID3111142283      19881 01 First-year        6       19933
+#>     3: MCID3111142290      19881 01 First-year        6       19933
+#>     4: MCID3111142294      19881 01 First-year        6       19933
+#>     5: MCID3111142299      19881 01 First-year        6       19933
+#>    ---                                                             
+#> 97551: MCID3112898886      20181 01 First-year        6       20233
+#> 97552: MCID3112898890      20181 01 First-year        6       20233
+#> 97553: MCID3112898894      20181 01 First-year        6       20233
+#> 97554: MCID3112898895      20181 01 First-year        6       20233
+#> 97555: MCID3112898940      20181 01 First-year        6       20233
+```
+
+### `data_sufficiency()`
+
+*Identify IDs to exclude due to insufficient data*
+
+The *data sufficiency* test identifies students whose admission term and
+projected timely completion term lie within the range of data available
+from their institution—a necessary and sufficient condition for
+determining program completion status.
+[`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
+requires the entry term and timely-completion term from `timely_term().`
+
+``` r
+
+# Get required variables from timely_term
+DT <- unique(term[, .(mcid)])
+DT <- timely_term(DT, midf_table = term)
+DT <- DT[, .(mcid, entry_term, timely_term)]
+
+# Results
+data_sufficiency(DT, midf_table = term)[order(-data_sufficiency)]
+#>                  mcid entry_term timely_term  data_range data_sufficiency
+#>                <char>     <char>      <char>      <char>           <char>
+#>     1: MCID3111142689      19883       19941 19881-20181          include
+#>     2: MCID3111142782      19883       19941 19881-20096          include
+#>     3: MCID3111142881      19893       19951 19881-20181          include
+#>     4: MCID3111142884      19883       19941 19881-20181          include
+#>     5: MCID3111142893      19883       19941 19881-20181          include
+#>    ---                                                                   
+#> 97551: MCID3111618645      19901       19953 19901-20154    exclude-lower
+#> 97552: MCID3111624491      19881       19933 19881-20181    exclude-lower
+#> 97553: MCID3111824139      19901       19953 19901-20154    exclude-lower
+#> 97554: MCID3111869416      19901       19953 19901-20154    exclude-lower
+#> 97555: MCID3112056754      19881       19933 19881-20096    exclude-lower
+```
+
+Columns are added indicating an institution’s data range and the results
+of the data sufficiency test: “include” if the time span from entry to
+timely completion lie within the range; “exclude” if not. We typically
+exclude the “exclude” rows.
+
+## Metrics and groupings
+
+### Data: Program names and CIP codes
+
+### `filter_programs()`
+
+*Helps you find program names and CIP codes*
+
+paragraph
+
+### `completion_status()`
+
+*Identify IDs to include for timely completion*
+
+paragraph
+
+### `prep_fye_mice()`
+
+*Condition data for imputing starting majors of FYE students*
+
+Used when an institution has a required First-Year Engineering (FYE)
+program and the quantitative metric (e.g., graduation rate) requires
+knowledge of a student’s degree-granting starting program.
+
+Because FYE is not a degree-granting program, we impute what their
+starting program would have been had they not been required to enroll in
+FYE. For details see [FYE
+proxies](https://midfieldr.github.io/midfieldr/articles/art-060-fye-proxies.md).
+
+## Dissemination
+
+### `order_multiway()`
+
+*Condition data for Cleveland multiway charts*
+
+The ordering of rows and panels in a multiway chart is crucial to the
+perception of effects. Used when data have a multiway structure. For
+details see [Multiway data and
+charts](https://midfieldr.github.io/midfieldr/articles/art-120-multiway.md).
+
+## Utilities
+
+See the relevant help page for more information, e.g. `?look_at.`
+
+- [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
+  for data frames, wraps base
+  [`str()`](https://rdrr.io/r/utils/str.html) with preset arguments.
+- [`sort_uniq()`](https://midfieldr.github.io/midfieldr/reference/sort_uniq.md)
+  for vectors, wraps base `sort(unique())` with preset arguments.
+- [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md)
+  wraps base [`tryCatch()`](https://rdrr.io/r/base/conditions.html) for
+  errors with preset arguments.
+- [`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
+  re-exported from the wrapr package
 
 ## Program data
 
@@ -315,64 +645,6 @@ NCES 6-digit program name, and our own program labels.
 
 ## Student-level data
 
-*Credibly subset the source data and refine the population.*
-
-For this article we load the `student,` `term,` and `degree` tables from
-midfielddata.
-
-``` r
-
-data(student, term, degree)
-```
-
-The data tables are linked by `mcid`, the anonymized student ID.
-[`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
-is a midfieldr convenience function that wraps base
-[`str()`](https://rdrr.io/r/utils/str.html) with preset arguments.
-
-``` r
-
-look_at(student)
-#> Classes 'data.table' and 'data.frame':   97555 obs. of  13 variables:
-#>  $ mcid          : chr  "MCID3111142225" "MCID3111142283" "MCID3111142290" "M"..
-#>  $ race          : chr  "Asian" "Asian" "Asian" "Asian" ...
-#>  $ sex           : chr  "Male" "Female" "Male" "Male" ...
-#>  $ institution   : chr  "Institution B" "Institution J" "Institution J" "Inst"..
-#>  $ transfer      : chr  "First-Time Transfer" "First-Time Transfer" "First-Ti"..
-#>  $ hours_transfer: num  NA NA NA NA NA NA NA NA NA NA ...
-#>  $ age_desc      : chr  "Under 25" "Under 25" "Under 25" "Under 25" ...
-#>  $ us_citizen    : chr  "Yes" "Yes" "Yes" "Yes" ...
-#>  $ home_zip      : chr  NA "22020" "23233" "20853" ...
-#>  $ high_school   : chr  NA NA "471872" NA ...
-#>  $ sat_math      : num  NA 560 510 640 600 570 480 NA NA NA ...
-#>  $ sat_verbal    : num  NA 230 380 460 500 530 530 NA NA NA ...
-#>  $ act_comp      : num  NA NA NA NA NA NA NA NA NA NA ...
-
-look_at(term)
-#> Classes 'data.table' and 'data.frame':   639915 obs. of  13 variables:
-#>  $ mcid               : chr  "MCID3111142225" "MCID3111142283" "MCID311114228"..
-#>  $ term               : chr  "19881" "19881" "19883" "19885" ...
-#>  $ cip6               : chr  "140901" "240102" "240102" "190601" ...
-#>  $ institution        : chr  "Institution B" "Institution J" "Institution J" "..
-#>  $ level              : chr  "01 First-year" "01 First-year" "01 First-year" "..
-#>  $ standing           : chr  "Good Standing" "Academic Probation" "Academic P"..
-#>  $ coop               : chr  "No" "No" "No" "No" ...
-#>  $ hours_term         : num  7 6 12 6 6 6 6 18 15 14 ...
-#>  $ hours_term_attempt : num  7 6 12 6 6 6 6 18 18 14 ...
-#>  $ hours_cumul        : num  7 6 18 24 30 36 42 63 78 14 ...
-#>  $ hours_cumul_attempt: num  7 6 18 24 30 36 42 63 81 14 ...
-#>  $ gpa_term           : num  2.56 1.85 1.93 2.15 1.85 1.2 1.85 2.33 2.32 2.15 ..
-#>  $ gpa_cumul          : num  2.56 1.85 1.9 1.96 1.94 1.82 1.82 1.98 2.04 2.15 ..
-
-look_at(degree)
-#> Classes 'data.table' and 'data.frame':   49665 obs. of  5 variables:
-#>  $ mcid       : chr  "MCID3111142225" "MCID3111142290" "MCID3111142294" "MCID"..
-#>  $ term_degree: chr  "19881" "19921" "19903" "19921" ...
-#>  $ cip6       : chr  "141001" "141001" "141001" "141001" ...
-#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
-#>  $ degree     : chr  "Bachelor of Science in Electrical Engineering" "Bachelo"..
-```
-
 We copy our “source” material under separate names (and locations in
 memory).
 
@@ -384,9 +656,9 @@ degree_source <- copy(degree)
 
 # demonstrate that memory addresses are different
 address(student)
-#> [1] "0000017d3b0626b8"
+#> [1] "000001fedbf32e60"
 address(student_source)
-#> [1] "0000017d3c276060"
+#> [1] "000001fedc75a660"
 ```
 
 Then we can use the shorter names such as `term` and `degree` as we
@@ -413,22 +685,13 @@ few functions.
   identifies such students. Only those records passing the data
   sufficiency test are included in a population study.
 
-In midfieldr:
-
-- [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
-  yields the timely-completion term for every student.
-- [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
-  tests for data sufficiency for every student .
-- `undergrad_terms()` identifies post-baccalaureate terms to exclude.
-- [`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
-  yields the completion status for every student passing the data
-  sufficiency test.
-
 ## `timely_term()`
 
 *Determine the term by which degree completion would be considered
 timely.*
 
+The *timely-completion term* is the term by which we would consider a
+student’s program completion “timely”, default 6 years after admission.
 We start with a unique set of IDs from the `term` table.
 
 ``` r
@@ -442,7 +705,21 @@ DT
 #>     1: MCID3111142225
 #>     2: MCID3111142283
 #>     3: MCID3111142290
+#>     4: MCID3111142294
+#>     5: MCID3111142299
+#>     6: MCID3111142303
+#>     7: MCID3111142633
+#>     8: MCID3111142689
+#>     9: MCID3111142729
+#>    10: MCID3111142775
 #>    ---               
+#> 97546: MCID3112898824
+#> 97547: MCID3112898828
+#> 97548: MCID3112898842
+#> 97549: MCID3112898857
+#> 97550: MCID3112898877
+#> 97551: MCID3112898886
+#> 97552: MCID3112898890
 #> 97553: MCID3112898894
 #> 97554: MCID3112898895
 #> 97555: MCID3112898940
@@ -460,15 +737,29 @@ and `timely_completion()`.
 DT <- timely_term(DT, midf_table = term)
 
 DT
-#>                  mcid term_i       level_i adj_span timely_term
-#>                <char> <char>        <char>    <num>      <char>
-#>     1: MCID3111142225  19881 01 First-year        6       19933
-#>     2: MCID3111142283  19881 01 First-year        6       19933
-#>     3: MCID3111142290  19881 01 First-year        6       19933
-#>    ---                                                         
-#> 97553: MCID3112898894  20181 01 First-year        6       20233
-#> 97554: MCID3112898895  20181 01 First-year        6       20233
-#> 97555: MCID3112898940  20181 01 First-year        6       20233
+#>                  mcid entry_term   entry_level adj_span timely_term
+#>                <char>     <char>        <char>    <num>      <char>
+#>     1: MCID3111142225      19881 01 First-year        6       19933
+#>     2: MCID3111142283      19881 01 First-year        6       19933
+#>     3: MCID3111142290      19881 01 First-year        6       19933
+#>     4: MCID3111142294      19881 01 First-year        6       19933
+#>     5: MCID3111142299      19881 01 First-year        6       19933
+#>     6: MCID3111142303      19881 01 First-year        6       19933
+#>     7: MCID3111142633      19881 01 First-year        6       19933
+#>     8: MCID3111142689      19883 01 First-year        6       19941
+#>     9: MCID3111142729      19881 01 First-year        6       19933
+#>    10: MCID3111142775      19881 01 First-year        6       19933
+#>    ---                                                             
+#> 97546: MCID3112898824      20181 01 First-year        6       20233
+#> 97547: MCID3112898828      20181 01 First-year        6       20233
+#> 97548: MCID3112898842      20181 01 First-year        6       20233
+#> 97549: MCID3112898857      20181 01 First-year        6       20233
+#> 97550: MCID3112898877      20181 01 First-year        6       20233
+#> 97551: MCID3112898886      20181 01 First-year        6       20233
+#> 97552: MCID3112898890      20181 01 First-year        6       20233
+#> 97553: MCID3112898894      20181 01 First-year        6       20233
+#> 97554: MCID3112898895      20181 01 First-year        6       20233
+#> 97555: MCID3112898940      20181 01 First-year        6       20233
 ```
 
 ## `data_sufficiency()`
@@ -487,21 +778,49 @@ finding, and generates additional columns of supporting information.
 DT <- data_sufficiency(DT, midf_table = term)
 
 DT
-#>                  mcid term_i       level_i adj_span timely_term  data_range
-#>                <char> <char>        <char>    <num>      <char>      <char>
-#>     1: MCID3111142225  19881 01 First-year        6       19933 19881-20181
-#>     2: MCID3111142283  19881 01 First-year        6       19933 19881-20096
-#>     3: MCID3111142290  19881 01 First-year        6       19933 19881-20096
-#>    ---                                                                     
-#> 97553: MCID3112898894  20181 01 First-year        6       20233 19881-20181
-#> 97554: MCID3112898895  20181 01 First-year        6       20233 19881-20181
-#> 97555: MCID3112898940  20181 01 First-year        6       20233 19881-20181
+#>                  mcid entry_term   entry_level adj_span timely_term  data_range
+#>                <char>     <char>        <char>    <num>      <char>      <char>
+#>     1: MCID3111142225      19881 01 First-year        6       19933 19881-20181
+#>     2: MCID3111142283      19881 01 First-year        6       19933 19881-20096
+#>     3: MCID3111142290      19881 01 First-year        6       19933 19881-20096
+#>     4: MCID3111142294      19881 01 First-year        6       19933 19881-20096
+#>     5: MCID3111142299      19881 01 First-year        6       19933 19881-20096
+#>     6: MCID3111142303      19881 01 First-year        6       19933 19881-20096
+#>     7: MCID3111142633      19881 01 First-year        6       19933 19881-20096
+#>     8: MCID3111142689      19883 01 First-year        6       19941 19881-20181
+#>     9: MCID3111142729      19881 01 First-year        6       19933 19881-20181
+#>    10: MCID3111142775      19881 01 First-year        6       19933 19881-20096
+#>    ---                                                                         
+#> 97546: MCID3112898824      20181 01 First-year        6       20233 19881-20181
+#> 97547: MCID3112898828      20181 01 First-year        6       20233 19881-20181
+#> 97548: MCID3112898842      20181 01 First-year        6       20233 19881-20181
+#> 97549: MCID3112898857      20181 01 First-year        6       20233 19881-20181
+#> 97550: MCID3112898877      20181 01 First-year        6       20233 19881-20181
+#> 97551: MCID3112898886      20181 01 First-year        6       20233 19881-20181
+#> 97552: MCID3112898890      20181 01 First-year        6       20233 19881-20181
+#> 97553: MCID3112898894      20181 01 First-year        6       20233 19881-20181
+#> 97554: MCID3112898895      20181 01 First-year        6       20233 19881-20181
+#> 97555: MCID3112898940      20181 01 First-year        6       20233 19881-20181
 #>        data_sufficiency
 #>                  <char>
 #>     1:    exclude-lower
 #>     2:    exclude-lower
 #>     3:    exclude-lower
+#>     4:    exclude-lower
+#>     5:    exclude-lower
+#>     6:    exclude-lower
+#>     7:    exclude-lower
+#>     8:          include
+#>     9:    exclude-lower
+#>    10:    exclude-lower
 #>    ---                 
+#> 97546:    exclude-upper
+#> 97547:    exclude-upper
+#> 97548:    exclude-upper
+#> 97549:    exclude-upper
+#> 97550:    exclude-upper
+#> 97551:    exclude-upper
+#> 97552:    exclude-upper
 #> 97553:    exclude-upper
 #> 97554:    exclude-upper
 #> 97555:    exclude-upper
@@ -529,7 +848,21 @@ population
 #>     1: MCID3111142689
 #>     2: MCID3111142782
 #>     3: MCID3111142881
+#>     4: MCID3111142884
+#>     5: MCID3111142893
+#>     6: MCID3111142962
+#>     7: MCID3111142965
+#>     8: MCID3111143066
+#>     9: MCID3111143068
+#>    10: MCID3111143078
 #>    ---               
+#> 76866: MCID3112692944
+#> 76867: MCID3112693003
+#> 76868: MCID3112693979
+#> 76869: MCID3112694738
+#> 76870: MCID3112698681
+#> 76871: MCID3112727985
+#> 76872: MCID3112730841
 #> 76873: MCID3112785480
 #> 76874: MCID3112800920
 #> 76875: MCID3112870009
@@ -545,20 +878,12 @@ term_source <- population[term_source, on = "mcid", nomatch = NULL]
 degree_source <- population[degree_source, on = "mcid", nomatch = NULL]
 
 look_at(term_source)
-#> Classes 'data.table' and 'data.frame':   531419 obs. of  13 variables:
-#>  $ mcid               : chr  "MCID3111142689" "MCID3111142782" "MCID311114278"..
-#>  $ term               : chr  "19883" "19883" "19885" "19893" ...
-#>  $ cip6               : chr  "090401" "260101" "260101" "260101" ...
-#>  $ institution        : chr  "Institution B" "Institution J" "Institution J" "..
-#>  $ level              : chr  "01 First-year" "01 First-year" "02 Second-year""..
-#>  $ standing           : chr  "Good Standing" "Good Standing" "Good Standing" "..
-#>  $ coop               : chr  "No" "No" "No" "No" ...
-#>  $ hours_term         : num  9 16 4 13 4 4 10 9 18 6 ...
-#>  $ hours_term_attempt : num  9 16 4 13 4 4 10 9 18 6 ...
-#>  $ hours_cumul        : num  18 26 30 56 60 64 74 83 21 27 ...
-#>  $ hours_cumul_attempt: num  18 26 30 56 60 64 74 83 21 27 ...
-#>  $ gpa_term           : num  3.33 2.8 3 2.84 4 3.25 2.26 2.43 2.55 2.15 ...
-#>  $ gpa_cumul          : num  3.05 2.57 2.63 2.53 2.63 2.67 2.61 2.59 2.76 2.62..
+#> Classes 'data.table' and 'data.frame':   531419 obs. of  5 variables:
+#>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142782" "MCID"..
+#>  $ term       : chr  "19883" "19883" "19885" "19893" ...
+#>  $ cip6       : chr  "090401" "260101" "260101" "260101" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
+#>  $ level      : chr  "01 First-year" "01 First-year" "02 Second-year" "02 Sec"..
 ```
 
 In subsequent analysis, any variables we need from the source data has
@@ -582,7 +907,7 @@ all.equal(population$mcid, unique(term_source$mcid))
 #> [1] TRUE
 ```
 
-## `record_bracket()`
+## `undergrad_focus()`
 
 *Identify rows of post-baccalaureate terms to exclude.*
 
@@ -590,45 +915,37 @@ In most cases, we are not generally interested in academic terms beyond
 the first degree term, so we use the results of this function to exclude
 post-first-degree terms from the source data.
 
-[`record_bracket()`](https://midfieldr.github.io/midfieldr/reference/record_bracket.md)
+[`undergrad_focus()`](https://midfieldr.github.io/midfieldr/reference/undergrad_focus.md)
 identifies terms later than the first baccalaureate, if any.
 
 ``` r
 
-term <- record_bracket(term_source, midf_table = degree)
-degree <- record_bracket(degree_source, midf_table = degree)
+term <- undergrad_focus(term_source, midf_table = degree)
+degree <- undergrad_focus(degree_source, midf_table = degree)
 ```
 
-[`record_bracket()`](https://midfieldr.github.io/midfieldr/reference/record_bracket.md)
+[`undergrad_focus()`](https://midfieldr.github.io/midfieldr/reference/undergrad_focus.md)
 adds a column indicating the bracket a term belongs to with respect to
 the first degree term.
 
 ``` r
 
 look_at(term)
-#> Classes 'data.table' and 'data.frame':   531419 obs. of  15 variables:
-#>  $ mcid               : chr  "MCID3111142689" "MCID3111142782" "MCID311114278"..
-#>  $ cip6               : chr  "090401" "260101" "260101" "260101" ...
-#>  $ institution        : chr  "Institution B" "Institution J" "Institution J" "..
-#>  $ level              : chr  "01 First-year" "01 First-year" "02 Second-year""..
-#>  $ standing           : chr  "Good Standing" "Good Standing" "Good Standing" "..
-#>  $ coop               : chr  "No" "No" "No" "No" ...
-#>  $ hours_term         : num  9 16 4 13 4 4 10 9 18 6 ...
-#>  $ hours_term_attempt : num  9 16 4 13 4 4 10 9 18 6 ...
-#>  $ hours_cumul        : num  18 26 30 56 60 64 74 83 21 27 ...
-#>  $ hours_cumul_attempt: num  18 26 30 56 60 64 74 83 21 27 ...
-#>  $ gpa_term           : num  3.33 2.8 3 2.84 4 3.25 2.26 2.43 2.55 2.15 ...
-#>  $ gpa_cumul          : num  3.05 2.57 2.63 2.53 2.63 2.67 2.61 2.59 2.76 2.62..
-#>  $ term               : chr  "19883" "19883" "19885" "19893" ...
-#>  $ term_1st_degree    : chr  "19913" "19903" "19903" "19903" ...
-#>  $ bracket            : chr  "undergrad" "undergrad" "undergrad" "undergrad" ...
+#> Classes 'data.table' and 'data.frame':   531419 obs. of  7 variables:
+#>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142782" "MCID"..
+#>  $ cip6       : chr  "090401" "260101" "260101" "260101" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
+#>  $ level      : chr  "01 First-year" "01 First-year" "02 Second-year" "02 Sec"..
+#>  $ term       : chr  "19883" "19883" "19885" "19893" ...
+#>  $ bacc       : chr  "19913" "19903" "19903" "19903" ...
+#>  $ focus      : chr  "undergrad" "undergrad" "undergrad" "undergrad" ...
 ```
 
 The possible bracket values are given by,
 
 ``` r
 
-term[, sort(unique(bracket), na.last = FALSE)]
+term[, sort(unique(focus), na.last = FALSE)]
 #> [1] "post-bacc" "undergrad"
 ```
 
@@ -637,27 +954,19 @@ temporary columns.
 
 ``` r
 
-term <- term["undergrad", on = "bracket"]
-degree <- degree["undergrad", on = "bracket"]
+term <- term["undergrad", on = "focus"]
+degree <- degree["undergrad", on = "focus"]
 
-term[, c("term_1st_degree", "bracket") := NULL]
-degree[, c("term_1st_degree", "bracket") := NULL]
+term[, c("bacc", "focus") := NULL]
+degree[, c("bacc", "focus") := NULL]
 
 look_at(term)
-#> Classes 'data.table' and 'data.frame':   525446 obs. of  13 variables:
-#>  $ mcid               : chr  "MCID3111142689" "MCID3111142782" "MCID311114278"..
-#>  $ cip6               : chr  "090401" "260101" "260101" "260101" ...
-#>  $ institution        : chr  "Institution B" "Institution J" "Institution J" "..
-#>  $ level              : chr  "01 First-year" "01 First-year" "02 Second-year""..
-#>  $ standing           : chr  "Good Standing" "Good Standing" "Good Standing" "..
-#>  $ coop               : chr  "No" "No" "No" "No" ...
-#>  $ hours_term         : num  9 16 4 13 4 4 10 9 18 6 ...
-#>  $ hours_term_attempt : num  9 16 4 13 4 4 10 9 18 6 ...
-#>  $ hours_cumul        : num  18 26 30 56 60 64 74 83 21 27 ...
-#>  $ hours_cumul_attempt: num  18 26 30 56 60 64 74 83 21 27 ...
-#>  $ gpa_term           : num  3.33 2.8 3 2.84 4 3.25 2.26 2.43 2.55 2.15 ...
-#>  $ gpa_cumul          : num  3.05 2.57 2.63 2.53 2.63 2.67 2.61 2.59 2.76 2.62..
-#>  $ term               : chr  "19883" "19883" "19885" "19893" ...
+#> Classes 'data.table' and 'data.frame':   525446 obs. of  5 variables:
+#>  $ mcid       : chr  "MCID3111142689" "MCID3111142782" "MCID3111142782" "MCID"..
+#>  $ cip6       : chr  "090401" "260101" "260101" "260101" ...
+#>  $ institution: chr  "Institution B" "Institution J" "Institution J" "Institu"..
+#>  $ level      : chr  "01 First-year" "01 First-year" "02 Second-year" "02 Sec"..
+#>  $ term       : chr  "19883" "19883" "19885" "19893" ...
 ```
 
 We redefine our source material to incorporate the exclusion of
@@ -672,89 +981,6 @@ degree_source <- copy(degree)
 ## `select_basic_cols()`
 
 *Choose columns required by midfieldr functions.*
-
-[`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
-operates on student records to reduce the number of columns to those
-required by other midfieldr functions plus the key or composite key
-variables of the four data tables. With a smaller number of columns, the
-printout of the data frame is more readable, a benefit when working with
-the data interactively.
-
-``` r
-
-student <- select_basic_cols(student)
-term <- select_basic_cols(term)
-degree <- select_basic_cols(degree)
-
-student
-#>                  mcid          race    sex
-#>                <char>        <char> <char>
-#>     1: MCID3111142689      Hispanic Female
-#>     2: MCID3111142782      Hispanic Female
-#>     3: MCID3111142881 International   Male
-#>    ---                                    
-#> 76873: MCID3112785480         White   Male
-#> 76874: MCID3112800920         White Female
-#> 76875: MCID3112870009         White   Male
-
-term
-#>                   mcid   cip6   institution          level   term
-#>                 <char> <char>        <char>         <char> <char>
-#>      1: MCID3111142689 090401 Institution B  01 First-year  19883
-#>      2: MCID3111142782 260101 Institution J  01 First-year  19883
-#>      3: MCID3111142782 260101 Institution J 02 Second-year  19885
-#>     ---                                                          
-#> 525444: MCID3112870009 240102 Institution B  01 First-year  19953
-#> 525445: MCID3112870009 240102 Institution B  01 First-year  19954
-#> 525446: MCID3112870009 240102 Institution B 02 Second-year  19983
-
-degree
-#>                  mcid   cip6 term_degree
-#>                <char> <char>      <char>
-#>     1: MCID3111142689 090401       19913
-#>     2: MCID3111142782 260101       19903
-#>     3: MCID3111142881 450601       19894
-#>    ---                                  
-#> 43855: MCID3112694738 230101       20143
-#> 43856: MCID3112698681 110701       20181
-#> 43857: MCID3112730841 040401       20164
-```
-
-Any variables you might need that have been dropped can always be
-recovered from the source tables we saved earlier. For example, if we
-needed GPA in our working `term` table, we can use a left join, knowing
-that student ID and term are the composite keys in this case.
-
-``` r
-
-x <- copy(term)
-source_cols <- term_source[, .(mcid, term, gpa_term, gpa_cumul)]
-x <- source_cols[x, on = c("mcid", "term")]
-x
-#>                   mcid   term gpa_term gpa_cumul   cip6   institution
-#>                 <char> <char>    <num>     <num> <char>        <char>
-#>      1: MCID3111142689  19883     3.33      3.05 090401 Institution B
-#>      2: MCID3111142782  19883     2.80      2.57 260101 Institution J
-#>      3: MCID3111142782  19885     3.00      2.63 260101 Institution J
-#>     ---                                                              
-#> 525444: MCID3112870009  19953     3.57      3.71 240102 Institution B
-#> 525445: MCID3112870009  19954     4.00      3.72 240102 Institution B
-#> 525446: MCID3112870009  19983     4.00      3.87 240102 Institution B
-#>                  level
-#>                 <char>
-#>      1:  01 First-year
-#>      2:  01 First-year
-#>      3: 02 Second-year
-#>     ---               
-#> 525444:  01 First-year
-#> 525445:  01 First-year
-#> 525446: 02 Second-year
-```
-
-Keys and composite keys to the four data tables are described in the
-midfielddata [Data
-structure](https://midfieldr.github.io/midfielddata/articles/data-structure.html)
-article.
 
 ## `completion_status()`
 
@@ -782,24 +1008,52 @@ DT <- timely_term(DT, midf_table = term)
 DT <- completion_status(DT, midf_table = degree)
 
 DT
-#>                  mcid term_i       level_i adj_span timely_term completion_term
-#>                <char> <char>        <char>    <num>      <char>          <char>
-#>     1: MCID3111142689  19883 01 First-year        6       19941           19913
-#>     2: MCID3111142782  19883 01 First-year        6       19941           19903
-#>     3: MCID3111142881  19893 01 First-year        6       19951           19894
-#>    ---                                                                         
-#> 76863: MCID3112785480  20071 01 First-year        6       20123            <NA>
-#> 76864: MCID3112800920  20101 01 First-year        6       20153            <NA>
-#> 76865: MCID3112870009  19951 01 First-year        6       20003            <NA>
-#>        completion_status
-#>                   <char>
-#>     1:            timely
-#>     2:            timely
-#>     3:            timely
-#>    ---                  
-#> 76863:              <NA>
-#> 76864:              <NA>
-#> 76865:              <NA>
+#>                  mcid entry_term   entry_level adj_span timely_term
+#>                <char>     <char>        <char>    <num>      <char>
+#>     1: MCID3111142689      19883 01 First-year        6       19941
+#>     2: MCID3111142782      19883 01 First-year        6       19941
+#>     3: MCID3111142881      19893 01 First-year        6       19951
+#>     4: MCID3111142884      19883 01 First-year        6       19941
+#>     5: MCID3111142893      19883 01 First-year        6       19941
+#>     6: MCID3111142962      19883 01 First-year        6       19941
+#>     7: MCID3111142965      19883 01 First-year        6       19941
+#>     8: MCID3111143066      19883 01 First-year        6       19941
+#>     9: MCID3111143068      19891 01 First-year        6       19943
+#>    10: MCID3111143078      19883 01 First-year        6       19941
+#>    ---                                                             
+#> 76856: MCID3112692944      20111 01 First-year        6       20163
+#> 76857: MCID3112693003      20093 01 First-year        6       20151
+#> 76858: MCID3112693979      20114 01 First-year        6       20173
+#> 76859: MCID3112694738      20103 01 First-year        6       20161
+#> 76860: MCID3112698681      20113 01 First-year        6       20171
+#> 76861: MCID3112727985      20114 01 First-year        6       20173
+#> 76862: MCID3112730841      20121 01 First-year        6       20173
+#> 76863: MCID3112785480      20071 01 First-year        6       20123
+#> 76864: MCID3112800920      20101 01 First-year        6       20153
+#> 76865: MCID3112870009      19951 01 First-year        6       20003
+#>        completion_term completion_status
+#>                 <char>            <char>
+#>     1:           19913            timely
+#>     2:           19903            timely
+#>     3:           19894            timely
+#>     4:            <NA>              <NA>
+#>     5:            <NA>              <NA>
+#>     6:            <NA>              <NA>
+#>     7:           19901            timely
+#>     8:           19883            timely
+#>     9:           19903            timely
+#>    10:           19891            timely
+#>    ---                                  
+#> 76856:           20153            timely
+#> 76857:           20171              late
+#> 76858:           20181              late
+#> 76859:           20143            timely
+#> 76860:           20181              late
+#> 76861:            <NA>              <NA>
+#> 76862:           20164            timely
+#> 76863:            <NA>              <NA>
+#> 76864:            <NA>              <NA>
+#> 76865:            <NA>              <NA>
 ```
 
 The possible values for completion status are:
@@ -824,39 +1078,25 @@ graduates
 #>     1: MCID3111142689   grad
 #>     2: MCID3111142782   grad
 #>     3: MCID3111142881   grad
+#>     4: MCID3111142965   grad
+#>     5: MCID3111143066   grad
+#>     6: MCID3111143068   grad
+#>     7: MCID3111143078   grad
+#>     8: MCID3111143126   grad
+#>     9: MCID3111143157   grad
+#>    10: MCID3111144047   grad
 #>    ---                      
+#> 40421: MCID3112648334   grad
+#> 40422: MCID3112658012   grad
+#> 40423: MCID3112672577   grad
+#> 40424: MCID3112673376   grad
+#> 40425: MCID3112675420   grad
+#> 40426: MCID3112675459   grad
+#> 40427: MCID3112675472   grad
 #> 40428: MCID3112692944   grad
 #> 40429: MCID3112694738   grad
 #> 40430: MCID3112730841   grad
 ```
-
-## Other functions
-
-[`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
-  Conditions data for imputing the starting majors of First-Year
-Engineering (FYE) students. Used when blocs of starters in Engineering
-are needed and an institution has a required FYE program. For details
-see [FYE
-proxies](https://midfieldr.github.io/midfieldr/articles/art-060-fye-proxies.md).
-
-[`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
-  Conditions data for Cleveland multiway charts. The ordering of its
-rows and panels is crucial to the perception of effects. Used when data
-have a multiway structure. For details see [Multiway data and
-charts](https://midfieldr.github.io/midfieldr/articles/art-120-multiway.md).
-
-Utilities
-
-- [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
-  for data frames, wraps base
-  [`str()`](https://rdrr.io/r/utils/str.html) with preset arguments.
-- [`sort_uniq()`](https://midfieldr.github.io/midfieldr/reference/sort_uniq.md)
-  for vectors, wraps base `sort(unique())` with preset arguments.
-- [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md)
-  wraps base [`tryCatch()`](https://rdrr.io/r/base/conditions.html) for
-  errors with preset arguments.
-- [`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
-  re-exported from the wrapr package
 
 ## References
 

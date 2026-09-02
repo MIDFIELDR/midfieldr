@@ -28,38 +28,21 @@ knitr::opts_chunk$set(fig.path = "man/figures/README-")
 
 ## Overview
 
-An R package that supplies tools for working with longitudinal undergraduate records from the MIDFIELD database---or similarly structured data tables---in the following areas. 
+An R package that supplies tools for working with longitudinal undergraduate records from the MIDFIELD, or similarly structured, database.
 
-Programs  
-
-- `filter_programs()` helps you find program names and CIP codes.  
-
-Records and population  
-
-- `timely_term()` estimates timely completion terms.  
+- `completion_status()` identifies IDs to include for timely completion. 
 - `data_sufficiency()` identifies IDs to exclude due to insufficient data.  
-- `undergraduate_term()` identifies rows with post-baccalaureate terms to exclude.  
-
-Blocs  
-
-- `completion_status()` labels program completion as timely, late, or NA.  
-
-Special conditioning  
-
-- `prep_fye_mice()` conditions data for imputing starting majors of FYE students.  
+- `filter_programs()` helps you find program names and CIP codes.  
 - `order_multiway()` conditions data for Cleveland multiway charts.  
-
-Convenience  
-
+- `prep_fye_mice()` conditions data for imputing starting majors of FYE students.
 - `select_basic_cols()` minimizes the number of columns viewed for interactive sessions.  
-- `look_at()` for data frames, wraps base `str()` with preset arguments.
+- `timely_term()` estimates timely completion terms. 
+- `undergrad_focus()` identifies terms to exclude occurring after a student's first degree term.  
+ 
 
 
-```{r}
-library("midfieldr")
-packageVersion("midfieldr")
-Sys.Date()
-```
+
+
 
 
 
@@ -82,7 +65,7 @@ To get a bug fix or preview a new feature, you can install the development versi
 pak::pak("MIDFIELDR/midfieldr")
 ```
 
-midfieldr is designed to operate on the MIDFIELD database [@ohland:midfield:2023] or similarly structured data such as the MIDFIELD sample in [midfielddata](https://midfieldr.github.io/midfielddata/), an R data package you can download from GitHub. 
+midfieldr is designed to operate on the MIDFIELD database [@ohland:midfield:2023] or similarly structured data such as the MIDFIELD sample in [midfielddata](https://midfieldr.github.io/midfielddata/), an R data package you can download from GitHub. All midfieldr articles use the data tables from  midfielddata.
 
 ```{r}
 #| eval: false
@@ -107,117 +90,81 @@ options(
 )
 ```
 
-We illustrate usage with a small sample that loads with midfieldr for use in such examples. These data frames `(toy_student, toy_term, toy_course, toy_degree)` have the same structure as the practice data in midfielddata. Academic program names and codes in dataset `cip` also loads with midfieldr. 
+We illustrate usage with a small sample that loads with midfieldr for use in such examples. These data frames `(toy_student, toy_term, toy_course, toy_degree)` have the same structure as the practice data in midfielddata. Academic program names and codes in the `cip` dataset also loads with midfieldr. 
 
 ```{r}
 library("midfieldr")
 library("data.table")
 
-# Program codes
-look_at(cip)
-
-# Search for 6-digit codes of specific programs
-filter_programs(cip, c(
-  "mechanical engineering",
-  "psychology, general",
-  "business, managerial"
-))
-
-# Select specific CIP codes and add useful labels
-programs <- filter_programs(cip, c("^1419", "^4201", "^5202"))
-programs <- programs[, .(cip6name, cip6)]
-programs
-
-programs[, program := fcase(
-  cip6 %like% "^1419", "Mech Engr",
-  cip6 %like% "^4201", "Genl Psych",
-  cip6 %like% "^5202", "Business"
-)]
-programs <- programs[, .(cip6, program)]
-programs
-
-# Small sample student records
+# small sample of student records
 student <- copy(toy_student)
 term <- copy(toy_term)
 course <- copy(toy_course)
 degree <- copy(toy_degree)
 
-# Data structure
-look_at(student)
+# identify undergraduate terms
+term <- undergrad_focus(term, midf_table = degree)
+course <- undergrad_focus(course, midf_table = degree)
+degree <- undergrad_focus(degree, midf_table = degree)
 
-look_at(term)
+# filter to retain undergraduate terms only
+term <- term[focus == "undergrad"]
+course <- course[focus == "undergrad"]
+degree <- degree[focus == "undergrad"]
 
-look_at(course)
+# remove temporary columns
+term[, c("bacc", "focus") := NULL]
+course[, c("bacc", "focus") := NULL]
+degree[, c("bacc", "focus") := NULL]
 
-look_at(degree)
-
-# Begin developing the populatioon
-DT <- term[, .(mcid)]
-DT <- unique(DT)
-DT
-
-# Add timely-completion-term columns
+# filter for data sufficiency to obtain the population
+DT <- unique(term[, .(mcid)])
 DT <- timely_term(DT, midf_table = term)
-DT
-
-# Add data sufficiency columns
-DT <- DT[, .(mcid, term_i, timely_term)]
 DT <- data_sufficiency(DT, midf_table = term)
-DT[order(data_sufficiency)]
-
-# "include" denotes the credible initial population
 population <- DT[data_sufficiency == "include", .(mcid)]
-population <- unique(population)
-population
 
-# Inner join restricts source data to this population
+# filter records to match this population
 student <- population[student, on = "mcid", nomatch = NULL]
 term <- population[term, on = "mcid", nomatch = NULL]
 course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-# Identify pre- and post-completion terms
-term <- record_bracket(term, midf_table = degree)
-course <- record_bracket(course, midf_table = degree)
-degree <- record_bracket(degree, midf_table = degree)
+# create program data frame for three programs: Mechanical
+# Engineering (CIP code 1419), General Psychology (CIP code 4201),
+# and Business, Managerial Operations (CIP code 5202).
+programs <- filter_programs(cip, c("^1419", "^4201", "^5202"))
+programs <- programs[, .(cip6name, cip6)]
 
-# View summary results
-term[order(-bracket), .N, by = "bracket"]
-course[order(-bracket), .N, by = "bracket"]
-degree[order(-bracket), .N, by = "bracket"]
+# add custom labels, select 6-digit codes
+programs[, program := fcase(
+  cip6 %like% "^1419", "Mech Engr",
+  cip6 %like% "^4201", "Genl Psych",
+  cip6 %like% "^5202", "Bus Mng Op"
+)]
+programs <- programs[, .(cip6, program)]
 
-# Retain undergraduate terms
-term <- term[bracket == "undergrad"]
-course <- course[bracket == "undergrad"]
-degree <- degree[bracket == "undergrad"]
+# filter records for the study programs
+term <- term[programs, on = "cip6", nomatch = NULL]
+degree <- degree[programs, on = "cip6", nomatch = NULL]
 
-# Choose a minimum set of columns to proceed
-student <- select_basic_cols(student)
-term <- select_basic_cols(term)
-course <- select_basic_cols(course)
-degree <- select_basic_cols(degree)
+# filter population to match IDs in the programs
+enrolled <- unique(rbindlist(list(term[, .(mcid)], degree[, .(mcid)])))
+population <- enrolled[population, on = "mcid", nomatch = NULL]
 
-# Subset population to match the programs selected earlier
-study_term <- programs[term, .(mcid, program), on = "cip6", nomatch = NULL]
-study_degree <- programs[degree, .(mcid, program), on = "cip6", nomatch = NULL]
-study_population <- unique(rbindlist(list(study_term, study_degree)))
-study_population
-study_population[, .N, by = "program"][order(-N)]
+# filter remaining records for the study programs
+student <- population[student, on = "mcid", nomatch = NULL]
+course <- population[course, on = "mcid", nomatch = NULL]
 
-# Use these IDs to subset the records
-student <- study_population[, .(mcid)][student, on = "mcid", nomatch = NULL]
-term <- study_population[, .(mcid)][term, on = "mcid", nomatch = NULL]
-course <- study_population[, .(mcid)][course, on = "mcid", nomatch = NULL]
-degree <- study_population[, .(mcid)][degree, on = "mcid", nomatch = NULL]
+# records ready for further analysis (first few columns)
+look_at(student[, 1:6])
 
-# Abbreviated records of all students ever enrolled in one the selected programs
-student
+look_at(term[, 1:6])
 
-term
+look_at(course[, 1:6])
 
-course
+look_at(degree)
 
-degree
+look_at(population)
 ```
 
 ## Acknowledgments

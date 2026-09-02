@@ -160,7 +160,7 @@ variable from previous code chunks.
 DT <- timely_term(DT, term)
 
 # Drop unnecessary columns
-DT[, c("term_i", "level_i", "adj_span") := NULL]
+DT[, c("entry_term", "entry_level", "adj_span") := NULL]
 ```
 
 *Arguments.*

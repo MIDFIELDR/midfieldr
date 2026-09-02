@@ -8,7 +8,7 @@ data_sufficiency(dframe, midf_table = term)
 }
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) with required variables
-\verb{\{mcid, term_i, timely_term\}.}}
+\verb{\{mcid, entry_term, timely_term\}.}}
 
 \item{midf_table}{\code{term} data frame with required variables
 \verb{\{mcid, term, institution\}.}}
@@ -71,7 +71,7 @@ x
 
 # Add the required columns from timely_term()
 x <- timely_term(x, midf_table = term)
-x <- x[, .(mcid, term_i, timely_term)]
+x <- x[, .(mcid, entry_term, timely_term)]
 x
 
 # Add data sufficiency columns

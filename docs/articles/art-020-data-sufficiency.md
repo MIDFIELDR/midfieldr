@@ -304,9 +304,9 @@ check_equiv_frames(x, z)
 
 *Output.*   Adds the following columns to the data frame.
 
-- **`term_i`**   Student initial term, encoded YYYYT.
+- **`entry_term`**   Student initial term, encoded YYYYT.
 
-- **`level_i`**   Student level (01 Freshman, 02 Sophomore, etc.) in
+- **`entry_level`**   Student level (01 Freshman, 02 Sophomore, etc.) in
   their initial term.
 
 - **`adj_span`**   Integer span of years for timely completion, adjusted
@@ -320,15 +320,24 @@ check_equiv_frames(x, z)
 # Add timely term column and supporting variables
 DT <- timely_term(DT, term)
 DT
-#>                  mcid   institution term_i       level_i adj_span timely_term
-#>                <char>        <char> <char>        <char>    <num>      <char>
-#>     1: MCID3111142225 Institution B  19881 01 First-year        6       19933
-#>     2: MCID3111142283 Institution J  19881 01 First-year        6       19933
-#>     3: MCID3111142290 Institution J  19881 01 First-year        6       19933
-#>    ---                                                                       
-#> 97553: MCID3112898894 Institution B  20181 01 First-year        6       20233
-#> 97554: MCID3112898895 Institution B  20181 01 First-year        6       20233
-#> 97555: MCID3112898940 Institution B  20181 01 First-year        6       20233
+#>                  mcid   institution entry_term   entry_level adj_span
+#>                <char>        <char>     <char>        <char>    <num>
+#>     1: MCID3111142225 Institution B      19881 01 First-year        6
+#>     2: MCID3111142283 Institution J      19881 01 First-year        6
+#>     3: MCID3111142290 Institution J      19881 01 First-year        6
+#>    ---                                                               
+#> 97553: MCID3112898894 Institution B      20181 01 First-year        6
+#> 97554: MCID3112898895 Institution B      20181 01 First-year        6
+#> 97555: MCID3112898940 Institution B      20181 01 First-year        6
+#>        timely_term
+#>             <char>
+#>     1:       19933
+#>     2:       19933
+#>     3:       19933
+#>    ---            
+#> 97553:       20233
+#> 97554:       20233
+#> 97555:       20233
 ```
 
 ### Closer look
@@ -345,9 +354,9 @@ timely completion is 6 years, that is, academic years 2007–08, 08–09,
 
 # Display one student by ID
 DT[mcid == "MCID3112785480"]
-#>              mcid   institution term_i       level_i adj_span timely_term
-#>            <char>        <char> <char>        <char>    <num>      <char>
-#> 1: MCID3112785480 Institution C  20071 01 First-year        6       20123
+#>              mcid   institution entry_term   entry_level adj_span timely_term
+#>            <char>        <char>     <char>        <char>    <num>      <char>
+#> 1: MCID3112785480 Institution C      20071 01 First-year        6       20123
 ```
 
 *Example 2.*   The student’s initial term is Spring 2002 (encoded
@@ -361,9 +370,9 @@ completion term of Fall 2005.
 
 # Display one student by ID
 DT[mcid == "MCID3111860641"]
-#>              mcid   institution term_i       level_i adj_span timely_term
-#>            <char>        <char> <char>        <char>    <num>      <char>
-#> 1: MCID3111860641 Institution J  20013 03 Third-year        4       20051
+#>              mcid   institution entry_term   entry_level adj_span timely_term
+#>            <char>        <char>     <char>        <char>    <num>      <char>
+#> 1: MCID3111860641 Institution J      20013 03 Third-year        4       20051
 ```
 
 ### Alternate source names
@@ -385,15 +394,15 @@ toy_DT <- timely_term(dframe = toy_mcid, midf_table = toy_term)
 # Equivalently
 toy_DT <- timely_term(toy_mcid, toy_term)
 toy_DT
-#>                mcid term_i       level_i adj_span timely_term
-#>              <char> <char>        <char>    <num>      <char>
-#>   1: MCID3111142897  19881 01 First-year        6       19933
-#>   2: MCID3111157634  19881 01 First-year        6       19933
-#>   3: MCID3111158724  19881 01 First-year        6       19933
-#>  ---                                                         
-#> 349: MCID3112868072  20171 01 First-year        6       20223
-#> 350: MCID3112869843  20173 01 First-year        6       20231
-#> 351: MCID3112885339  20181 01 First-year        6       20233
+#>                mcid entry_term   entry_level adj_span timely_term
+#>              <char>     <char>        <char>    <num>      <char>
+#>   1: MCID3111142897      19881 01 First-year        6       19933
+#>   2: MCID3111157634      19881 01 First-year        6       19933
+#>   3: MCID3111158724      19881 01 First-year        6       19933
+#>  ---                                                             
+#> 349: MCID3112868072      20171 01 First-year        6       20223
+#> 350: MCID3112869843      20173 01 First-year        6       20231
+#> 351: MCID3112885339      20181 01 First-year        6       20233
 ```
 
 ### Silent overwriting
@@ -405,7 +414,7 @@ columns added by timely term except `adj_span`.
 ``` r
 
 # Drop three columns
-toy_DT <- toy_DT[, c("term_i", "level_i", "timely_term") := NULL]
+toy_DT <- toy_DT[, c("entry_term", "entry_level", "timely_term") := NULL]
 toy_DT
 ```
 
@@ -417,15 +426,15 @@ replaced.
 # Demonstrate overwriting
 toy_DT <- timely_term(toy_DT, toy_term)
 toy_DT
-#>                mcid term_i       level_i adj_span timely_term
-#>              <char> <char>        <char>    <num>      <char>
-#>   1: MCID3111142897  19881 01 First-year        6       19933
-#>   2: MCID3111157634  19881 01 First-year        6       19933
-#>   3: MCID3111158724  19881 01 First-year        6       19933
-#>  ---                                                         
-#> 349: MCID3112868072  20171 01 First-year        6       20223
-#> 350: MCID3112869843  20173 01 First-year        6       20231
-#> 351: MCID3112885339  20181 01 First-year        6       20233
+#>                mcid entry_term   entry_level adj_span timely_term
+#>              <char>     <char>        <char>    <num>      <char>
+#>   1: MCID3111142897      19881 01 First-year        6       19933
+#>   2: MCID3111157634      19881 01 First-year        6       19933
+#>   3: MCID3111158724      19881 01 First-year        6       19933
+#>  ---                                                             
+#> 349: MCID3112868072      20171 01 First-year        6       20223
+#> 350: MCID3112869843      20173 01 First-year        6       20231
+#> 351: MCID3112885339      20181 01 First-year        6       20233
 ```
 
 ## `data_sufficiency()`
@@ -467,7 +476,7 @@ check_equiv_frames(x, z)
 
 *Output.*   Adds the following columns to the data frame.
 
-- **`term_i`**   Student initial term, encoded YYYYT.
+- **`entry_term`**   Student initial term, encoded YYYYT.
 
 - **`lower_limit`**   Initial term of an institution’s data range,
   encoded YYYYT.
@@ -485,20 +494,20 @@ check_equiv_frames(x, z)
 ``` r
 
 # Un-clutter the printout
-DT <- DT[, .(mcid, term_i, timely_term)]
+DT <- DT[, .(mcid, entry_term, timely_term)]
 
 # Add data sufficiency column and supporting variables
 DT <- data_sufficiency(DT, term)
 DT
-#>                  mcid term_i timely_term  data_range data_sufficiency
-#>                <char> <char>      <char>      <char>           <char>
-#>     1: MCID3111142225  19881       19933 19881-20181    exclude-lower
-#>     2: MCID3111142283  19881       19933 19881-20096    exclude-lower
-#>     3: MCID3111142290  19881       19933 19881-20096    exclude-lower
-#>    ---                                                               
-#> 97553: MCID3112898894  20181       20233 19881-20181    exclude-upper
-#> 97554: MCID3112898895  20181       20233 19881-20181    exclude-upper
-#> 97555: MCID3112898940  20181       20233 19881-20181    exclude-upper
+#>                  mcid entry_term timely_term  data_range data_sufficiency
+#>                <char>     <char>      <char>      <char>           <char>
+#>     1: MCID3111142225      19881       19933 19881-20181    exclude-lower
+#>     2: MCID3111142283      19881       19933 19881-20096    exclude-lower
+#>     3: MCID3111142290      19881       19933 19881-20096    exclude-lower
+#>    ---                                                                   
+#> 97553: MCID3112898894      20181       20233 19881-20181    exclude-upper
+#> 97554: MCID3112898895      20181       20233 19881-20181    exclude-upper
+#> 97555: MCID3112898940      20181       20233 19881-20181    exclude-upper
 ```
 
 Similar to the details described in the previous section,
@@ -532,9 +541,9 @@ the 2015 upper-limit exclusion does not apply.
 
 # Display one student by ID
 DT[mcid == "MCID3112785480"]
-#>              mcid term_i timely_term  data_range data_sufficiency
-#>            <char> <char>      <char>      <char>           <char>
-#> 1: MCID3112785480  20071       20123 19901-20154          include
+#>              mcid entry_term timely_term  data_range data_sufficiency
+#>            <char>     <char>      <char>      <char>           <char>
+#> 1: MCID3112785480      20071       20123 19901-20154          include
 ```
 
 *Example 4.*   Exemplifies “Student B” in Figure 1. The student attends
@@ -547,9 +556,9 @@ upper-limit exclusion does apply.
 
 # Display one student by ID
 DT[mcid == "MCID3111170322"]
-#>              mcid term_i timely_term  data_range data_sufficiency
-#>            <char> <char>      <char>      <char>           <char>
-#> 1: MCID3111170322  20133       20191 19881-20181    exclude-upper
+#>              mcid entry_term timely_term  data_range data_sufficiency
+#>            <char>     <char>      <char>      <char>           <char>
+#> 1: MCID3111170322      20133       20191 19881-20181    exclude-upper
 ```
 
 *Example 5.*   Exemplifies “Student C” in Figure 2. The student attends
@@ -560,9 +569,9 @@ term is Fall 1988 so the 1988 lower-limit exclusion applies.
 
 # Display one student by ID
 DT[mcid == "MCID3112056754"]
-#>              mcid term_i timely_term  data_range data_sufficiency
-#>            <char> <char>      <char>      <char>           <char>
-#> 1: MCID3112056754  19881       19933 19881-20096    exclude-lower
+#>              mcid entry_term timely_term  data_range data_sufficiency
+#>            <char>     <char>      <char>      <char>           <char>
+#> 1: MCID3112056754      19881       19933 19881-20096    exclude-lower
 ```
 
 ## References

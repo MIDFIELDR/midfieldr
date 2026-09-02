@@ -133,7 +133,7 @@ test_timely_term <- function() {
     
     # correct columns in place
     dframe_vars <- c("mcid")
-    added_vars  <- c("term_i", "level_i", "adj_span", "timely_term")
+    added_vars  <- c("entry_term", "entry_level", "adj_span", "timely_term")
     return_vars <- c(dframe_vars, added_vars)
     DT <- timely_term(dframe, term)
     expect_equal(return_vars, colnames(DT))

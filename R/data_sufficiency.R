@@ -27,7 +27,7 @@
 #' data sufficiency article (see references).
 #'
 #' @param dframe `r dframe` with required variables
-#'        `{mcid, term_i, timely_term}.`
+#'        `{mcid, entry_term, timely_term}.`
 #' @param midf_table `r midfield_x("term")` with required variables
 #'        `{mcid, term, institution}.`
 #' @returns Data frame with the following properties:
@@ -54,13 +54,13 @@ data_sufficiency <- function(dframe, midf_table = term) {
   # ---------- declarations
 
   # active column names
-  reqd_dframe_vars <- c("mcid", "term_i", "timely_term")
+  reqd_dframe_vars <- c("mcid", "entry_term", "timely_term")
   reqd_table_vars <- c("mcid", "term", "institution")
   added_vars <- c("data_range", "data_sufficiency")
 
   # bind names for R CMD check
   data_range <- NULL
-  term_i <- NULL
+  entry_term <- NULL
   IDX <- NULL
   LOWER_LIMIT <- NULL
   UPPER_LIMIT <- NULL
@@ -124,7 +124,7 @@ data_sufficiency <- function(dframe, midf_table = term) {
   # compare student terms to institution range limits
   dframe[, data_sufficiency := fcase(
     timely_term > UPPER_LIMIT, "exclude-upper",
-    term_i == LOWER_LIMIT, "exclude-lower",
+    entry_term == LOWER_LIMIT, "exclude-lower",
     default = "include"
   ), env = list(
     LOWER_LIMIT = lower_limit,

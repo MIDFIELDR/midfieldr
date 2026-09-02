@@ -8,7 +8,7 @@ x
 
 # Add the required columns from timely_term()
 x <- timely_term(x, midf_table = term)
-x <- x[, .(mcid, term_i, timely_term)]
+x <- x[, .(mcid, entry_term, timely_term)]
 x
 
 # Add data sufficiency columns

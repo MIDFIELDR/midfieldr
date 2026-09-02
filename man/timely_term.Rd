@@ -33,9 +33,9 @@ of the required variables are removed. Duplicated rows are removed.
 below) are not modified; columns with matching names are replaced.
 The new columns added are:
 \itemize{
-\item \code{term_i}   Character. Initial term of a student's longitudinal
+\item \code{entry_term}   Character. Initial term of a student's longitudinal
 record, encoded \code{YYYYT}. Extracted from \code{midf_table.}
-\item \code{level_i}   Character. Student level (01 Freshman, 02 Sophomore,
+\item \code{entry_level}   Character. Student level (01 Freshman, 02 Sophomore,
 etc.) in their initial term. Extracted from \code{midf_table.}
 \item \code{adj_span}   Numeric. Integer span of years for timely
 completion adjusted for a student's initial level.
@@ -79,8 +79,8 @@ x
 # If you repeat, the new columns are overwritten
 timely_term(x, midf_table = term)
 
-# Application: data_sufficiency() requires term_i and timely_term
-data_sufficiency(x[, .(mcid, term_i, timely_term)], midf_table = term)
+# Application: data_sufficiency() requires entry_term and timely_term
+data_sufficiency(x[, .(mcid, entry_term, timely_term)], midf_table = term)
 
 # Application: completion_status() requires timely_term
 completion_status(x[, .(mcid, timely_term)], midf_table = degree)

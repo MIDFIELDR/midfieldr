@@ -40,7 +40,7 @@ test_data_sufficiency <- function() {
     
     # testing dataset
     test_DT <- wrapr::build_frame(
-        "mcid"        , "term_i", "timely_term", "term" , "institution" |
+        "mcid"        , "entry_term", "timely_term", "term" , "institution" |
             "A1_OK"     , "19881" , "19933"      , "19881", "Inst X"    |
             "A1_OK"     , "19881" , "19933"      , "19891", "Inst X"    |
             "A1_OK"     , "19881" , "19933"      , "19901", "Inst X"    |
@@ -73,7 +73,7 @@ test_data_sufficiency <- function() {
             "C2_exclude", "19861" , "19913"      , "19881", "Inst X"    |
             "C2_exclude", "19861" , "19913"      , "19893", "Inst X"    )
     setDT(test_DT)
-    dframe <- test_DT[, .(mcid, term_i, timely_term)]
+    dframe <- test_DT[, .(mcid, entry_term, timely_term)]
     dframe <- unique(dframe)
     term <- test_DT[, .(mcid, term, institution)]
     term <- unique(term)
@@ -101,7 +101,7 @@ test_data_sufficiency <- function() {
     expect_equal("exclude-lower", DT[mcid %like% "C2", (ds)])
     
     # correct columns in place
-    dframe_vars <- c("mcid", "term_i", "timely_term")
+    dframe_vars <- c("mcid", "entry_term", "timely_term")
     added_vars  <- c("data_range", "data_sufficiency")
     return_vars <- c(dframe_vars, added_vars)
     DT <- data_sufficiency(dframe, term)
@@ -126,7 +126,7 @@ test_data_sufficiency <- function() {
     
     # row order is maintained
     x <- copy(dframe)
-    setorderv(x, c("term_i", "mcid"))
+    setorderv(x, c("entry_term", "mcid"))
     x[, rownum := .I]
     y <- data_sufficiency(x, term)
     expect_equal(unique(y[["mcid"]]), unique(x[["mcid"]]))

@@ -28,10 +28,10 @@ expect_class_preserved <- function(x, y, fnc) {
   rm(x, y)
 }
 
-test_record_bracket <- function() {
+test_undergrad_focus <- function() {
   
   # usage
-  # record_bracket(dframe, midf_table = degree)
+  # undergrad_focus(dframe, midf_table = degree)
   
   # ---------- setup
   
@@ -39,46 +39,46 @@ test_record_bracket <- function() {
   suppressPackageStartupMessages(require("data.table"))
   
   # column names to be added
-  new_cols <- c("term_1st_degree", "bracket")
+  new_cols <- c("bacc", "focus")
   
   # ---------- start tests
   
   # check that class is preserved function
-  expect_class_preserved(toy_term, toy_degree, record_bracket)
+  expect_class_preserved(toy_term, toy_degree, undergrad_focus)
   
   # check for incorrect input class / required variables
-  expect_error(record_bracket(1))
-  expect_error(record_bracket(toy_term, "sat"))
-  expect_error(record_bracket(toy_student, toy_degree))
-  expect_error(record_bracket(toy_degree, toy_student))
+  expect_error(undergrad_focus(1))
+  expect_error(undergrad_focus(toy_term, "sat"))
+  expect_error(undergrad_focus(toy_student, toy_degree))
+  expect_error(undergrad_focus(toy_degree, toy_student))
   
   # term added columns correct
   x <- copy(toy_term)
   y <- copy(toy_degree)
-  z <- record_bracket(x, y)
+  z <- undergrad_focus(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
 
   # course added columns correct
   x <- copy(toy_course)
-  z <- record_bracket(x, y)
+  z <- undergrad_focus(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
    
   # degree added columns correct
   x <- copy(toy_degree)
-  z <- record_bracket(x, y)
+  z <- undergrad_focus(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
   
   # confirm NO changes by reference
   term <- copy(toy_term)
   degr <- copy(toy_degree)
-  z <- record_bracket(term, degr)
+  z <- undergrad_focus(term, degr)
   expect_true(check_equiv_frames(term, toy_term))
   expect_true(check_equiv_frames(degr, toy_degree))
   
   # overwrite prevention works
   x <- copy(toy_term)
   x[, idx := as.character(.I)]
-  y <- record_bracket(x, toy_degree)
+  y <- undergrad_focus(x, toy_degree)
   expect_equal(x[["idx"]], y[["idx"]])
   expect_equal(new_cols, setdiff(colnames(y), colnames(x)))
   
@@ -116,7 +116,7 @@ test_record_bracket <- function() {
       "4", "20053"
   )
   setDT(x_degr)
-  ans <- record_bracket(x_term, x_degr)[["bracket"]]
+  ans <- undergrad_focus(x_term, x_degr)[["focus"]]
   expected_ans <- c("undergrad", "undergrad", "post-bacc", 
                     "undergrad", "undergrad", 
                     "undergrad", "undergrad",  
@@ -133,7 +133,7 @@ test_record_bracket <- function() {
   invisible(NULL)
 }
 
-test_record_bracket()
+test_undergrad_focus()
 
 
 

@@ -14,8 +14,8 @@ x
 # If you repeat, the new columns are overwritten
 timely_term(x, midf_table = term)
 
-# Application: data_sufficiency() requires term_i and timely_term
-data_sufficiency(x[, .(mcid, term_i, timely_term)], midf_table = term)
+# Application: data_sufficiency() requires entry_term and timely_term
+data_sufficiency(x[, .(mcid, entry_term, timely_term)], midf_table = term)
 
 # Application: completion_status() requires timely_term
 completion_status(x[, .(mcid, timely_term)], midf_table = degree)
