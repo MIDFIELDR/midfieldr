@@ -216,7 +216,7 @@ population
 To obtain our baseline records, we exclude students not in our
 population and we exclude terms that are post-baccalaureate.
 
-### *Population*
+### *Population filter*
 
 An inner join of the population data frame and each data table, matching
 on `mcid,` excludes IDs not in our population.
@@ -243,7 +243,7 @@ We are interested in *undergraduate* records: academic terms before a
 student’s first degree. We use
 [`undergrad_focus()`](https://midfieldr.github.io/midfieldr/reference/undergrad_focus.md)
 to categorize terms as “undergrad” for terms before the first degree or
-“post-bacc” (post-baccalaureate) for terms after the first degree term.
+“post-bacc” (post-baccalaureate) for terms after the first degree.
 
 ``` r
 
@@ -369,34 +369,37 @@ look_at(degree_baseline)
 #>  $ institution: chr  "Institution B" "Institution J" "Institution B" "Institu"..
 #>  $ degree     : chr  "Bachelor of Arts in Journalism" "Bachelor of Science in"..
 #>  $ term_degree: chr  "19913" "19903" "19894" "19901" ...
+
+look_at(population)
+#> Classes 'data.table' and 'data.frame':   76875 obs. of  1 variable:
+#>  $ mcid: chr  "MCID3111142689" "MCID3111142782" "MCID3111142881" "MCID3111142"..
 ```
 
 ## Blocs and groupings
 
-Working with blocs and groupings begins the process of narrowing our
-data from the general to the case-specific. We start by copying the data
-tables so our work will not affect the baseline material by reference.
+With blocs and groupings we start narrowing our data from the general to
+the case-specific. We would usually start by copying the baseline
+tables, e.g.,
 
-``` r
+        student <- copy(student_baseline)
 
-student <- copy(student_baseline)
-term <- copy(term_baseline)
-degree <- copy(degree_baseline)
-```
+but in this particular script the baseline tables were created in the
+code chunk just above, so we know our working data tables
+`{student, term, degree}` already have the desired content.
 
-The stickiness metric requires these blocs:
+From our scope of work, the stickiness metric requires two blocs:
 
-- students with timely completion from the study programs
-- students ever enrolled in these programs
+- students (timely) graduating from the programs
+- students ever enrolled in the programs
 
-And we selected these groupings:
+And we listed three groupings:
 
 - program
 - race/ethnicity
 - sex
 
-The case-study program codes are necessary to develop both of the blocs
-in the metric, so we start with programs.
+This is a convenient point to work on the programs, given their
+importance to both blocs and groupings.
 
 ## Programs
 
@@ -569,37 +572,11 @@ programs
 #> 15:                                    Operations Research   1437
 ```
 
-Because all CIP codes in the student records are 6-digit, we drop all
-but the 6-digit information.
-
-``` r
-
-programs <- programs[, .(cip6name, cip6)]
-programs
-#>                                                          cip6name   cip6
-#>                                                            <char> <char>
-#>  1:                                    Civil Engineering, General 140801
-#>  2:                                      Geotechnical Engineering 140802
-#>  3:                                        Structural Engineering 140803
-#>  4:                        Transportation and Highway Engineering 140804
-#>  5:                                   Water Resources Engineering 140805
-#>  6:                                      Civil Engineering, Other 140899
-#>  7:        Electrical, Electronics and Communications Engineering 141001
-#>  8:                                 Laser and Optical Engineering 141003
-#>  9:                                Telecommunications Engineering 141004
-#> 10: Electrical, Electronics and Communications Engineering, Other 141099
-#> 11:                                        Mechanical Engineering 141901
-#> 12:                                           Systems Engineering 142701
-#> 13:                                        Industrial Engineering 143501
-#> 14:                                     Manufacturing Engineering 143601
-#> 15:                                           Operations Research 143701
-```
-
-The 6-digit program names are usually too specialized for our
-purposes—user-defined names or abbreviations are nearly always required.
-We add a `program` variable with values “CE” (Civil Engineering), “EE”
-(electrical), “ME” (Mechanical), and “ISE” (Industrial/Systems
-Engineering).
+The `cip4name` values are not quite what we want for program
+identifiers. The Electrical Engineering name is inconveniently long and
+the four programs that comprise Industrial/Systems Engineering are not
+linked by name. We assign our own abbreviations to a user-defined
+`program` variable.
 
 ``` r
 
@@ -612,11 +589,14 @@ programs[, program := fcase(
 )]
 ```
 
-We can preserve the 6-digit names for reference. Here we abbreviate some
-of them for a more compact display.
+In the student records, all program data is encoded using 6-digit codes,
+so we retain the 6-digit codes, the 6-digit names (for reference), and
+our program labels. We shorten the longer names for a less cluttered
+display.
 
 ``` r
 
+programs <- programs[, .(cip6name, cip6, program)]
 programs[, cip6name := gsub("Engineering", "Engng", cip6name)]
 programs[, cip6name := gsub("Communications", "Commns", cip6name)]
 programs[, cip6name := gsub("Electrical, Electronics", "Elec, Electr,", cip6name)]
@@ -669,9 +649,8 @@ DT
 
 ### *Filter by program*
 
-We left-join the CIP column from the `degree` table, matching on `mcid`.
-That the number of rows has increased indicates that some students have
-more than one degree in their first degree term.
+We left-join the CIP column from the baseline `degree` table, matching
+on `mcid.` NAs are introduced for students with no degree.
 
 ``` r
 
@@ -689,16 +668,23 @@ DT
 #> 76946: MCID3112870009   <NA>
 ```
 
-*Summary check.*   Numbers of students completing \small N degrees.
+*Summary check.*   That the number of rows above has increased indicates
+that some students have more than one degree in their first degree term.
+To check, we count how many students completed \small N degrees.
 
 ``` r
 
-x <- DT[, .(N_degrees = .N), by = "mcid"]
-x[, .(N_students = .N), by = "N_degrees"]
+x <- copy(DT)
+x[, deg := ifelse(is.na(cip6), 0, 1)]
+x <- x[, .(N_degrees = sum(deg)), by = "mcid"]
+x <- x[, .(N_students = .N), by = "N_degrees"][order(N_degrees)]
+
+x
 #>    N_degrees N_students
-#>        <int>      <int>
-#> 1:         1      76804
-#> 2:         2         71
+#>        <num>      <int>
+#> 1:         0      33089
+#> 2:         1      43715
+#> 3:         2         71
 ```
 
 We use an inner-join with our `programs` data frame to retain only the
@@ -744,7 +730,7 @@ DT
 
 We want to retain timely graduates only. We start by obtaining the
 timely completion term then selecting the variables we need to go
-forward.
+forward. The `term` table here is identical to `term_baseline.`
 
 ``` r
 
@@ -849,7 +835,7 @@ graduates[, .N, by = c("program")][order(-N)]
 #> 4:     ISE   238
 ```
 
-## Ever enrolled
+## Ever-enrolled
 
 Again we start with the baseline population.
 
@@ -1382,6 +1368,42 @@ DT_table |>
 Table 1. Engineering program stickiness (%) {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
 
+Alternatively, one could decide to only include rows that have at least
+two values for comparison.
+
+``` r
+
+DT_table <- DT_table[!People %ilike% "Native"]
+DT_table <- DT_table[!People %ilike% "Other/Unknown Female"]
+DT_table <- DT_table[!People %ilike% "Black Female"]
+DT_table |>
+  gt() |>
+  tab_caption("Table 2. Engineering program stickiness (%)") |>
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  sub_missing() |>
+  tab_style(
+    locations = cells_column_labels(columns = everything()),
+    style = list(cell_fill(color = "#c7eae5"))
+  )
+```
+
+| People               | Civil | Electrical | Industrial/Systems | Mechanical |
+|----------------------|-------|------------|--------------------|------------|
+| Asian Female         | 71.4  | 57.1       | 66.7               | —          |
+| Asian Male           | 75.8  | 58.2       | 66.7               | 63.6       |
+| Black Male           | 62.5  | 58.6       | 66.7               | 65.5       |
+| Hispanic Female      | 46.2  | —          | —                  | 66.7       |
+| Hispanic Male        | 47.0  | 38.6       | 66.7               | 53.8       |
+| International Female | 56.5  | 33.3       | —                  | 55.0       |
+| International Male   | 56.1  | 46.2       | 57.1               | 50.6       |
+| Other/Unknown Male   | 40.7  | 39.0       | —                  | 50.6       |
+| White Female         | 62.1  | 47.9       | 74.0               | 62.9       |
+| White Male           | 64.6  | 51.8       | 73.0               | 60.0       |
+
+Table 2. Engineering program stickiness (%) {.table .gt_table
+quarto-disable-processing="false" quarto-bootstrap="false"}
+
 ### *Chart*
 
 To use
@@ -1520,12 +1542,11 @@ right and from bottom to top.
 We have presented a complete study, from a sample of registrar’s data to
 charts comparing a quantitative metric, illustrating how we use
 midfieldr and other R packages to work with longitudinal student
-records. Details of specific midfieldr functions are covered in
-subsequent articles.
+records.
 
-Please note that these results cannot be used for drawing inferences
-about people or programs. The data in midfielddata are for *practice*,
-not *research*.
+Please note that the data in midfielddata are for *practice*, not
+*research*. These results cannot be used for drawing inferences about
+people or programs.
 
 ## References
 

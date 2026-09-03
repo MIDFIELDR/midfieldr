@@ -1,16 +1,11 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
-#' Identify terms after the first completion term
-#'
-#' For each student's term in a data frame, determine its relationship to the
-#' student's first degree term (pre-degree, first-degree, or post-first-degree)
-#' and add columns that support the findings. Post-first-baccalaureate terms
-#' are typically excluded from the `term, course,` and `degree` data tables.
-#'
-#' In a typical analysis, one is interested in a student's progress up to
-#' and including the term in which they earn their first degree or degrees.
-#' Any terms later than the first baccalaureate can usually be excluded from
-#' study.
+#' Identify undergraduate terms
+#' 
+#' Categorize terms as “undergrad” for terms before a student's first degree 
+#' or “post-bacc” (post-baccalaureate) for terms after the first degree  
+#' and add columns that support the findings. Post-baccalaureate terms are 
+#' typically excluded from the `term, course,` and `degree` data tables.
 #'
 #' @param dframe `r dframe` with required variables `{mcid}` and one of
 #'        `{term, term_course, term_degree}.`
