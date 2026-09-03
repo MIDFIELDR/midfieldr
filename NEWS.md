@@ -18,7 +18,7 @@
 
 New features
 
-- New function `undergrad_focus()` to identify rows of post-baccalaureate terms to exclude.
+- New function `qualification_level()` to identify rows of post-baccalaureate terms to exclude.
 - New utilities  `look_at()`, `catch_error()`, and `sort_uniq()` that wrap base R functions with our preferred arguments. 
 - Add data set `cip2010`, constructed from a recent download of the source file (`CIPCode2010.csv`) from NCES. Has the same data structure as the existing `cip` dataset, but with more rows. 
 - Renamed/revised functions and their arguments:

@@ -37,7 +37,7 @@ An R package that supplies tools for working with longitudinal undergraduate rec
 - `prep_fye_mice()` conditions data for imputing starting majors of FYE students.
 - `select_basic_cols()` minimizes the number of columns viewed for interactive sessions.  
 - `timely_term()` estimates timely completion terms. 
-- `undergrad_focus()` identifies terms to exclude occurring after a student's first degree term.  
+- `qualification_level()` identifies terms to exclude occurring after a student's first degree term.  
  
 
 
@@ -103,19 +103,19 @@ course <- copy(toy_course)
 degree <- copy(toy_degree)
 
 # identify undergraduate terms
-term <- undergrad_focus(term, midf_table = degree)
-course <- undergrad_focus(course, midf_table = degree)
-degree <- undergrad_focus(degree, midf_table = degree)
+term <- qualification_level(term, midf_table = degree)
+course <- qualification_level(course, midf_table = degree)
+degree <- qualification_level(degree, midf_table = degree)
 
 # filter to retain undergraduate terms only
-term <- term[focus == "undergrad"]
-course <- course[focus == "undergrad"]
-degree <- degree[focus == "undergrad"]
+term <- term[qual_level == "undergrad"]
+course <- course[qual_level == "undergrad"]
+degree <- degree[qual_level == "undergrad"]
 
 # remove temporary columns
-term[, c("bacc", "focus") := NULL]
-course[, c("bacc", "focus") := NULL]
-degree[, c("bacc", "focus") := NULL]
+term[, c("bacc", "qual_level") := NULL]
+course[, c("bacc", "qual_level") := NULL]
+degree[, c("bacc", "qual_level") := NULL]
 
 # filter for data sufficiency to obtain the population
 DT <- unique(term[, .(mcid)])

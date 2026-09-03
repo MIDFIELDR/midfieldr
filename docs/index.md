@@ -20,9 +20,8 @@ database.
   minimizes the number of columns viewed for interactive sessions.  
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
   estimates timely completion terms.
-- [`undergrad_focus()`](https://midfieldr.github.io/midfieldr/reference/undergrad_focus.md)
-  identifies terms to exclude occurring after a student’s first degree
-  term.
+- `undergrad_focus()` identifies terms to exclude occurring after a
+  student’s first degree term.
 
 ## Installation
 

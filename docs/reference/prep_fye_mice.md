@@ -131,11 +131,6 @@ Notes:
 
 ``` r
 library(data.table)
-#> 
-#> Attaching package: 'data.table'
-#> The following object is masked from 'package:base':
-#> 
-#>     %notin%
 
 # Subset student and term data using selected IDs
 IDs <- c("MCID3112319668", "MCID3112214437", "MCID3112328548", 

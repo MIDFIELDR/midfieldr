@@ -1,10 +1,10 @@
-# Identify terms after the first completion term
+# Identify undergraduate terms
 
-For each student's term in a data frame, determine its relationship to
-the student's first degree term (pre-degree, first-degree, or
-post-first-degree) and add columns that support the findings.
-Post-first-baccalaureate terms are typically excluded from the
-`term, course,` and `degree` data tables.
+Categorize terms as “undergrad” for terms before a student's first
+degree or “post-bacc” (post-baccalaureate) for terms after the first
+degree and add columns that support the findings. Post-baccalaureate
+terms are typically excluded from the `term, course,` and `degree` data
+tables.
 
 ## Usage
 
@@ -48,13 +48,6 @@ Data frame with the following properties:
     degree.
 
 - Groups and keys are not preserved.
-
-## Details
-
-In a typical analysis, one is interested in a student's progress up to
-and including the term in which they earn their first degree or degrees.
-Any terms later than the first baccalaureate can usually be excluded
-from study.
 
 ## Examples
 

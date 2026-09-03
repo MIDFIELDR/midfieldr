@@ -28,10 +28,10 @@ expect_class_preserved <- function(x, y, fnc) {
   rm(x, y)
 }
 
-test_undergrad_focus <- function() {
+test_qualification_level <- function() {
   
   # usage
-  # undergrad_focus(dframe, midf_table = degree)
+  # qualification_level(dframe, midf_table = degree)
   
   # ---------- setup
   
@@ -39,46 +39,46 @@ test_undergrad_focus <- function() {
   suppressPackageStartupMessages(require("data.table"))
   
   # column names to be added
-  new_cols <- c("bacc", "focus")
+  new_cols <- c("bacc", "qual_level")
   
   # ---------- start tests
   
   # check that class is preserved function
-  expect_class_preserved(toy_term, toy_degree, undergrad_focus)
+  expect_class_preserved(toy_term, toy_degree, qualification_level)
   
   # check for incorrect input class / required variables
-  expect_error(undergrad_focus(1))
-  expect_error(undergrad_focus(toy_term, "sat"))
-  expect_error(undergrad_focus(toy_student, toy_degree))
-  expect_error(undergrad_focus(toy_degree, toy_student))
+  expect_error(qualification_level(1))
+  expect_error(qualification_level(toy_term, "sat"))
+  expect_error(qualification_level(toy_student, toy_degree))
+  expect_error(qualification_level(toy_degree, toy_student))
   
   # term added columns correct
   x <- copy(toy_term)
   y <- copy(toy_degree)
-  z <- undergrad_focus(x, y)
+  z <- qualification_level(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
 
   # course added columns correct
   x <- copy(toy_course)
-  z <- undergrad_focus(x, y)
+  z <- qualification_level(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
    
   # degree added columns correct
   x <- copy(toy_degree)
-  z <- undergrad_focus(x, y)
+  z <- qualification_level(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
   
   # confirm NO changes by reference
   term <- copy(toy_term)
   degr <- copy(toy_degree)
-  z <- undergrad_focus(term, degr)
+  z <- qualification_level(term, degr)
   expect_true(check_equiv_frames(term, toy_term))
   expect_true(check_equiv_frames(degr, toy_degree))
   
   # overwrite prevention works
   x <- copy(toy_term)
   x[, idx := as.character(.I)]
-  y <- undergrad_focus(x, toy_degree)
+  y <- qualification_level(x, toy_degree)
   expect_equal(x[["idx"]], y[["idx"]])
   expect_equal(new_cols, setdiff(colnames(y), colnames(x)))
   
@@ -116,7 +116,7 @@ test_undergrad_focus <- function() {
       "4", "20053"
   )
   setDT(x_degr)
-  ans <- undergrad_focus(x_term, x_degr)[["focus"]]
+  ans <- qualification_level(x_term, x_degr)[["qual_level"]]
   expected_ans <- c("undergrad", "undergrad", "post-bacc", 
                     "undergrad", "undergrad", 
                     "undergrad", "undergrad",  
@@ -133,7 +133,7 @@ test_undergrad_focus <- function() {
   invisible(NULL)
 }
 
-test_undergrad_focus()
+test_qualification_level()
 
 
 

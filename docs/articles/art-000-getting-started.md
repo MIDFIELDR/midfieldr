@@ -28,7 +28,7 @@ workflow, as follows:
 
 Refining a population and records
 
-- [`undergrad_focus()`](https://midfieldr.github.io/midfieldr/reference/undergrad_focus.md)
+- [`qualification_level()`](https://midfieldr.github.io/midfieldr/reference/qualification_level.md)
   identifies terms to include prior to a first degree.
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
   estimates timely completion terms.
@@ -140,7 +140,7 @@ look_at(degree)
 #>  $ degree     : chr  "Bachelor of Science in Electrical Engineering" "Bachelo"..
 ```
 
-### `undergrad_focus()`
+### `qualification_level()`
 
 *Identify terms to include prior to a first degree.* Applies to data
 tables with a term variable:
@@ -150,12 +150,12 @@ tables with a term variable:
 - `term_degree` in the `degree` table
 
 Applying
-[`undergrad_focus()`](https://midfieldr.github.io/midfieldr/reference/undergrad_focus.md)
+[`qualification_level()`](https://midfieldr.github.io/midfieldr/reference/qualification_level.md)
 to the `term` table, for example, we display selected columns from the
 result. The `bacc` (baccalaureate) column contains the student’s first
-degree term (if any). The `focus` column labels each term as focused on
-“undergrad” or “post-bacc” study, depending on whether a term is before
-or after the first degree.
+degree term (if any). The `qual_level` column labels each term as
+focused on “undergrad” or “post-bacc” study, depending on whether a term
+is before or after the first degree.
 
 labels terms before a first degree “undergrad”; later terms are labeled
 “post-bacc.” Post-baccalaureate terms are typically excluded from a
@@ -163,22 +163,22 @@ study.
 
 ``` r
 
-DT <- undergrad_focus(term, midf_table = degree)
-DT <- DT[order(-focus), .(mcid, term, bacc, focus)]
+DT <- qualification_level(term, midf_table = degree)
+DT <- DT[order(-qual_level), .(mcid, term, bacc, qual_level)]
 DT
-#>                   mcid   term   bacc     focus
-#>                 <char> <char> <char>    <char>
-#>      1: MCID3111142225  19881  19881 undergrad
-#>      2: MCID3111142283  19881   <NA> undergrad
-#>      3: MCID3111142283  19883   <NA> undergrad
-#>      4: MCID3111142283  19885   <NA> undergrad
-#>      5: MCID3111142283  19891   <NA> undergrad
-#>     ---                                       
-#> 639911: MCID3112760109  20174  20153 post-bacc
-#> 639912: MCID3112760109  20181  20153 post-bacc
-#> 639913: MCID3112760306  20181  20174 post-bacc
-#> 639914: MCID3112768322  20181  20174 post-bacc
-#> 639915: MCID3112773810  20181  20174 post-bacc
+#>                   mcid   term   bacc qual_level
+#>                 <char> <char> <char>     <char>
+#>      1: MCID3111142225  19881  19881  undergrad
+#>      2: MCID3111142283  19881   <NA>  undergrad
+#>      3: MCID3111142283  19883   <NA>  undergrad
+#>      4: MCID3111142283  19885   <NA>  undergrad
+#>      5: MCID3111142283  19891   <NA>  undergrad
+#>     ---                                        
+#> 639911: MCID3112760109  20174  20153  post-bacc
+#> 639912: MCID3112760109  20181  20153  post-bacc
+#> 639913: MCID3112760306  20181  20174  post-bacc
+#> 639914: MCID3112768322  20181  20174  post-bacc
+#> 639915: MCID3112773810  20181  20174  post-bacc
 ```
 
 ### `select_basic_cols()`
@@ -656,9 +656,9 @@ degree_source <- copy(degree)
 
 # demonstrate that memory addresses are different
 address(student)
-#> [1] "000001fedbf32e60"
+#> [1] "0000025a06f24060"
 address(student_source)
-#> [1] "000001fedc75a660"
+#> [1] "0000025a0882a660"
 ```
 
 Then we can use the shorter names such as `term` and `degree` as we
@@ -907,7 +907,7 @@ all.equal(population$mcid, unique(term_source$mcid))
 #> [1] TRUE
 ```
 
-## `undergrad_focus()`
+## `qualification_level()`
 
 *Identify rows of post-baccalaureate terms to exclude.*
 
@@ -915,16 +915,16 @@ In most cases, we are not generally interested in academic terms beyond
 the first degree term, so we use the results of this function to exclude
 post-first-degree terms from the source data.
 
-[`undergrad_focus()`](https://midfieldr.github.io/midfieldr/reference/undergrad_focus.md)
+[`qualification_level()`](https://midfieldr.github.io/midfieldr/reference/qualification_level.md)
 identifies terms later than the first baccalaureate, if any.
 
 ``` r
 
-term <- undergrad_focus(term_source, midf_table = degree)
-degree <- undergrad_focus(degree_source, midf_table = degree)
+term <- qualification_level(term_source, midf_table = degree)
+degree <- qualification_level(degree_source, midf_table = degree)
 ```
 
-[`undergrad_focus()`](https://midfieldr.github.io/midfieldr/reference/undergrad_focus.md)
+[`qualification_level()`](https://midfieldr.github.io/midfieldr/reference/qualification_level.md)
 adds a column indicating the bracket a term belongs to with respect to
 the first degree term.
 
@@ -938,14 +938,14 @@ look_at(term)
 #>  $ level      : chr  "01 First-year" "01 First-year" "02 Second-year" "02 Sec"..
 #>  $ term       : chr  "19883" "19883" "19885" "19893" ...
 #>  $ bacc       : chr  "19913" "19903" "19903" "19903" ...
-#>  $ focus      : chr  "undergrad" "undergrad" "undergrad" "undergrad" ...
+#>  $ qual_level : chr  "undergrad" "undergrad" "undergrad" "undergrad" ...
 ```
 
 The possible bracket values are given by,
 
 ``` r
 
-term[, sort(unique(focus), na.last = FALSE)]
+term[, sort(unique(qual_level), na.last = FALSE)]
 #> [1] "post-bacc" "undergrad"
 ```
 
@@ -954,11 +954,11 @@ temporary columns.
 
 ``` r
 
-term <- term["undergrad", on = "focus"]
-degree <- degree["undergrad", on = "focus"]
+term <- term["undergrad", on = "qual_level"]
+degree <- degree["undergrad", on = "qual_level"]
 
-term[, c("bacc", "focus") := NULL]
-degree[, c("bacc", "focus") := NULL]
+term[, c("bacc", "qual_level") := NULL]
+degree[, c("bacc", "qual_level") := NULL]
 
 look_at(term)
 #> Classes 'data.table' and 'data.frame':   525446 obs. of  5 variables:

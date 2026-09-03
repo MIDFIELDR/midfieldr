@@ -54,7 +54,7 @@ We can categorize midfieldr functions by their contribution to a typical workflo
 
 Refining a population and records
 
-- `undergrad_focus()` identifies terms to include prior to a first degree.
+- `qualification_level()` identifies terms to include prior to a first degree.
 - `timely_term()` estimates timely completion terms.
 - `data_sufficiency()` identifies IDs to exclude due to insufficient data.
 
@@ -105,7 +105,7 @@ look_at(degree)
 
  
 
-### `undergrad_focus()`
+### `qualification_level()`
 
 *Identify terms to include prior to a first degree.* Applies to data tables with a term variable:
 
@@ -113,14 +113,14 @@ look_at(degree)
 - `term_course` in the `course` table
 - `term_degree` in the `degree` table
 
-Applying `undergrad_focus()` to the `term` table, for example, we display selected columns from the result. The `bacc` (baccalaureate) column contains the student's first degree term (if any). The `focus` column labels each term as focused on "undergrad" or "post-bacc" study, depending on whether a term is before or after the first degree. 
+Applying `qualification_level()` to the `term` table, for example, we display selected columns from the result. The `bacc` (baccalaureate) column contains the student's first degree term (if any). The `qual_level` column labels each term as focused on "undergrad" or "post-bacc" study, depending on whether a term is before or after the first degree. 
 
 
 labels terms before a first degree "undergrad"; later terms are labeled "post-bacc." Post-baccalaureate terms are typically excluded from a study.  
 
 ```{r}
-DT <- undergrad_focus(term, midf_table = degree)
-DT <- DT[order(-focus), .(mcid, term, bacc, focus)]
+DT <- qualification_level(term, midf_table = degree)
+DT <- DT[order(-qual_level), .(mcid, term, bacc, qual_level)]
 DT
 ```
 
@@ -464,20 +464,20 @@ all.equal(population$mcid, unique(term_source$mcid))
 ```
 
 
-## `undergrad_focus()`
+## `qualification_level()`
 
 *Identify rows of post-baccalaureate terms to exclude.*
 
 In most cases, we are not generally interested in academic terms beyond the first degree term, so we use the results of this function to exclude post-first-degree terms from the source data. 
 
-`undergrad_focus()` identifies terms later than the first baccalaureate, if any.  
+`qualification_level()` identifies terms later than the first baccalaureate, if any.  
 
 ```{r}
-term <- undergrad_focus(term_source, midf_table = degree)
-degree <- undergrad_focus(degree_source, midf_table = degree)
+term <- qualification_level(term_source, midf_table = degree)
+degree <- qualification_level(degree_source, midf_table = degree)
 ```
 
-`undergrad_focus()` adds a column indicating the bracket a term belongs to with respect to the first degree term.
+`qualification_level()` adds a column indicating the bracket a term belongs to with respect to the first degree term.
 
 ```{r}
 look_at(term)
@@ -486,17 +486,17 @@ look_at(term)
 The possible bracket values are given by, 
 
 ```{r}
-term[, sort(unique(focus), na.last = FALSE)]
+term[, sort(unique(qual_level), na.last = FALSE)]
 ```
 
 We filter to exclude all terms labeled "post-bacc" and drop the temporary columns. 
 
 ```{r}
-term <- term["undergrad", on = "focus"]
-degree <- degree["undergrad", on = "focus"]
+term <- term["undergrad", on = "qual_level"]
+degree <- degree["undergrad", on = "qual_level"]
 
-term[, c("bacc", "focus") := NULL]
-degree[, c("bacc", "focus") := NULL]
+term[, c("bacc", "qual_level") := NULL]
+degree[, c("bacc", "qual_level") := NULL]
 
 look_at(term)
 ```

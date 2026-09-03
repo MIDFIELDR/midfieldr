@@ -7,7 +7,7 @@
 New features
 
 - New function
-  [`undergrad_focus()`](https://midfieldr.github.io/midfieldr/reference/undergrad_focus.md)
+  [`qualification_level()`](https://midfieldr.github.io/midfieldr/reference/qualification_level.md)
   to identify rows of post-baccalaureate terms to exclude.
 - New utilities
   [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md),

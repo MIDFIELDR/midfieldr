@@ -237,69 +237,69 @@ degree <- population[degree, on = "mcid", nomatch = NULL]
 Table 1(b). Number of observations {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
 
-### *Undergraduate focus*
+### *Qualification level*
 
 We are interested in *undergraduate* records: academic terms before a
 student’s first degree. We use
-[`undergrad_focus()`](https://midfieldr.github.io/midfieldr/reference/undergrad_focus.md)
+[`qualification_level()`](https://midfieldr.github.io/midfieldr/reference/qualification_level.md)
 to categorize terms as “undergrad” for terms before the first degree or
 “post-bacc” (post-baccalaureate) for terms after the first degree.
 
 ``` r
 
-term <- undergrad_focus(term, midf_table = degree)
-degree <- undergrad_focus(degree, midf_table = degree)
+term <- qualification_level(term, midf_table = degree)
+degree <- qualification_level(degree, midf_table = degree)
 
-term[order(-focus), .(mcid, term, bacc, focus)]
-#>                   mcid   term   bacc     focus
-#>                 <char> <char> <char>    <char>
-#>      1: MCID3111142689  19883  19913 undergrad
-#>      2: MCID3111142782  19883  19903 undergrad
-#>      3: MCID3111142782  19885  19903 undergrad
-#>     ---                                       
-#> 531417: MCID3112501004  20161  20133 post-bacc
-#> 531418: MCID3112595308  20161  20154 post-bacc
-#> 531419: MCID3112619703  20161  20154 post-bacc
+term[order(-qual_level), .(mcid, term, bacc, qual_level)]
+#>                   mcid   term   bacc qual_level
+#>                 <char> <char> <char>     <char>
+#>      1: MCID3111142689  19883  19913  undergrad
+#>      2: MCID3111142782  19883  19903  undergrad
+#>      3: MCID3111142782  19885  19903  undergrad
+#>     ---                                        
+#> 531417: MCID3112501004  20161  20133  post-bacc
+#> 531418: MCID3112595308  20161  20154  post-bacc
+#> 531419: MCID3112619703  20161  20154  post-bacc
 
-degree[order(-focus), .(mcid, term_degree, bacc, focus)]
-#>                  mcid term_degree   bacc     focus
-#>                <char>      <char> <char>    <char>
-#>     1: MCID3111142689       19913  19913 undergrad
-#>     2: MCID3111142782       19903  19903 undergrad
-#>     3: MCID3111142881       19894  19894 undergrad
-#>    ---                                            
-#> 43901: MCID3112290406       20143  20111 post-bacc
-#> 43902: MCID3112347391       20133  20101 post-bacc
-#> 43903: MCID3112407729       20133  20123 post-bacc
+degree[order(-qual_level), .(mcid, term_degree, bacc, qual_level)]
+#>                  mcid term_degree   bacc qual_level
+#>                <char>      <char> <char>     <char>
+#>     1: MCID3111142689       19913  19913  undergrad
+#>     2: MCID3111142782       19903  19903  undergrad
+#>     3: MCID3111142881       19894  19894  undergrad
+#>    ---                                             
+#> 43901: MCID3112290406       20143  20111  post-bacc
+#> 43902: MCID3112347391       20133  20101  post-bacc
+#> 43903: MCID3112407729       20133  20123  post-bacc
 ```
 
 *Summary check.*   Summarize the numbers of students in each category.
 
 ``` r
 
-term[, .N, by = c("focus")][order(-N)]
-#>        focus      N
-#>       <char>  <int>
-#> 1: undergrad 525446
-#> 2: post-bacc   5973
+term[, .N, by = c("qual_level")][order(-N)]
+#>    qual_level      N
+#>        <char>  <int>
+#> 1:  undergrad 525446
+#> 2:  post-bacc   5973
 
-degree[, .N, by = c("focus")][order(-N)]
-#>        focus     N
-#>       <char> <int>
-#> 1: undergrad 43857
-#> 2: post-bacc    46
+degree[, .N, by = c("qual_level")][order(-N)]
+#>    qual_level     N
+#>        <char> <int>
+#> 1:  undergrad 43857
+#> 2:  post-bacc    46
 ```
 
-We keep the terms with an undergraduate focus.
+We keep the terms at the undergraduate level.
 
 ``` r
 
-term <- term[focus == "undergrad"]
-degree <- degree[focus == "undergrad"]
+term <- term[qual_level == "undergrad"]
+degree <- degree[qual_level == "undergrad"]
 
 # drop temporary columns
-term[, c("bacc", "focus") := NULL]
-degree[, c("bacc", "focus") := NULL]
+term[, c("bacc", "qual_level") := NULL]
+degree[, c("bacc", "qual_level") := NULL]
 ```
 
 We copy the current data tables to reserve them as our “baseline”
@@ -647,10 +647,86 @@ DT
 #> 76875: MCID3112870009
 ```
 
+### *Filter for timely completion*
+
+We want to retain timely graduates only. We start by obtaining the
+timely completion term then selecting the variables we need to go
+forward. The `term` table here is identical to `term_baseline.`
+
+``` r
+
+DT <- timely_term(DT, midf_table = term)
+DT <- DT[, .(mcid, timely_term)]
+DT
+#>                  mcid timely_term
+#>                <char>      <char>
+#>     1: MCID3111142689       19941
+#>     2: MCID3111142782       19941
+#>     3: MCID3111142881       19951
+#>    ---                           
+#> 76873: MCID3112785480       20123
+#> 76874: MCID3112800920       20153
+#> 76875: MCID3112870009       20003
+```
+
+[`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
+builds on the output from
+[`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
+to label rows to indicate whether a student completes a degree timely or
+late compared to their timely completion term (or NA for
+non-completion). The `degree` table here is identical to
+`degree_baseline.`
+
+``` r
+
+DT <- completion_status(DT, midf_table = degree)
+DT
+#>                  mcid timely_term completion_term completion_status
+#>                <char>      <char>          <char>            <char>
+#>     1: MCID3111142689       19941           19913            timely
+#>     2: MCID3111142782       19941           19903            timely
+#>     3: MCID3111142881       19951           19894            timely
+#>    ---                                                             
+#> 76863: MCID3112785480       20123            <NA>              <NA>
+#> 76864: MCID3112800920       20153            <NA>              <NA>
+#> 76865: MCID3112870009       20003            <NA>              <NA>
+```
+
+*Summary check.*   Numbers of students in each category.
+
+``` r
+
+DT[, .N, by = c("completion_status")][order(-completion_status)]
+#>    completion_status     N
+#>               <char> <int>
+#> 1:            timely 40430
+#> 2:              late  3346
+#> 3:              <NA> 33089
+```
+
+We retain the rows labeled “timely”, drop all the columns except ID, and
+ensure unique rows.
+
+``` r
+
+DT <- DT[completion_status == "timely", .(mcid)]
+DT <- unique(DT)
+DT
+#>                  mcid
+#>                <char>
+#>     1: MCID3111142689
+#>     2: MCID3111142782
+#>     3: MCID3111142881
+#>    ---               
+#> 40428: MCID3112692944
+#> 40429: MCID3112694738
+#> 40430: MCID3112730841
+```
+
 ### *Filter by program*
 
 We left-join the CIP column from the baseline `degree` table, matching
-on `mcid.` NAs are introduced for students with no degree.
+on `mcid.`
 
 ``` r
 
@@ -663,28 +739,24 @@ DT
 #>     2: MCID3111142782 260101
 #>     3: MCID3111142881 450601
 #>    ---                      
-#> 76944: MCID3112785480   <NA>
-#> 76945: MCID3112800920   <NA>
-#> 76946: MCID3112870009   <NA>
+#> 40488: MCID3112692944 090101
+#> 40489: MCID3112694738 230101
+#> 40490: MCID3112730841 040401
 ```
 
-*Summary check.*   That the number of rows above has increased indicates
-that some students have more than one degree in their first degree term.
-To check, we count how many students completed \small N degrees.
+*Summary check.*   That the number of rows above has increased from
+40,430 to 40,490 indicates that some students have more than one degree
+in their first degree term. To check, we count how many students
+completed \small N degrees.
 
 ``` r
 
-x <- copy(DT)
-x[, deg := ifelse(is.na(cip6), 0, 1)]
-x <- x[, .(N_degrees = sum(deg)), by = "mcid"]
-x <- x[, .(N_students = .N), by = "N_degrees"][order(N_degrees)]
-
-x
+x <- DT[, .(N_degrees = .N), by = "mcid"]
+x[, .(N_students = .N), by = "N_degrees"][order(N_degrees)]
 #>    N_degrees N_students
-#>        <num>      <int>
-#> 1:         0      33089
-#> 2:         1      43715
-#> 3:         2         71
+#>        <int>      <int>
+#> 1:         1      40370
+#> 2:         2         60
 ```
 
 We use an inner-join with our `programs` data frame to retain only the
@@ -701,9 +773,9 @@ DT
 #>    2: MCID3111158631 140801      CE
 #>    3: MCID3111161749 140801      CE
 #>   ---                              
-#> 3429: MCID3111864022 143501     ISE
-#> 3430: MCID3111864356 143501     ISE
-#> 3431: MCID3111912851 143501     ISE
+#> 3261: MCID3111864022 143501     ISE
+#> 3262: MCID3111864356 143501     ISE
+#> 3263: MCID3111912851 143501     ISE
 ```
 
 We drop the `cip6` column, leaving the `program` column with our
@@ -713,81 +785,6 @@ more of our four engineering programs.
 ``` r
 
 DT[, cip6 := NULL]
-DT <- unique(DT)
-DT
-#>                 mcid program
-#>               <char>  <char>
-#>    1: MCID3111156062      CE
-#>    2: MCID3111158631      CE
-#>    3: MCID3111161749      CE
-#>   ---                       
-#> 3429: MCID3111864022     ISE
-#> 3430: MCID3111864356     ISE
-#> 3431: MCID3111912851     ISE
-```
-
-### *Filter for timely completion*
-
-We want to retain timely graduates only. We start by obtaining the
-timely completion term then selecting the variables we need to go
-forward. The `term` table here is identical to `term_baseline.`
-
-``` r
-
-DT <- timely_term(DT, midf_table = term)
-DT <- DT[, .(mcid, program, timely_term)]
-DT
-#>                 mcid program timely_term
-#>               <char>  <char>      <char>
-#>    1: MCID3111156062      CE       19931
-#>    2: MCID3111158631      CE       19931
-#>    3: MCID3111161749      CE       19933
-#>   ---                                   
-#> 3429: MCID3111864022     ISE       20051
-#> 3430: MCID3111864356     ISE       20053
-#> 3431: MCID3111912851     ISE       20071
-```
-
-[`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
-builds on the output from
-[`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
-to label rows to indicate whether a student completes a degree timely or
-late compared to their timely completion term (or NA for
-non-completion).
-
-``` r
-
-DT <- completion_status(DT, midf_table = degree)
-DT
-#>                 mcid program timely_term completion_term completion_status
-#>               <char>  <char>      <char>          <char>            <char>
-#>    1: MCID3111156062      CE       19931           19913            timely
-#>    2: MCID3111158631      CE       19931           19923            timely
-#>    3: MCID3111161749      CE       19933           19916            timely
-#>   ---                                                                     
-#> 3429: MCID3111864022     ISE       20051           20033            timely
-#> 3430: MCID3111864356     ISE       20053           20033            timely
-#> 3431: MCID3111912851     ISE       20071           20033            timely
-```
-
-*Summary check.*   Numbers of students in each category. In this case,
-all students completed, thus no NAs.
-
-``` r
-
-DT[, .N, by = c("completion_status")][order(-N)]
-#>    completion_status     N
-#>               <char> <int>
-#> 1:            timely  3263
-#> 2:              late   168
-```
-
-We retain the rows labeled “timely”, drop all the columns except ID and
-program, and ensure unique rows.
-
-``` r
-
-DT <- DT[completion_status == "timely", .(mcid, program)]
 DT <- unique(DT)
 DT
 #>                 mcid program
@@ -1187,11 +1184,11 @@ DT[grad <= 3][order(grad)]
 When dealing with the full MIDFIELD research data, we typically omit
 data from rows in which \small N\_\mathrm{grad}\leq 10, but for these
 practice data we illustrate the process using \small
-N\_\mathrm{grad}\leq 3. We convert the values to NA.
+N\_\mathrm{grad}\leq 1. We convert the values to NA.
 
 ``` r
 
-DT[grad <= 3, c("ever", "grad", "stick") := NA_real_]
+DT[grad <= 1, c("ever", "grad", "stick") := NA_real_]
 DT
 #>     program                 people  ever  grad stick
 #>      <char>                 <char> <num> <num> <num>
@@ -1205,14 +1202,14 @@ DT
 #>  8:      CE     International Male    98    55  56.1
 #>  9:      CE Native American Female    NA    NA    NA
 #> 10:      CE   Native American Male    NA    NA    NA
-#> 11:      CE   Other/Unknown Female    NA    NA    NA
+#> 11:      CE   Other/Unknown Female     5     3  60.0
 #> 12:      CE     Other/Unknown Male    27    11  40.7
 #> 13:      CE           White Female   261   162  62.1
 #> 14:      CE             White Male   948   612  64.6
 #> ---                                                 
 #> 43:      ME           Asian Female    NA    NA    NA
 #> 44:      ME             Asian Male    77    49  63.6
-#> 45:      ME           Black Female    NA    NA    NA
+#> 45:      ME           Black Female     3     2  66.7
 #> 46:      ME             Black Male    29    19  65.5
 #> 47:      ME        Hispanic Female    12     8  66.7
 #> 48:      ME          Hispanic Male    78    42  53.8
@@ -1224,6 +1221,13 @@ DT
 #> 54:      ME     Other/Unknown Male    81    41  50.6
 #> 55:      ME           White Female   213   134  62.9
 #> 56:      ME             White Male  1587   952  60.0
+```
+
+We can optionally remove all NA rows for tables and charts.
+
+``` r
+
+DT <- na.omit(DT)
 ```
 
 Readers can more readily interpret our charts and tables if the programs
@@ -1238,37 +1242,37 @@ DT[, program := fcase(
   program %like% "ISE", "Industrial/Systems"
 )]
 DT
-#>        program                 people  ever  grad stick
-#>         <char>                 <char> <num> <num> <num>
-#>  1:      Civil           Asian Female    14    10  71.4
-#>  2:      Civil             Asian Male    33    25  75.8
-#>  3:      Civil           Black Female    NA    NA    NA
-#>  4:      Civil             Black Male     8     5  62.5
-#>  5:      Civil        Hispanic Female    13     6  46.2
-#>  6:      Civil          Hispanic Male    66    31  47.0
-#>  7:      Civil   International Female    23    13  56.5
-#>  8:      Civil     International Male    98    55  56.1
-#>  9:      Civil Native American Female    NA    NA    NA
-#> 10:      Civil   Native American Male    NA    NA    NA
-#> 11:      Civil   Other/Unknown Female    NA    NA    NA
-#> 12:      Civil     Other/Unknown Male    27    11  40.7
-#> 13:      Civil           White Female   261   162  62.1
-#> 14:      Civil             White Male   948   612  64.6
-#> ---                                                    
-#> 43: Mechanical           Asian Female    NA    NA    NA
-#> 44: Mechanical             Asian Male    77    49  63.6
-#> 45: Mechanical           Black Female    NA    NA    NA
-#> 46: Mechanical             Black Male    29    19  65.5
-#> 47: Mechanical        Hispanic Female    12     8  66.7
-#> 48: Mechanical          Hispanic Male    78    42  53.8
-#> 49: Mechanical   International Female    20    11  55.0
-#> 50: Mechanical     International Male   176    89  50.6
-#> 51: Mechanical Native American Female    NA    NA    NA
-#> 52: Mechanical   Native American Male    NA    NA    NA
-#> 53: Mechanical   Other/Unknown Female     8     4  50.0
-#> 54: Mechanical     Other/Unknown Male    81    41  50.6
-#> 55: Mechanical           White Female   213   134  62.9
-#> 56: Mechanical             White Male  1587   952  60.0
+#>                program               people  ever  grad stick
+#>                 <char>               <char> <num> <num> <num>
+#>  1:              Civil         Asian Female    14    10  71.4
+#>  2:              Civil           Asian Male    33    25  75.8
+#>  3:              Civil           Black Male     8     5  62.5
+#>  4:              Civil      Hispanic Female    13     6  46.2
+#>  5:              Civil        Hispanic Male    66    31  47.0
+#>  6:              Civil International Female    23    13  56.5
+#>  7:              Civil   International Male    98    55  56.1
+#>  8:              Civil Other/Unknown Female     5     3  60.0
+#>  9:              Civil   Other/Unknown Male    27    11  40.7
+#> 10:              Civil         White Female   261   162  62.1
+#> 11:              Civil           White Male   948   612  64.6
+#> 12:         Electrical         Asian Female    21    12  57.1
+#> 13:         Electrical           Asian Male   122    71  58.2
+#> 14:         Electrical         Black Female     6     3  50.0
+#> ---                                                          
+#> 30: Industrial/Systems   International Male    21    12  57.1
+#> 31: Industrial/Systems         White Female    73    54  74.0
+#> 32: Industrial/Systems           White Male   178   130  73.0
+#> 33:         Mechanical           Asian Male    77    49  63.6
+#> 34:         Mechanical         Black Female     3     2  66.7
+#> 35:         Mechanical           Black Male    29    19  65.5
+#> 36:         Mechanical      Hispanic Female    12     8  66.7
+#> 37:         Mechanical        Hispanic Male    78    42  53.8
+#> 38:         Mechanical International Female    20    11  55.0
+#> 39:         Mechanical   International Male   176    89  50.6
+#> 40:         Mechanical Other/Unknown Female     8     4  50.0
+#> 41:         Mechanical   Other/Unknown Male    81    41  50.6
+#> 42:         Mechanical         White Female   213   134  62.9
+#> 43:         Mechanical           White Male  1587   952  60.0
 ```
 
 ### *Table*
@@ -1286,16 +1290,16 @@ DT_table
 #>  1: Asian Female              Civil  71.4
 #>  2: Asian Female         Electrical  57.1
 #>  3: Asian Female Industrial/Systems  66.7
-#>  4: Asian Female         Mechanical    NA
-#>  5:   Asian Male              Civil  75.8
-#>  6:   Asian Male         Electrical  58.2
+#>  4:   Asian Male              Civil  75.8
+#>  5:   Asian Male         Electrical  58.2
+#>  6:   Asian Male Industrial/Systems  66.7
 #> ---                                      
-#> 51: White Female Industrial/Systems  74.0
-#> 52: White Female         Mechanical  62.9
-#> 53:   White Male              Civil  64.6
-#> 54:   White Male         Electrical  51.8
-#> 55:   White Male Industrial/Systems  73.0
-#> 56:   White Male         Mechanical  60.0
+#> 38: White Female Industrial/Systems  74.0
+#> 39: White Female         Mechanical  62.9
+#> 40:   White Male              Civil  64.6
+#> 41:   White Male         Electrical  51.8
+#> 42:   White Male Industrial/Systems  73.0
+#> 43:   White Male         Mechanical  60.0
 ```
 
 Transform the data to row-record form. The key column `people` remains
@@ -1313,22 +1317,20 @@ DT_table <- dcast(DT_table,
 setnames(DT_table, old = "people", new = "People")
 setkey(DT_table, NULL)
 DT_table
-#>                     People Civil Electrical Industrial/Systems Mechanical
-#>                     <char> <num>      <num>              <num>      <num>
-#>  1:           Asian Female  71.4       57.1               66.7         NA
-#>  2:             Asian Male  75.8       58.2               66.7       63.6
-#>  3:           Black Female    NA         NA               85.7         NA
-#>  4:             Black Male  62.5       58.6               66.7       65.5
-#>  5:        Hispanic Female  46.2         NA                 NA       66.7
-#>  6:          Hispanic Male  47.0       38.6               66.7       53.8
-#>  7:   International Female  56.5       33.3                 NA       55.0
-#>  8:     International Male  56.1       46.2               57.1       50.6
-#>  9: Native American Female    NA         NA                 NA         NA
-#> 10:   Native American Male    NA         NA                 NA         NA
-#> 11:   Other/Unknown Female    NA         NA                 NA       50.0
-#> 12:     Other/Unknown Male  40.7       39.0                 NA       50.6
-#> 13:           White Female  62.1       47.9               74.0       62.9
-#> 14:             White Male  64.6       51.8               73.0       60.0
+#>                   People Civil Electrical Industrial/Systems Mechanical
+#>                   <char> <num>      <num>              <num>      <num>
+#>  1:         Asian Female  71.4       57.1               66.7         NA
+#>  2:           Asian Male  75.8       58.2               66.7       63.6
+#>  3:         Black Female    NA       50.0               85.7       66.7
+#>  4:           Black Male  62.5       58.6               66.7       65.5
+#>  5:      Hispanic Female  46.2       37.5                 NA       66.7
+#>  6:        Hispanic Male  47.0       38.6               66.7       53.8
+#>  7: International Female  56.5       33.3               33.3       55.0
+#>  8:   International Male  56.1       46.2               57.1       50.6
+#>  9: Other/Unknown Female  60.0       42.9                 NA       50.0
+#> 10:   Other/Unknown Male  40.7       39.0                 NA       50.6
+#> 11:         White Female  62.1       47.9               74.0       62.9
+#> 12:           White Male  64.6       51.8               73.0       60.0
 ```
 
 Format the table for publication. An em-dash indicates the number of
@@ -1348,60 +1350,22 @@ DT_table |>
   )
 ```
 
-| People                 | Civil | Electrical | Industrial/Systems | Mechanical |
-|------------------------|-------|------------|--------------------|------------|
-| Asian Female           | 71.4  | 57.1       | 66.7               | —          |
-| Asian Male             | 75.8  | 58.2       | 66.7               | 63.6       |
-| Black Female           | —     | —          | 85.7               | —          |
-| Black Male             | 62.5  | 58.6       | 66.7               | 65.5       |
-| Hispanic Female        | 46.2  | —          | —                  | 66.7       |
-| Hispanic Male          | 47.0  | 38.6       | 66.7               | 53.8       |
-| International Female   | 56.5  | 33.3       | —                  | 55.0       |
-| International Male     | 56.1  | 46.2       | 57.1               | 50.6       |
-| Native American Female | —     | —          | —                  | —          |
-| Native American Male   | —     | —          | —                  | —          |
-| Other/Unknown Female   | —     | —          | —                  | 50.0       |
-| Other/Unknown Male     | 40.7  | 39.0       | —                  | 50.6       |
-| White Female           | 62.1  | 47.9       | 74.0               | 62.9       |
-| White Male             | 64.6  | 51.8       | 73.0               | 60.0       |
-
-Table 1. Engineering program stickiness (%) {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
-
-Alternatively, one could decide to only include rows that have at least
-two values for comparison.
-
-``` r
-
-DT_table <- DT_table[!People %ilike% "Native"]
-DT_table <- DT_table[!People %ilike% "Other/Unknown Female"]
-DT_table <- DT_table[!People %ilike% "Black Female"]
-DT_table |>
-  gt() |>
-  tab_caption("Table 2. Engineering program stickiness (%)") |>
-  tab_options(table.font.size = "small") |>
-  opt_stylize(style = 1, color = "gray") |>
-  sub_missing() |>
-  tab_style(
-    locations = cells_column_labels(columns = everything()),
-    style = list(cell_fill(color = "#c7eae5"))
-  )
-```
-
 | People               | Civil | Electrical | Industrial/Systems | Mechanical |
 |----------------------|-------|------------|--------------------|------------|
 | Asian Female         | 71.4  | 57.1       | 66.7               | —          |
 | Asian Male           | 75.8  | 58.2       | 66.7               | 63.6       |
+| Black Female         | —     | 50.0       | 85.7               | 66.7       |
 | Black Male           | 62.5  | 58.6       | 66.7               | 65.5       |
-| Hispanic Female      | 46.2  | —          | —                  | 66.7       |
+| Hispanic Female      | 46.2  | 37.5       | —                  | 66.7       |
 | Hispanic Male        | 47.0  | 38.6       | 66.7               | 53.8       |
-| International Female | 56.5  | 33.3       | —                  | 55.0       |
+| International Female | 56.5  | 33.3       | 33.3               | 55.0       |
 | International Male   | 56.1  | 46.2       | 57.1               | 50.6       |
+| Other/Unknown Female | 60.0  | 42.9       | —                  | 50.0       |
 | Other/Unknown Male   | 40.7  | 39.0       | —                  | 50.6       |
 | White Female         | 62.1  | 47.9       | 74.0               | 62.9       |
 | White Male           | 64.6  | 51.8       | 73.0               | 60.0       |
 
-Table 2. Engineering program stickiness (%) {.table .gt_table
+Table 1. Engineering program stickiness (%) {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
 
 ### *Chart*
@@ -1409,42 +1373,8 @@ quarto-disable-processing="false" quarto-bootstrap="false"}
 To use
 [`ggplot()`](https://ggplot2.tidyverse.org/reference/ggplot.html), we
 want the data in its original block-record form with one value column
-(stickiness). From the table above we see we have no values for Native
-American students to disseminate so we can omit those rows.
-
-``` r
-
-DT_chart <- copy(DT)
-DT_chart <- DT_chart[!people %ilike% "Native"]
-```
-
-We (optionally) rearrange the order of columns and rows.
-
-``` r
-
-setcolorder(DT_chart, c("people", "program"))
-setkeyv(DT_chart, c("people", "program"))
-setkey(DT_chart, NULL)
-DT_chart
-#>           people            program  ever  grad stick
-#>           <char>             <char> <num> <num> <num>
-#>  1: Asian Female              Civil    14    10  71.4
-#>  2: Asian Female         Electrical    21    12  57.1
-#>  3: Asian Female Industrial/Systems    15    10  66.7
-#>  4: Asian Female         Mechanical    NA    NA    NA
-#>  5:   Asian Male              Civil    33    25  75.8
-#>  6:   Asian Male         Electrical   122    71  58.2
-#> ---                                                  
-#> 43: White Female Industrial/Systems    73    54  74.0
-#> 44: White Female         Mechanical   213   134  62.9
-#> 45:   White Male              Civil   948   612  64.6
-#> 46:   White Male         Electrical   848   439  51.8
-#> 47:   White Male Industrial/Systems   178   130  73.0
-#> 48:   White Male         Mechanical  1587   952  60.0
-```
-
-With one quantitative variable (stickiness) for every combination of the
-levels of two categorical variables (program and people), these are
+(stickiness). With one quantitative variable for every combination of
+the levels of two categorical variables (program and people), these are
 *multiway data* ([Cleveland 1993](#ref-Cleveland:1993)). How one orders
 the categorical variables is critical for visualizing effects.
 
@@ -1456,6 +1386,7 @@ to the data frame, one column per category.
 
 ``` r
 
+DT_chart <- copy(DT)
 DT_chart <- order_multiway(DT_chart,
   quantity = "stick",
   categories = c("people", "program"),
@@ -1464,21 +1395,21 @@ DT_chart <- order_multiway(DT_chart,
 )
 DT_chart[, c("ever", "grad") := NULL]
 DT_chart
-#>           people            program stick people_metric program_metric
-#>           <fctr>             <fctr> <num>         <num>          <num>
-#>  1: Asian Female              Civil  71.4          64.0           62.4
-#>  2: Asian Female         Electrical  57.1          64.0           50.3
-#>  3: Asian Female Industrial/Systems  66.7          64.0           71.5
-#>  4: Asian Female         Mechanical    NA          64.0           59.1
-#>  5:   Asian Male              Civil  75.8          62.8           62.4
-#>  6:   Asian Male         Electrical  58.2          62.8           50.3
+#>        program               people stick people_metric program_metric
+#>         <fctr>               <fctr> <num>         <num>          <num>
+#>  1:      Civil         Asian Female  71.4          64.0           62.4
+#>  2:      Civil           Asian Male  75.8          62.8           62.4
+#>  3:      Civil           Black Male  62.5          62.7           62.4
+#>  4:      Civil      Hispanic Female  46.2          51.5           62.4
+#>  5:      Civil        Hispanic Male  47.0          48.5           62.4
+#>  6:      Civil International Female  56.5          46.1           62.4
 #> ---                                                                   
-#> 43: White Female Industrial/Systems  74.0          61.1           71.5
-#> 44: White Female         Mechanical  62.9          61.1           59.1
-#> 45:   White Male              Civil  64.6          59.9           62.4
-#> 46:   White Male         Electrical  51.8          59.9           50.3
-#> 47:   White Male Industrial/Systems  73.0          59.9           71.5
-#> 48:   White Male         Mechanical  60.0          59.9           59.1
+#> 38: Mechanical International Female  55.0          46.1           59.2
+#> 39: Mechanical   International Male  50.6          50.2           59.2
+#> 40: Mechanical Other/Unknown Female  50.0          50.0           59.2
+#> 41: Mechanical   Other/Unknown Male  50.6          45.6           59.2
+#> 42: Mechanical         White Female  62.9          61.1           59.2
+#> 43: Mechanical           White Male  60.0          59.9           59.2
 ```
 
 Format the chart for publication. No arguments for ordering the data are

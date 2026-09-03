@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9029</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9030</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -120,8 +120,8 @@ typical workflow, as follows:</p>
 <p>Refining a population and records</p>
 <ul>
 <li>
-<code><a href="../reference/undergrad_focus.html">undergrad_focus()</a></code> identifies terms to include prior to
-a first degree.</li>
+<code><a href="../reference/qualification_level.html">qualification_level()</a></code> identifies terms to include prior
+to a first degree.</li>
 <li>
 <code><a href="../reference/timely_term.html">timely_term()</a></code> estimates timely completion terms.</li>
 <li>
@@ -233,8 +233,8 @@ that wraps base <code><a href="https://rdrr.io/r/utils/str.html" class="external
 <span><span class="co">#&gt;  $ degree     : chr  "Bachelor of Science in Electrical Engineering" "Bachelo"..</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="undergrad_focus">
-<code>undergrad_focus()</code><a class="anchor" aria-label="anchor" href="#undergrad_focus"></a>
+<h3 id="qualification_level">
+<code>qualification_level()</code><a class="anchor" aria-label="anchor" href="#qualification_level"></a>
 </h3>
 <p><em>Identify terms to include prior to a first degree.</em> Applies
 to data tables with a term variable:</p>
@@ -246,32 +246,32 @@ to data tables with a term variable:</p>
 <li>
 <code>term_degree</code> in the <code>degree</code> table</li>
 </ul>
-<p>Applying <code><a href="../reference/undergrad_focus.html">undergrad_focus()</a></code> to the <code>term</code>
+<p>Applying <code><a href="../reference/qualification_level.html">qualification_level()</a></code> to the <code>term</code>
 table, for example, we display selected columns from the result. The
 <code>bacc</code> (baccalaureate) column contains the student’s first
-degree term (if any). The <code>focus</code> column labels each term as
-focused on “undergrad” or “post-bacc” study, depending on whether a term
-is before or after the first degree.</p>
+degree term (if any). The <code>qual_level</code> column labels each
+term as focused on “undergrad” or “post-bacc” study, depending on
+whether a term is before or after the first degree.</p>
 <p>labels terms before a first degree “undergrad”; later terms are
 labeled “post-bacc.” Post-baccalaureate terms are typically excluded
 from a study.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/undergrad_focus.html">undergrad_focus</a></span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">focus</span><span class="op">)</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span>, <span class="va">bacc</span>, <span class="va">focus</span><span class="op">)</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qualification_level.html">qualification_level</a></span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">qual_level</span><span class="op">)</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span>, <span class="va">bacc</span>, <span class="va">qual_level</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
-<span><span class="co">#&gt;                   mcid   term   bacc     focus</span></span>
-<span><span class="co">#&gt;                 &lt;char&gt; &lt;char&gt; &lt;char&gt;    &lt;char&gt;</span></span>
-<span><span class="co">#&gt;      1: MCID3111142225  19881  19881 undergrad</span></span>
-<span><span class="co">#&gt;      2: MCID3111142283  19881   &lt;NA&gt; undergrad</span></span>
-<span><span class="co">#&gt;      3: MCID3111142283  19883   &lt;NA&gt; undergrad</span></span>
-<span><span class="co">#&gt;      4: MCID3111142283  19885   &lt;NA&gt; undergrad</span></span>
-<span><span class="co">#&gt;      5: MCID3111142283  19891   &lt;NA&gt; undergrad</span></span>
-<span><span class="co">#&gt;     ---                                       </span></span>
-<span><span class="co">#&gt; 639911: MCID3112760109  20174  20153 post-bacc</span></span>
-<span><span class="co">#&gt; 639912: MCID3112760109  20181  20153 post-bacc</span></span>
-<span><span class="co">#&gt; 639913: MCID3112760306  20181  20174 post-bacc</span></span>
-<span><span class="co">#&gt; 639914: MCID3112768322  20181  20174 post-bacc</span></span>
-<span><span class="co">#&gt; 639915: MCID3112773810  20181  20174 post-bacc</span></span></code></pre></div>
+<span><span class="co">#&gt;                   mcid   term   bacc qual_level</span></span>
+<span><span class="co">#&gt;                 &lt;char&gt; &lt;char&gt; &lt;char&gt;     &lt;char&gt;</span></span>
+<span><span class="co">#&gt;      1: MCID3111142225  19881  19881  undergrad</span></span>
+<span><span class="co">#&gt;      2: MCID3111142283  19881   &lt;NA&gt;  undergrad</span></span>
+<span><span class="co">#&gt;      3: MCID3111142283  19883   &lt;NA&gt;  undergrad</span></span>
+<span><span class="co">#&gt;      4: MCID3111142283  19885   &lt;NA&gt;  undergrad</span></span>
+<span><span class="co">#&gt;      5: MCID3111142283  19891   &lt;NA&gt;  undergrad</span></span>
+<span><span class="co">#&gt;     ---                                        </span></span>
+<span><span class="co">#&gt; 639911: MCID3112760109  20174  20153  post-bacc</span></span>
+<span><span class="co">#&gt; 639912: MCID3112760109  20181  20153  post-bacc</span></span>
+<span><span class="co">#&gt; 639913: MCID3112760306  20181  20174  post-bacc</span></span>
+<span><span class="co">#&gt; 639914: MCID3112768322  20181  20174  post-bacc</span></span>
+<span><span class="co">#&gt; 639915: MCID3112773810  20181  20174  post-bacc</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="select_basic_cols">
@@ -733,9 +733,9 @@ memory).</p>
 <span></span>
 <span><span class="co"># demonstrate that memory addresses are different</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/address.html" class="external-link">address</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "000001fedbf32e60"</span></span>
+<span><span class="co">#&gt; [1] "0000025a06f24060"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/address.html" class="external-link">address</a></span><span class="op">(</span><span class="va">student_source</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "000001fedc75a660"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "0000025a0882a660"</span></span></code></pre></div>
 <p>Then we can use the shorter names such as <code>term</code> and
 <code>degree</code> as we work. The shorter names are also the default
 values for arguments in several midfieldr functions.</p>
@@ -961,20 +961,20 @@ population, we use <code>population</code> or unique IDs from
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="undergrad_focus-1">
-<code>undergrad_focus()</code><a class="anchor" aria-label="anchor" href="#undergrad_focus-1"></a>
+<h2 id="qualification_level-1">
+<code>qualification_level()</code><a class="anchor" aria-label="anchor" href="#qualification_level-1"></a>
 </h2>
 <p><em>Identify rows of post-baccalaureate terms to exclude.</em></p>
 <p>In most cases, we are not generally interested in academic terms
 beyond the first degree term, so we use the results of this function to
 exclude post-first-degree terms from the source data.</p>
-<p><code><a href="../reference/undergrad_focus.html">undergrad_focus()</a></code> identifies terms later than the first
-baccalaureate, if any.</p>
+<p><code><a href="../reference/qualification_level.html">qualification_level()</a></code> identifies terms later than the
+first baccalaureate, if any.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/undergrad_focus.html">undergrad_focus</a></span><span class="op">(</span><span class="va">term_source</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/undergrad_focus.html">undergrad_focus</a></span><span class="op">(</span><span class="va">degree_source</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span></code></pre></div>
-<p><code><a href="../reference/undergrad_focus.html">undergrad_focus()</a></code> adds a column indicating the bracket a
-term belongs to with respect to the first degree term.</p>
+<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qualification_level.html">qualification_level</a></span><span class="op">(</span><span class="va">term_source</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qualification_level.html">qualification_level</a></span><span class="op">(</span><span class="va">degree_source</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="../reference/qualification_level.html">qualification_level()</a></code> adds a column indicating the
+bracket a term belongs to with respect to the first degree term.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   531419 obs. of  7 variables:</span></span>
@@ -984,19 +984,19 @@ term belongs to with respect to the first degree term.</p>
 <span><span class="co">#&gt;  $ level      : chr  "01 First-year" "01 First-year" "02 Second-year" "02 Sec"..</span></span>
 <span><span class="co">#&gt;  $ term       : chr  "19883" "19883" "19885" "19893" ...</span></span>
 <span><span class="co">#&gt;  $ bacc       : chr  "19913" "19903" "19903" "19903" ...</span></span>
-<span><span class="co">#&gt;  $ focus      : chr  "undergrad" "undergrad" "undergrad" "undergrad" ...</span></span></code></pre></div>
+<span><span class="co">#&gt;  $ qual_level : chr  "undergrad" "undergrad" "undergrad" "undergrad" ...</span></span></code></pre></div>
 <p>The possible bracket values are given by,</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">term</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">focus</span><span class="op">)</span>, na.last <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">term</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">qual_level</span><span class="op">)</span>, na.last <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1] "post-bacc" "undergrad"</span></span></code></pre></div>
 <p>We filter to exclude all terms labeled “post-bacc” and drop the
 temporary columns.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="st">"undergrad"</span>, on <span class="op">=</span> <span class="st">"focus"</span><span class="op">]</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="st">"undergrad"</span>, on <span class="op">=</span> <span class="st">"focus"</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="st">"undergrad"</span>, on <span class="op">=</span> <span class="st">"qual_level"</span><span class="op">]</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="st">"undergrad"</span>, on <span class="op">=</span> <span class="st">"qual_level"</span><span class="op">]</span></span>
 <span></span>
-<span><span class="va">term</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc"</span>, <span class="st">"focus"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">degree</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc"</span>, <span class="st">"focus"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">term</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc"</span>, <span class="st">"qual_level"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">degree</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc"</span>, <span class="st">"qual_level"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   525446 obs. of  5 variables:</span></span>

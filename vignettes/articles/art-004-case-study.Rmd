@@ -194,36 +194,36 @@ make_table(Ncompare, "Table 1(b). Number of observations")
 
 
 
-### *Undergraduate focus*
+### *Qualification level*
 
-We are interested in *undergraduate* records: academic terms before a student's  first degree. We use `undergrad_focus()` to categorize terms as "undergrad" for terms before the first degree or "post-bacc" (post-baccalaureate) for terms after the first degree.
+We are interested in *undergraduate* records: academic terms before a student's  first degree. We use `qualification_level()` to categorize terms as "undergrad" for terms before the first degree or "post-bacc" (post-baccalaureate) for terms after the first degree.
 
 ```{r}
-term <- undergrad_focus(term, midf_table = degree)
-degree <- undergrad_focus(degree, midf_table = degree)
+term <- qualification_level(term, midf_table = degree)
+degree <- qualification_level(degree, midf_table = degree)
 
-term[order(-focus), .(mcid, term, bacc, focus)]
+term[order(-qual_level), .(mcid, term, bacc, qual_level)]
 
-degree[order(-focus), .(mcid, term_degree, bacc, focus)]
+degree[order(-qual_level), .(mcid, term_degree, bacc, qual_level)]
 ```
 
 *Summary check.* &nbsp; Summarize the numbers of students in each category.
 
 ```{r}
-term[, .N, by = c("focus")][order(-N)]
+term[, .N, by = c("qual_level")][order(-N)]
 
-degree[, .N, by = c("focus")][order(-N)]
+degree[, .N, by = c("qual_level")][order(-N)]
 ```
 
-We keep the terms with an undergraduate focus. 
+We keep the terms at the undergraduate level.  
 
 ```{r}
-term <- term[focus == "undergrad"]
-degree <- degree[focus == "undergrad"]
+term <- term[qual_level == "undergrad"]
+degree <- degree[qual_level == "undergrad"]
 
 # drop temporary columns
-term[, c("bacc", "focus") := NULL]
-degree[, c("bacc", "focus") := NULL]
+term[, c("bacc", "qual_level") := NULL]
+degree[, c("bacc", "qual_level") := NULL]
 ```
 
 We copy the current data tables to reserve them as our "baseline" records. From this point forward, anytime we need a fresh copy of any of the data tables, we copy the `*_baseline` version. Anytime we need a starting population, we copy  `population.`
@@ -403,13 +403,48 @@ DT <- copy(population)
 DT
 ```
 
+### *Filter for timely completion*
+
+We want to retain timely graduates only. We start by obtaining the timely completion term then selecting the variables we need to go forward. The `term` table here is identical to `term_baseline.`
+
+```{r}
+DT <- timely_term(DT, midf_table = term)
+DT <- DT[, .(mcid, timely_term)]
+DT
+```
+
+`completion_status()` builds on the output from `timely_term()` to label rows to indicate whether a student completes a degree timely or late compared to their timely completion term (or NA for non-completion). The `degree` table here is identical to `degree_baseline.`
+
+```{r}
+DT <- completion_status(DT, midf_table = degree)
+DT
+```
+
+*Summary check.* &nbsp; Numbers of students in each category.
+
+```{r}
+DT[, .N, by = c("completion_status")][order(-completion_status)]
+```
+
+We retain the rows labeled "timely", drop all the columns except ID, and ensure unique rows. 
+
+```{r}
+DT <- DT[completion_status == "timely", .(mcid)]
+DT <- unique(DT)
+DT
+```
 
 
 
 
 ### *Filter by program*
 
-We left-join the CIP column from the baseline `degree` table, matching on `mcid.` NAs are introduced for students with no degree.
+We left-join the CIP column from the baseline `degree` table, matching on `mcid.`
+
+```{r}
+#| echo: false
+prev_nrows <- nrow(DT)
+```
 
 ```{r}
 degree_cip <- degree[, .(mcid, cip6)]
@@ -417,17 +452,16 @@ DT <- degree_cip[DT, on = "mcid"]
 DT
 ```
 
+```{r}
+#| echo: false
+new_nrows <- nrow(DT)
+```
 
-
-*Summary check.* &nbsp; That the number of rows above has increased indicates that some students have more than one degree in their first degree term. To check, we count how many students completed $\small N$ degrees.  
+*Summary check.* &nbsp; That the number of rows above has increased from `r prev_nrows` to `r new_nrows` indicates that some students have more than one degree in their first degree term. To check, we count how many students completed $\small N$ degrees.  
 
 ```{r}
-x <- copy(DT)
-x[, deg := ifelse(is.na(cip6), 0, 1)]
-x <- x[, .(N_degrees = sum(deg)), by = "mcid"]
-x <- x[, .(N_students = .N), by = "N_degrees"][order(N_degrees)]
-
-x
+x <- DT[, .(N_degrees = .N), by = "mcid"]
+x[, .(N_students = .N), by = "N_degrees"][order(N_degrees)]
 ```
 
 We use an inner-join with our `programs` data frame to retain only the rows that have matching CIP codes in both tables. 
@@ -448,36 +482,6 @@ DT
 
 
 
-### *Filter for timely completion*
-
-We want to retain timely graduates only. We start by obtaining the timely completion term then selecting the variables we need to go forward. The `term` table here is identical to `term_baseline.`
-
-```{r}
-DT <- timely_term(DT, midf_table = term)
-DT <- DT[, .(mcid, program, timely_term)]
-DT
-```
-
-`completion_status()` builds on the output from `timely_term()` to label rows to indicate whether a student completes a degree timely or late compared to their timely completion term (or NA for non-completion).
-
-```{r}
-DT <- completion_status(DT, midf_table = degree)
-DT
-```
-
-*Summary check.* &nbsp; Numbers of students in each category. In this case, all students completed, thus no NAs.
-
-```{r}
-DT[, .N, by = c("completion_status")][order(-N)]
-```
-
-We retain the rows labeled "timely", drop all the columns except ID and program, and ensure unique rows. 
-
-```{r}
-DT <- DT[completion_status == "timely", .(mcid, program)]
-DT <- unique(DT)
-DT
-```
 
 ### *Bloc of timely graduates*
 
@@ -601,7 +605,6 @@ DT
 
 
 
-
 ### *Reshape*
 
 ```{r}
@@ -675,11 +678,17 @@ options(datatable.print.nrows = 15)
 DT[grad <= 3][order(grad)]
 ```
 
-When dealing with the full MIDFIELD research data, we typically omit data from  rows in which $\small N_\mathrm{grad}\leq 10$, but for these practice data we illustrate the process using $\small N_\mathrm{grad}\leq 3$. We convert the values to NA. 
+When dealing with the full MIDFIELD research data, we typically omit data from  rows in which $\small N_\mathrm{grad}\leq 10$, but for these practice data we illustrate the process using $\small N_\mathrm{grad}\leq 1$. We convert the values to NA. 
 
 ```{r}
-DT[grad <= 3, c("ever", "grad", "stick") := NA_real_]
+DT[grad <= 1, c("ever", "grad", "stick") := NA_real_]
 DT
+```
+
+We can optionally remove all NA rows for tables and charts. 
+
+```{r}
+DT <- na.omit(DT)
 ```
 
 Readers can more readily interpret our charts and tables if the programs are unabbreviated. 
@@ -741,26 +750,6 @@ DT_table |>
   )
 ```
 
-Alternatively, one could decide to only include rows that have at least two values for comparison. 
-
-```{r}
-DT_table <- DT_table[!People %ilike% "Native"]
-DT_table <- DT_table[!People %ilike% "Other/Unknown Female"]
-DT_table <- DT_table[!People %ilike% "Black Female"]
-DT_table |>
-  gt() |>
-  tab_caption("Table 2. Engineering program stickiness (%)") |>
-  tab_options(table.font.size = "small") |>
-  opt_stylize(style = 1, color = "gray") |>
-  sub_missing() |>
-  tab_style(
-    locations = cells_column_labels(columns = everything()),
-    style = list(cell_fill(color = "#c7eae5"))
-  )
-```
-
-
-
 ```{r}
 #| echo: false
 options(datatable.print.nrows = 5)
@@ -769,27 +758,12 @@ options(datatable.print.nrows = 5)
 
 ### *Chart*
 
-To use `ggplot()`, we want the data in its original block-record form with one value column (stickiness).  From the table above we see we have no values for Native American students to disseminate so we can omit those rows. 
-
-```{r}
-DT_chart <- copy(DT)
-DT_chart <- DT_chart[!people %ilike% "Native"]
-```
-
-We (optionally) rearrange the order of columns and rows.
-
-```{r}
-setcolorder(DT_chart, c("people", "program"))
-setkeyv(DT_chart, c("people", "program"))
-setkey(DT_chart, NULL)
-DT_chart
-```
-
-With one quantitative variable (stickiness) for every combination of the levels of two categorical variables (program and people), these are *multiway data* [@Cleveland:1993]. How one orders the categorical variables is critical for visualizing effects. 
+To use `ggplot()`, we want the data in its original block-record form with one value column (stickiness). With one quantitative variable for every combination of the levels of two categorical variables (program and people), these are *multiway data* [@Cleveland:1993]. How one orders the categorical variables is critical for visualizing effects. 
 
 `order_multiway()` converts the two categorical variables to ordered factors to support the ordering of rows and panels in the chart. Ordering is based on a calculation of aggregate stickiness values reported in two columns added to the data frame, one column per category. 
 
 ```{r}
+DT_chart <- copy(DT)
 DT_chart <- order_multiway(DT_chart,
   quantity = "stick",
   categories = c("people", "program"),

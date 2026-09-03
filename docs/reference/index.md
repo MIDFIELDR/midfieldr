@@ -24,12 +24,12 @@
   : Order multiway categories
 - [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
   : Prepare FYE data for imputation
+- [`qualification_level()`](https://midfieldr.github.io/midfieldr/reference/qualification_level.md)
+  : Categorize qualification level by term
 - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
   : Choose columns of student records
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
   : Determine timely completion terms
-- [`undergrad_focus()`](https://midfieldr.github.io/midfieldr/reference/undergrad_focus.md)
-  : Identify terms after the first completion term
 
 ## Utility
 
