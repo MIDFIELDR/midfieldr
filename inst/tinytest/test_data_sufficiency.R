@@ -87,22 +87,22 @@ test_data_sufficiency <- function() {
     DT <- data_sufficiency(dframe, term)
     DT <- unique(DT)
     setnames(DT, 
-             old = c("data_sufficiency"), 
+             old = c("sufficiency"), 
              new = c("ds"))
     
-    expect_equal("include", DT[mcid %like% "A1", (ds)])
-    expect_equal("include", DT[mcid %like% "A2", (ds)])
-    expect_equal("include", DT[mcid %like% "A3", (ds)])
-    expect_equal("include", DT[mcid %like% "A4", (ds)])
-    expect_equal("exclude-upper", DT[mcid %like% "B1", (ds)])
-    expect_equal("exclude-upper", DT[mcid %like% "B2", (ds)])
-    expect_equal("exclude-upper", DT[mcid %like% "B3", (ds)])
-    expect_equal("exclude-lower", DT[mcid %like% "C1", (ds)])
-    expect_equal("exclude-lower", DT[mcid %like% "C2", (ds)])
+    expect_equal("satisfied", DT[mcid %like% "A1", (ds)])
+    expect_equal("satisfied", DT[mcid %like% "A2", (ds)])
+    expect_equal("satisfied", DT[mcid %like% "A3", (ds)])
+    expect_equal("satisfied", DT[mcid %like% "A4", (ds)])
+    expect_equal("fail-upper", DT[mcid %like% "B1", (ds)])
+    expect_equal("fail-upper", DT[mcid %like% "B2", (ds)])
+    expect_equal("fail-upper", DT[mcid %like% "B3", (ds)])
+    expect_equal("fail-lower", DT[mcid %like% "C1", (ds)])
+    expect_equal("fail-lower", DT[mcid %like% "C2", (ds)])
     
     # correct columns in place
     dframe_vars <- c("mcid", "entry_term", "timely_term")
-    added_vars  <- c("data_range", "data_sufficiency")
+    added_vars  <- c("data_range", "sufficiency")
     return_vars <- c(dframe_vars, added_vars)
     DT <- data_sufficiency(dframe, term)
     expect_equal(return_vars, colnames(DT))
@@ -137,7 +137,7 @@ test_data_sufficiency <- function() {
     x <- copy(dframe)
     x[, idx := as.character(.I)]
     y <- data_sufficiency(x, term)
-    expect_equal("include", DT[mcid %like% "A1", (data_sufficiency)])
+    expect_equal("satisfied", DT[mcid %like% "A1", (sufficiency)])
     
     # existing names that match internals protected
     expect_equal(x[["idx"]], y[["idx"]])

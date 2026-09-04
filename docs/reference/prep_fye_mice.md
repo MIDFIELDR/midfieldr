@@ -131,6 +131,13 @@ Notes:
 
 ``` r
 library(data.table)
+#> data.table 1.18.4 using 8 threads (see ?getDTthreads).  
+#> Latest news: r-datatable.com
+#> 
+#> Attaching package: ‘data.table’
+#> The following object is masked from ‘package:base’:
+#> 
+#>     %notin%
 
 # Subset student and term data using selected IDs
 IDs <- c("MCID3112319668", "MCID3112214437", "MCID3112328548", 

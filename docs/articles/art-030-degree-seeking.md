@@ -104,7 +104,7 @@ sufficiency](https://midfieldr.github.io/midfieldr/articles/art-020-data-suffici
 # Filter for data sufficiency, output unique IDs
 DT <- timely_term(DT, term)
 DT <- data_sufficiency(DT, term)
-DT <- DT[data_sufficiency == "include", .(mcid)]
+DT <- DT[sufficiency == "satisfied", .(mcid)]
 DT <- unique(DT)
 ```
 

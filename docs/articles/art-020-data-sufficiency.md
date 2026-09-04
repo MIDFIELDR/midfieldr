@@ -499,15 +499,15 @@ DT <- DT[, .(mcid, entry_term, timely_term)]
 # Add data sufficiency column and supporting variables
 DT <- data_sufficiency(DT, term)
 DT
-#>                  mcid entry_term timely_term  data_range data_sufficiency
-#>                <char>     <char>      <char>      <char>           <char>
-#>     1: MCID3111142225      19881       19933 19881-20181    exclude-lower
-#>     2: MCID3111142283      19881       19933 19881-20096    exclude-lower
-#>     3: MCID3111142290      19881       19933 19881-20096    exclude-lower
-#>    ---                                                                   
-#> 97553: MCID3112898894      20181       20233 19881-20181    exclude-upper
-#> 97554: MCID3112898895      20181       20233 19881-20181    exclude-upper
-#> 97555: MCID3112898940      20181       20233 19881-20181    exclude-upper
+#>                  mcid entry_term timely_term  data_range sufficiency
+#>                <char>     <char>      <char>      <char>      <char>
+#>     1: MCID3111142225      19881       19933 19881-20181  fail-lower
+#>     2: MCID3111142283      19881       19933 19881-20096  fail-lower
+#>     3: MCID3111142290      19881       19933 19881-20096  fail-lower
+#>    ---                                                              
+#> 97553: MCID3112898894      20181       20233 19881-20181  fail-upper
+#> 97554: MCID3112898895      20181       20233 19881-20181  fail-upper
+#> 97555: MCID3112898940      20181       20233 19881-20181  fail-upper
 ```
 
 Similar to the details described in the previous section,
@@ -541,9 +541,9 @@ the 2015 upper-limit exclusion does not apply.
 
 # Display one student by ID
 DT[mcid == "MCID3112785480"]
-#>              mcid entry_term timely_term  data_range data_sufficiency
-#>            <char>     <char>      <char>      <char>           <char>
-#> 1: MCID3112785480      20071       20123 19901-20154          include
+#>              mcid entry_term timely_term  data_range sufficiency
+#>            <char>     <char>      <char>      <char>      <char>
+#> 1: MCID3112785480      20071       20123 19901-20154   satisfied
 ```
 
 *Example 4.*   Exemplifies “Student B” in Figure 1. The student attends
@@ -556,9 +556,9 @@ upper-limit exclusion does apply.
 
 # Display one student by ID
 DT[mcid == "MCID3111170322"]
-#>              mcid entry_term timely_term  data_range data_sufficiency
-#>            <char>     <char>      <char>      <char>           <char>
-#> 1: MCID3111170322      20133       20191 19881-20181    exclude-upper
+#>              mcid entry_term timely_term  data_range sufficiency
+#>            <char>     <char>      <char>      <char>      <char>
+#> 1: MCID3111170322      20133       20191 19881-20181  fail-upper
 ```
 
 *Example 5.*   Exemplifies “Student C” in Figure 2. The student attends
@@ -569,9 +569,9 @@ term is Fall 1988 so the 1988 lower-limit exclusion applies.
 
 # Display one student by ID
 DT[mcid == "MCID3112056754"]
-#>              mcid entry_term timely_term  data_range data_sufficiency
-#>            <char>     <char>      <char>      <char>           <char>
-#> 1: MCID3112056754      19881       19933 19881-20096    exclude-lower
+#>              mcid entry_term timely_term  data_range sufficiency
+#>            <char>     <char>      <char>      <char>      <char>
+#> 1: MCID3112056754      19881       19933 19881-20096  fail-lower
 ```
 
 ## References

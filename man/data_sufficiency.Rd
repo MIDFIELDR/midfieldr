@@ -27,8 +27,8 @@ The new columns added are:
 \item \code{data_range}   Character. Institution data range, encoded
 \verb{YYYYT-YYYYT,} indicating the institution's first and last term in the
 database. Extracted from \code{midf_table.}
-\item \code{data_sufficiency}   Character. Possible values are "include",
-"exclude-lower," and "exclude-upper."
+\item \code{sufficiency}   Character. Data sufficiency results.
+Possible values are "satisfied", "fail-lower," and "fail-upper."
 }
 }
 }
@@ -82,7 +82,7 @@ x
 data_sufficiency(x, midf_table = term)
 
 # Typical application retains "include" rows only
-x[data_sufficiency == "include"]
+x[sufficiency == "satisfied"]
 }
 \references{
 R. Layton, R. Long, M. Ohland, M. Orr, and S. Lord (2026), "Data sufficiency,"  \url{https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.html}

@@ -20,4 +20,4 @@ x
 completion_status(x, midf_table = degree)
 
 # Typical application retains "timely" rows only
-x[completion_status == "timely"]
+x[completion == "timely"]

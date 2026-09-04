@@ -37,8 +37,8 @@ Data frame with the following properties:
     `YYYYT-YYYYT,` indicating the institution's first and last term in
     the database. Extracted from `midf_table.`
 
-  - `data_sufficiency`   Character. Possible values are "include",
-    "exclude-lower," and "exclude-upper."
+  - `sufficiency`   Character. Data sufficiency results. Possible values
+    are "satisfied", "fail-lower," and "fail-upper."
 
 ## Details
 
@@ -125,55 +125,55 @@ x
 # Add data sufficiency columns
 x <- data_sufficiency(x, midf_table = term)
 x
-#>               mcid entry_term timely_term  data_range data_sufficiency
-#>             <char>     <char>      <char>      <char>           <char>
-#>  1: MCID3111169729      19881       19933 19881-20181    exclude-lower
-#>  2: MCID3111170852      19881       19933 19881-20181    exclude-lower
-#>  3: MCID3111173999      19881       19933 19881-20181    exclude-lower
-#>  4: MCID3111257807      19901       19953 19881-20181          include
-#>  5: MCID3111258275      19901       19953 19881-20181          include
-#>  6: MCID3111258347      19901       19953 19881-20181          include
-#>  7: MCID3111259642      19901       19953 19901-20153    exclude-lower
-#>  8: MCID3111262210      19901       19953 19881-20181          include
-#>  9: MCID3111265287      19901       19953 19881-20181          include
-#> 10: MCID3111269576      19901       19953 19881-20181          include
-#> 11: MCID3111272691      19901       19953 19881-20181          include
-#> 12: MCID3111272880      19901       19953 19881-20181          include
-#> 13: MCID3111277081      19903       19961 19881-20181          include
-#> 14: MCID3112751130      20151       20203 19881-20181    exclude-upper
-#> 15: MCID3112754537      20151       20203 19881-20181    exclude-upper
+#>               mcid entry_term timely_term  data_range sufficiency
+#>             <char>     <char>      <char>      <char>      <char>
+#>  1: MCID3111169729      19881       19933 19881-20181  fail-lower
+#>  2: MCID3111170852      19881       19933 19881-20181  fail-lower
+#>  3: MCID3111173999      19881       19933 19881-20181  fail-lower
+#>  4: MCID3111257807      19901       19953 19881-20181   satisfied
+#>  5: MCID3111258275      19901       19953 19881-20181   satisfied
+#>  6: MCID3111258347      19901       19953 19881-20181   satisfied
+#>  7: MCID3111259642      19901       19953 19901-20153  fail-lower
+#>  8: MCID3111262210      19901       19953 19881-20181   satisfied
+#>  9: MCID3111265287      19901       19953 19881-20181   satisfied
+#> 10: MCID3111269576      19901       19953 19881-20181   satisfied
+#> 11: MCID3111272691      19901       19953 19881-20181   satisfied
+#> 12: MCID3111272880      19901       19953 19881-20181   satisfied
+#> 13: MCID3111277081      19903       19961 19881-20181   satisfied
+#> 14: MCID3112751130      20151       20203 19881-20181  fail-upper
+#> 15: MCID3112754537      20151       20203 19881-20181  fail-upper
 
 # If you repeat, the new columns are overwritten
 data_sufficiency(x, midf_table = term)
-#>               mcid entry_term timely_term  data_range data_sufficiency
-#>             <char>     <char>      <char>      <char>           <char>
-#>  1: MCID3111169729      19881       19933 19881-20181    exclude-lower
-#>  2: MCID3111170852      19881       19933 19881-20181    exclude-lower
-#>  3: MCID3111173999      19881       19933 19881-20181    exclude-lower
-#>  4: MCID3111257807      19901       19953 19881-20181          include
-#>  5: MCID3111258275      19901       19953 19881-20181          include
-#>  6: MCID3111258347      19901       19953 19881-20181          include
-#>  7: MCID3111259642      19901       19953 19901-20153    exclude-lower
-#>  8: MCID3111262210      19901       19953 19881-20181          include
-#>  9: MCID3111265287      19901       19953 19881-20181          include
-#> 10: MCID3111269576      19901       19953 19881-20181          include
-#> 11: MCID3111272691      19901       19953 19881-20181          include
-#> 12: MCID3111272880      19901       19953 19881-20181          include
-#> 13: MCID3111277081      19903       19961 19881-20181          include
-#> 14: MCID3112751130      20151       20203 19881-20181    exclude-upper
-#> 15: MCID3112754537      20151       20203 19881-20181    exclude-upper
+#>               mcid entry_term timely_term  data_range sufficiency
+#>             <char>     <char>      <char>      <char>      <char>
+#>  1: MCID3111169729      19881       19933 19881-20181  fail-lower
+#>  2: MCID3111170852      19881       19933 19881-20181  fail-lower
+#>  3: MCID3111173999      19881       19933 19881-20181  fail-lower
+#>  4: MCID3111257807      19901       19953 19881-20181   satisfied
+#>  5: MCID3111258275      19901       19953 19881-20181   satisfied
+#>  6: MCID3111258347      19901       19953 19881-20181   satisfied
+#>  7: MCID3111259642      19901       19953 19901-20153  fail-lower
+#>  8: MCID3111262210      19901       19953 19881-20181   satisfied
+#>  9: MCID3111265287      19901       19953 19881-20181   satisfied
+#> 10: MCID3111269576      19901       19953 19881-20181   satisfied
+#> 11: MCID3111272691      19901       19953 19881-20181   satisfied
+#> 12: MCID3111272880      19901       19953 19881-20181   satisfied
+#> 13: MCID3111277081      19903       19961 19881-20181   satisfied
+#> 14: MCID3112751130      20151       20203 19881-20181  fail-upper
+#> 15: MCID3112754537      20151       20203 19881-20181  fail-upper
 
 # Typical application retains "include" rows only
-x[data_sufficiency == "include"]
-#>              mcid entry_term timely_term  data_range data_sufficiency
-#>            <char>     <char>      <char>      <char>           <char>
-#> 1: MCID3111257807      19901       19953 19881-20181          include
-#> 2: MCID3111258275      19901       19953 19881-20181          include
-#> 3: MCID3111258347      19901       19953 19881-20181          include
-#> 4: MCID3111262210      19901       19953 19881-20181          include
-#> 5: MCID3111265287      19901       19953 19881-20181          include
-#> 6: MCID3111269576      19901       19953 19881-20181          include
-#> 7: MCID3111272691      19901       19953 19881-20181          include
-#> 8: MCID3111272880      19901       19953 19881-20181          include
-#> 9: MCID3111277081      19903       19961 19881-20181          include
+x[sufficiency == "satisfied"]
+#>              mcid entry_term timely_term  data_range sufficiency
+#>            <char>     <char>      <char>      <char>      <char>
+#> 1: MCID3111257807      19901       19953 19881-20181   satisfied
+#> 2: MCID3111258275      19901       19953 19881-20181   satisfied
+#> 3: MCID3111258347      19901       19953 19881-20181   satisfied
+#> 4: MCID3111262210      19901       19953 19881-20181   satisfied
+#> 5: MCID3111265287      19901       19953 19881-20181   satisfied
+#> 6: MCID3111269576      19901       19953 19881-20181   satisfied
+#> 7: MCID3111272691      19901       19953 19881-20181   satisfied
+#> 8: MCID3111272880      19901       19953 19881-20181   satisfied
+#> 9: MCID3111277081      19903       19961 19881-20181   satisfied
 ```

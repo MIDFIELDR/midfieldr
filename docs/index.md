@@ -11,17 +11,17 @@ database.
 - [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
   identifies IDs to exclude due to insufficient data.  
 - [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
-  helps you find program names and CIP codes.  
+  helps you find 6-digit program codes.  
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   conditions data for Cleveland multiway charts.  
 - [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
   conditions data for imputing starting majors of FYE students.
+- [`qualification_level()`](https://midfieldr.github.io/midfieldr/reference/qualification_level.md)
+  identifies post-first-degree terms to exclude.
 - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
-  minimizes the number of columns viewed for interactive sessions.  
+  minimizes columns for interactive sessions.  
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
-  estimates timely completion terms.
-- `undergrad_focus()` identifies terms to exclude occurring after a
-  student’s first degree term.
+  estimates terms of timely completion.
 
 ## Installation
 
@@ -79,25 +79,25 @@ course <- copy(toy_course)
 degree <- copy(toy_degree)
 
 # identify undergraduate terms
-term <- undergrad_focus(term, midf_table = degree)
-course <- undergrad_focus(course, midf_table = degree)
-degree <- undergrad_focus(degree, midf_table = degree)
+term <- qualification_level(term, midf_table = degree)
+course <- qualification_level(course, midf_table = degree)
+degree <- qualification_level(degree, midf_table = degree)
 
 # filter to retain undergraduate terms only
-term <- term[focus == "undergrad"]
-course <- course[focus == "undergrad"]
-degree <- degree[focus == "undergrad"]
+term <- term[qual_level == "undergrad"]
+course <- course[qual_level == "undergrad"]
+degree <- degree[qual_level == "undergrad"]
 
 # remove temporary columns
-term[, c("bacc", "focus") := NULL]
-course[, c("bacc", "focus") := NULL]
-degree[, c("bacc", "focus") := NULL]
+term[, c("bacc", "qual_level") := NULL]
+course[, c("bacc", "qual_level") := NULL]
+degree[, c("bacc", "qual_level") := NULL]
 
 # filter for data sufficiency to obtain the population
 DT <- unique(term[, .(mcid)])
 DT <- timely_term(DT, midf_table = term)
 DT <- data_sufficiency(DT, midf_table = term)
-population <- DT[data_sufficiency == "include", .(mcid)]
+population <- DT[sufficiency == "satisfied", .(mcid)]
 
 # filter records to match this population
 student <- population[student, on = "mcid", nomatch = NULL]

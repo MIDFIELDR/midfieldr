@@ -64,19 +64,19 @@ test_completion_status <- function() {
     DT <- completion_status(dframe, degree)
     DT <- unique(DT)
     
-    expect_equal("timely", DT[mcid == "A1_OK", (completion_status)])
-    expect_equal("timely", DT[mcid == "A2_OK_tfr", (completion_status)])
-    expect_equal("timely", DT[mcid == "A3_OK_tfr", (completion_status)])
-    expect_equal("late", DT[mcid == "A4_OK_late", (completion_status)])
-    expect_equal("timely", DT[mcid == "B1_exclude", (completion_status)])
-    expect_equal(NA_character_, DT[mcid == "B2_exclude", (completion_status)])
-    expect_equal(NA_character_, DT[mcid == "B3_exclude", (completion_status)])
-    expect_equal("timely", DT[mcid == "C1_exclude", (completion_status)])
-    expect_equal("timely", DT[mcid == "C2_exclude", (completion_status)])
+    expect_equal("timely", DT[mcid == "A1_OK", (completion)])
+    expect_equal("timely", DT[mcid == "A2_OK_tfr", (completion)])
+    expect_equal("timely", DT[mcid == "A3_OK_tfr", (completion)])
+    expect_equal("late", DT[mcid == "A4_OK_late", (completion)])
+    expect_equal("timely", DT[mcid == "B1_exclude", (completion)])
+    expect_equal(NA_character_, DT[mcid == "B2_exclude", (completion)])
+    expect_equal(NA_character_, DT[mcid == "B3_exclude", (completion)])
+    expect_equal("timely", DT[mcid == "C1_exclude", (completion)])
+    expect_equal("timely", DT[mcid == "C2_exclude", (completion)])
     
     # correct columns in place
     dframe_vars <- c("mcid", "timely_term")
-    added_vars  <- c("completion_term", "completion_status")
+    added_vars  <- c("bacc", "completion")
     return_vars <- c(dframe_vars, added_vars)
     expect_equal(return_vars, colnames(DT))
     
@@ -103,7 +103,7 @@ test_completion_status <- function() {
     x <- copy(dframe)
     x[, idx := as.character(.I)]
     y <- completion_status(x, degree)
-    expect_equal("timely", y[mcid == "A1_OK", (completion_status)])
+    expect_equal("timely", y[mcid == "A1_OK", (completion)])
     
     # existing names that match internals protected
     expect_equal(x[["idx"]], y[["idx"]])

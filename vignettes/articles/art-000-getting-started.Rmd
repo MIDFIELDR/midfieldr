@@ -187,10 +187,10 @@ DT <- timely_term(DT, midf_table = term)
 DT <- DT[, .(mcid, entry_term, timely_term)]
 
 # Results
-data_sufficiency(DT, midf_table = term)[order(-data_sufficiency)]
+data_sufficiency(DT, midf_table = term)[order(-sufficiency)]
 ```
 
-Columns are added indicating an institution's data range and the results of the data sufficiency test: "include" if the time span from entry to timely completion lie within the range; "exclude" if not. We typically exclude the "exclude" rows. 
+Columns are added indicating an institution's data range and the results of the data sufficiency test: "satisfied" if the time span from entry to timely completion lie within the range; "fail" if not. We typically include the "satisfied" rows only. 
 
 
 
@@ -428,13 +428,13 @@ DT
 The possible values for data sufficiency are:
 
 ```{r}
-DT[, sort(unique(data_sufficiency), na.last = FALSE)]
+DT[, sort(unique(sufficiency), na.last = FALSE)]
 ```
 
-We filter to retain rows labeled "include". The resulting IDs define our baseline population. 
+We filter to retain rows labeled "satisfied". The resulting IDs define our baseline population. 
 
 ```{r}
-population <- DT["include", on = "data_sufficiency", .(mcid)]
+population <- DT["satisfied", on = .(sufficiency), .(mcid)]
 population <- unique(population)
 
 population
@@ -548,13 +548,13 @@ DT
 The possible values for completion status are:
 
 ```{r}
-DT[, sort(unique(completion_status), na.last = FALSE)]
+DT[, sort(unique(completion), na.last = FALSE)]
 ```
 
 If we were constructing a bloc of timely graduates, we would filter to retain rows labeled "timely". The resulting IDs would define our graduates bloc.
 
 ```{r}
-graduates <- DT["timely", on = "completion_status", .(mcid)]
+graduates <- DT["timely", on = .(completion), .(mcid)]
 graduates[, bloc := "grad"]
 graduates
 ```

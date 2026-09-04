@@ -36,9 +36,9 @@
 #' * `r new_cols_added`
 #'   - `data_range` &nbsp; Character. Institution data range, encoded
 #'     `YYYYT-YYYYT,` indicating the institution's first and last term in the
-#'     database. Extracted from `midf_table.`
-#'   - `data_sufficiency` &nbsp; Character. Possible values are "include",
-#'      "exclude-lower," and "exclude-upper."
+#'      database. Extracted from `midf_table.`
+#'   - `sufficiency` &nbsp; Character. Data sufficiency results.
+#'      Possible values are "satisfied", "fail-lower," and "fail-upper."
 #' @references R. Layton, R. Long, M. Ohland, M. Orr, and S. Lord (2026), "Data sufficiency,"  \url{https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.html}
 #' @example man/examples/exa_data_sufficiency.R
 #' @export
@@ -56,11 +56,12 @@ data_sufficiency <- function(dframe, midf_table = term) {
   # active column names
   reqd_dframe_vars <- c("mcid", "entry_term", "timely_term")
   reqd_table_vars <- c("mcid", "term", "institution")
-  added_vars <- c("data_range", "data_sufficiency")
+  added_vars <- c("data_range", "sufficiency")
 
   # bind names for R CMD check
   data_range <- NULL
   entry_term <- NULL
+  sufficiency <- NULL
   IDX <- NULL
   LOWER_LIMIT <- NULL
   UPPER_LIMIT <- NULL
@@ -122,10 +123,10 @@ data_sufficiency <- function(dframe, midf_table = term) {
   dframe <- midf_table[dframe, on = "mcid"]
 
   # compare student terms to institution range limits
-  dframe[, data_sufficiency := fcase(
-    timely_term > UPPER_LIMIT, "exclude-upper",
-    entry_term == LOWER_LIMIT, "exclude-lower",
-    default = "include"
+  dframe[, sufficiency := fcase(
+    timely_term > UPPER_LIMIT, "fail-upper",
+    entry_term == LOWER_LIMIT, "fail-lower",
+    default = "satisfied"
   ), env = list(
     LOWER_LIMIT = lower_limit,
     UPPER_LIMIT = upper_limit

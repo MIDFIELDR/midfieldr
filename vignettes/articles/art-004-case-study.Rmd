@@ -150,19 +150,19 @@ We can reduce the number of columns to just those we need and use  `data_suffici
 ```{r}
 DT <- DT[, .(mcid, entry_term, timely_term)]
 DT <- data_sufficiency(DT, midf_table = term)
-DT[order(-data_sufficiency)]
+DT[order(-sufficiency)]
 ```
 
 *Summary check.* &nbsp; A brief credibility check by summarizing the numbers of students in each category.
 
 ```{r}
-DT[, .N, by = c("data_sufficiency")][order(-N)]
+DT[, .N, by = c("sufficiency")][order(-N)]
 ```
 
 We retain rows labeled "include" and drop all but the ID column. This set of IDs is our baseline population.
 
 ```{r}
-population <- DT[data_sufficiency == "include", .(mcid)]
+population <- DT[sufficiency == "satisfied", .(mcid)]
 population
 ```
 
@@ -423,13 +423,13 @@ DT
 *Summary check.* &nbsp; Numbers of students in each category.
 
 ```{r}
-DT[, .N, by = c("completion_status")][order(-completion_status)]
+DT[, .N, by = c("completion")][order(-completion)]
 ```
 
 We retain the rows labeled "timely", drop all the columns except ID, and ensure unique rows. 
 
 ```{r}
-DT <- DT[completion_status == "timely", .(mcid)]
+DT <- DT[completion == "timely", .(mcid)]
 DT <- unique(DT)
 DT
 ```

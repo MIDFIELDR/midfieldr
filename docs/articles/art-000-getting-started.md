@@ -316,26 +316,26 @@ DT <- timely_term(DT, midf_table = term)
 DT <- DT[, .(mcid, entry_term, timely_term)]
 
 # Results
-data_sufficiency(DT, midf_table = term)[order(-data_sufficiency)]
-#>                  mcid entry_term timely_term  data_range data_sufficiency
-#>                <char>     <char>      <char>      <char>           <char>
-#>     1: MCID3111142689      19883       19941 19881-20181          include
-#>     2: MCID3111142782      19883       19941 19881-20096          include
-#>     3: MCID3111142881      19893       19951 19881-20181          include
-#>     4: MCID3111142884      19883       19941 19881-20181          include
-#>     5: MCID3111142893      19883       19941 19881-20181          include
-#>    ---                                                                   
-#> 97551: MCID3111618645      19901       19953 19901-20154    exclude-lower
-#> 97552: MCID3111624491      19881       19933 19881-20181    exclude-lower
-#> 97553: MCID3111824139      19901       19953 19901-20154    exclude-lower
-#> 97554: MCID3111869416      19901       19953 19901-20154    exclude-lower
-#> 97555: MCID3112056754      19881       19933 19881-20096    exclude-lower
+data_sufficiency(DT, midf_table = term)[order(-sufficiency)]
+#>                  mcid entry_term timely_term  data_range sufficiency
+#>                <char>     <char>      <char>      <char>      <char>
+#>     1: MCID3111142689      19883       19941 19881-20181   satisfied
+#>     2: MCID3111142782      19883       19941 19881-20096   satisfied
+#>     3: MCID3111142881      19893       19951 19881-20181   satisfied
+#>     4: MCID3111142884      19883       19941 19881-20181   satisfied
+#>     5: MCID3111142893      19883       19941 19881-20181   satisfied
+#>    ---                                                              
+#> 97551: MCID3111618645      19901       19953 19901-20154  fail-lower
+#> 97552: MCID3111624491      19881       19933 19881-20181  fail-lower
+#> 97553: MCID3111824139      19901       19953 19901-20154  fail-lower
+#> 97554: MCID3111869416      19901       19953 19901-20154  fail-lower
+#> 97555: MCID3112056754      19881       19933 19881-20096  fail-lower
 ```
 
 Columns are added indicating an institution’s data range and the results
-of the data sufficiency test: “include” if the time span from entry to
-timely completion lie within the range; “exclude” if not. We typically
-exclude the “exclude” rows.
+of the data sufficiency test: “satisfied” if the time span from entry to
+timely completion lie within the range; “fail” if not. We typically
+include the “satisfied” rows only.
 
 ## Metrics and groupings
 
@@ -656,9 +656,9 @@ degree_source <- copy(degree)
 
 # demonstrate that memory addresses are different
 address(student)
-#> [1] "0000025a06f24060"
+#> [1] "000001ef69f30c60"
 address(student_source)
-#> [1] "0000025a0882a660"
+#> [1] "000001ef6a96fa60"
 ```
 
 Then we can use the shorter names such as `term` and `degree` as we
@@ -801,45 +801,45 @@ DT
 #> 97553: MCID3112898894      20181 01 First-year        6       20233 19881-20181
 #> 97554: MCID3112898895      20181 01 First-year        6       20233 19881-20181
 #> 97555: MCID3112898940      20181 01 First-year        6       20233 19881-20181
-#>        data_sufficiency
-#>                  <char>
-#>     1:    exclude-lower
-#>     2:    exclude-lower
-#>     3:    exclude-lower
-#>     4:    exclude-lower
-#>     5:    exclude-lower
-#>     6:    exclude-lower
-#>     7:    exclude-lower
-#>     8:          include
-#>     9:    exclude-lower
-#>    10:    exclude-lower
-#>    ---                 
-#> 97546:    exclude-upper
-#> 97547:    exclude-upper
-#> 97548:    exclude-upper
-#> 97549:    exclude-upper
-#> 97550:    exclude-upper
-#> 97551:    exclude-upper
-#> 97552:    exclude-upper
-#> 97553:    exclude-upper
-#> 97554:    exclude-upper
-#> 97555:    exclude-upper
+#>        sufficiency
+#>             <char>
+#>     1:  fail-lower
+#>     2:  fail-lower
+#>     3:  fail-lower
+#>     4:  fail-lower
+#>     5:  fail-lower
+#>     6:  fail-lower
+#>     7:  fail-lower
+#>     8:   satisfied
+#>     9:  fail-lower
+#>    10:  fail-lower
+#>    ---            
+#> 97546:  fail-upper
+#> 97547:  fail-upper
+#> 97548:  fail-upper
+#> 97549:  fail-upper
+#> 97550:  fail-upper
+#> 97551:  fail-upper
+#> 97552:  fail-upper
+#> 97553:  fail-upper
+#> 97554:  fail-upper
+#> 97555:  fail-upper
 ```
 
 The possible values for data sufficiency are:
 
 ``` r
 
-DT[, sort(unique(data_sufficiency), na.last = FALSE)]
-#> [1] "exclude-lower" "exclude-upper" "include"
+DT[, sort(unique(sufficiency), na.last = FALSE)]
+#> [1] "fail-lower" "fail-upper" "satisfied"
 ```
 
-We filter to retain rows labeled “include”. The resulting IDs define our
-baseline population.
+We filter to retain rows labeled “satisfied”. The resulting IDs define
+our baseline population.
 
 ``` r
 
-population <- DT["include", on = "data_sufficiency", .(mcid)]
+population <- DT["satisfied", on = .(sufficiency), .(mcid)]
 population <- unique(population)
 
 population
@@ -1008,59 +1008,59 @@ DT <- timely_term(DT, midf_table = term)
 DT <- completion_status(DT, midf_table = degree)
 
 DT
-#>                  mcid entry_term   entry_level adj_span timely_term
-#>                <char>     <char>        <char>    <num>      <char>
-#>     1: MCID3111142689      19883 01 First-year        6       19941
-#>     2: MCID3111142782      19883 01 First-year        6       19941
-#>     3: MCID3111142881      19893 01 First-year        6       19951
-#>     4: MCID3111142884      19883 01 First-year        6       19941
-#>     5: MCID3111142893      19883 01 First-year        6       19941
-#>     6: MCID3111142962      19883 01 First-year        6       19941
-#>     7: MCID3111142965      19883 01 First-year        6       19941
-#>     8: MCID3111143066      19883 01 First-year        6       19941
-#>     9: MCID3111143068      19891 01 First-year        6       19943
-#>    10: MCID3111143078      19883 01 First-year        6       19941
-#>    ---                                                             
-#> 76856: MCID3112692944      20111 01 First-year        6       20163
-#> 76857: MCID3112693003      20093 01 First-year        6       20151
-#> 76858: MCID3112693979      20114 01 First-year        6       20173
-#> 76859: MCID3112694738      20103 01 First-year        6       20161
-#> 76860: MCID3112698681      20113 01 First-year        6       20171
-#> 76861: MCID3112727985      20114 01 First-year        6       20173
-#> 76862: MCID3112730841      20121 01 First-year        6       20173
-#> 76863: MCID3112785480      20071 01 First-year        6       20123
-#> 76864: MCID3112800920      20101 01 First-year        6       20153
-#> 76865: MCID3112870009      19951 01 First-year        6       20003
-#>        completion_term completion_status
-#>                 <char>            <char>
-#>     1:           19913            timely
-#>     2:           19903            timely
-#>     3:           19894            timely
-#>     4:            <NA>              <NA>
-#>     5:            <NA>              <NA>
-#>     6:            <NA>              <NA>
-#>     7:           19901            timely
-#>     8:           19883            timely
-#>     9:           19903            timely
-#>    10:           19891            timely
-#>    ---                                  
-#> 76856:           20153            timely
-#> 76857:           20171              late
-#> 76858:           20181              late
-#> 76859:           20143            timely
-#> 76860:           20181              late
-#> 76861:            <NA>              <NA>
-#> 76862:           20164            timely
-#> 76863:            <NA>              <NA>
-#> 76864:            <NA>              <NA>
-#> 76865:            <NA>              <NA>
+#>                  mcid entry_term   entry_level adj_span timely_term   bacc
+#>                <char>     <char>        <char>    <num>      <char> <char>
+#>     1: MCID3111142689      19883 01 First-year        6       19941  19913
+#>     2: MCID3111142782      19883 01 First-year        6       19941  19903
+#>     3: MCID3111142881      19893 01 First-year        6       19951  19894
+#>     4: MCID3111142884      19883 01 First-year        6       19941   <NA>
+#>     5: MCID3111142893      19883 01 First-year        6       19941   <NA>
+#>     6: MCID3111142962      19883 01 First-year        6       19941   <NA>
+#>     7: MCID3111142965      19883 01 First-year        6       19941  19901
+#>     8: MCID3111143066      19883 01 First-year        6       19941  19883
+#>     9: MCID3111143068      19891 01 First-year        6       19943  19903
+#>    10: MCID3111143078      19883 01 First-year        6       19941  19891
+#>    ---                                                                    
+#> 76856: MCID3112692944      20111 01 First-year        6       20163  20153
+#> 76857: MCID3112693003      20093 01 First-year        6       20151  20171
+#> 76858: MCID3112693979      20114 01 First-year        6       20173  20181
+#> 76859: MCID3112694738      20103 01 First-year        6       20161  20143
+#> 76860: MCID3112698681      20113 01 First-year        6       20171  20181
+#> 76861: MCID3112727985      20114 01 First-year        6       20173   <NA>
+#> 76862: MCID3112730841      20121 01 First-year        6       20173  20164
+#> 76863: MCID3112785480      20071 01 First-year        6       20123   <NA>
+#> 76864: MCID3112800920      20101 01 First-year        6       20153   <NA>
+#> 76865: MCID3112870009      19951 01 First-year        6       20003   <NA>
+#>        completion
+#>            <char>
+#>     1:     timely
+#>     2:     timely
+#>     3:     timely
+#>     4:       <NA>
+#>     5:       <NA>
+#>     6:       <NA>
+#>     7:     timely
+#>     8:     timely
+#>     9:     timely
+#>    10:     timely
+#>    ---           
+#> 76856:     timely
+#> 76857:       late
+#> 76858:       late
+#> 76859:     timely
+#> 76860:       late
+#> 76861:       <NA>
+#> 76862:     timely
+#> 76863:       <NA>
+#> 76864:       <NA>
+#> 76865:       <NA>
 ```
 
 The possible values for completion status are:
 
 ``` r
 
-DT[, sort(unique(completion_status), na.last = FALSE)]
+DT[, sort(unique(completion), na.last = FALSE)]
 #> [1] NA       "late"   "timely"
 ```
 
@@ -1070,7 +1070,7 @@ graduates bloc.
 
 ``` r
 
-graduates <- DT["timely", on = "completion_status", .(mcid)]
+graduates <- DT["timely", on = .(completion), .(mcid)]
 graduates[, bloc := "grad"]
 graduates
 #>                  mcid   bloc

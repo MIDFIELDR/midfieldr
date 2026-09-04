@@ -26,11 +26,9 @@ any). Other columns are not modified. The following variables are added:
 \item \code{bacc}    Character. Term of a student's first
 baccalaureate, encoded \code{YYYYT} or, if no degree recorded, \code{NA}.
 Joined from the \code{term_degree} variable in \code{midf_table.}
-\item \code{qual_level}    Character, indicating that a term belongs
-to one of two groups: "undergrad" terms are those leading up to
-and including the term in which a student completes their first
-degree; and "post-bacc" (post-baccalaureate) for all terms after the
-first degree.
+\item \code{qual_level}    Character. Qualification level, indicating a term
+contributing to study before or after a student's first baccalaureate.
+Possible values are "undergrad" and "post-bacc."
 }
 \item Groups and keys are not preserved.
 }

@@ -1,11 +1,11 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
 #' Categorize qualification level by term
-#' 
-#' Categorize the qualification level towards which a student is working in 
-#' each term. Two levels are used: “undergrad” for terms before a student's 
-#' first degree and “post-bacc” (post-baccalaureate) for terms after the first 
-#' degree. Added columns support the findings. Post-baccalaureate terms are 
+#'
+#' Categorize the qualification level towards which a student is working in
+#' each term. Two levels are used: “undergrad” for terms before a student's
+#' first degree and “post-bacc” (post-baccalaureate) for terms after the first
+#' degree. Added columns support the findings. Post-baccalaureate terms are
 #' typically excluded from the `term, course,` and `degree` data tables.
 #'
 #' @param dframe `r dframe` with required variables `{mcid}` and one of
@@ -20,11 +20,9 @@
 #'   - `bacc` &nbsp;  Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA`.
 #'      Joined from the `term_degree` variable in `midf_table.`
-#'   - `qual_level` &nbsp;  Character, indicating that a term belongs
-#'      to one of two groups: "undergrad" terms are those leading up to
-#'      and including the term in which a student completes their first
-#'      degree; and "post-bacc" (post-baccalaureate) for all terms after the
-#'      first degree.
+#'   - `qual_level` &nbsp;  Character. Qualification level, indicating a term
+#'      contributing to study before or after a student's first baccalaureate.
+#'      Possible values are "undergrad" and "post-bacc."
 #' * `r not_preserved`
 #' @example man/examples/exa_qualification_level.R
 #' @export

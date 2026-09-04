@@ -42,11 +42,9 @@ Data frame with the following properties:
     `YYYYT` or, if no degree recorded, `NA`. Joined from the
     `term_degree` variable in `midf_table.`
 
-  - `qual_level`   Character, indicating that a term belongs to one of
-    two groups: "undergrad" terms are those leading up to and including
-    the term in which a student completes their first degree; and
-    "post-bacc" (post-baccalaureate) for all terms after the first
-    degree.
+  - `qual_level`   Character. Qualification level, indicating a term
+    contributing to study before or after a student's first
+    baccalaureate. Possible values are "undergrad" and "post-bacc."
 
 - Groups and keys are not preserved.
 

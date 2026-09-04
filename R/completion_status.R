@@ -23,9 +23,11 @@
 #' * `r df_class_preserved`
 #' * `r rows_not_modified`
 #' * `r new_cols_added`
-#'   - `completion_term` &nbsp; Equal to `term_degree` from `midf_table.`
-#'   - `completion_status` &nbsp; Character. Possible values of "timely",
-#'      "late" and "NA".
+#'   - `bacc` &nbsp;  Character. Term of a student's first
+#'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA.`
+#'      Joined from the `term_degree` variable in `midf_table.`
+#'   - `completion` &nbsp; Character. Completion status, possible values of
+#'      "timely", "late", and "NA".
 #' @example man/examples/exa_completion_status.R
 #' @export
 #'
@@ -42,10 +44,11 @@ completion_status <- function(dframe, midf_table = degree) {
   # active column names
   reqd_dframe_vars <- c("mcid", "timely_term")
   reqd_table_vars <- c("mcid", "term_degree")
-  added_vars <- c("completion_term", "completion_status")
+  added_vars <- c("bacc", "completion")
 
   # bind names for R CMD check
-  completion_term <- NULL
+  completion <- NULL
+  bacc <- NULL
   IDX <- NULL
 
   # ---------- variable assertions
@@ -75,9 +78,10 @@ completion_status <- function(dframe, midf_table = degree) {
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
 
   # prevent overwriting by temporary columns
-  temp_vars <- c("idx")
+  temp_vars <- c("idx", "bacc")
   temp_vars <- utils_edit_colnames(dframe, temp_vars)
   idx <- temp_vars[1]
+  bacc <- temp_vars[2]
 
   # for restoring row order
   dframe[, IDX := .I, env = list(IDX = idx)]
@@ -85,12 +89,12 @@ completion_status <- function(dframe, midf_table = degree) {
   # ---------- do the work
 
   # edit name before join
-  setnames(midf_table, old = "term_degree", new = "completion_term")
+  setnames(midf_table, old = "term_degree", new = "bacc")
   dframe <- midf_table[dframe, on = "mcid"]
 
   # completion is timely, late, or NA
-  dframe[, completion_status := fifelse(
-    completion_term <= timely_term,
+  dframe[, completion := fifelse(
+    bacc <= timely_term,
     "timely",
     "late",
     na = NA_character_

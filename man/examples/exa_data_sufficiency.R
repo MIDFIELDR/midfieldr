@@ -19,4 +19,4 @@ x
 data_sufficiency(x, midf_table = term)
 
 # Typical application retains "include" rows only
-x[data_sufficiency == "include"]
+x[sufficiency == "satisfied"]

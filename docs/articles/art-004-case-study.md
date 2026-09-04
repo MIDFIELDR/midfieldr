@@ -168,16 +168,16 @@ added columns support the findings.
 
 DT <- DT[, .(mcid, entry_term, timely_term)]
 DT <- data_sufficiency(DT, midf_table = term)
-DT[order(-data_sufficiency)]
-#>                  mcid entry_term timely_term  data_range data_sufficiency
-#>                <char>     <char>      <char>      <char>           <char>
-#>     1: MCID3111142689      19883       19941 19881-20181          include
-#>     2: MCID3111142782      19883       19941 19881-20096          include
-#>     3: MCID3111142881      19893       19951 19881-20181          include
-#>    ---                                                                   
-#> 97553: MCID3111824139      19901       19953 19901-20154    exclude-lower
-#> 97554: MCID3111869416      19901       19953 19901-20154    exclude-lower
-#> 97555: MCID3112056754      19881       19933 19881-20096    exclude-lower
+DT[order(-sufficiency)]
+#>                  mcid entry_term timely_term  data_range sufficiency
+#>                <char>     <char>      <char>      <char>      <char>
+#>     1: MCID3111142689      19883       19941 19881-20181   satisfied
+#>     2: MCID3111142782      19883       19941 19881-20096   satisfied
+#>     3: MCID3111142881      19893       19951 19881-20181   satisfied
+#>    ---                                                              
+#> 97553: MCID3111824139      19901       19953 19901-20154  fail-lower
+#> 97554: MCID3111869416      19901       19953 19901-20154  fail-lower
+#> 97555: MCID3112056754      19881       19933 19881-20096  fail-lower
 ```
 
 *Summary check.*   A brief credibility check by summarizing the numbers
@@ -185,12 +185,12 @@ of students in each category.
 
 ``` r
 
-DT[, .N, by = c("data_sufficiency")][order(-N)]
-#>    data_sufficiency     N
-#>              <char> <int>
-#> 1:          include 76875
-#> 2:    exclude-upper 17934
-#> 3:    exclude-lower  2746
+DT[, .N, by = c("sufficiency")][order(-N)]
+#>    sufficiency     N
+#>         <char> <int>
+#> 1:   satisfied 76875
+#> 2:  fail-upper 17934
+#> 3:  fail-lower  2746
 ```
 
 We retain rows labeled “include” and drop all but the ID column. This
@@ -198,7 +198,7 @@ set of IDs is our baseline population.
 
 ``` r
 
-population <- DT[data_sufficiency == "include", .(mcid)]
+population <- DT[sufficiency == "satisfied", .(mcid)]
 population
 #>                  mcid
 #>                <char>
@@ -681,27 +681,27 @@ non-completion). The `degree` table here is identical to
 
 DT <- completion_status(DT, midf_table = degree)
 DT
-#>                  mcid timely_term completion_term completion_status
-#>                <char>      <char>          <char>            <char>
-#>     1: MCID3111142689       19941           19913            timely
-#>     2: MCID3111142782       19941           19903            timely
-#>     3: MCID3111142881       19951           19894            timely
-#>    ---                                                             
-#> 76863: MCID3112785480       20123            <NA>              <NA>
-#> 76864: MCID3112800920       20153            <NA>              <NA>
-#> 76865: MCID3112870009       20003            <NA>              <NA>
+#>                  mcid timely_term   bacc completion
+#>                <char>      <char> <char>     <char>
+#>     1: MCID3111142689       19941  19913     timely
+#>     2: MCID3111142782       19941  19903     timely
+#>     3: MCID3111142881       19951  19894     timely
+#>    ---                                             
+#> 76863: MCID3112785480       20123   <NA>       <NA>
+#> 76864: MCID3112800920       20153   <NA>       <NA>
+#> 76865: MCID3112870009       20003   <NA>       <NA>
 ```
 
 *Summary check.*   Numbers of students in each category.
 
 ``` r
 
-DT[, .N, by = c("completion_status")][order(-completion_status)]
-#>    completion_status     N
-#>               <char> <int>
-#> 1:            timely 40430
-#> 2:              late  3346
-#> 3:              <NA> 33089
+DT[, .N, by = c("completion")][order(-completion)]
+#>    completion     N
+#>        <char> <int>
+#> 1:     timely 40430
+#> 2:       late  3346
+#> 3:       <NA> 33089
 ```
 
 We retain the rows labeled “timely”, drop all the columns except ID, and
@@ -709,7 +709,7 @@ ensure unique rows.
 
 ``` r
 
-DT <- DT[completion_status == "timely", .(mcid)]
+DT <- DT[completion == "timely", .(mcid)]
 DT <- unique(DT)
 DT
 #>                  mcid

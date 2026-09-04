@@ -23,9 +23,11 @@ of the required variables are removed. Duplicated rows are removed.
 below) are not modified; columns with matching names are replaced.
 The new columns added are:
 \itemize{
-\item \code{completion_term}   Equal to \code{term_degree} from \code{midf_table.}
-\item \code{completion_status}   Character. Possible values of "timely",
-"late" and "NA".
+\item \code{bacc}    Character. Term of a student's first
+baccalaureate, encoded \code{YYYYT} or, if no degree recorded, \code{NA.}
+Joined from the \code{term_degree} variable in \code{midf_table.}
+\item \code{completion}   Character. Completion status, possible values of
+"timely", "late", and "NA".
 }
 }
 }
@@ -68,5 +70,5 @@ x
 completion_status(x, midf_table = degree)
 
 # Typical application retains "timely" rows only
-x[completion_status == "timely"]
+x[completion == "timely"]
 }

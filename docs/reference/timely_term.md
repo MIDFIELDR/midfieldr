@@ -148,41 +148,41 @@ timely_term(x, midf_table = term)
 
 # Application: data_sufficiency() requires entry_term and timely_term
 data_sufficiency(x[, .(mcid, entry_term, timely_term)], midf_table = term)
-#>               mcid entry_term timely_term  data_range data_sufficiency
-#>             <char>     <char>      <char>      <char>           <char>
-#>  1: MCID3111169729      19881       19933 19881-20181    exclude-lower
-#>  2: MCID3111170852      19881       19933 19881-20181    exclude-lower
-#>  3: MCID3111173999      19881       19933 19881-20181    exclude-lower
-#>  4: MCID3111257807      19901       19953 19881-20181          include
-#>  5: MCID3111258275      19901       19953 19881-20181          include
-#>  6: MCID3111258347      19901       19953 19881-20181          include
-#>  7: MCID3111259642      19901       19953 19901-20153    exclude-lower
-#>  8: MCID3111262210      19901       19953 19881-20181          include
-#>  9: MCID3111265287      19901       19953 19881-20181          include
-#> 10: MCID3111269576      19901       19953 19881-20181          include
-#> 11: MCID3111272691      19901       19953 19881-20181          include
-#> 12: MCID3111272880      19901       19953 19881-20181          include
-#> 13: MCID3111277081      19903       19961 19881-20181          include
-#> 14: MCID3112751130      20151       20203 19881-20181    exclude-upper
-#> 15: MCID3112754537      20151       20203 19881-20181    exclude-upper
+#>               mcid entry_term timely_term  data_range sufficiency
+#>             <char>     <char>      <char>      <char>      <char>
+#>  1: MCID3111169729      19881       19933 19881-20181  fail-lower
+#>  2: MCID3111170852      19881       19933 19881-20181  fail-lower
+#>  3: MCID3111173999      19881       19933 19881-20181  fail-lower
+#>  4: MCID3111257807      19901       19953 19881-20181   satisfied
+#>  5: MCID3111258275      19901       19953 19881-20181   satisfied
+#>  6: MCID3111258347      19901       19953 19881-20181   satisfied
+#>  7: MCID3111259642      19901       19953 19901-20153  fail-lower
+#>  8: MCID3111262210      19901       19953 19881-20181   satisfied
+#>  9: MCID3111265287      19901       19953 19881-20181   satisfied
+#> 10: MCID3111269576      19901       19953 19881-20181   satisfied
+#> 11: MCID3111272691      19901       19953 19881-20181   satisfied
+#> 12: MCID3111272880      19901       19953 19881-20181   satisfied
+#> 13: MCID3111277081      19903       19961 19881-20181   satisfied
+#> 14: MCID3112751130      20151       20203 19881-20181  fail-upper
+#> 15: MCID3112754537      20151       20203 19881-20181  fail-upper
 
 # Application: completion_status() requires timely_term
 completion_status(x[, .(mcid, timely_term)], midf_table = degree)
-#>               mcid timely_term completion_term completion_status
-#>             <char>      <char>          <char>            <char>
-#>  1: MCID3111169729       19933           19901            timely
-#>  2: MCID3111170852       19933            <NA>              <NA>
-#>  3: MCID3111173999       19933            <NA>              <NA>
-#>  4: MCID3111257807       19953           19964              late
-#>  5: MCID3111258275       19953           19921            timely
-#>  6: MCID3111258347       19953           19923            timely
-#>  7: MCID3111259642       19953           19934            timely
-#>  8: MCID3111262210       19953           19951            timely
-#>  9: MCID3111265287       19953           19904            timely
-#> 10: MCID3111269576       19953           19943            timely
-#> 11: MCID3111272691       19953           19914            timely
-#> 12: MCID3111272880       19953           19934            timely
-#> 13: MCID3111277081       19961           19963              late
-#> 14: MCID3112751130       20203           20171            timely
-#> 15: MCID3112754537       20203            <NA>              <NA>
+#>               mcid timely_term   bacc completion
+#>             <char>      <char> <char>     <char>
+#>  1: MCID3111169729       19933  19901     timely
+#>  2: MCID3111170852       19933   <NA>       <NA>
+#>  3: MCID3111173999       19933   <NA>       <NA>
+#>  4: MCID3111257807       19953  19964       late
+#>  5: MCID3111258275       19953  19921     timely
+#>  6: MCID3111258347       19953  19923     timely
+#>  7: MCID3111259642       19953  19934     timely
+#>  8: MCID3111262210       19953  19951     timely
+#>  9: MCID3111265287       19953  19904     timely
+#> 10: MCID3111269576       19953  19943     timely
+#> 11: MCID3111272691       19953  19914     timely
+#> 12: MCID3111272880       19953  19934     timely
+#> 13: MCID3111277081       19961  19963       late
+#> 14: MCID3112751130       20203  20171     timely
+#> 15: MCID3112754537       20203   <NA>       <NA>
 ```
