@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9031</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9032</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -135,110 +135,153 @@
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<p>We illustrate usage with a small sample that loads with midfieldr for use in such examples. These data frames <code>(toy_student, toy_term, toy_course, toy_degree)</code> have the same structure as the practice data in midfielddata. Academic program names and codes in the <code>cip</code> dataset also loads with midfieldr.</p>
+<p>The <code>cip</code> dataset of program codes loads with midfieldr. Small samples of student records <code>(toy_student, toy_term, toy_course, toy_degree)</code> also load with midfieldr, containing the same variables found in the midfielddata practice data as well as the MIDFIELD research data tables.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfieldr/">"midfieldr"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># small sample of student records</span></span>
+<span><span class="co"># Assign record samples </span></span>
 <span><span class="va">student</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">toy_student</span><span class="op">)</span></span>
 <span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">toy_term</span><span class="op">)</span></span>
 <span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">toy_course</span><span class="op">)</span></span>
 <span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">toy_degree</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># identify undergraduate terms</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qualification_level.html">qualification_level</a></span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qualification_level.html">qualification_level</a></span><span class="op">(</span><span class="va">course</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qualification_level.html">qualification_level</a></span><span class="op">(</span><span class="va">degree</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="co"># Pull IDs of degree-seeking students</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span></span>
+<span><span class="co">#&gt;                mcid</span></span>
+<span><span class="co">#&gt;              &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1: MCID3111142897</span></span>
+<span><span class="co">#&gt;   2: MCID3111157634</span></span>
+<span><span class="co">#&gt;   3: MCID3111158724</span></span>
+<span><span class="co">#&gt;  ---               </span></span>
+<span><span class="co">#&gt; 349: MCID3112868072</span></span>
+<span><span class="co">#&gt; 350: MCID3112869843</span></span>
+<span><span class="co">#&gt; 351: MCID3112885339</span></span>
 <span></span>
-<span><span class="co"># filter to retain undergraduate terms only</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">qual_level</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span>
-<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="va">course</span><span class="op">[</span><span class="va">qual_level</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">qual_level</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># remove temporary columns</span></span>
-<span><span class="va">term</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc"</span>, <span class="st">"qual_level"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">course</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc"</span>, <span class="st">"qual_level"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">degree</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc"</span>, <span class="st">"qual_level"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># filter for data sufficiency to obtain the population</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">term</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co"># Filter population for data sufficiency</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span>, midf_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/data_sufficiency.html">data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, midf_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
 <span><span class="va">population</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">sufficiency</span> <span class="op">==</span> <span class="st">"satisfied"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">population</span></span>
+<span><span class="co">#&gt;                mcid</span></span>
+<span><span class="co">#&gt;              &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1: MCID3111198701</span></span>
+<span><span class="co">#&gt;   2: MCID3111208924</span></span>
+<span><span class="co">#&gt;   3: MCID3111213539</span></span>
+<span><span class="co">#&gt;  ---               </span></span>
+<span><span class="co">#&gt; 238: MCID3112592592</span></span>
+<span><span class="co">#&gt; 239: MCID3112593368</span></span>
+<span><span class="co">#&gt; 240: MCID3112617577</span></span>
 <span></span>
-<span><span class="co"># filter records to match this population</span></span>
+<span><span class="co"># Inner join to filter records to match the population</span></span>
 <span><span class="va">student</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">student</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">term</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="va">course</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">course</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">degree</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span></span>
-<span><span class="co"># create program data frame for three programs: Mechanical</span></span>
-<span><span class="co"># Engineering (CIP code 1419), General Psychology (CIP code 4201),</span></span>
-<span><span class="co"># and Business, Managerial Operations (CIP code 5202).</span></span>
-<span><span class="va">programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^1419"</span>, <span class="st">"^4201"</span>, <span class="st">"^5202"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Categorize pre- and post-baccalaureate terms</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qualification_level.html">qualification_level</a></span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qualification_level.html">qualification_level</a></span><span class="op">(</span><span class="va">course</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qualification_level.html">qualification_level</a></span><span class="op">(</span><span class="va">degree</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="co"># -- example summary</span></span>
+<span><span class="va">term</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"qual_level"</span><span class="op">]</span></span>
+<span><span class="co">#&gt;    qual_level     N</span></span>
+<span><span class="co">#&gt;        &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:  undergrad  1330</span></span>
+<span><span class="co">#&gt; 2:  post-bacc    17</span></span>
+<span></span>
+<span><span class="co"># Filter records to exclude post-baccalaureate terms</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">qual_level</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span>
+<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="va">course</span><span class="op">[</span><span class="va">qual_level</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">qual_level</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Omit temporary columns to finalize baseline records</span></span>
+<span><span class="va">term</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc"</span>, <span class="st">"qual_level"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">course</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc"</span>, <span class="st">"qual_level"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">degree</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc"</span>, <span class="st">"qual_level"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Obtain set of 6-digit CIP codes for three programs</span></span>
+<span><span class="co"># -- Engineering (14)</span></span>
+<span><span class="co"># -- Psychology (42)</span></span>
+<span><span class="co"># -- Business (52)</span></span>
+<span><span class="va">programs</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">cip</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"^14"</span>, <span class="st">"^42"</span>, <span class="st">"^52"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">programs</span> <span class="op">&lt;-</span> <span class="va">programs</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6name</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
-<span><span class="co"># add custom labels, select 6-digit codes</span></span>
+<span><span class="co"># Construct the programs table</span></span>
 <span><span class="va">programs</span><span class="op">[</span>, <span class="va">program</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fcase.html" class="external-link">fcase</a></span><span class="op">(</span></span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^1419"</span>, <span class="st">"Mech Engr"</span>,</span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^4201"</span>, <span class="st">"Genl Psych"</span>,</span>
-<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^5202"</span>, <span class="st">"Bus Mng Op"</span></span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^14"</span>, <span class="st">"Engineering"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^42"</span>, <span class="st">"Psychology"</span>,</span>
+<span>  <span class="va">cip6</span> <span class="op"><a href="https://rdrr.io/pkg/data.table/man/like.html" class="external-link">%like%</a></span> <span class="st">"^52"</span>, <span class="st">"Business"</span></span>
 <span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">programs</span> <span class="op">&lt;-</span> <span class="va">programs</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">program</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">programs</span></span>
+<span><span class="co">#&gt;        cip6     program</span></span>
+<span><span class="co">#&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1: 140101 Engineering</span></span>
+<span><span class="co">#&gt;   2: 140102 Engineering</span></span>
+<span><span class="co">#&gt;   3: 140201 Engineering</span></span>
+<span><span class="co">#&gt;  ---                   </span></span>
+<span><span class="co">#&gt; 173: 522001    Business</span></span>
+<span><span class="co">#&gt; 174: 522101    Business</span></span>
+<span><span class="co">#&gt; 175: 529999    Business</span></span>
 <span></span>
-<span><span class="co"># filter records for the study programs</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">programs</span>, on <span class="op">=</span> <span class="st">"cip6"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">programs</span>, on <span class="op">=</span> <span class="st">"cip6"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="co"># Categorize completion status</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">population</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span>, midf_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/completion_status.html">completion_status</a></span><span class="op">(</span><span class="va">DT</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="co"># -- summary</span></span>
+<span><span class="va">DT</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"completion"</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;    completion     N</span></span>
+<span><span class="co">#&gt;        &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:     timely   161</span></span>
+<span><span class="co">#&gt; 2:       &lt;NA&gt;    71</span></span>
+<span><span class="co">#&gt; 3:       late     8</span></span>
 <span></span>
-<span><span class="co"># filter population to match IDs in the programs</span></span>
-<span><span class="va">enrolled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">term</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span>, <span class="va">degree</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">population</span> <span class="op">&lt;-</span> <span class="va">enrolled</span><span class="op">[</span><span class="va">population</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="co"># Filter population for timely completion</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">DT</span><span class="op">[</span><span class="va">completion</span> <span class="op">==</span> <span class="st">"timely"</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">DT</span></span>
+<span><span class="co">#&gt;                mcid</span></span>
+<span><span class="co">#&gt;              &lt;char&gt;</span></span>
+<span><span class="co">#&gt;   1: MCID3111213539</span></span>
+<span><span class="co">#&gt;   2: MCID3111213856</span></span>
+<span><span class="co">#&gt;   3: MCID3111254225</span></span>
+<span><span class="co">#&gt;  ---               </span></span>
+<span><span class="co">#&gt; 159: MCID3112587501</span></span>
+<span><span class="co">#&gt; 160: MCID3112592592</span></span>
+<span><span class="co">#&gt; 161: MCID3112593368</span></span>
 <span></span>
-<span><span class="co"># filter remaining records for the study programs</span></span>
-<span><span class="va">student</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">student</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">course</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="co"># Join degree CIP codes</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">cip6</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
 <span></span>
-<span><span class="co"># records ready for further analysis (first few columns)</span></span>
-<span><span class="fu"><a href="reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">student</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   45 obs. of  6 variables:</span></span>
-<span><span class="co">#&gt;  $ mcid          : chr  "MCID3111265287" "MCID3111312495" "MCID3111391443" "M"..</span></span>
-<span><span class="co">#&gt;  $ race          : chr  "White" "White" "White" "White" ...</span></span>
-<span><span class="co">#&gt;  $ sex           : chr  "Male" "Male" "Female" "Male" ...</span></span>
-<span><span class="co">#&gt;  $ institution   : chr  "Institution B" "Institution B" "Institution J" "Inst"..</span></span>
-<span><span class="co">#&gt;  $ transfer      : chr  "First-Time Transfer" "First-Time Transfer" "First-Ti"..</span></span>
-<span><span class="co">#&gt;  $ hours_transfer: num  92 13 NA 1 NA NA 26 NA NA NA ...</span></span>
+<span><span class="co"># Inner join to filter graduates by program</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">programs</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6</span>, <span class="va">program</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="st">"cip6"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">program</span>, cip6 <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span></span>
+<span><span class="co">#&gt;               mcid     program</span></span>
+<span><span class="co">#&gt;             &lt;char&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1: MCID3111254412 Engineering</span></span>
+<span><span class="co">#&gt;  2: MCID3111262210 Engineering</span></span>
+<span><span class="co">#&gt;  3: MCID3111265287  Psychology</span></span>
+<span><span class="co">#&gt; ---                           </span></span>
+<span><span class="co">#&gt; 53: MCID3112467463  Psychology</span></span>
+<span><span class="co">#&gt; 54: MCID3112587501  Psychology</span></span>
+<span><span class="co">#&gt; 55: MCID3112592592    Business</span></span>
 <span></span>
-<span><span class="fu"><a href="reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">term</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   214 obs. of  6 variables:</span></span>
-<span><span class="co">#&gt;  $ mcid       : chr  "MCID3111447797" "MCID3111447797" "MCID3111447797" "MCID"..</span></span>
-<span><span class="co">#&gt;  $ cip6       : chr  "141901" "141901" "141901" "141901" ...</span></span>
-<span><span class="co">#&gt;  $ institution: chr  "Institution J" "Institution J" "Institution J" "Institu"..</span></span>
-<span><span class="co">#&gt;  $ level      : chr  "01 First-year" "02 Second-year" "02 Second-year" "02 Se"..</span></span>
-<span><span class="co">#&gt;  $ standing   : chr  "Academic Probation" "Academic Probation" "Academic Prob"..</span></span>
-<span><span class="co">#&gt;  $ coop       : chr  "No" "No" "No" "No" ...</span></span>
+<span><span class="co"># Join demographics</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="va">DT</span>, on <span class="op">=</span> <span class="st">"mcid"</span><span class="op">]</span></span>
 <span></span>
-<span><span class="fu"><a href="reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">course</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   1273 obs. of  6 variables:</span></span>
-<span><span class="co">#&gt;  $ mcid       : chr  "MCID3111265287" "MCID3111265287" "MCID3111265287" "MCID"..</span></span>
-<span><span class="co">#&gt;  $ abbrev     : chr  "ECON" "EMUS" "PSYC" "PSYC" ...</span></span>
-<span><span class="co">#&gt;  $ number     : chr  "2020" "1832" "2012" "2303" ...</span></span>
-<span><span class="co">#&gt;  $ institution: chr  "Institution B" "Institution B" "Institution B" "Institu"..</span></span>
-<span><span class="co">#&gt;  $ course     : chr  "Prin Of Macroeconomics" "Appreciation Of Music" "Biolog"..</span></span>
-<span><span class="co">#&gt;  $ section    : chr  "500" "006" "001" "001" ...</span></span>
-<span></span>
-<span><span class="fu"><a href="reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   33 obs. of  6 variables:</span></span>
-<span><span class="co">#&gt;  $ mcid       : chr  "MCID3111701868" "MCID3111730954" "MCID3111832009" "MCID"..</span></span>
-<span><span class="co">#&gt;  $ cip6       : chr  "141901" "141901" "141901" "141901" ...</span></span>
-<span><span class="co">#&gt;  $ institution: chr  "Institution J" "Institution C" "Institution J" "Institu"..</span></span>
-<span><span class="co">#&gt;  $ degree     : chr  "Bachelor of Science in Mechanical Engineering" "Bachelo"..</span></span>
-<span><span class="co">#&gt;  $ term_degree: chr  "19993" "20011" "20013" "20033" ...</span></span>
-<span><span class="co">#&gt;  $ program    : chr  "Mech Engr" "Mech Engr" "Mech Engr" "Mech Engr" ...</span></span>
-<span></span>
-<span><span class="fu"><a href="reference/look_at.html">look_at</a></span><span class="op">(</span><span class="va">population</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   45 obs. of  1 variable:</span></span>
-<span><span class="co">#&gt;  $ mcid: chr  "MCID3111265287" "MCID3111312495" "MCID3111391443" "MCID3111437"..</span></span></code></pre></div>
+<span><span class="co"># Group and summarize timely graduates</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span>grad <span class="op">=</span> <span class="va">.N</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"sex"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">program</span>, <span class="va">sex</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;        program    sex  grad</span></span>
+<span><span class="co">#&gt;         &lt;char&gt; &lt;char&gt; &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1:    Business Female     8</span></span>
+<span><span class="co">#&gt; 2:    Business   Male    12</span></span>
+<span><span class="co">#&gt; 3: Engineering Female     3</span></span>
+<span><span class="co">#&gt; 4: Engineering   Male    16</span></span>
+<span><span class="co">#&gt; 5:  Psychology Female    12</span></span>
+<span><span class="co">#&gt; 6:  Psychology   Male     4</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>

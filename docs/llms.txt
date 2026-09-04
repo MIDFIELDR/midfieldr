@@ -61,116 +61,158 @@ the American Society for Engineering Education (ASEE).
 
 ## Usage
 
-We illustrate usage with a small sample that loads with midfieldr for
-use in such examples. These data frames
-`(toy_student, toy_term, toy_course, toy_degree)` have the same
-structure as the practice data in midfielddata. Academic program names
-and codes in the `cip` dataset also loads with midfieldr.
+The `cip` dataset of program codes loads with midfieldr. Small samples
+of student records `(toy_student, toy_term, toy_course, toy_degree)`
+also load with midfieldr, containing the same variables found in the
+midfielddata practice data as well as the MIDFIELD research data tables.
 
 ``` r
 
 library("midfieldr")
 library("data.table")
 
-# small sample of student records
+# Assign record samples 
 student <- copy(toy_student)
 term <- copy(toy_term)
 course <- copy(toy_course)
 degree <- copy(toy_degree)
 
-# identify undergraduate terms
-term <- qualification_level(term, midf_table = degree)
-course <- qualification_level(course, midf_table = degree)
-degree <- qualification_level(degree, midf_table = degree)
+# Pull IDs of degree-seeking students
+DT <- student[, .(mcid)]
+DT
+#>                mcid
+#>              <char>
+#>   1: MCID3111142897
+#>   2: MCID3111157634
+#>   3: MCID3111158724
+#>  ---               
+#> 349: MCID3112868072
+#> 350: MCID3112869843
+#> 351: MCID3112885339
 
-# filter to retain undergraduate terms only
-term <- term[qual_level == "undergrad"]
-course <- course[qual_level == "undergrad"]
-degree <- degree[qual_level == "undergrad"]
-
-# remove temporary columns
-term[, c("bacc", "qual_level") := NULL]
-course[, c("bacc", "qual_level") := NULL]
-degree[, c("bacc", "qual_level") := NULL]
-
-# filter for data sufficiency to obtain the population
-DT <- unique(term[, .(mcid)])
+# Filter population for data sufficiency
 DT <- timely_term(DT, midf_table = term)
 DT <- data_sufficiency(DT, midf_table = term)
 population <- DT[sufficiency == "satisfied", .(mcid)]
+population
+#>                mcid
+#>              <char>
+#>   1: MCID3111198701
+#>   2: MCID3111208924
+#>   3: MCID3111213539
+#>  ---               
+#> 238: MCID3112592592
+#> 239: MCID3112593368
+#> 240: MCID3112617577
 
-# filter records to match this population
+# Inner join to filter records to match the population
 student <- population[student, on = "mcid", nomatch = NULL]
 term <- population[term, on = "mcid", nomatch = NULL]
 course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-# create program data frame for three programs: Mechanical
-# Engineering (CIP code 1419), General Psychology (CIP code 4201),
-# and Business, Managerial Operations (CIP code 5202).
-programs <- filter_programs(cip, c("^1419", "^4201", "^5202"))
+# Categorize pre- and post-baccalaureate terms
+term <- qualification_level(term, midf_table = degree)
+course <- qualification_level(course, midf_table = degree)
+degree <- qualification_level(degree, midf_table = degree)
+# -- example summary
+term[, .N, by = "qual_level"]
+#>    qual_level     N
+#>        <char> <int>
+#> 1:  undergrad  1330
+#> 2:  post-bacc    17
+
+# Filter records to exclude post-baccalaureate terms
+term <- term[qual_level == "undergrad"]
+course <- course[qual_level == "undergrad"]
+degree <- degree[qual_level == "undergrad"]
+
+# Omit temporary columns to finalize baseline records
+term[, c("bacc", "qual_level") := NULL]
+course[, c("bacc", "qual_level") := NULL]
+degree[, c("bacc", "qual_level") := NULL]
+
+# Obtain set of 6-digit CIP codes for three programs
+# -- Engineering (14)
+# -- Psychology (42)
+# -- Business (52)
+programs <- filter_programs(cip, c("^14", "^42", "^52"))
 programs <- programs[, .(cip6name, cip6)]
 
-# add custom labels, select 6-digit codes
+# Construct the programs table
 programs[, program := fcase(
-  cip6 %like% "^1419", "Mech Engr",
-  cip6 %like% "^4201", "Genl Psych",
-  cip6 %like% "^5202", "Bus Mng Op"
+  cip6 %like% "^14", "Engineering",
+  cip6 %like% "^42", "Psychology",
+  cip6 %like% "^52", "Business"
 )]
 programs <- programs[, .(cip6, program)]
+programs
+#>        cip6     program
+#>      <char>      <char>
+#>   1: 140101 Engineering
+#>   2: 140102 Engineering
+#>   3: 140201 Engineering
+#>  ---                   
+#> 173: 522001    Business
+#> 174: 522101    Business
+#> 175: 529999    Business
 
-# filter records for the study programs
-term <- term[programs, on = "cip6", nomatch = NULL]
-degree <- degree[programs, on = "cip6", nomatch = NULL]
+# Categorize completion status
+DT <- copy(population)
+DT <- timely_term(DT, midf_table = term)
+DT <- completion_status(DT, midf_table = degree)
+# -- summary
+DT[, .N, by = "completion"][order(-N)]
+#>    completion     N
+#>        <char> <int>
+#> 1:     timely   161
+#> 2:       <NA>    71
+#> 3:       late     8
 
-# filter population to match IDs in the programs
-enrolled <- unique(rbindlist(list(term[, .(mcid)], degree[, .(mcid)])))
-population <- enrolled[population, on = "mcid", nomatch = NULL]
+# Filter population for timely completion
+DT <- unique(DT[completion == "timely", .(mcid)])
+DT
+#>                mcid
+#>              <char>
+#>   1: MCID3111213539
+#>   2: MCID3111213856
+#>   3: MCID3111254225
+#>  ---               
+#> 159: MCID3112587501
+#> 160: MCID3112592592
+#> 161: MCID3112593368
 
-# filter remaining records for the study programs
-student <- population[student, on = "mcid", nomatch = NULL]
-course <- population[course, on = "mcid", nomatch = NULL]
+# Join degree CIP codes
+DT <- degree[, .(mcid, cip6)][DT, on = "mcid"]
 
-# records ready for further analysis (first few columns)
-look_at(student[, 1:6])
-#> Classes 'data.table' and 'data.frame':   45 obs. of  6 variables:
-#>  $ mcid          : chr  "MCID3111265287" "MCID3111312495" "MCID3111391443" "M"..
-#>  $ race          : chr  "White" "White" "White" "White" ...
-#>  $ sex           : chr  "Male" "Male" "Female" "Male" ...
-#>  $ institution   : chr  "Institution B" "Institution B" "Institution J" "Inst"..
-#>  $ transfer      : chr  "First-Time Transfer" "First-Time Transfer" "First-Ti"..
-#>  $ hours_transfer: num  92 13 NA 1 NA NA 26 NA NA NA ...
+# Inner join to filter graduates by program
+DT <- programs[, .(cip6, program)][DT, on = "cip6", nomatch = NULL]
+DT <- DT[, .(mcid, program, cip6 = NULL)]
+DT
+#>               mcid     program
+#>             <char>      <char>
+#>  1: MCID3111254412 Engineering
+#>  2: MCID3111262210 Engineering
+#>  3: MCID3111265287  Psychology
+#> ---                           
+#> 53: MCID3112467463  Psychology
+#> 54: MCID3112587501  Psychology
+#> 55: MCID3112592592    Business
 
-look_at(term[, 1:6])
-#> Classes 'data.table' and 'data.frame':   214 obs. of  6 variables:
-#>  $ mcid       : chr  "MCID3111447797" "MCID3111447797" "MCID3111447797" "MCID"..
-#>  $ cip6       : chr  "141901" "141901" "141901" "141901" ...
-#>  $ institution: chr  "Institution J" "Institution J" "Institution J" "Institu"..
-#>  $ level      : chr  "01 First-year" "02 Second-year" "02 Second-year" "02 Se"..
-#>  $ standing   : chr  "Academic Probation" "Academic Probation" "Academic Prob"..
-#>  $ coop       : chr  "No" "No" "No" "No" ...
+# Join demographics
+DT <- student[, .(mcid, sex)][DT, on = "mcid"]
 
-look_at(course[, 1:6])
-#> Classes 'data.table' and 'data.frame':   1273 obs. of  6 variables:
-#>  $ mcid       : chr  "MCID3111265287" "MCID3111265287" "MCID3111265287" "MCID"..
-#>  $ abbrev     : chr  "ECON" "EMUS" "PSYC" "PSYC" ...
-#>  $ number     : chr  "2020" "1832" "2012" "2303" ...
-#>  $ institution: chr  "Institution B" "Institution B" "Institution B" "Institu"..
-#>  $ course     : chr  "Prin Of Macroeconomics" "Appreciation Of Music" "Biolog"..
-#>  $ section    : chr  "500" "006" "001" "001" ...
-
-look_at(degree)
-#> Classes 'data.table' and 'data.frame':   33 obs. of  6 variables:
-#>  $ mcid       : chr  "MCID3111701868" "MCID3111730954" "MCID3111832009" "MCID"..
-#>  $ cip6       : chr  "141901" "141901" "141901" "141901" ...
-#>  $ institution: chr  "Institution J" "Institution C" "Institution J" "Institu"..
-#>  $ degree     : chr  "Bachelor of Science in Mechanical Engineering" "Bachelo"..
-#>  $ term_degree: chr  "19993" "20011" "20013" "20033" ...
-#>  $ program    : chr  "Mech Engr" "Mech Engr" "Mech Engr" "Mech Engr" ...
-
-look_at(population)
-#> Classes 'data.table' and 'data.frame':   45 obs. of  1 variable:
-#>  $ mcid: chr  "MCID3111265287" "MCID3111312495" "MCID3111391443" "MCID3111437"..
+# Group and summarize timely graduates
+DT <- DT[, .(grad = .N), by = c("program", "sex")]
+DT[order(program, sex)]
+#>        program    sex  grad
+#>         <char> <char> <int>
+#> 1:    Business Female     8
+#> 2:    Business   Male    12
+#> 3: Engineering Female     3
+#> 4: Engineering   Male    16
+#> 5:  Psychology Female    12
+#> 6:  Psychology   Male     4
 ```
 
 ## Acknowledgments
