@@ -76,7 +76,7 @@ test_completion_status <- function() {
     
     # correct columns in place
     dframe_vars <- c("mcid", "timely_term")
-    added_vars  <- c("bacc", "completion")
+    added_vars  <- c("bacc_term", "completion")
     return_vars <- c(dframe_vars, added_vars)
     expect_equal(return_vars, colnames(DT))
     

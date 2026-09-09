@@ -53,7 +53,7 @@ Bug fixes
 - Convert vignettes to non-vignette articles available on the website. 
 - Add re-export of wrapr `check_equiv_frames()` to replace `same_content()` 
 - Add composite column keys of the `course` data table to `select_required()`
-- Add datasets `grade_scale` and `sat_act_scale`
+- Add datasets `grade_scale` and `act_sat_scale`
 
 
 

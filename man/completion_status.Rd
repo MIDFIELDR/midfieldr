@@ -23,7 +23,7 @@ of the required variables are removed. Duplicated rows are removed.
 below) are not modified; columns with matching names are replaced.
 The new columns added are:
 \itemize{
-\item \code{bacc}    Character. Term of a student's first
+\item \code{bacc_term}    Character. Term of a student's first
 baccalaureate, encoded \code{YYYYT} or, if no degree recorded, \code{NA.}
 Joined from the \code{term_degree} variable in \code{midf_table.}
 \item \code{completion}   Character. Completion status, possible values of

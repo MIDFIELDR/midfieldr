@@ -21,9 +21,10 @@ new_cols_added <- "Columns with names different from the new columns (named
         below) are not modified; columns with matching names are replaced.
         The new columns added are:"
 
-# new_cols_added <- "New columns are added as listed below. The new columns
-#         silently replace existing columns of the same name. Other columns are
-#         not modified."
+
+
+
+
 
 
 # ---------- Variable names used in data.R

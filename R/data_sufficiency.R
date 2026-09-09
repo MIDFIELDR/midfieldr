@@ -93,19 +93,19 @@ data_sufficiency <- function(dframe, midf_table = term) {
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
 
   # prevent overwriting by temporary columns
-  temp_vars <- c("idx", "lower_limit", "upper_limit", "institution")
+  temp_vars <- c("idx", "lower_limit", "upper_limit")
   temp_vars <- utils_edit_colnames(dframe, temp_vars)
   idx <- temp_vars[1]
   lower_limit <- temp_vars[2]
   upper_limit <- temp_vars[3]
-  institution <- temp_vars[4]
+  # institution <- temp_vars[4]
 
   # for restoring row order
   dframe[, IDX := .I, env = list(IDX = idx)]
 
   # ---------- do the work
 
-  # add institution data range limits
+  # find institution data range limits
   midf_table[, `:=`(
     LOWER_LIMIT = min(term),
     UPPER_LIMIT = max(term)
@@ -116,10 +116,9 @@ data_sufficiency <- function(dframe, midf_table = term) {
     UPPER_LIMIT = upper_limit
   )
   ]
-  midf_table[, term := NULL]
-
-  # edit name before join
-  setnames(midf_table, old = "institution", new = institution)
+ 
+  # drop variables before join limits
+  midf_table[, c("term", "institution") := NULL]
   dframe <- midf_table[dframe, on = "mcid"]
 
   # compare student terms to institution range limits

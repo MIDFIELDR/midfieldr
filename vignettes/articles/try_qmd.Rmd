@@ -1,0 +1,126 @@
+---
+title: "Try a QMD script"
+format: html
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: "#>"
+    fig-dpi: 300
+    fig-asp: 0.618
+    fig-width: 6
+    out-width: "80%"
+---
+
+```{=html}
+<style>
+.content h3 {
+margin-top: -30px !important;
+}
+
+details {
+margin-bottom: 40px;
+}
+</style>
+```
+```{r}
+#| include: false
+library(midfieldr)
+library(midfielddata)
+library(data.table)
+library(dplyr)
+library(tibble)
+```
+
+## Hello
+
+```{r}
+data(student, term, degree)
+```
+
+
+::: {.panel-tabset}
+
+### data.table
+
+```{r}
+student_DT <- copy(student)
+term_DT <- copy(term)
+degree_DT <- copy(degree)
+```
+
+### dplyr
+
+```{r}
+student_TB <- as_tibble(student)
+term_TB <- as_tibble(term)
+degree_TB <- as_tibble(degree)
+```
+
+:::
+
+```{r}
+class(student)
+class(student_DT)
+class(student_TB)
+
+check_equiv_frames(student_DT, student_TB)
+```
+
+# Population
+
+The baseline population used for most studies consists of degree-seeking students whose records satisfy the data sufficiency requirement.
+
+## Degree-seeking
+
+By design, the `student` data table contains all (and only) degree-seeking students. Thus we start with those IDs. 
+
+::: {.panel-tabset}
+
+### data.table
+
+```{r}
+DT <- student_DT[, .(mcid)]
+```
+
+### dplyr
+
+```{r}
+TB <- student_DT %>%
+    select(mcid)
+```
+
+:::
+
+```{r}
+DT
+
+check_equiv_frames(DT, TB)
+```
+
+## Data sufficiency
+
+We use `timely_term()` to determine the timely completion term for the degree-seeking students and add columns to the data frame to support those findings. 
+
+::: {.panel-tabset}
+
+### data.table
+
+```{r}
+DT <- timely_term(DT, midf_table = term_DT)
+DT
+```
+
+### dplyr
+
+```{r}
+TB <- timely_term(TB, midf_table = term_TB)
+TB
+```
+
+:::
+
+
+
+```{r}
+DT[order(entry_level)]
+```

@@ -4,7 +4,7 @@
 \alias{timely_term}
 \title{Determine timely completion terms}
 \usage{
-timely_term(dframe, midf_table = term, ..., sched_span = NULL, span = NULL)
+timely_term(dframe, midf_table = term, ..., span = NULL, sched_span = NULL)
 }
 \arguments{
 \item{dframe}{Data frame or data frame extension (e.g., data.table or tibble) with required variable \verb{\{mcid\}.}}
@@ -15,12 +15,12 @@ timely_term(dframe, midf_table = term, ..., sched_span = NULL, span = NULL)
 \item{...}{Not used for passing values; forces subsequent arguments to be
 referable only by name.}
 
-\item{sched_span}{Integer scalar (default 4), the number of years an
-institution officially schedules for completing a program.}
-
 \item{span}{Integer scalar (default 6), number of years to define timely
 completion, typically 4, 6, or 8 years (100\%, 150\%, 200\% respectively
-of \code{sched_span}).}
+of \code{sched_span}).#'}
+
+\item{sched_span}{Integer scalar (default 4), the number of years an
+institution officially schedules for completing a program.}
 }
 \value{
 Data frame with the following properties:

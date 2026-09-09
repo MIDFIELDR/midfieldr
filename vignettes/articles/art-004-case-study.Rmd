@@ -52,17 +52,22 @@ $$
 
 *Dissemination.* &nbsp; Exclude groupings too small to preserve anonymity;   condition or transform data as needed for tables or charts. 
 
+
+
+
+
 ### *Essential terminology*
 
-- The students comprising the population are expected to be undergraduates and  *degree-seeking,* i.e., attempting to complete a program. 
+- *Degree-seeking.* Attempting to complete a program. Students comprising the population are expected to be undergraduates and degree-seeking.
 
-- *Program completion* means satisfying the requirements for a first baccalaureate degree. 
+- *Program completion.* Satisfying the requirements for a first baccalaureate degree. 
 
-- The *timely-completion term* is the term by which we would consider their completion "timely", default 6 years after admission. 
+- *Timely-completion term.* The latest term by which we would consider a student's completion "timely", default 6 years after admission. 
 
-- *Completion status* is "timely" for students graduating no later than their timely-completion term; "late" for graduating afterwards; and "NA" for non-completion. Completion status can be established only for records consistent with data sufficiency. 
+- *Data sufficiency.* Identifying students whose admission term and  timely completion term lie within their institution's data range. Meeting this condition is necessary and sufficient for positively determining completion status. 
 
-- The *data sufficiency* test identifies students whose admission term and projected timely completion term lie within the range of data available from their institution---a necessary and sufficient condition for determining completion status. 
+- *Completion status.* Can be positively determined only for records meeting the data sufficiency condition.  Status levels are "timely" for students graduating no later than their timely-completion term; "late" for graduating afterwards; and "NA" for non-completion. 
+
 
 
 
@@ -196,34 +201,34 @@ make_table(Ncompare, "Table 1(b). Number of observations")
 
 ### *Qualification level*
 
-We are interested in *undergraduate* records: academic terms before a student's  first degree. We use `qualification_level()` to categorize terms as "undergrad" for terms before the first degree or "post-bacc" (post-baccalaureate) for terms after the first degree.
+We are interested in *undergraduate* records: academic terms before a student's  first degree. We use `is_undergrad()` to categorize terms as "undergrad" for terms before the first degree or "post-bacc" (post-baccalaureate) for terms after the first degree.
 
 ```{r}
-term <- qualification_level(term, midf_table = degree)
-degree <- qualification_level(degree, midf_table = degree)
+term <- is_undergrad(term, midf_table = degree)
+degree <- is_undergrad(degree, midf_table = degree)
 
-term[order(-qual_level), .(mcid, term, bacc, qual_level)]
+term[order(-term_focus), .(mcid, term, bacc_term, term_focus)]
 
-degree[order(-qual_level), .(mcid, term_degree, bacc, qual_level)]
+degree[order(-term_focus), .(mcid, term_degree, bacc_term, term_focus)]
 ```
 
 *Summary check.* &nbsp; Summarize the numbers of students in each category.
 
 ```{r}
-term[, .N, by = c("qual_level")][order(-N)]
+term[, .N, by = c("term_focus")][order(-N)]
 
-degree[, .N, by = c("qual_level")][order(-N)]
+degree[, .N, by = c("term_focus")][order(-N)]
 ```
 
 We keep the terms at the undergraduate level.  
 
 ```{r}
-term <- term[qual_level == "undergrad"]
-degree <- degree[qual_level == "undergrad"]
+term <- term[term_focus == "undergrad"]
+degree <- degree[term_focus == "undergrad"]
 
 # drop temporary columns
-term[, c("bacc", "qual_level") := NULL]
-degree[, c("bacc", "qual_level") := NULL]
+term[, c("bacc_term", "term_focus") := NULL]
+degree[, c("bacc_term", "term_focus") := NULL]
 ```
 
 We copy the current data tables to reserve them as our "baseline" records. From this point forward, anytime we need a fresh copy of any of the data tables, we copy the `*_baseline` version. Anytime we need a starting population, we copy  `population.`

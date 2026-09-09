@@ -13,66 +13,49 @@ check](https://github.com/MIDFIELDR/midfieldr/actions/workflows/R-CMD-check.yaml
 
 ## Overview
 
-An R package that supplies tools for working with longitudinal
-undergraduate records from the MIDFIELD, or similarly structured,
-database.
+midfieldr is an R package that supplies tools for working with
+longitudinal undergraduate records from the MIDFIELD database ([Ohland
+2023](#ref-ohland:midfield:2023)) or similarly structured data tables.
+These tools help you develop credible populations, subset records to
+calculate quantitative metrics, and prepare results for dissemination.
 
-- `completion_status()` identifies IDs to include for timely completion.
-- `data_sufficiency()` identifies IDs to exclude due to insufficient
+- `completion_status()` Identifies IDs to include for timely completion.
+- `data_sufficiency()` Identifies IDs to exclude due to insufficient
   data.  
-- `filter_programs()` helps you find 6-digit program codes.  
-- `order_multiway()` conditions data for Cleveland multiway charts.  
-- `prep_fye_mice()` conditions data for imputing starting majors of FYE
+- `filter_programs()` Helps in finding 6-digit program codes.  
+- `order_multiway()` Conditions data for Cleveland multiway charts.  
+- `prep_fye_mice()` Conditions data for imputing starting majors of FYE
   students.
-- `qualification_level()` identifies post-first-degree terms to exclude.
-- `select_basic_cols()` minimizes columns for interactive sessions.  
-- `timely_term()` estimates terms of timely completion.
+- `qualification_level()` Identifies post-baccalaureate terms to
+  exclude.
+- `timely_term()` Determines the latest term for timely completion.
 
 ## Installation
 
-Install from CRAN with:
-
 ``` r
+# Install from CRAN:
 install.packages("midfieldr")
-```
 
-To get a bug fix or preview a new feature, you can install the
-development version from GitHub.
-
-``` r
-# install.packages("pak")
+# Or install the development version from GitHub:
 pak::pak("MIDFIELDR/midfieldr")
-```
 
-midfieldr is designed to operate on the MIDFIELD database ([Ohland
-2023](#ref-ohland:midfield:2023)) or similarly structured data such as
-the MIDFIELD sample in
-[midfielddata](https://midfieldr.github.io/midfielddata/), an R data
-package you can download from GitHub. All midfieldr articles use the
-data tables from midfielddata.
-
-``` r
+# Also install the midfielddata package for practice data
 install.packages("midfielddata",
   repos = "https://MIDFIELDR.github.io/drat/",
   type = "source"
 )
 ```
 
-For information on accessing the MIDFIELD database for research, contact
-the American Society for Engineering Education (ASEE).
-
 ## Usage
 
-The `cip` dataset of program codes loads with midfieldr. Small samples
-of student records `(toy_student, toy_term, toy_course, toy_degree)`
-also load with midfieldr, containing the same variables found in the
-midfielddata practice data as well as the MIDFIELD research data tables.
+Data that load with midfieldr include `cip` for program codes and small
+samples of the four data tables (prefix `toy_`) for terse examples.
 
 ``` r
 library("midfieldr")
 library("data.table")
 
-# Assign record samples 
+# Assign preferred names to example tables 
 student <- copy(toy_student)
 term <- copy(toy_term)
 course <- copy(toy_course)
@@ -91,9 +74,18 @@ DT
 #> 350: MCID3112869843
 #> 351: MCID3112885339
 
-# Filter population for data sufficiency
+# Categorize records for data sufficiency
 DT <- timely_term(DT, midf_table = term)
 DT <- data_sufficiency(DT, midf_table = term)
+# -- result summary
+DT[, .N, by = "sufficiency"][order(-N)]
+#>    sufficiency     N
+#>         <char> <int>
+#> 1:   satisfied   240
+#> 2:  fail-upper    99
+#> 3:  fail-lower    12
+
+# Subset to obtain baseline population
 population <- DT[sufficiency == "satisfied", .(mcid)]
 population
 #>                mcid
@@ -128,15 +120,13 @@ term <- term[qual_level == "undergrad"]
 course <- course[qual_level == "undergrad"]
 degree <- degree[qual_level == "undergrad"]
 
-# Omit temporary columns to finalize baseline records
+# Omit temporary columns to obtain baseline records
 term[, c("bacc", "qual_level") := NULL]
 course[, c("bacc", "qual_level") := NULL]
 degree[, c("bacc", "qual_level") := NULL]
 
-# Obtain set of 6-digit CIP codes for three programs
-# -- Engineering (14)
-# -- Psychology (42)
-# -- Business (52)
+# Obtain 6-digit CIP codes for Engineering (14), Psychology (42), 
+# and Business (52)
 programs <- filter_programs(cip, c("^14", "^42", "^52"))
 programs <- programs[, .(cip6name, cip6)]
 
@@ -159,11 +149,11 @@ programs
 #> 175: 529999    Business
 
 # Categorize completion status
-DT <- copy(population)
-DT <- timely_term(DT, midf_table = term)
-DT <- completion_status(DT, midf_table = degree)
-# -- summary
-DT[, .N, by = "completion"][order(-N)]
+pop <- copy(population)
+pop <- timely_term(pop, midf_table = term)
+pop <- completion_status(pop, midf_table = degree)
+# -- result summary
+pop[, .N, by = "completion"][order(-N)]
 #>    completion     N
 #>        <char> <int>
 #> 1:     timely   161
@@ -171,8 +161,8 @@ DT[, .N, by = "completion"][order(-N)]
 #> 3:       late     8
 
 # Filter population for timely completion
-DT <- unique(DT[completion == "timely", .(mcid)])
-DT
+pop <- unique(pop[completion == "timely", .(mcid)])
+pop
 #>                mcid
 #>              <char>
 #>   1: MCID3111213539
@@ -184,7 +174,7 @@ DT
 #> 161: MCID3112593368
 
 # Join degree CIP codes
-DT <- degree[, .(mcid, cip6)][DT, on = "mcid"]
+DT <- degree[, .(mcid, cip6)][pop, on = "mcid"]
 
 # Inner join to filter graduates by program
 DT <- programs[, .(cip6, program)][DT, on = "cip6", nomatch = NULL]

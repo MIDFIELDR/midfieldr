@@ -23,7 +23,7 @@
 #' * `r df_class_preserved`
 #' * `r rows_not_modified`
 #' * `r new_cols_added`
-#'   - `bacc` &nbsp;  Character. Term of a student's first
+#'   - `bacc_term` &nbsp;  Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA.`
 #'      Joined from the `term_degree` variable in `midf_table.`
 #'   - `completion` &nbsp; Character. Completion status, possible values of
@@ -44,11 +44,11 @@ completion_status <- function(dframe, midf_table = degree) {
   # active column names
   reqd_dframe_vars <- c("mcid", "timely_term")
   reqd_table_vars <- c("mcid", "term_degree")
-  added_vars <- c("bacc", "completion")
+  added_vars <- c("bacc_term", "completion")
 
   # bind names for R CMD check
   completion <- NULL
-  bacc <- NULL
+  bacc_term <- NULL
   IDX <- NULL
 
   # ---------- variable assertions
@@ -78,10 +78,9 @@ completion_status <- function(dframe, midf_table = degree) {
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
 
   # prevent overwriting by temporary columns
-  temp_vars <- c("idx", "bacc")
+  temp_vars <- c("idx")
   temp_vars <- utils_edit_colnames(dframe, temp_vars)
   idx <- temp_vars[1]
-  bacc <- temp_vars[2]
 
   # for restoring row order
   dframe[, IDX := .I, env = list(IDX = idx)]
@@ -89,12 +88,12 @@ completion_status <- function(dframe, midf_table = degree) {
   # ---------- do the work
 
   # edit name before join
-  setnames(midf_table, old = "term_degree", new = "bacc")
+  setnames(midf_table, old = "term_degree", new = "bacc_term")
   dframe <- midf_table[dframe, on = "mcid"]
 
   # completion is timely, late, or NA
   dframe[, completion := fifelse(
-    bacc <= timely_term,
+    bacc_term <= timely_term,
     "timely",
     "late",
     na = NA_character_
