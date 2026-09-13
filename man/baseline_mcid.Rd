@@ -21,6 +21,7 @@ illustrated in the package articles.
 }
 \seealso{
 Other case-study-data:
+\code{\link{case_results}},
 \code{\link{study_observations}},
 \code{\link{study_programs}},
 \code{\link{study_results}}

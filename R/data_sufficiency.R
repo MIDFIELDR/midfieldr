@@ -116,7 +116,7 @@ data_sufficiency <- function(dframe, midf_table = term) {
     UPPER_LIMIT = upper_limit
   )
   ]
- 
+
   # drop variables before join limits
   midf_table[, c("term", "institution") := NULL]
   dframe <- midf_table[dframe, on = "mcid"]

@@ -108,6 +108,7 @@ select_basic_cols <- function(dframe) {
     returned_vars,
     prior_class
   )
+
   # done
   dframe[]
 }

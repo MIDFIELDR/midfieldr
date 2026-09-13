@@ -32,8 +32,10 @@ options(
 library(gt)
 added_variables_table <- function(df) {
   gt(df) |>
-    tab_options(table.font.size = pct(80), 
-                container.height = pct(80)) |>
+    tab_options(
+      table.font.size = pct(80),
+      container.height = pct(80)
+    ) |>
     fmt_markdown(columns = 1) |>
     cols_label(
       var = "variable",
@@ -42,13 +44,13 @@ added_variables_table <- function(df) {
 }
 ```
 
-In this document, we introduce midfieldr's basic tools and show how to apply them to data frames of student-level records (registrar's data). We organize the topics following a typical workflow:
+In this document, we introduce midfieldr's basic tools and show how to apply them to data frames of student-level records (registrar's data). We organize the topics to follow a typical workflow:
 
 - data
 - population
 - records
 - blocs
-- dissemination
+- special conditioning
 
 *Packages.* We manipulate data using data.table syntax. 
 
@@ -69,8 +71,7 @@ midfieldr is designed to work with the MIDFIELD research database or any  databa
 For this article we load all four midfielddata tables. 
 
 ```{r, chunk06}
-# data(student, term, course, degree)
-data(student, term, degree)
+data(student, term, course, degree)
 ```
 
 `select_basic_cols()` returns a subset of each table with the variables most often encountered in the early stages of a project. The tables are linked by the anonymized student ID variable `mcid.`
@@ -80,7 +81,7 @@ select_basic_cols(student)
 
 select_basic_cols(term)
 
-# select_basic_cols(course)
+select_basic_cols(course)
 
 select_basic_cols(degree)
 ```
@@ -107,6 +108,8 @@ Relevant functions:
 
 - `timely_term()`
 - `data_sufficiency()`
+- `degree_seeking()`
+
 
 
 ### timely_term()
@@ -186,8 +189,10 @@ Relevant functions:
 
 - `is_undergrad()`
 
-### is_undergrad()
 
+
+
+### is_undergrad()
 
 *Undergraduate terms* are those prior to (and including) the first degree term.
 
@@ -198,7 +203,7 @@ Relevant functions:
 x <- wrapr::build_frame(
   "var", "val" |
     "`bacc_term`", "term of a student's first baccalaureate or NA" |
-    "`term_focus`", 'indicates whether a term is before or after a first degree'
+    "`term_focus`", "indicates whether a term is before or after a first degree"
 )
 added_variables_table(x)
 ```
@@ -233,7 +238,6 @@ Relevant functions:
 
 - `filter_programs()`
 - `completion_status()`
-- `prep_fye_mice()`
 
 
 
@@ -309,6 +313,17 @@ DT <- completion_status(DT)
 DT[order(-completion)]
 ```
 
+When we want of bloc of timely graduates, we filter to retain rows with completion "timely."
+
+
+
+## Special conditioning
+
+Relevant functions:
+
+- `prep_fye_mice()`
+- `order_multiway()`
+
 
 
 ### prep_fye_mice()
@@ -328,10 +343,6 @@ At some U.S. institutions, completing a *First-Year Engineering (FYE)* program i
 `prep_fye_mice()` helps us develop an *FYE proxy,* a likely CIP code of the  student's starting program had FYE not been required. Results are a CIP code or NA, treated as missing data to be imputed. 
 
 ```{r}
-# seed set for reproducibility only
-set.seed(202060909)
-
-# apply
 prep_fye_mice(student, term)
 ```
 
@@ -343,11 +354,8 @@ If FYE programs are involved in your study,
 
 
 
-## Dissemination
 
-Relevant functions:
 
-- `order_multiway()`
 
 
 
@@ -355,11 +363,30 @@ Relevant functions:
 
 Conditions data for Cleveland multiway charts.
 
-*Multiway data* comprise three variables: a category with $\small m$ levels; a second independent category with $\small n$ levels; and a quantitative variable (the response) of length $\small m \times n$ with a value of the response for each combination of levels of the two categorical variables.
+*Multiway data* comprise two independent categorical variables and one quantitative variable with a value for each combination of levels of the two categories.
 
-`order_multiway()` converts the categorical variables to factors ordered by the quantitative variable. The ordering of the rows and panels is crucial to the perception of effects.
+`order_multiway()` converts the categorical variables to factors ordered by the quantitative variable. This ordering determines the order of the panels and rows in a multiway chart, crucial to our ability to perceive effects.
 
-Complete information on using `order_multiway()` can be found in  [Multiway data and charts](art-120-multiway.html).
+In this example, we use the `case_results` multiway data that loads with midfieldr. The two categories are `program` and `people`. The quantity is `stick` (program stickiness) which is the ratio of `grad` (number of program graduates) to `ever` (number ever enrolled in the program). 
+
+```{r}
+case_results
+```
+
+In the data frame returned, the factor levels are ordered by the aggregate stickiness calculated separately by category and reported in the new columns (suffix `_metric`). A multiway chart can be constructed from the data in this form. 
+
+```{r}
+DT <- order_multiway(case_results,
+  quantity = "stick",
+  categories = c("program", "people"),
+  method = "percent",
+  ratio_of = c("grad", "ever")
+)
+DT[, c("grad", "ever") := NULL]
+DT
+```
+
+Complete information on using `order_multiway()` and constructing multiway charts can be found in  [Multiway data and charts](art-120-multiway.html).
 
 
 
@@ -372,10 +399,8 @@ See the relevant help page for more information, e.g. `?look_at.`
 - `look_at()` for data frames, wraps base `str()` with preset arguments.
 - `sort_uniq()` for vectors, wraps base `sort(unique())` with preset arguments.
 - `catch_error()` wraps base `tryCatch()` for errors with preset arguments.
+- `select_unique_cols()` primarily used internally to drop duplicate columns.
 - `check_equiv_frames()` re-exported from the wrapr package.
-
-
-
 
 
 

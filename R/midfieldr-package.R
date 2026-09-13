@@ -29,11 +29,13 @@
 #' @importFrom data.table setorder
 #' @importFrom data.table setorderv
 #' @importFrom data.table shift
+#' @importFrom data.table tstrsplit
 #'
 #' @importFrom stats median
 #' @importFrom stats na.omit
 #' @importFrom stats reorder
 #'
+#' @importFrom utils combn
 #' @importFrom utils str
 #'
 #' @importFrom wrapr %?%

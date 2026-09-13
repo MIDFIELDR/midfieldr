@@ -22,11 +22,6 @@ new_cols_added <- "Columns with names different from the new columns (named
         The new columns added are:"
 
 
-
-
-
-
-
 # ---------- Variable names used in data.R
 
 var_abbrev <- '\\item{`abbrev`}{Character. Course alphabetical identifier,
@@ -67,6 +62,9 @@ var_discipline_midfield <- '\\item{`discipline_midfield`}{Character. A variable
         Science", "Engineering", "Language and Literature", "Mathematics",
         "Visual and Performing Arts", etc.}'
 
+var_ever <- "\\item{`ever`}{Numerical. The number of students
+        ever enrolled in a program.}"
+
 var_ever_enrolled <- "\\item{`ever_enrolled`}{Numerical. The number of students
         ever enrolled in a program.}"
 
@@ -80,6 +78,9 @@ var_gpa_term <- "\\item{`gpa_term`}{Numeric. Term grade point average.}"
 
 var_grade <- '\\item{`grade`}{Character. Course grade, e.g., "A+", "A", "A-",
         "B+", "I", "NG", etc.}'
+
+var_grad <- "\\item{`grad`}{Numerical. Number of students completing
+        a program.}"
 
 var_graduates <- "\\item{`graduates`}{Numerical. Number of students completing
         a program.}"
@@ -122,6 +123,9 @@ var_mcid <- '\\item{`mcid`}{Character. Anonymized student identifier
 var_number <- '\\item{`number`}{Character. Course numeric identifier, e.g.
         "101", "3429."}'
 
+var_people <- '\\item{`people`}{Character. Race/ethnicity and sex as
+         self-reported by the student, e.g., "Asian Male", "Black Female", etc.}'
+
 var_program <- "\\item{`program`}{Character. Academic program label.}"
 
 var_proxy <- "\\item{`proxy`}{Character. The 6-digit CIP code of the estimated
@@ -146,6 +150,14 @@ var_sex <- '\\item{`sex`}{Character. Sex as self-reported by the student,
 var_standing <- '\\item{`standing`}{Character. Academic standing during the
         reported term, e.g., "Good Standing", "Academic Warning", etc.}'
 
+var_stick <- "\\item{`stick`}{Numerical. Program stickiness, the
+        ratio of the number of graduates to the number ever enrolled, in
+        percent.}"
+
+var_stickiness <- "\\item{`stickiness`}{Numerical. Program stickiness, the
+        ratio of the number of graduates to the number ever enrolled, in
+        percent.}"
+
 var_term <- "\\item{`term`}{Character. Academic year and term the student
         attended, encoded `YYYYT.`}"
 
@@ -164,7 +176,3 @@ var_type <- '\\item{`type`}{Character. Predominant delivery method for this
 
 var_us_citizen <- '\\item{`us_citizen`}{Character. US citizenship, possible
         values are "No", "Yes."}'
-
-var_stickiness <- "\\item{`stickiness`}{Numerical. Program stickiness, the
-        ratio of the number of graduates to the number ever enrolled, in
-        percent.}"

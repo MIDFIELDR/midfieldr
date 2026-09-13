@@ -92,8 +92,7 @@
 #' Proxies are the degree-granting engineering programs we estimate that
 #' First-Year Engineering (FYE) students would have declared had they not been
 #' required to enroll in FYE. Keyed by student ID. Proxies are provided for all
-#' students in the midfielddata practice data who enroll in FYE in their first
-#' term.
+#' students in the midfielddata practice data who ever enroll in FYE.
 #'
 #' The proxy variable contains 6-digit CIP codes of degree-granting engineering
 #' programs, e.g., Electrical Engineering, Mechanical Engineering, etc., that
@@ -101,11 +100,11 @@
 #' degree-granting starting programs. The most common application is a
 #' graduation rate calculation.
 #'
-#' The estimation is based on students' first post-FYE programs and a multiple
-#' imputation suitable for categorical variables using the mice package. The
-#' predictor variables are institution, race, and sex. The estimated variable is
-#' the 6-digit CIP code of a degree-granting engineering program at their
-#' institution.
+#' The estimation is based on students' earliest non-FYE, degree-granting
+#' programs and a multiple imputation suitable for categorical variables using
+#' the mice package. The predictor variables are institution, race, and sex.
+#' The estimated variable is the 6-digit CIP code of a degree-granting
+#' engineering program at their institution.
 #'
 #' `fye_proxy` holds only for the practice data in midfielddata---these values
 #' cannot be commingled with the MIDFIELD research database.
@@ -113,7 +112,7 @@
 #' @usage fye_proxy
 #' @family cip-data
 #'
-#' @format `data.table` with 4623 rows and 2 columns keyed by student ID:
+#' @format `data.table` with 5789 rows and 2 columns keyed by student ID:
 #' \describe{
 #'   `r var_mcid`
 #'   `r var_proxy`
@@ -375,3 +374,32 @@
 #'   corresponding to the ACT composite score.}
 #' }
 "act_sat_scale"
+
+
+# -------------------------------------------------------------------
+
+#' Case-study results
+#'
+#' Data table of longitudinal stickiness for the four programs of the case study
+#' (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) grouped
+#' by program, race/ethnicity, and sex. Provided for the convenience of vignette
+#' users.
+#'
+#' Longitudinal stickiness is the ratio of the number of students graduating
+#' from a program to the number of students ever enrolled in the program over
+#' the time span of available data. Results are based on data that have been
+#' filtered for data sufficiency, degree seeking, undergraduate terms, and
+#' timely completion.
+#'
+#' @usage case_results
+#' @family case-study-data
+#'
+#' @format `data.table` with 43 rows and 4 columns:
+#' \describe{
+#'  `r var_program`
+#'  `r var_people`
+#'  `r var_ever`
+#'  `r var_grad`
+#'  `r var_stick`
+#' }
+"case_results"

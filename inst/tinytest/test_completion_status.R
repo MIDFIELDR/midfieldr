@@ -78,7 +78,7 @@ test_completion_status <- function() {
     dframe_vars <- c("mcid", "timely_term")
     added_vars  <- c("bacc_term", "completion")
     return_vars <- c(dframe_vars, added_vars)
-    expect_equal(return_vars, colnames(DT))
+    expect_equal(sort(return_vars), sort(colnames(DT)))
     
     # correct answers naming and not naming arguments
     x <- completion_status(dframe = dframe, midf_table = degree)

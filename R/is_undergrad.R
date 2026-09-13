@@ -20,7 +20,7 @@
 #'   - `bacc_term` &nbsp;  Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA`.
 #'      Joined from the `term_degree` variable in `midf_table.`
-#'   - `term_focus` &nbsp;  Character. Indicating a term contributes to study 
+#'   - `term_focus` &nbsp;  Character. Indicating a term contributes to study
 #'      before or after a student's first baccalaureate.
 #'      Possible values are "undergrad" and "post-bacc."
 #' * `r not_preserved`

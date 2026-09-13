@@ -39,6 +39,7 @@ filtered for data sufficiency, degree seeking, and timely completion.
 \seealso{
 Other case-study-data:
 \code{\link{baseline_mcid}},
+\code{\link{case_results}},
 \code{\link{study_observations}},
 \code{\link{study_programs}}
 }

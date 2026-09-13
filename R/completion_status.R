@@ -41,14 +41,13 @@ completion_status <- function(dframe, midf_table = degree) {
 
   # ---------- declarations
 
-  # active column names
+  # required column names
   reqd_dframe_vars <- c("mcid", "timely_term")
   reqd_table_vars <- c("mcid", "term_degree")
-  added_vars <- c("bacc_term", "completion")
 
   # bind names for R CMD check
-  completion <- NULL
-  bacc_term <- NULL
+  BACC_TERM <- NULL
+  COMPLETION <- NULL
   IDX <- NULL
 
   # ---------- variable assertions
@@ -65,43 +64,55 @@ completion_status <- function(dframe, midf_table = degree) {
   dframe <- copy(dframe)
   midf_table <- copy(midf_table)
 
-  # setDT then reqd_vars as.char, na.omit, unique
+  # setDT, reqd_vars as.char, na.omit, unique
   dframe <- utils_prep_DT(dframe, reqd_dframe_vars)
   midf_table <- utils_prep_DT(midf_table, reqd_table_vars)
 
-  # dframe columns to protect and return
-  protected_vars <- setdiff(colnames(dframe), added_vars)
-  returned_vars <- c(protected_vars, added_vars)
-
   # select columns
-  dframe <- dframe[, .SD, .SDcols = protected_vars]
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
 
-  # prevent overwriting by temporary columns
-  temp_vars <- c("idx")
-  temp_vars <- utils_edit_colnames(dframe, temp_vars)
-  idx <- temp_vars[1]
+  # ---------- prevent overwriting
 
-  # for restoring row order
-  dframe[, IDX := .I, env = list(IDX = idx)]
+  added_vars <- c("bacc_term", "completion")
+  temp_vars <- c("idx")
+  proposed <- c(added_vars, temp_vars)
+
+  new_vars <- utils_edit_colnames(dframe, proposed)
+
+  q_bacc_term <- new_vars[1]
+  q_completion <- new_vars[2]
+  q_idx <- new_vars[3]
+
+  temp_vars <- c(q_idx)
 
   # ---------- do the work
 
+  # for restoring row order
+  dframe[, IDX := .I, env = list(IDX = q_idx)]
+
   # edit name before join
-  setnames(midf_table, old = "term_degree", new = "bacc_term")
+  setnames(midf_table, old = "term_degree", new = q_bacc_term)
   dframe <- midf_table[dframe, on = "mcid"]
 
   # completion is timely, late, or NA
-  dframe[, completion := fifelse(
-    bacc_term <= timely_term,
+  dframe[, COMPLETION := fifelse(
+    BACC_TERM <= timely_term,
     "timely",
     "late",
     na = NA_character_
-  )]
+  ),
+  env = list(
+    COMPLETION = q_completion,
+    BACC_TERM = q_bacc_term
+  )
+  ]
 
   # ---------- prepare to return
-  # restore row and column order, select return columns, restore class
-  dframe <- utils_prepare_return(dframe, idx, returned_vars, prior_class)
+
+  dframe <- dframe[, .SD, .SDcols = !temp_vars]
+  dframe <- select_unique_cols(dframe)
+  dframe <- unique(dframe)
+  setattr(dframe, "class", prior_class)
 
   # done
   dframe[]

@@ -24,7 +24,7 @@
 #' @param ... `r param_dots`
 #' @param span Integer scalar (default 6), number of years to define timely
 #'        completion, typically 4, 6, or 8 years (100%, 150%, 200% respectively
-#'        of `sched_span`).#' 
+#'        of `sched_span`).#'
 #' @param sched_span Integer scalar (default 4), the number of years an
 #'        institution officially schedules for completing a program.
 #' @returns Data frame with the following properties:

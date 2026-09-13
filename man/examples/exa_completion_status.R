@@ -17,7 +17,7 @@ x <- completion_status(x, midf_table = degree)
 x
 
 # If you repeat, the new columns are overwritten
-completion_status(x, midf_table = degree)
+y = completion_status(x, midf_table = degree)
 
 # Typical application retains "timely" rows only
 x[completion == "timely"]

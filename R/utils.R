@@ -163,7 +163,8 @@ utils_prep_DT <- function(dframe, reqd_vars) {
 #' @param prior_class Character vector to restore data frame class
 #' @noRd
 utils_prepare_return <- function(dframe, idx, returned_vars, prior_class) {
-  # defaults NULL if absent
+  #
+  # default NULL if absent
   idx <- idx %?% NULL
   returned_vars <- returned_vars %?% NULL
   prior_class <- prior_class %?% NULL
@@ -190,4 +191,90 @@ utils_prepare_return <- function(dframe, idx, returned_vars, prior_class) {
   if (!is.null(prior_class)) {
     setattr(dframe, "class", prior_class)
   }
+}
+
+
+#' Drop identical columns
+#'
+#' Operate on data frame check column names and contents. If values and names
+#' are identical, including a name with a .i suffix, the the new column is
+#' dropped. If values are different, the new column is retained.
+#' @param DT Data frame to be checked
+#' @param orig_names Character vector of original column names
+#' @param proposed_names Character vector or proposed new column names
+#' @param add_cols Character vector of columns to be added after running
+#'        `utils_edit_colnames()`.
+#' @noRd
+utils_drop_duplicate_column <- function(DT, orig_names, proposed_names, add_cols) {
+  # ---------- possible cases
+  # - values identical, names identical (drop)
+  # - values identical, name.i and name.j (drop)
+  # - values identical, names different (keep)
+  # - values different, names different (keep)
+  # - values different, names identical (keep) use name.i
+
+  RM_COL <- NULL
+  V1 <- NULL
+  V2 <- NULL
+
+  DT <- copy(DT)
+
+  # drop new column when proposed name = original name and content identical
+  # in this case, the added col name will have a suffix
+  idx_match_col <- which(proposed_names %in% orig_names)
+  if (length(idx_match_col) > 0) {
+    for (i in idx_match_col) {
+      p <- DT[, .SD, .SDcols = proposed_names[i]]
+      q <- DT[, .SD, .SDcols = add_cols[i]]
+      setnames(q, old = add_cols[i], new = proposed_names[i])
+      if (identical(p, q)) {
+        DT[, RM_COL := NULL, env = list(RM_COL = add_cols[i])]
+      }
+    }
+  }
+
+  # similar but checks .1, .2, .3 etc suffixed-names
+  strsplit_names <- tstrsplit(names(DT), split = "\\.")
+  strsplit_names
+
+  # list must have at least one suffixed column name
+  if (length(strsplit_names) > 1) {
+    names_no_suffix <- strsplit_names[[1]]
+    suffix_or_na <- strsplit_names[[2]]
+    names_ij <- names(DT)[!is.na(suffix_or_na)]
+    drop_ij <- names_no_suffix[!is.na(suffix_or_na)]
+
+    # must be at least two columns with suffixes
+    if (length(names_ij) > 1) {
+      # select cols with suffix, drop suffix
+      DT_ij <- DT[, .SD, .SDcols = names_ij]
+      setnames(DT_ij, old = names_ij, new = drop_ij)
+
+      # pairwise combinations of column integers
+      idx_pairs <- t(combn(1:length(names_ij), m = 2))
+      idx_pairs <- as.data.table(idx_pairs)
+
+      # compare columns in pairs, drop second if identical
+      names_to_drop <- NULL
+      for (i in 1:nrow(idx_pairs)) {
+        idx_1 <- idx_pairs[i, (V1)]
+        idx_2 <- idx_pairs[i, (V2)]
+
+        # isolate two columns in separate data tables
+        p <- DT_ij[, .SD, .SDcols = names(DT_ij)[idx_1]]
+        q <- DT_ij[, .SD, .SDcols = names(DT_ij)[idx_2]]
+
+        # drop name.j column if it duplicates name.i column
+        if (identical(p, q)) {
+          names_to_drop <- unique(c(names_to_drop, names_ij[idx_2]))
+        }
+      }
+      if (!is.null(names_to_drop)) {
+        DT[, c(names_to_drop) := NULL]
+      }
+    }
+  }
+
+  # done
+  DT[]
 }
