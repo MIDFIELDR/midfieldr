@@ -30,8 +30,8 @@ programs. One FYE code per institution.}
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved. Groups and keys are
-not preserved.
+\item Data frame class is preserved. Groups and keys
+are not preserved.
 \item Rows: One row for every degree-seeking FYE student.
 \item Columns: Conditioned for later use as an input to the mice R
 package for multiple imputation as follows:

@@ -19,11 +19,11 @@ expect_class_preserved <- function(df1, df2, fnc) {
     setattr(x, "class", c("tbl_df", "tbl", "data.frame"))
     setattr(y, "class", c("tbl_df", "tbl", "data.frame"))
     run_check(x, y, fnc)
-    
+
     x <- as.data.table(x)
     y <- as.data.table(y)
     run_check(x, y, fnc)
-    
+
     # done
     rm(x, y)
 }

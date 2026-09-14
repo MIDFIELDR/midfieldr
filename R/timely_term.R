@@ -28,9 +28,9 @@
 #' @param sched_span Integer scalar (default 4), the number of years an
 #'        institution officially schedules for completing a program.
 #' @returns Data frame with the following properties:
-#' * `r df_class_preserved`
-#' * `r rows_not_modified`
-#' * `r new_cols_added`
+#' * `r preserv_class_not_grp_keys`
+#' * `r omit_NA_dup_rows`
+#' * `r add_cols_drop_duplic`
 #'   - `entry_term` &nbsp; Character. Initial term of a student's longitudinal
 #'      record, encoded `YYYYT`. Extracted from `midf_table.`
 #'   - `entry_level` &nbsp; Character. Student level (01 Freshman, 02 Sophomore,
@@ -65,19 +65,19 @@ timely_term <- function(dframe,
   # active column names
   reqd_dframe_vars <- c("mcid")
   reqd_table_vars <- c("mcid", "term", "level")
-  added_vars <- c("entry_term", "entry_level", "adj_span", "timely_term")
 
   # optional defaults
   span <- span %?% 6
   sched_span <- sched_span %?% 4
 
   # bind names for R CMD check
-  adj_span <- NULL
-  entry_level <- NULL
-  entry_term <- NULL
+  ADJ_SPAN <- NULL
+  ENTRY_LEVEL <- NULL
+  ENTRY_TERM <- NULL
   DELTA <- NULL
   IDX <- NULL
   TERM_CODE <- NULL
+  TIMELY_TERM <- NULL
   YYYY <- NULL
 
   # ---------- variable assertions
@@ -100,31 +100,37 @@ timely_term <- function(dframe,
   dframe <- utils_prep_DT(dframe, reqd_dframe_vars)
   midf_table <- utils_prep_DT(midf_table, reqd_table_vars)
 
-  # dframe columns to protect and return
-  protected_vars <- setdiff(colnames(dframe), added_vars)
-  returned_vars <- c(protected_vars, added_vars)
-
   # select columns
-  dframe <- dframe[, .SD, .SDcols = protected_vars]
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
 
-  # prevent overwriting by temporary columns
-  temp_vars <- c("idx", "yyyy", "term_code", "delta")
-  temp_vars <- utils_edit_colnames(dframe, temp_vars)
-  idx <- temp_vars[1]
-  yyyy <- temp_vars[2]
-  term_code <- temp_vars[3]
-  delta <- temp_vars[4]
+  # ---------- prevent overwriting
 
-  # for restoring row order
-  dframe[, IDX := .I, env = list(IDX = idx)]
+  added_vars <- c("entry_term", "entry_level", "adj_span", "timely_term")
+  temp_vars <- c("idx", "yyyy", "term_code", "delta")
+  proposed <- c(added_vars, temp_vars)
+
+  new_vars <- utils_edit_colnames(dframe, proposed)
+
+  q_entry_term <- new_vars[1]
+  q_entry_level <- new_vars[2]
+  q_adj_span <- new_vars[3]
+  q_timely_term <- new_vars[4]
+  q_idx <- new_vars[5]
+  q_yyyy <- new_vars[6]
+  q_term_code <- new_vars[7]
+  q_delta <- new_vars[8]
+
+  return_vars <- c(names(dframe), new_vars[1:4])
 
   # ---------- do the work
+
+  # for restoring row order
+  dframe[, IDX := .I, env = list(IDX = q_idx)]
 
   # edit names before joining
   setnames(midf_table,
     old = c("term", "level"),
-    new = c("entry_term", "entry_level")
+    new = c(q_entry_term, q_entry_level)
   )
 
   # inner-join IDs, terms, levels
@@ -133,7 +139,7 @@ timely_term <- function(dframe,
   ID_term <- unique(ID_term)
 
   # keep the row of the first term by ID
-  setorderv(ID_term, c("mcid", "entry_term"))
+  setorderv(ID_term, c("mcid", q_entry_term))
   ID_term <- ID_term[, .SD[1L], by = c("mcid")]
 
   # left-join the results back to dframe
@@ -141,22 +147,23 @@ timely_term <- function(dframe,
 
   # separate year and term codes
   dframe[, `:=`(
-    YYYY = substr(entry_term, 1, 4),
-    TERM_CODE = substr(entry_term, 5, 5)
+    YYYY = substr(ENTRY_TERM, 1, 4),
+    TERM_CODE = substr(ENTRY_TERM, 5, 5)
   ),
   env = list(
-    TERM_CODE = term_code,
-    YYYY = yyyy
+    ENTRY_TERM = q_entry_term,
+    TERM_CODE = q_term_code,
+    YYYY = q_yyyy
   )
   ]
 
   # for month terms, (letters A, B, ..., a, b, ...), set first term to zero
   dframe[TERM_CODE %chin% c(LETTERS, letters), TERM_CODE := "0",
-    env = list(TERM_CODE = term_code)
+    env = list(TERM_CODE = q_term_code)
   ]
 
   # make year and term numeric
-  dframe[, names(.SD) := lapply(.SD, as.numeric), .SDcols = c(yyyy, term_code)]
+  dframe[, names(.SD) := lapply(.SD, as.numeric), .SDcols = c(q_yyyy, q_term_code)]
 
   # if first term is in summer, delay to the subsequent Fall
   dframe[TERM_CODE > 3, `:=`(
@@ -164,34 +171,52 @@ timely_term <- function(dframe,
     TERM_CODE = 1
   ),
   env = list(
-    TERM_CODE = term_code,
-    YYYY = yyyy
+    TERM_CODE = q_term_code,
+    YYYY = q_yyyy
   )
   ]
 
   # reduce span by assumed number of completed years by level
-  dframe[, DELTA := fcase(entry_level %like% "04", 3,
-    entry_level %like% "03", 2,
-    entry_level %like% "02", 1,
+  dframe[, DELTA := fcase(
+    ENTRY_LEVEL %like% "04", 3,
+    ENTRY_LEVEL %like% "03", 2,
+    ENTRY_LEVEL %like% "02", 1,
     default = 0
   ),
-  env = list(DELTA = delta)
+  env = list(
+    DELTA = q_delta,
+    ENTRY_LEVEL = q_entry_level
+  )
   ]
-  dframe[, adj_span := span - DELTA, env = list(DELTA = delta)]
+  dframe[, ADJ_SPAN := span - DELTA,
+    env = list(
+      ADJ_SPAN = q_adj_span,
+      DELTA = q_delta
+    )
+  ]
 
   # construct the timely-completion term
-  dframe[, timely_term := fcase(
-    TERM_CODE == 0, paste0(YYYY + adj_span - 1, 3),
-    TERM_CODE == 1, paste0(YYYY + adj_span - 1, 3),
-    TERM_CODE > 1, paste0(YYYY + adj_span, 1)
+  dframe[, TIMELY_TERM := fcase(
+    TERM_CODE == 0, paste0(YYYY + ADJ_SPAN - 1, 3),
+    TERM_CODE == 1, paste0(YYYY + ADJ_SPAN - 1, 3),
+    TERM_CODE > 1, paste0(YYYY + ADJ_SPAN, 1)
   ), env = list(
-    TERM_CODE = term_code,
-    YYYY = yyyy
+    TIMELY_TERM = q_timely_term,
+    TERM_CODE = q_term_code,
+    ADJ_SPAN = q_adj_span,
+    YYYY = q_yyyy
   )]
 
   # ---------- prepare to return
-  # restore row and column order, select return columns, restore class
-  dframe <- utils_prepare_return(dframe, idx, returned_vars, prior_class)
+
+  # restore row order
+  setkeyv(dframe, q_idx)
+
+  # NULL keys, return vars, unique, class
+  dframe <- utils_prep_return(dframe, return_vars, prior_class)
+
+  # drop cols or cols.1 duplicates if any
+  dframe <- select_unique_cols(dframe)
 
   # done
   dframe[]

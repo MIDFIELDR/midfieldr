@@ -24,15 +24,15 @@ program labels, as derived in
 
 This article in the MIDFIELD workflow:
 
-1.  Planning  
-2.  Initial processing  
+1.  Planning\
+2.  Initial processing\
 3.  Blocs
     - Ever-enrolled
-    - FYE proxies  
-    - Starters  
-    - Graduates  
-4.  Groupings  
-5.  Metrics  
+    - FYE proxies\
+    - Starters\
+    - Graduates\
+4.  Groupings\
+5.  Metrics\
 6.  Displays
 
 ## Definitions
@@ -190,9 +190,9 @@ The general form for a left join is
 
 where
 
-- `X` is the “left” data frame, all rows returned  
+- `X` is the “left” data frame, all rows returned\
 - `Y` is the “right” data frame, matching rows returned
-- `by` is the vector of shared column names to merge by  
+- `by` is the vector of shared column names to merge by\
 - `all.x = TRUE` ensures the left join
 
 In this example, the `Y` data frame is `term`, from which we extract the
@@ -244,7 +244,7 @@ efficient—has the form
 
 where
 
-- `X` is the “left” data frame, all rows returned  
+- `X` is the “left” data frame, all rows returned\
 - `Y` is the “right” data frame, matching rows returned
 - `j` selects columns from the joined data frame to retain
 - `on` is the vector of shared column names to merge on

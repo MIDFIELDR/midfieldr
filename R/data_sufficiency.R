@@ -31,9 +31,9 @@
 #' @param midf_table `r midfield_x("term")` with required variables
 #'        `{mcid, term, institution}.`
 #' @returns Data frame with the following properties:
-#' * `r df_class_preserved`
-#' * `r rows_not_modified`
-#' * `r new_cols_added`
+#' * `r preserv_class_not_grp_keys`
+#' * `r omit_NA_dup_rows`
+#' * `r add_cols_drop_duplic`
 #'   - `data_range` &nbsp; Character. Institution data range, encoded
 #'     `YYYYT-YYYYT,` indicating the institution's first and last term in the
 #'      database. Extracted from `midf_table.`
@@ -56,14 +56,13 @@ data_sufficiency <- function(dframe, midf_table = term) {
   # active column names
   reqd_dframe_vars <- c("mcid", "entry_term", "timely_term")
   reqd_table_vars <- c("mcid", "term", "institution")
-  added_vars <- c("data_range", "sufficiency")
 
   # bind names for R CMD check
-  data_range <- NULL
   entry_term <- NULL
-  sufficiency <- NULL
+  DATA_RANGE <- NULL
   IDX <- NULL
   LOWER_LIMIT <- NULL
+  SUFFICIENCY <- NULL
   UPPER_LIMIT <- NULL
 
   # ---------- variable assertions
@@ -84,26 +83,29 @@ data_sufficiency <- function(dframe, midf_table = term) {
   dframe <- utils_prep_DT(dframe, reqd_dframe_vars)
   midf_table <- utils_prep_DT(midf_table, reqd_table_vars)
 
-  # dframe columns to protect and return
-  protected_vars <- setdiff(colnames(dframe), added_vars)
-  returned_vars <- c(protected_vars, added_vars)
-
   # select columns
-  dframe <- dframe[, .SD, .SDcols = protected_vars]
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
 
-  # prevent overwriting by temporary columns
-  temp_vars <- c("idx", "lower_limit", "upper_limit")
-  temp_vars <- utils_edit_colnames(dframe, temp_vars)
-  idx <- temp_vars[1]
-  lower_limit <- temp_vars[2]
-  upper_limit <- temp_vars[3]
-  # institution <- temp_vars[4]
+  # ---------- prevent overwriting
 
-  # for restoring row order
-  dframe[, IDX := .I, env = list(IDX = idx)]
+  added_vars <- c("data_range", "sufficiency")
+  temp_vars <- c("idx", "lower_limit", "upper_limit")
+  proposed <- c(added_vars, temp_vars)
+
+  new_vars <- utils_edit_colnames(dframe, proposed)
+
+  q_data_range <- new_vars[1]
+  q_sufficiency <- new_vars[2]
+  q_idx <- new_vars[3]
+  q_lower_limit <- new_vars[4]
+  q_upper_limit <- new_vars[5]
+
+  return_vars <- c(names(dframe), new_vars[1:2])
 
   # ---------- do the work
+
+  # for restoring row order
+  dframe[, IDX := .I, env = list(IDX = q_idx)]
 
   # find institution data range limits
   midf_table[, `:=`(
@@ -112,8 +114,8 @@ data_sufficiency <- function(dframe, midf_table = term) {
   ),
   by = "institution",
   env = list(
-    LOWER_LIMIT = lower_limit,
-    UPPER_LIMIT = upper_limit
+    LOWER_LIMIT = q_lower_limit,
+    UPPER_LIMIT = q_upper_limit
   )
   ]
 
@@ -122,26 +124,35 @@ data_sufficiency <- function(dframe, midf_table = term) {
   dframe <- midf_table[dframe, on = "mcid"]
 
   # compare student terms to institution range limits
-  dframe[, sufficiency := fcase(
+  dframe[, SUFFICIENCY := fcase(
     timely_term > UPPER_LIMIT, "fail-upper",
     entry_term == LOWER_LIMIT, "fail-lower",
     default = "satisfied"
   ), env = list(
-    LOWER_LIMIT = lower_limit,
-    UPPER_LIMIT = upper_limit
+    LOWER_LIMIT = q_lower_limit,
+    UPPER_LIMIT = q_upper_limit,
+    SUFFICIENCY = q_sufficiency
   )]
 
   # combine limits for the data_range variable
-  dframe[, data_range := paste(LOWER_LIMIT, UPPER_LIMIT, sep = "-"),
+  dframe[, DATA_RANGE := paste(LOWER_LIMIT, UPPER_LIMIT, sep = "-"),
     env = list(
-      LOWER_LIMIT = lower_limit,
-      UPPER_LIMIT = upper_limit
+      LOWER_LIMIT = q_lower_limit,
+      UPPER_LIMIT = q_upper_limit,
+      DATA_RANGE = q_data_range
     )
   ]
 
   # ---------- prepare to return
-  # restore row and column order, select return columns, restore class
-  dframe <- utils_prepare_return(dframe, idx, returned_vars, prior_class)
+
+  # restore row order
+  setkeyv(dframe, q_idx)
+
+  # NULL keys, return vars, unique, class
+  dframe <- utils_prep_return(dframe, return_vars, prior_class)
+
+  # drop cols or cols.1 duplicates if any
+  dframe <- select_unique_cols(dframe)
 
   # done
   dframe[]

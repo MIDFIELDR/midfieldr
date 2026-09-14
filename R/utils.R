@@ -150,44 +150,26 @@ utils_prep_DT <- function(dframe, reqd_vars) {
   dframe[]
 }
 
+
 #' Prepare data frame output to be returned
 #'
 #' Operate on output data frame to:
-#' - restore row order via idx
-#' - restore column order and drop temporary columns
+#' - drop temporary columns and order columns
 #' - unique rows
 #' - restore class
 #' @param dframe Data frame to be returned
-#' @param idx Character name of column for restoring row order
-#' @param returned_vars Character vector of variables to return
+#' @param return_vars Character vector of variables to return
 #' @param prior_class Character vector to restore data frame class
 #' @noRd
-utils_prepare_return <- function(dframe, idx, returned_vars, prior_class) {
-  #
-  # default NULL if absent
-  idx <- idx %?% NULL
-  returned_vars <- returned_vars %?% NULL
-  prior_class <- prior_class %?% NULL
+utils_prep_return <- function(dframe, return_vars, prior_class) {
+  # setkey(dframe, NULL)
 
-  # bind names for R CMD check
-  IDX <- NULL
-
-  # restore row order
-  if (!is.null(idx)) {
-    setkeyv(dframe, idx)
-    # drop idx column, needed for NULL returned_vars
-    dframe[, IDX := NULL, env = list(IDX = idx)]
+  if (!is.null(return_vars)) {
+    dframe <- dframe[, .SD, .SDcols = return_vars]
   }
 
-  # restore column order and drop temporary columns
-  if (!is.null(returned_vars)) {
-    dframe <- dframe[, .SD, .SDcols = returned_vars]
-  }
-
-  # ensure unique rows
   dframe <- unique(dframe)
 
-  # restore class
   if (!is.null(prior_class)) {
     setattr(dframe, "class", prior_class)
   }

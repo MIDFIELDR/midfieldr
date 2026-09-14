@@ -42,8 +42,8 @@ when \code{method = "percent,"} ignored otherwise.}
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved. Groups and keys are
-not preserved.
+\item Data frame class is preserved. Groups and keys
+are not preserved.
 \item Row order is preserved. Duplicated rows are removed.
 \item Column specified by \code{quantity} is converted to type double.
 Columns specified by \code{categories} are converted to factors and ordered.

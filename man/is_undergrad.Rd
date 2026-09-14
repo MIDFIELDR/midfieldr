@@ -16,12 +16,14 @@ is_undergrad(dframe, midf_table = degree)
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved. Groups and keys are
-not preserved.
+\item Data frame class is preserved. Groups and keys
+are not preserved.
 \item Row order is preserved. Rows with \code{NA} values in any
 of the required variables are removed. Duplicated rows are removed.
-\item New columns are added or replace existing columns of the same name (if
-any). Other columns are not modified. The following variables are added:
+\item New columns are added and all unique columns are
+preserved. If required to prevent overwriting, new column names are
+suffixed (\verb{.1, .2,} etc.). Duplicate columns, differing by suffix only,
+are dropped. The new variables are:
 \itemize{
 \item \code{bacc_term}    Character. Term of a student's first
 baccalaureate, encoded \code{YYYYT} or, if no degree recorded, \code{NA}.
@@ -30,7 +32,6 @@ Joined from the \code{term_degree} variable in \code{midf_table.}
 before or after a student's first baccalaureate.
 Possible values are "undergrad" and "post-bacc."
 }
-\item Groups and keys are not preserved.
 }
 }
 \description{

@@ -13,8 +13,8 @@ data tables: \verb{\{student, term, course, degree\}.}}
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved. Groups and keys are
-not preserved.
+\item Data frame class is preserved. Groups and keys
+are not preserved.
 \item Rows are not modified.
 \item Columns are a subset of the input, appearing in the same order.
 }

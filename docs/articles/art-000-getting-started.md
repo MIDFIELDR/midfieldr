@@ -2,7 +2,7 @@
 
 In this document, we introduce midfieldr’s basic tools and show how to
 apply them to data frames of student-level records (registrar’s data).
-We organize the topics to follow a typical workflow:
+We follow a typical workflow to organize these topics:
 
 - data
 - population
@@ -10,7 +10,8 @@ We organize the topics to follow a typical workflow:
 - blocs
 - special conditioning
 
-*Packages.* We manipulate data using data.table syntax.
+*Packages.* We load midfielddata for its practice data and data.table
+for its data manipulation syntax.
 
 ``` r
 
@@ -150,7 +151,6 @@ Relevant functions:
 
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
 - [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
-- `degree_seeking()`
 
 ### timely_term()
 
@@ -198,6 +198,7 @@ consider “timely.”
 
 ``` r
 
+DT <- student[, .(mcid)]
 timely_term(DT, span = 8)[order(-adj_span)]
 #>                  mcid entry_term    entry_level adj_span timely_term
 #>                <char>     <char>         <char>    <num>      <char>
@@ -251,10 +252,10 @@ DT[order(-sufficiency)]
 #> 97555: MCID3112056754      19881       19933 19881-20096  fail-lower
 ```
 
-For a sufficiency result of “satisfied,” the entry term must be at least
-one term later than the lower limit of the data range and the timely
-completion term must be no later than the upper limit. We filter to
-retain rows with sufficiency labeled “satisfied.”
+We usually filter to retain rows with sufficiency labeled “satisfied,”
+indicating that the entry term is at least one term later than the lower
+limit of the data range and the timely completion term is no later than
+the upper limit.
 
 ## Records
 
@@ -269,14 +270,26 @@ degree term.
 
 [`is_undergrad()`](https://midfieldr.github.io/midfieldr/reference/is_undergrad.md)
 evaluates whether a term is before or after a student’s first degree.
-The principal data frame is one of `term, course,` or `degree.` In all
-cases, the first degree term is pulled from the `degree` table. The data
-table is returned with the following variables added:
+The principal data frame is any of the data tables having a term-value
+variable:
+
+``` r
+
+term <- is_undergrad(term)
+course <- is_undergrad(course)
+degree <- is_undergrad(degree)
+```
+
+In all cases, the term of the student’s first degree is pulled from the
+`degree` table. The input data frame is returned with the following
+variables added:
 
 | variable     | description                                                |
 |--------------|------------------------------------------------------------|
 | `bacc_term`  | term of a student's first baccalaureate or NA              |
 | `term_focus` | indicates whether a term is before or after a first degree |
+
+For example,
 
 ``` r
 
@@ -310,8 +323,8 @@ is_undergrad(term)
 #> 639915:                  15     2.18      2.18      <NA>  undergrad
 ```
 
-We usually retain all columns, but the results are easier to examine if
-we view a selection of columns,
+While we usually retain all columns, the results are easier to examine
+if we view a selection of columns,
 
 ``` r
 
@@ -328,25 +341,16 @@ term[order(-term_focus), .(mcid, term, bacc_term, term_focus)]
 #> 639915: MCID3112773810  20181     20174  post-bacc
 ```
 
-We apply
-[`is_undergrad()`](https://midfieldr.github.io/midfieldr/reference/is_undergrad.md)
-to the student records having term-value variables
-`{term, term_course, term_degree}.` In all cases, we filter to retain
-terms with an “undergrad” focus.
-
-``` r
-
-term <- is_undergrad(term)
-course <- is_undergrad(course)
-degree <- is_undergrad(degree)
-```
+In all cases, we filter to retain terms with an “undergrad” focus,
+dropping the post-baccalaureate terms.
 
 ## Blocs
 
 A *bloc* is a grouping of student-level data dealt with as a unit, for
-example, administrative groupings such as transfer students, traditional
-students, and non-traditional students, or program-based groupings such
-as program starters, ever-enrolled, graduates, or migrators.
+example, administrative groupings such as transfer students and
+traditional or non-traditional students, as well as program-based
+groupings such as students starting in, ever-enrolling in, migrating
+into or out of, or graduating from a program.
 
 Relevant functions:
 
@@ -493,15 +497,15 @@ DT <- completion_status(DT)
 
 # result
 DT[order(-completion)]
-#>                  mcid bacc_term timely_term completion
-#>                <char>    <char>      <char>     <char>
-#>     1: MCID3111142689     19913       19941     timely
-#>     2: MCID3111142782     19903       19941     timely
-#>     3: MCID3111142881     19894       19951     timely
+#>                  mcid timely_term bacc_term completion
+#>                <char>      <char>    <char>     <char>
+#>     1: MCID3111142689       19941     19913     timely
+#>     2: MCID3111142782       19941     19903     timely
+#>     3: MCID3111142881       19951     19894     timely
 #>    ---                                                
-#> 76919: MCID3112785480      <NA>       20123       <NA>
-#> 76920: MCID3112800920      <NA>       20153       <NA>
-#> 76921: MCID3112870009      <NA>       20003       <NA>
+#> 76919: MCID3112785480       20123      <NA>       <NA>
+#> 76920: MCID3112800920       20153      <NA>       <NA>
+#> 76921: MCID3112870009       20003      <NA>       <NA>
 ```
 
 When we want of bloc of timely graduates, we filter to retain rows with
@@ -629,20 +633,21 @@ charts](https://midfieldr.github.io/midfieldr/articles/art-120-multiway.md).
 
 ## Utilities
 
-See the relevant help page for more information, e.g. `?look_at.`
+See the relevant help page for more information,
+e.g. [`?catch_error`](https://midfieldr.github.io/midfieldr/reference/catch_error.md).
 
-- [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
-  for data frames, wraps base
-  [`str()`](https://rdrr.io/r/utils/str.html) with preset arguments.
-- [`sort_uniq()`](https://midfieldr.github.io/midfieldr/reference/sort_uniq.md)
-  for vectors, wraps base `sort(unique())` with preset arguments.
 - [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md)
   wraps base [`tryCatch()`](https://rdrr.io/r/base/conditions.html) for
   errors with preset arguments.
-- [`select_unique_cols()`](https://midfieldr.github.io/midfieldr/reference/select_unique_cols.md)
-  primarily used internally to drop duplicate columns.
 - [`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
   re-exported from the wrapr package.
+- [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
+  for data frames, wraps base
+  [`str()`](https://rdrr.io/r/utils/str.html) with preset arguments.
+- [`select_unique_cols()`](https://midfieldr.github.io/midfieldr/reference/select_unique_cols.md)
+  primarily used internally to drop duplicate columns.
+- [`sort_uniq()`](https://midfieldr.github.io/midfieldr/reference/sort_uniq.md)
+  for vectors, wraps base `sort(unique())` with preset arguments.
 
 ## References
 

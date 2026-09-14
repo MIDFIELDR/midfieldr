@@ -100,19 +100,15 @@ select_basic_cols(x)
 # e.g., consider the result for a full table:
 select_basic_cols(toy_term)
 #> Index: <mcid>
-#>                 mcid   term   cip6   institution          level
-#>               <char> <char> <char>        <char>         <char>
-#>    1: MCID3111142897  19881 400801 Institution B  01 First-year
-#>    2: MCID3111157634  19881 240102 Institution J  01 First-year
-#>    3: MCID3111157634  19883 040201 Institution J  01 First-year
-#>    4: MCID3111157634  19891 040201 Institution J 02 Second-year
-#>    5: MCID3111157634  19893 040201 Institution J 02 Second-year
-#>   ---                                                          
-#> 1817: MCID3112868072  20171 240199 Institution B  01 First-year
-#> 1818: MCID3112868072  20173 380101 Institution B 02 Second-year
-#> 1819: MCID3112869843  20173 240199 Institution B  01 First-year
-#> 1820: MCID3112869843  20181 240199 Institution B  01 First-year
-#> 1821: MCID3112885339  20181 520201 Institution B  01 First-year
+#>                 mcid   term   cip6   institution         level
+#>               <char> <char> <char>        <char>        <char>
+#>    1: MCID3111142897  19881 400801 Institution B 01 First-year
+#>    2: MCID3111157634  19881 240102 Institution J 01 First-year
+#>    3: MCID3111157634  19883 040201 Institution J 01 First-year
+#>   ---                                                         
+#> 1819: MCID3112869843  20173 240199 Institution B 01 First-year
+#> 1820: MCID3112869843  20181 240199 Institution B 01 First-year
+#> 1821: MCID3112885339  20181 520201 Institution B 01 First-year
 
 # Compared to the result for a subset of the same table:
 y <- toy_term[, .(mcid, term, cip6, hours_term, gpa_term)]
@@ -122,11 +118,7 @@ select_basic_cols(y)
 #>    1: MCID3111142897  19881 400801
 #>    2: MCID3111157634  19881 240102
 #>    3: MCID3111157634  19883 040201
-#>    4: MCID3111157634  19891 040201
-#>    5: MCID3111157634  19893 040201
 #>   ---                             
-#> 1817: MCID3112868072  20171 240199
-#> 1818: MCID3112868072  20173 380101
 #> 1819: MCID3112869843  20173 240199
 #> 1820: MCID3112869843  20181 240199
 #> 1821: MCID3112885339  20181 520201

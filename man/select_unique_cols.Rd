@@ -12,8 +12,8 @@ select_unique_cols(dframe)
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved. Groups and keys are
-not preserved.
+\item Data frame class is preserved. Groups and keys
+are not preserved.
 \item Rows are preserved.
 \item Unique columns preserved. Redundant columns dropped.
 }

@@ -15,13 +15,14 @@ variables \verb{\{mcid, term_degree\}.}}
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved. Groups and keys are
-not preserved.
+\item Data frame class is preserved. Groups and keys
+are not preserved.
 \item Row order is preserved. Rows with \code{NA} values in any
 of the required variables are removed. Duplicated rows are removed.
-\item Columns with names different from the new columns (named
-below) are not modified; columns with matching names are replaced.
-The new columns added are:
+\item New columns are added and all unique columns are
+preserved. If required to prevent overwriting, new column names are
+suffixed (\verb{.1, .2,} etc.). Duplicate columns, differing by suffix only,
+are dropped. The new variables are:
 \itemize{
 \item \code{bacc_term}    Character. Term of a student's first
 baccalaureate, encoded \code{YYYYT} or, if no degree recorded, \code{NA.}
@@ -66,8 +67,15 @@ x
 x <- completion_status(x, midf_table = degree)
 x
 
-# If you repeat, the new columns are overwritten
+# No change if new columns match existing columns
 y = completion_status(x, midf_table = degree)
+
+# If new column should match existing but does not,
+# new column with suffix .1, .2, etc., is added. 
+# Indicates an error has occurred somewhere. 
+y$bacc_term[1] <- "19893"
+z = completion_status(y, midf_table = degree)
+z
 
 # Typical application retains "timely" rows only
 x[completion == "timely"]

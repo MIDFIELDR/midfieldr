@@ -20,7 +20,7 @@
 #' @param dframe `r dframe` equivalent to or derived from one of the MIDFIELD
 #'        data tables: `{student, term, course, degree}.`
 #' @returns Data frame with the following properties:
-#' * `r df_class_preserved`
+#' * `r preserv_class_not_grp_keys`
 #' * Rows are not modified.
 #' * Columns are a subset of the input, appearing in the same order.
 #' @example man/examples/exa_select_basic_cols.R
@@ -99,15 +99,12 @@ select_basic_cols <- function(dframe) {
   }
 
   # determine the required columns that exist in dframe
-  returned_vars <- intersect(input_cols, reqd_var_set)
+  return_vars <- intersect(input_cols, reqd_var_set)
 
   # ---------- prepare to return
-  # restore row and column order, select return columns, restore class
-  dframe <- utils_prepare_return(dframe,
-    idx = NULL,
-    returned_vars,
-    prior_class
-  )
+
+  # NULL keys, return vars, unique, class
+  dframe <- utils_prep_return(dframe, return_vars, prior_class)
 
   # done
   dframe[]

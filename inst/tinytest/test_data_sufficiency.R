@@ -105,7 +105,7 @@ test_data_sufficiency <- function() {
     added_vars  <- c("data_range", "sufficiency")
     return_vars <- c(dframe_vars, added_vars)
     DT <- data_sufficiency(dframe, term)
-    expect_equal(return_vars, colnames(DT))
+    expect_equal(sort(return_vars), sort(colnames(DT)))
     
     # correct answers naming and not naming arguments
     x <- data_sufficiency(dframe = dframe, midf_table = term)

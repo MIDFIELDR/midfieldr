@@ -75,12 +75,27 @@ test_is_undergrad <- function() {
   expect_true(check_equiv_frames(term, toy_term))
   expect_true(check_equiv_frames(degr, toy_degree))
   
-  # overwrite prevention works
+  # overwrite prevention works, character idx remains, temp idx dropped
   x <- copy(toy_term)
-  x[, idx := as.character(.I)]
+  x[, idx := as.character(.I * 2)]
   y <- is_undergrad(x, toy_degree)
   expect_equal(x[["idx"]], y[["idx"]])
   expect_equal(new_cols, setdiff(colnames(y), colnames(x)))
+  
+  
+  
+  # ---------- ensuring unique names of internal columns
+  
+  # existing name that matches internals protected
+  x <- copy(toy_term)
+  x[, idx := as.character(.I * 2)]
+  y <- is_undergrad(x, toy_degree)
+  expect_equal(x[["idx"]], y[["idx"]])
+  
+  
+  
+  
+  
   
   # check term-cluster labels are correct
   # dframe required variables: mcid, term (or term_course or term_degree)

@@ -7,14 +7,14 @@ joins generally.
 
 This article in the MIDFIELD workflow:
 
-1.  Planning  
+1.  Planning\
 2.  Initial processing
-    - Data sufficiency  
+    - Data sufficiency\
     - Degree seeking
-    - Identify programs  
-3.  Blocs  
-4.  Groupings  
-5.  Metrics  
+    - Identify programs\
+3.  Blocs\
+4.  Groupings\
+5.  Metrics\
 6.  Displays
 
 ## Definitions

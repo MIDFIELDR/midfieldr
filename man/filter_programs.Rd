@@ -22,12 +22,11 @@ resulting Boolean vector.}
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved. Groups and keys are
-not preserved.
-\item Rows are a subset of the input and appear in the same order.
-Duplicated rows are removed.
+\item Data frame class is preserved. Groups and keys
+are not preserved.
+\item Rows are a subset of the input; row order is preserved. Duplicated rows
+are removed.
 \item Columns are not modified.
-\item Groups and keys are not preserved.
 }
 }
 \description{

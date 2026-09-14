@@ -8,12 +8,12 @@ rate metric–including migrators—are included in the stickiness metric
 
 This article in the MIDFIELD workflow:
 
-1.  Planning  
-2.  Initial processing  
-3.  Blocs  
-4.  Groupings  
+1.  Planning\
+2.  Initial processing\
+3.  Blocs\
+4.  Groupings\
 5.  Metrics
-    - Graduation rate  
+    - Graduation rate\
     - Stickiness
 6.  Displays
 

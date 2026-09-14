@@ -13,17 +13,15 @@
 #' @param midf_table `r midfield_x("degree")` with required variables
 #'        `{mcid, term_degree}.`
 #' @returns Data frame with the following properties:
-#' * `r df_class_preserved`
-#' * `r rows_not_modified`
-#' * New columns are added or replace existing columns of the same name (if
-#'   any). Other columns are not modified. The following variables are added:
+#' * `r preserv_class_not_grp_keys`
+#' * `r omit_NA_dup_rows`
+#' * `r add_cols_drop_duplic`
 #'   - `bacc_term` &nbsp;  Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA`.
 #'      Joined from the `term_degree` variable in `midf_table.`
 #'   - `term_focus` &nbsp;  Character. Indicating a term contributes to study
 #'      before or after a student's first baccalaureate.
 #'      Possible values are "undergrad" and "post-bacc."
-#' * `r not_preserved`
 #' @example man/examples/exa_is_undergrad.R
 #' @export
 #'
@@ -44,12 +42,11 @@ is_undergrad <- function(dframe, midf_table = degree) {
   # active column names
   reqd_dframe_vars <- c("mcid", term_var)
   reqd_table_vars <- c("mcid", "term_degree")
-  added_vars <- c("bacc_term", "term_focus")
 
   # bind names for R CMD check
-  bacc_term <- NULL
-  term_focus <- NULL
+  BACC_TERM <- NULL
   IDX <- NULL
+  TERM_FOCUS <- NULL
   TERM_VAR <- NULL
 
   # ---------- variable assertions
@@ -71,48 +68,63 @@ is_undergrad <- function(dframe, midf_table = degree) {
   dframe <- utils_prep_DT(dframe, reqd_dframe_vars)
   midf_table <- utils_prep_DT(midf_table, reqd_table_vars)
 
-  # dframe columns to protect and return
-  protected_vars <- setdiff(colnames(dframe), added_vars)
-  returned_vars <- c(protected_vars, added_vars)
-
   # select columns
-  dframe <- dframe[, .SD, .SDcols = protected_vars]
   midf_table <- midf_table[, .SD, .SDcols = reqd_table_vars]
 
-  # prevent overwriting by temporary columns
-  temp_vars <- c("idx")
-  temp_vars <- utils_edit_colnames(dframe, temp_vars)
-  idx <- temp_vars[1]
+  # ---------- prevent overwriting
 
-  # for restoring row order
-  dframe[, IDX := .I, env = list(IDX = idx)]
+  added_vars <- c("bacc_term", "term_focus")
+  temp_vars <- c("idx")
+  proposed <- c(added_vars, temp_vars)
+
+  new_vars <- utils_edit_colnames(dframe, proposed)
+
+  q_bacc_term <- new_vars[1]
+  q_term_focus <- new_vars[2]
+  q_idx <- new_vars[3]
+
+  return_vars <- c(names(dframe), new_vars[1:2])
 
   # ---------- do the work
 
+  # for restoring row order
+  dframe[, IDX := as.double(.I), env = list(IDX = q_idx)]
+
   # edit name before join
-  setnames(midf_table, old = "term_degree", new = "bacc_term")
+  setnames(midf_table, old = "term_degree", new = q_bacc_term)
   DT <- midf_table[dframe[, .(mcid)], on = "mcid", nomatch = NULL]
 
   # keep the first-degree term/row
-  setorderv(DT, c("mcid", "bacc_term"))
+  setorderv(DT, c("mcid", q_bacc_term))
   DT <- DT[, .SD[1L], by = "mcid"]
 
   # left-join to dframe, introduces NAs in bacc_term col
   dframe <- DT[dframe, on = "mcid"]
 
   # assign term status labels
-  dframe[, term_focus := fifelse(
-    TERM_VAR > bacc_term,
+  dframe[, TERM_FOCUS := fifelse(
+    TERM_VAR > BACC_TERM,
     "post-bacc",
     "undergrad",
     na = "undergrad"
   ),
-  env = list(TERM_VAR = term_var)
+  env = list(
+    TERM_VAR = term_var,
+    TERM_FOCUS = q_term_focus,
+    BACC_TERM = q_bacc_term
+  )
   ]
 
   # ---------- prepare to return
-  # restore row and column order, select return columns, restore class
-  dframe <- utils_prepare_return(dframe, idx, returned_vars, prior_class)
+
+  # restore row order
+  setkeyv(dframe, q_idx)
+
+  # NULL keys, return vars, unique, class
+  dframe <- utils_prep_return(dframe, return_vars, prior_class)
+
+  # drop cols or cols.1 duplicates if any
+  dframe <- select_unique_cols(dframe)
 
   # done
   dframe[]

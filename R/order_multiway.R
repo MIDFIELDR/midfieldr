@@ -42,7 +42,7 @@
 #'        must be in order, as in `c(dividend, divisor).` Required
 #'        when `method = "percent,"` ignored otherwise.
 #' @returns Data frame with the following properties:
-#' * `r df_class_preserved`
+#' * `r preserv_class_not_grp_keys`
 #' * Row order is preserved. Duplicated rows are removed.
 #' * Column specified by `quantity` is converted to type double.
 #'   Columns specified by `categories` are converted to factors and ordered.
@@ -159,15 +159,26 @@ order_multiway <- function(dframe,
   # convert class for analysis
   setDT(dframe)
 
-  # prevent overwriting by temporary columns
-  temp_vars <- c("idx")
-  temp_vars <- utils_edit_colnames(dframe, temp_vars)
-  idx <- temp_vars[1]
+  # ---------- prevent overwriting
 
-  # for restoring row order
-  dframe[, IDX := .I, env = list(IDX = idx)]
+  # new column names for ordering the factor levels
+  method_label <- fifelse(method == "percent", "metric", "median")
+  method_order <- paste(categories, method_label, sep = "_")
+
+  added_vars <- method_order
+  temp_vars <- c("idx")
+  proposed <- c(added_vars, temp_vars)
+
+  new_vars <- utils_edit_colnames(dframe, proposed)
+  q_method_order <- new_vars[1:2]
+  q_idx <- new_vars[3]
+
+  return_vars <- c(names(dframe), new_vars[1:2])
 
   # ---------- do the work
+
+  # for restoring row order
+  dframe[, IDX := .I, env = list(IDX = q_idx)]
 
   # convert categories to factors
   dframe[, (categories) := lapply(.SD, as.factor), .SDcols = categories]
@@ -177,10 +188,6 @@ order_multiway <- function(dframe,
     dframe[, (ratio_of) := lapply(.SD, as.double), .SDcols = ratio_of]
   }
   dframe[, (quantity) := lapply(.SD, as.double), .SDcols = quantity]
-
-  # new column names for ordering the factor levels
-  method_label <- fifelse(method == "percent", "metric", "median")
-  method_order <- paste(categories, method_label, sep = "_")
 
   # functions for creating the new ordering columns
   f_percent <- function(x, y) {
@@ -200,7 +207,7 @@ order_multiway <- function(dframe,
     ),
     by = CATEGORY,
     env = list(
-      METHOD_ORDER = method_order[jj],
+      METHOD_ORDER = q_method_order[jj],
       CATEGORY = categories[jj],
       NUM = ratio_of[1],
       DEN = ratio_of[2],
@@ -210,19 +217,22 @@ order_multiway <- function(dframe,
     # order the factor levels
     dframe[, CATEGORY := reorder(CATEGORY, METHOD_ORDER),
       env = list(
-        METHOD_ORDER = method_order[jj],
+        METHOD_ORDER = q_method_order[jj],
         CATEGORY = categories[jj]
       )
     ]
   }
 
   # ---------- prepare to return
-  # restore row and column order, select return columns, restore class
-  dframe <- utils_prepare_return(dframe,
-    idx,
-    returned_vars = NULL,
-    prior_class
-  )
+
+  # restore row order
+  setkeyv(dframe, q_idx)
+
+  # NULL keys, return vars, unique, class
+  dframe <- utils_prep_return(dframe, return_vars, prior_class)
+
+  # drop cols or cols.1 duplicates if any
+  dframe <- select_unique_cols(dframe)
 
   # done
   dframe[]

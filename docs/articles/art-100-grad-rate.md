@@ -18,13 +18,13 @@ if your study includes no FYE-style Engineering programs.
 
 This article in the MIDFIELD workflow:
 
-1.  Planning  
-2.  Initial processing  
-3.  Blocs  
-4.  Groupings  
+1.  Planning\
+2.  Initial processing\
+3.  Blocs\
+4.  Groupings\
 5.  Metrics
     - Graduation rate
-    - Stickiness  
+    - Stickiness\
 6.  Displays
 
 ## Definitions
@@ -97,7 +97,7 @@ completers.](figures/art-100-fig01-1.png)
 Figure 1. Graduation rate metric. Starters, migrators, and timely
 completers.
 
-  
+\
 When calculating graduation rate, whether migrator-graduates are
 included in the count of graduates depends how a program is defined in
 terms of CIP codes.
@@ -172,7 +172,7 @@ migrators.
 Table 1. Comparing graduation rate definitions {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
 
-  
+\
 
 - First-Year Engineering (FYE) starters:
 

@@ -9,14 +9,14 @@ from study.
 
 This article in the MIDFIELD workflow:
 
-1.  Planning  
+1.  Planning\
 2.  Initial processing
     - Data sufficiency
-    - Degree seeking  
-    - Identify programs  
-3.  Blocs  
-4.  Groupings  
-5.  Metrics  
+    - Degree seeking\
+    - Identify programs\
+3.  Blocs\
+4.  Groupings\
+5.  Metrics\
 6.  Displays
 
 ## Definitions
@@ -50,7 +50,7 @@ two students admitted in different terms with representative time spans
 shown for timely completion. In this scenario, we assume institution
 data is available from 1986 to 1996.
 
-  
+\
 
 ![Figure 1: Upper limit data sufficiency.](figures/art-020-fig01-1.png)
 
@@ -108,7 +108,7 @@ first term of the data range (also non-summer). When these two terms are
 identical, the complete unit record is excluded. We illustrate with the
 three scenarios described below.
 
-  
+\
 
 ![Figure 2: Lower limit data sufficiency.](figures/art-020-fig02-1.png)
 

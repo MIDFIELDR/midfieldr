@@ -41,28 +41,6 @@ programs; and timely graduates of the programs.
 *Dissemination.*   Exclude groupings too small to preserve anonymity;
 condition or transform data as needed for tables or charts.
 
-### *Essential terminology*
-
-- *Degree-seeking.* Attempting to complete a program. Students
-  comprising the population are expected to be undergraduates and
-  degree-seeking.
-
-- *Program completion.* Satisfying the requirements for a first
-  baccalaureate degree.
-
-- *Timely-completion term.* The latest term by which we would consider a
-  student’s completion “timely”, default 6 years after admission.
-
-- *Data sufficiency.* Identifying students whose admission term and
-  timely completion term lie within their institution’s data range.
-  Meeting this condition is necessary and sufficient for positively
-  determining completion status.
-
-- *Completion status.* Can be positively determined only for records
-  meeting the data sufficiency condition. Status levels are “timely” for
-  students graduating no later than their timely-completion term; “late”
-  for graduating afterwards; and “NA” for non-completion.
-
 ### *Getting started*
 
 Packages used in this article:
@@ -216,7 +194,7 @@ population
 To obtain our baseline records, we exclude students not in our
 population and we exclude terms that are post-baccalaureate.
 
-### *Population filter*
+### *Filter for population*
 
 An inner join of the population data frame and each data table, matching
 on `mcid,` excludes IDs not in our population.
@@ -237,7 +215,7 @@ degree <- population[degree, on = "mcid", nomatch = NULL]
 Table 1(b). Number of observations {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
 
-### *Qualification level*
+### *Filter for undergraduate terms*
 
 We are interested in *undergraduate* records: academic terms before a
 student’s first degree. We use
@@ -524,7 +502,7 @@ following 4-digit codes.
 
 - Civil Engineering 1408
 - Electrical Engineering 1410
-- Mechanical Engineering 1419  
+- Mechanical Engineering 1419\
 - Industrial/Systems Engineering 1427, 1435, 1436, and 1437.
 
 ### *Construct the programs table*
@@ -681,15 +659,15 @@ non-completion). The `degree` table here is identical to
 
 DT <- completion_status(DT, midf_table = degree)
 DT
-#>                  mcid bacc_term timely_term completion
-#>                <char>    <char>      <char>     <char>
-#>     1: MCID3111142689     19913       19941     timely
-#>     2: MCID3111142782     19903       19941     timely
-#>     3: MCID3111142881     19894       19951     timely
+#>                  mcid timely_term bacc_term completion
+#>                <char>      <char>    <char>     <char>
+#>     1: MCID3111142689       19941     19913     timely
+#>     2: MCID3111142782       19941     19903     timely
+#>     3: MCID3111142881       19951     19894     timely
 #>    ---                                                
-#> 76863: MCID3112785480      <NA>       20123       <NA>
-#> 76864: MCID3112800920      <NA>       20153       <NA>
-#> 76865: MCID3112870009      <NA>       20003       <NA>
+#> 76863: MCID3112785480       20123      <NA>       <NA>
+#> 76864: MCID3112800920       20153      <NA>       <NA>
+#> 76865: MCID3112870009       20003      <NA>       <NA>
 ```
 
 *Summary check.*   Numbers of students in each category.
@@ -1475,9 +1453,9 @@ charts comparing a quantitative metric, illustrating how we use
 midfieldr and other R packages to work with longitudinal student
 records.
 
-Please note that the data in midfielddata are for *practice*, not
-*research*. These results cannot be used for drawing inferences about
-people or programs.
+Please note however that the data in midfielddata are for *practice*,
+not *research*. These results cannot be used for drawing inferences
+about people or programs.
 
 ## References
 

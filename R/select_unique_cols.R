@@ -20,7 +20,7 @@
 #'
 #' @param dframe `r dframe`
 #' @returns Data frame with the following properties:
-#' * `r df_class_preserved`
+#' * `r preserv_class_not_grp_keys`
 #' * Rows are preserved.
 #' * Unique columns preserved. Redundant columns dropped.
 #' @export
@@ -87,12 +87,8 @@ select_unique_cols <- function(dframe) {
 
   # ---------- prepare to return
 
-  # restore row and column order, select return columns, restore class
-  dframe <- utils_prepare_return(dframe,
-    idx = NULL,
-    returned_vars = NULL,
-    prior_class
-  )
+  # NULL keys, return vars, unique, class
+  dframe <- utils_prep_return(dframe, return_vars = NULL, prior_class)
 
   # done
   dframe[]

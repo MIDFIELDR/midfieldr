@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![CRAN
-status](https://www.r-pkg.org/badges/version/midfieldr)](https://cran.r-project.org/package=midfieldr)  
+status](https://www.r-pkg.org/badges/version/midfieldr)](https://cran.r-project.org/package=midfieldr)\
 [![R CMD
 check](https://github.com/MIDFIELDR/midfieldr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MIDFIELDR/midfieldr/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
@@ -21,9 +21,9 @@ calculate quantitative metrics, and prepare results for dissemination.
 
 - `completion_status()` Identifies IDs to include for timely completion.
 - `data_sufficiency()` Identifies IDs to exclude due to insufficient
-  data.  
-- `filter_programs()` Helps in finding 6-digit program codes.  
-- `order_multiway()` Conditions data for Cleveland multiway charts.  
+  data.\
+- `filter_programs()` Helps in finding 6-digit program codes.\
+- `order_multiway()` Conditions data for Cleveland multiway charts.\
 - `prep_fye_mice()` Conditions data for imputing starting majors of FYE
   students.
 - `is_undergrad()` Identifies undergraduate terms to include.

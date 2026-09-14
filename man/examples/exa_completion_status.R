@@ -16,8 +16,15 @@ x
 x <- completion_status(x, midf_table = degree)
 x
 
-# If you repeat, the new columns are overwritten
+# No change if new columns match existing columns
 y = completion_status(x, midf_table = degree)
+
+# If new column should match existing but does not,
+# new column with suffix .1, .2, etc., is added. 
+# Indicates an error has occurred somewhere. 
+y$bacc_term[1] <- "19893"
+z = completion_status(y, midf_table = degree)
+z
 
 # Typical application retains "timely" rows only
 x[completion == "timely"]

@@ -25,13 +25,14 @@ institution officially schedules for completing a program.}
 \value{
 Data frame with the following properties:
 \itemize{
-\item Data frame class is preserved. Groups and keys are
-not preserved.
+\item Data frame class is preserved. Groups and keys
+are not preserved.
 \item Row order is preserved. Rows with \code{NA} values in any
 of the required variables are removed. Duplicated rows are removed.
-\item Columns with names different from the new columns (named
-below) are not modified; columns with matching names are replaced.
-The new columns added are:
+\item New columns are added and all unique columns are
+preserved. If required to prevent overwriting, new column names are
+suffixed (\verb{.1, .2,} etc.). Duplicate columns, differing by suffix only,
+are dropped. The new variables are:
 \itemize{
 \item \code{entry_term}   Character. Initial term of a student's longitudinal
 record, encoded \code{YYYYT}. Extracted from \code{midf_table.}

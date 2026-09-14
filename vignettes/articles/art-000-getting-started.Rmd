@@ -44,7 +44,7 @@ added_variables_table <- function(df) {
 }
 ```
 
-In this document, we introduce midfieldr's basic tools and show how to apply them to data frames of student-level records (registrar's data). We organize the topics to follow a typical workflow:
+In this document, we introduce midfieldr's basic tools and show how to apply them to data frames of student-level records (registrar's data). We follow a typical workflow to organize these topics:
 
 - data
 - population
@@ -52,7 +52,7 @@ In this document, we introduce midfieldr's basic tools and show how to apply the
 - blocs
 - special conditioning
 
-*Packages.* We manipulate data using data.table syntax. 
+*Packages.* We load midfielddata for its practice data and data.table for its data manipulation syntax. 
 
 ```{r, chunk04}
 library("midfieldr")
@@ -62,7 +62,10 @@ library("data.table")
 
 
 
+
+
 ## Data
+
 
 ### *Student records*
 
@@ -94,6 +97,8 @@ select_basic_cols(degree)
 
 3.  The `cip6` columns contain 6-digit CIP program codes.
 
+
+
 ### *CIP data*
 
 The US Classification of Instructional Programs (CIP) is a taxonomy of fields of study [@NCES:2010]. The dataset `cip` that loads with midfieldr contains program names and codes at the 2-digit, 4-digit, and 6-digit level.
@@ -108,7 +113,6 @@ Relevant functions:
 
 - `timely_term()`
 - `data_sufficiency()`
-- `degree_seeking()`
 
 
 
@@ -144,6 +148,7 @@ DT[order(-adj_span)]
 The optional `span` argument allows you to change the time span you consider "timely."
 
 ```{r, chunk11}
+DT <- student[, .(mcid)]
 timely_term(DT, span = 8)[order(-adj_span)]
 ```
 
@@ -178,9 +183,7 @@ DT <- data_sufficiency(DT)
 DT[order(-sufficiency)]
 ```
 
-For a sufficiency result of "satisfied," the entry term must be at least one term later than the lower limit of the data range and the timely completion term must be no later than the upper limit. We filter to retain rows with sufficiency labeled "satisfied."
-
-
+We usually filter to retain rows with sufficiency labeled "satisfied," indicating that the entry term is at least one term later than the lower limit of the data range and the timely completion term is no later than the upper limit.
 
 
 ## Records
@@ -196,7 +199,16 @@ Relevant functions:
 
 *Undergraduate terms* are those prior to (and including) the first degree term.
 
-`is_undergrad()` evaluates whether a term is before or after a student's first degree. The principal data frame is one of `term, course,` or `degree.` In all cases, the first degree term is pulled from the `degree` table. The data table is returned with the following variables added:
+`is_undergrad()` evaluates whether a term is before or after a student's first degree. The principal data frame is any of the data tables having a term-value variable:
+
+```{r}
+#| eval: false
+term <- is_undergrad(term)
+course <- is_undergrad(course)
+degree <- is_undergrad(degree)
+```
+
+In all cases, the term of the student's first degree is pulled from the `degree` table. The input data frame is returned with the following variables added:
 
 ```{r}
 #| echo: false
@@ -208,31 +220,25 @@ x <- wrapr::build_frame(
 added_variables_table(x)
 ```
 
+For example, 
+
 ```{r}
 is_undergrad(term)
 ```
 
-We usually retain all columns, but the results are easier to examine if we view a selection of columns,
+While we usually retain all columns, the results are easier to examine if we view a selection of columns,
 
 ```{r}
 term <- is_undergrad(term)
 term[order(-term_focus), .(mcid, term, bacc_term, term_focus)]
 ```
 
-We apply `is_undergrad()` to the student records having term-value variables `{term, term_course, term_degree}.` In all cases, we filter to retain terms with an "undergrad" focus.
-
-```{r}
-#| eval: false
-term <- is_undergrad(term)
-course <- is_undergrad(course)
-degree <- is_undergrad(degree)
-```
-
+In all cases, we filter to retain terms with an "undergrad" focus, dropping the post-baccalaureate terms. 
 
 
 ## Blocs
 
-A *bloc* is a grouping of student-level data dealt with as a unit, for example, administrative groupings such as transfer students, traditional students, and non-traditional students, or program-based groupings such as program starters, ever-enrolled, graduates, or migrators.
+A *bloc* is a grouping of student-level data dealt with as a unit, for example, administrative groupings such as transfer students and  traditional or non-traditional students, as well as program-based groupings such as students starting in, ever-enrolling in, migrating into or out of, or graduating from a program.
 
 Relevant functions:
 
@@ -394,13 +400,13 @@ Complete information on using `order_multiway()` and constructing multiway chart
 
 ## Utilities
 
-See the relevant help page for more information, e.g. `?look_at.`
+See the relevant help page for more information, e.g. `?catch_error`. 
 
-- `look_at()` for data frames, wraps base `str()` with preset arguments.
-- `sort_uniq()` for vectors, wraps base `sort(unique())` with preset arguments.
 - `catch_error()` wraps base `tryCatch()` for errors with preset arguments.
-- `select_unique_cols()` primarily used internally to drop duplicate columns.
 - `check_equiv_frames()` re-exported from the wrapr package.
+- `look_at()` for data frames, wraps base `str()` with preset arguments.
+- `select_unique_cols()` primarily used internally to drop duplicate columns.
+- `sort_uniq()` for vectors, wraps base `sort(unique())` with preset arguments.
 
 
 

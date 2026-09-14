@@ -17,11 +17,10 @@
 #' @param negate Logical (default FALSE). If TRUE, inverts the
 #'        resulting Boolean vector.
 #' @returns Data frame with the following properties:
-#' * `r df_class_preserved`
-#' * Rows are a subset of the input and appear in the same order.
-#'   Duplicated rows are removed.
+#' * `r preserv_class_not_grp_keys`
+#' * Rows are a subset of the input; row order is preserved. Duplicated rows
+#'   are removed.
 #' * Columns are not modified.
-#' * `r not_preserved`
 #' @example man/examples/exa_filter_programs.R
 #' @export
 #'
@@ -62,6 +61,8 @@ filter_programs <- function(dframe, pattern, ..., negate = NULL) {
 
   # ---------- do the work
 
+  return_vars <- colnames(dframe)
+
   pattern <- paste0(pattern, collapse = "|")
 
   f <- function(x, y) {
@@ -73,12 +74,9 @@ filter_programs <- function(dframe, pattern, ..., negate = NULL) {
   }), ]
 
   # ---------- prepare to return
-  # restore row and column order, select return columns, restore class
-  dframe <- utils_prepare_return(dframe,
-    idx = NULL,
-    returned_vars = NULL,
-    prior_class
-  )
+
+  # NULL keys, return vars, unique, class
+  dframe <- utils_prep_return(dframe, return_vars, prior_class)
 
   # done
   dframe[]

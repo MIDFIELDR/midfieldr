@@ -20,9 +20,9 @@
 #' @param midf_table `r midfield_x("degree")` with required
 #'        variables `{mcid, term_degree}.`
 #' @returns Data frame with the following properties:
-#' * `r df_class_preserved`
-#' * `r rows_not_modified`
-#' * `r new_cols_added`
+#' * `r preserv_class_not_grp_keys`
+#' * `r omit_NA_dup_rows`
+#' * `r add_cols_drop_duplic`
 #'   - `bacc_term` &nbsp;  Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA.`
 #'      Joined from the `term_degree` variable in `midf_table.`
@@ -83,7 +83,7 @@ completion_status <- function(dframe, midf_table = degree) {
   q_completion <- new_vars[2]
   q_idx <- new_vars[3]
 
-  temp_vars <- c(q_idx)
+  return_vars <- c(names(dframe), q_bacc_term, q_completion)
 
   # ---------- do the work
 
@@ -109,10 +109,14 @@ completion_status <- function(dframe, midf_table = degree) {
 
   # ---------- prepare to return
 
-  dframe <- dframe[, .SD, .SDcols = !temp_vars]
+  # restore row order
+  setkeyv(dframe, q_idx)
+
+  # NULL keys, return vars, unique, class
+  dframe <- utils_prep_return(dframe, return_vars, prior_class)
+
+  # drop cols or cols.1 duplicates if any
   dframe <- select_unique_cols(dframe)
-  dframe <- unique(dframe)
-  setattr(dframe, "class", prior_class)
 
   # done
   dframe[]

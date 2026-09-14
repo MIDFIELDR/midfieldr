@@ -7,15 +7,15 @@ be a useful measure in its own right.
 
 This article in the MIDFIELD workflow:
 
-1.  Planning  
-2.  Initial processing  
+1.  Planning\
+2.  Initial processing\
 3.  Blocs
-    - Ever-enrolled  
-    - FYE proxies  
+    - Ever-enrolled\
+    - FYE proxies\
     - Starters
-    - Graduates  
-4.  Groupings  
-5.  Metrics  
+    - Graduates\
+4.  Groupings\
+5.  Metrics\
 6.  Displays
 
 ## Special cases

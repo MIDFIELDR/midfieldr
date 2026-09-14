@@ -8,14 +8,14 @@ period, i.e., 140102, and stores the variable as a character string.
 
 This article in the MIDFIELD workflow:
 
-1.  Planning  
+1.  Planning\
 2.  Initial processing
-    - Data sufficiency  
-    - Degree seeking  
+    - Data sufficiency\
+    - Degree seeking\
     - Identify programs
-3.  Blocs  
-4.  Groupings  
-5.  Metrics  
+3.  Blocs\
+4.  Groupings\
+5.  Metrics\
 6.  Displays
 
 ## Definitions

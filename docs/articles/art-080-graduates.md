@@ -8,15 +8,15 @@ variable to filter student-level records to obtain a bloc of graduates.
 
 This article in the MIDFIELD workflow:
 
-1.  Planning  
-2.  Initial processing  
+1.  Planning\
+2.  Initial processing\
 3.  Blocs
-    - Ever-enrolled  
-    - FYE proxies  
-    - Starters  
+    - Ever-enrolled\
+    - FYE proxies\
+    - Starters\
     - Graduates
-4.  Groupings  
-5.  Metrics  
+4.  Groupings\
+5.  Metrics\
 6.  Displays
 
 ## Definitions

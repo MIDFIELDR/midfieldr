@@ -11,11 +11,11 @@ chart design defined by Cleveland.
 
 This article in the MIDFIELD workflow:
 
-1.  Planning  
-2.  Initial processing  
-3.  Blocs  
+1.  Planning\
+2.  Initial processing\
+3.  Blocs\
 4.  Groupings
-5.  Metrics  
+5.  Metrics\
 6.  Displays
     - Multiway charts
     - Tables
@@ -412,7 +412,7 @@ values.](figures/art-120-fig01-1.png)
 
 Figure 1. Rows and columns ordered by median values.
 
-  
+\
 The programs are assigned to rows such that the program medians increase
 from bottom to top. Industrial/Systems has the smallest median;
 Mechanical Engineering the largest.
@@ -442,7 +442,7 @@ column.](figures/art-120-fig02-1.png)
 
 Figure 2. Redraw the panels in one column.
 
-  
+\
 Reading a multiway graph
 
 - We can more effectively compare values within a panel than between
@@ -478,7 +478,7 @@ variables.](figures/art-120-fig03-1.png)
 Figure 3. Switching the row and column assignments of categorical
 variables.
 
-  
+\
 In this chart, the visual asymmetry that stands out most is Electrical
 Engineering, White Female, low given their overall rank.
 
@@ -598,7 +598,7 @@ categories.](figures/art-120-fig05-1.png)
 
 Figure 5. Using superposition to display three categories.
 
-  
+\
 By superposing data by sex, we facilitate a direct comparison of Male
 and Female students within a program and by race.
 
@@ -765,7 +765,7 @@ percentages.](figures/art-120-fig07-1.png)
 
 Figure 7. Rows and column ordered by percentages.
 
-  
+\
 The visual asymmetries in this chart that stand out are
 
 - Industrial/Systems, Asian Male, low stickiness given given the
@@ -792,7 +792,7 @@ variables.](figures/art-120-fig08-1.png)
 Figure 8. Switching the row and column assignments of categorical
 variables.
 
-  
+\
 This chart shows a lot of variability. The visual asymmetries that stand
 out are
 

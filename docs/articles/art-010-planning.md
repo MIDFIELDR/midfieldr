@@ -21,22 +21,22 @@ below. Accented entries indicate topics in the open article.
     - Metrics, blocs, and groupings
 2.  Initial processing
     - Data sufficiency
-    - Degree seeking  
-    - Identify programs  
+    - Degree seeking\
+    - Identify programs\
 3.  Blocs
-    - Ever-enrolled  
-    - FYE proxies  
-    - Starters  
-    - Graduates  
+    - Ever-enrolled\
+    - FYE proxies\
+    - Starters\
+    - Graduates\
 4.  Groupings
-    - Program labels  
-    - Demographics  
+    - Program labels\
+    - Demographics\
     - Other variables
 5.  Metrics
-    - Graduation rate  
-    - Stickiness  
+    - Graduation rate\
+    - Stickiness\
 6.  Displays
-    - Multiway charts  
+    - Multiway charts\
     - Tables
 
 ## Definitions
@@ -124,8 +124,8 @@ modification.
 
 Identify programs in *general* terms, for example,
 
-- All Engineering  
-- Engineering, Business, Social Sciences, and Arts and Humanities  
+- All Engineering\
+- Engineering, Business, Social Sciences, and Arts and Humanities\
 - Electrical Engineering and Computer Engineering
 
 Search the `cip` data set included with midfieldr to identify the
@@ -144,7 +144,7 @@ Metrics can include bloc counts or comparative ratios, for example:
 
 - Blocs, e.g., counts of starters, graduates, migrators, etc.
 - Four-year persistence
-- Six-year graduation rate  
+- Six-year graduation rate\
 - Six-year stickiness
 
 The metric determines the blocs to gather, for example:
@@ -158,7 +158,7 @@ The research study design determines the grouping variables, for
 example,
 
 - Completion status is a critical variable whenever graduation (program
-  completion) is involved.  
+  completion) is involved.\
 - Programs, race/ethnicity, and sex are important grouping variables in
   many studies.
 - Other student-level variables such as institution, GPA, grade level,

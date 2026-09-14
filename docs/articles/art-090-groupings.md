@@ -8,14 +8,14 @@ use.
 
 This article in the MIDFIELD workflow:
 
-1.  Planning  
+1.  Planning\
 2.  Initial processing
-3.  Blocs  
+3.  Blocs\
 4.  Groupings
     - Program labels
     - Demographics
     - Other variables
-5.  Metrics  
+5.  Metrics\
 6.  Displays
 
 ## Definitions

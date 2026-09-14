@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9034</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9035</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,7 +88,7 @@
     
 <p>In this document, we introduce midfieldr’s basic tools and show how
 to apply them to data frames of student-level records (registrar’s
-data). We organize the topics to follow a typical workflow:</p>
+data). We follow a typical workflow to organize these topics:</p>
 <ul>
 <li>data</li>
 <li>population</li>
@@ -96,7 +96,8 @@ data). We organize the topics to follow a typical workflow:</p>
 <li>blocs</li>
 <li>special conditioning</li>
 </ul>
-<p><em>Packages.</em> We manipulate data using data.table syntax.</p>
+<p><em>Packages.</em> We load midfielddata for its practice data and
+data.table for its data manipulation syntax.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfieldr/">"midfieldr"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfielddata/" class="external-link">"midfielddata"</a></span><span class="op">)</span></span>
@@ -228,7 +229,6 @@ level.</p>
 <ul>
 <li><code><a href="../reference/timely_term.html">timely_term()</a></code></li>
 <li><code><a href="../reference/data_sufficiency.html">data_sufficiency()</a></code></li>
-<li><code>degree_seeking()</code></li>
 </ul>
 <div class="section level3">
 <h3 id="timely_term">timely_term()<a class="anchor" aria-label="anchor" href="#timely_term"></a>
@@ -737,7 +737,8 @@ variables added:</p>
 <p>The optional <code>span</code> argument allows you to change the time
 span you consider “timely.”</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span>, span <span class="op">=</span> <span class="fl">8</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">adj_span</span><span class="op">)</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span>, span <span class="op">=</span> <span class="fl">8</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">adj_span</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                  mcid entry_term    entry_level adj_span timely_term</span></span>
 <span><span class="co">#&gt;                &lt;char&gt;     &lt;char&gt;         &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
 <span><span class="co">#&gt;     1: MCID3111142225      19881  01 First-year        8       19953</span></span>
@@ -1246,10 +1247,10 @@ is returned with the following variables added:</p>
 <span><span class="co">#&gt; 97553: MCID3111824139      19901       19953 19901-20154  fail-lower</span></span>
 <span><span class="co">#&gt; 97554: MCID3111869416      19901       19953 19901-20154  fail-lower</span></span>
 <span><span class="co">#&gt; 97555: MCID3112056754      19881       19933 19881-20096  fail-lower</span></span></code></pre></div>
-<p>For a sufficiency result of “satisfied,” the entry term must be at
-least one term later than the lower limit of the data range and the
-timely completion term must be no later than the upper limit. We filter
-to retain rows with sufficiency labeled “satisfied.”</p>
+<p>We usually filter to retain rows with sufficiency labeled
+“satisfied,” indicating that the entry term is at least one term later
+than the lower limit of the data range and the timely completion term is
+no later than the upper limit.</p>
 </div>
 </div>
 <div class="section level2">
@@ -1265,10 +1266,15 @@ to retain rows with sufficiency labeled “satisfied.”</p>
 <p><em>Undergraduate terms</em> are those prior to (and including) the
 first degree term.</p>
 <p><code><a href="../reference/is_undergrad.html">is_undergrad()</a></code> evaluates whether a term is before or
-after a student’s first degree. The principal data frame is one of
-<code>term, course,</code> or <code>degree.</code> In all cases, the
-first degree term is pulled from the <code>degree</code> table. The data
-table is returned with the following variables added:</p>
+after a student’s first degree. The principal data frame is any of the
+data tables having a term-value variable:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/is_undergrad.html">is_undergrad</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/is_undergrad.html">is_undergrad</a></span><span class="op">(</span><span class="va">course</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/is_undergrad.html">is_undergrad</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span></code></pre></div>
+<p>In all cases, the term of the student’s first degree is pulled from
+the <code>degree</code> table. The input data frame is returned with the
+following variables added:</p>
 <div id="lspkzcbwjc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:80%;">
 <style>#lspkzcbwjc table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -1735,7 +1741,8 @@ table is returned with the following variables added:</p>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>For example,</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/is_undergrad.html">is_undergrad</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                   mcid   term   cip6   institution         level</span></span>
 <span><span class="co">#&gt;                 &lt;char&gt; &lt;char&gt; &lt;char&gt;        &lt;char&gt;        &lt;char&gt;</span></span>
@@ -1764,9 +1771,9 @@ table is returned with the following variables added:</p>
 <span><span class="co">#&gt; 639913:                  13     3.52      3.52      &lt;NA&gt;  undergrad</span></span>
 <span><span class="co">#&gt; 639914:                  18     3.50      3.50      &lt;NA&gt;  undergrad</span></span>
 <span><span class="co">#&gt; 639915:                  15     2.18      2.18      &lt;NA&gt;  undergrad</span></span></code></pre></div>
-<p>We usually retain all columns, but the results are easier to examine
-if we view a selection of columns,</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p>While we usually retain all columns, the results are easier to
+examine if we view a selection of columns,</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/is_undergrad.html">is_undergrad</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
 <span><span class="va">term</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">term_focus</span><span class="op">)</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span>, <span class="va">bacc_term</span>, <span class="va">term_focus</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                   mcid   term bacc_term term_focus</span></span>
@@ -1778,23 +1785,18 @@ if we view a selection of columns,</p>
 <span><span class="co">#&gt; 639913: MCID3112760306  20181     20174  post-bacc</span></span>
 <span><span class="co">#&gt; 639914: MCID3112768322  20181     20174  post-bacc</span></span>
 <span><span class="co">#&gt; 639915: MCID3112773810  20181     20174  post-bacc</span></span></code></pre></div>
-<p>We apply <code><a href="../reference/is_undergrad.html">is_undergrad()</a></code> to the student records having
-term-value variables <code>{term, term_course, term_degree}.</code> In
-all cases, we filter to retain terms with an “undergrad” focus.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/is_undergrad.html">is_undergrad</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
-<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/is_undergrad.html">is_undergrad</a></span><span class="op">(</span><span class="va">course</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/is_undergrad.html">is_undergrad</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span></code></pre></div>
+<p>In all cases, we filter to retain terms with an “undergrad” focus,
+dropping the post-baccalaureate terms.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="blocs">Blocs<a class="anchor" aria-label="anchor" href="#blocs"></a>
 </h2>
 <p>A <em>bloc</em> is a grouping of student-level data dealt with as a
-unit, for example, administrative groupings such as transfer students,
-traditional students, and non-traditional students, or program-based
-groupings such as program starters, ever-enrolled, graduates, or
-migrators.</p>
+unit, for example, administrative groupings such as transfer students
+and traditional or non-traditional students, as well as program-based
+groupings such as students starting in, ever-enrolling in, migrating
+into or out of, or graduating from a program.</p>
 <p>Relevant functions:</p>
 <ul>
 <li><code><a href="../reference/filter_programs.html">filter_programs()</a></code></li>
@@ -2390,15 +2392,15 @@ following variables added:</p>
 <span></span>
 <span><span class="co"># result</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">completion</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                  mcid bacc_term timely_term completion</span></span>
-<span><span class="co">#&gt;                &lt;char&gt;    &lt;char&gt;      &lt;char&gt;     &lt;char&gt;</span></span>
-<span><span class="co">#&gt;     1: MCID3111142689     19913       19941     timely</span></span>
-<span><span class="co">#&gt;     2: MCID3111142782     19903       19941     timely</span></span>
-<span><span class="co">#&gt;     3: MCID3111142881     19894       19951     timely</span></span>
+<span><span class="co">#&gt;                  mcid timely_term bacc_term completion</span></span>
+<span><span class="co">#&gt;                &lt;char&gt;      &lt;char&gt;    &lt;char&gt;     &lt;char&gt;</span></span>
+<span><span class="co">#&gt;     1: MCID3111142689       19941     19913     timely</span></span>
+<span><span class="co">#&gt;     2: MCID3111142782       19941     19903     timely</span></span>
+<span><span class="co">#&gt;     3: MCID3111142881       19951     19894     timely</span></span>
 <span><span class="co">#&gt;    ---                                                </span></span>
-<span><span class="co">#&gt; 76919: MCID3112785480      &lt;NA&gt;       20123       &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 76920: MCID3112800920      &lt;NA&gt;       20153       &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 76921: MCID3112870009      &lt;NA&gt;       20003       &lt;NA&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; 76919: MCID3112785480       20123      &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 76920: MCID3112800920       20153      &lt;NA&gt;       &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 76921: MCID3112870009       20003      &lt;NA&gt;       &lt;NA&gt;</span></span></code></pre></div>
 <p>When we want of bloc of timely graduates, we filter to retain rows
 with completion “timely.”</p>
 </div>
@@ -2516,23 +2518,23 @@ constructing multiway charts can be found in <a href="art-120-multiway.html">Mul
 <h2 id="utilities">Utilities<a class="anchor" aria-label="anchor" href="#utilities"></a>
 </h2>
 <p>See the relevant help page for more information,
-e.g. <code>?look_at.</code></p>
+e.g. <code><a href="../reference/catch_error.html">?catch_error</a></code>.</p>
 <ul>
-<li>
-<code><a href="../reference/look_at.html">look_at()</a></code> for data frames, wraps base
-<code><a href="https://rdrr.io/r/utils/str.html" class="external-link">str()</a></code> with preset arguments.</li>
-<li>
-<code><a href="../reference/sort_uniq.html">sort_uniq()</a></code> for vectors, wraps base
-<code>sort(unique())</code> with preset arguments.</li>
 <li>
 <code><a href="../reference/catch_error.html">catch_error()</a></code> wraps base <code><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch()</a></code> for
 errors with preset arguments.</li>
 <li>
+<code><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames()</a></code> re-exported from the wrapr
+package.</li>
+<li>
+<code><a href="../reference/look_at.html">look_at()</a></code> for data frames, wraps base
+<code><a href="https://rdrr.io/r/utils/str.html" class="external-link">str()</a></code> with preset arguments.</li>
+<li>
 <code><a href="../reference/select_unique_cols.html">select_unique_cols()</a></code> primarily used internally to drop
 duplicate columns.</li>
 <li>
-<code><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames()</a></code> re-exported from the wrapr
-package.</li>
+<code><a href="../reference/sort_uniq.html">sort_uniq()</a></code> for vectors, wraps base
+<code>sort(unique())</code> with preset arguments.</li>
 </ul>
 </div>
 <div class="section level2">

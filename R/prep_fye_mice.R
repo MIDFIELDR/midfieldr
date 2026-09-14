@@ -70,7 +70,7 @@
 #'        a 6-digit CIP code other than the value in `fye_cip` for their FYE
 #'        programs. One FYE code per institution.
 #' @returns Data frame with the following properties:
-#' * `r df_class_preserved`
+#' * `r preserv_class_not_grp_keys`
 #' * Rows: One row for every degree-seeking FYE student.
 #' * Columns: Conditioned for later use as an input to the mice R
 #'   package for multiple imputation as follows:
@@ -111,7 +111,7 @@ prep_fye_mice <- function(m_student,
   reqd_student_vars <- c("mcid", "race", "sex")
   reqd_term_vars <- c("mcid", "institution", "term", "cip6")
   reqd_fye_alt_vars <- c("institution", "alt_cip")
-  returned_vars <- c("mcid", "institution", "race", "sex", "proxy")
+
 
   # optional defaults
   fye_cip <- fye_cip %?% "140102"
@@ -152,7 +152,7 @@ prep_fye_mice <- function(m_student,
 
   # ---------- preparation
 
-  # for restoring class except grouped tibbles
+  # to restore class except grouped tibbles
   prior_class <- setdiff(class(m_student), "grouped_df")
 
   # prevent by-ref changes propagating to global env
@@ -171,6 +171,8 @@ prep_fye_mice <- function(m_student,
   alt_fye <- alt_fye[, .SD, .SDcols = reqd_fye_alt_vars]
 
   # ---------- do the work
+
+  return_vars <- c("mcid", "institution", "race", "sex", "proxy")
 
   # limit to degree-seeking
   m_term <- m_student[m_term, on = "mcid", nomatch = NULL]
@@ -207,20 +209,18 @@ prep_fye_mice <- function(m_student,
   engr_proxy <- engr_proxy[, .(mcid, proxy = cip6)]
   setkey(engr_proxy, NULL)
 
-  # join proxy to ever FYE, introduces proxy NAs
-  fye <- engr_proxy[ever_fye, on = "mcid"]
+  # join proxy to ever FYE, introduces proxy NAs, output nearly complete
+  dframe <- engr_proxy[ever_fye, on = "mcid"]
 
   # convert to factors to prepare for mice()
-  factor_cols <- setdiff(returned_vars, "mcid")
-  fye[, names(.SD) := lapply(.SD, factor), .SDcols = factor_cols]
+  factor_cols <- setdiff(return_vars, "mcid")
+  dframe[, names(.SD) := lapply(.SD, factor), .SDcols = factor_cols]
 
   # ---------- prepare to return
-  # restore row and column order, select return columns, restore class
-  fye <- utils_prepare_return(fye,
-    idx = NULL,
-    returned_vars,
-    prior_class
-  )
+
+  # NULL keys, return vars, unique, class
+  dframe <- utils_prep_return(dframe, return_vars, prior_class)
+
   # done
-  fye[]
+  dframe[]
 }
