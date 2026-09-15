@@ -73,7 +73,7 @@ DT
 #> 350: MCID3112869843
 #> 351: MCID3112885339
 
-# Categorize records for data sufficiency
+# Categorize by data sufficiency
 DT <- timely_term(DT, midf_table = term)
 DT <- data_sufficiency(DT, midf_table = term)
 # -- result summary

@@ -23,9 +23,8 @@
 #' * `r preserv_class_not_grp_keys`
 #' * Rows are preserved.
 #' * Unique columns preserved. Redundant columns dropped.
+#' @example man/examples/exa_select_unique_cols.R
 #' @export
-#'
-# @examples
 select_unique_cols <- function(dframe) {
   #
   # ---------- initial assertions
