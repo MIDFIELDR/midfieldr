@@ -173,6 +173,6 @@ add_data_sufficiency <- function(dframe, midfield_term = term) {
     msg = "This function was deprecated as part of an update to all
     midfieldr functions. Please use `data_sufficiency()` instead."
   )
-  # original function calls the new function
+  # invoking the old function calls the new function
   data_sufficiency(dframe = dframe, midf_table = midfield_term)
 }

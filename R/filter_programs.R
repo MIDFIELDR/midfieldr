@@ -106,7 +106,7 @@ filter_cip <- function(keep_text = NULL,
     first argument making it possible to chain with other functions.
     Please use `filter_programs()` instead."
   )
-  # attempt to continue to use original function with partial success
+  # invoking the old function calls the new function
   if (is.null(cip)) cip <- midfieldr::cip
   negate <- FALSE
   if (!is.null(drop_text)) {

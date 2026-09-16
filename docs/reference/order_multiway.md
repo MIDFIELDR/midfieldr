@@ -66,9 +66,10 @@ Data frame with the following properties:
 - Column specified by `quantity` is converted to type double. Columns
   specified by `categories` are converted to factors and ordered.
 
-- Columns with names different from the two new columns (named below)
-  are not modified; columns with matching names are replaced. The two
-  new column names have the form:
+- New columns are added and all unique columns are preserved. If
+  required to prevent overwriting, new column names are suffixed
+  (`.1, .2,` etc.). Redundant columns, differing by suffix only, are
+  dropped. The new variables are:
 
   - `CATEGORY_1_LABEL`
 
@@ -119,7 +120,16 @@ DT[, people := paste(race, sex)]
 #>  1:      EE Female    Asian            21        12       57.1    Asian Female
 #>  2:      EE Female    Black             6         3       50.0    Black Female
 #>  3:      EE Female Hispanic             8         3       37.5 Hispanic Female
-#> ---                                                                           
+#>  4:      EE Female    White           118        56       47.5    White Female
+#>  5:      EE   Male    Asian           123        71       57.7      Asian Male
+#>  6:      EE   Male    Black            29        17       58.6      Black Male
+#>  7:      EE   Male Hispanic            45        17       37.8   Hispanic Male
+#>  8:      EE   Male    White           864       439       50.8      White Male
+#>  9:      ME Female    Asian             7         1       14.3    Asian Female
+#> 10:      ME Female    Black             3         2       66.7    Black Female
+#> 11:      ME Female Hispanic            12         8       66.7 Hispanic Female
+#> 12:      ME Female    White           213       134       62.9    White Female
+#> 13:      ME   Male    Asian            76        49       64.5      Asian Male
 #> 14:      ME   Male    Black            30        19       63.3      Black Male
 #> 15:      ME   Male Hispanic            79        42       53.2   Hispanic Male
 #> 16:      ME   Male    White          1596       955       59.8      White Male
@@ -129,7 +139,16 @@ DT[, c("race", "sex") := NULL]
 #>  1:      EE            21        12       57.1    Asian Female
 #>  2:      EE             6         3       50.0    Black Female
 #>  3:      EE             8         3       37.5 Hispanic Female
-#> ---                                                           
+#>  4:      EE           118        56       47.5    White Female
+#>  5:      EE           123        71       57.7      Asian Male
+#>  6:      EE            29        17       58.6      Black Male
+#>  7:      EE            45        17       37.8   Hispanic Male
+#>  8:      EE           864       439       50.8      White Male
+#>  9:      ME             7         1       14.3    Asian Female
+#> 10:      ME             3         2       66.7    Black Female
+#> 11:      ME            12         8       66.7 Hispanic Female
+#> 12:      ME           213       134       62.9    White Female
+#> 13:      ME            76        49       64.5      Asian Male
 #> 14:      ME            30        19       63.3      Black Male
 #> 15:      ME            79        42       53.2   Hispanic Male
 #> 16:      ME          1596       955       59.8      White Male
@@ -143,7 +162,16 @@ DT[]
 #>  1:     EE    Asian Female    12    21  57.1
 #>  2:     EE    Black Female     3     6  50.0
 #>  3:     EE Hispanic Female     3     8  37.5
-#> ---                                         
+#>  4:     EE    White Female    56   118  47.5
+#>  5:     EE      Asian Male    71   123  57.7
+#>  6:     EE      Black Male    17    29  58.6
+#>  7:     EE   Hispanic Male    17    45  37.8
+#>  8:     EE      White Male   439   864  50.8
+#>  9:     ME    Asian Female     1     7  14.3
+#> 10:     ME    Black Female     2     3  66.7
+#> 11:     ME Hispanic Female     8    12  66.7
+#> 12:     ME    White Female   134   213  62.9
+#> 13:     ME      Asian Male    49    76  64.5
 #> 14:     ME      Black Male    19    30  63.3
 #> 15:     ME   Hispanic Male    42    79  53.2
 #> 16:     ME      White Male   955  1596  59.8
@@ -161,7 +189,16 @@ mw1
 #>  1:     EE    Asian Female  57.1        50.4         35.70
 #>  2:     EE   Hispanic Male  37.8        50.4         45.50
 #>  3:     EE Hispanic Female  37.5        50.4         52.10
-#> ---                                                       
+#>  4:     EE    White Female  47.5        50.4         55.20
+#>  5:     EE      White Male  50.8        50.4         55.30
+#>  6:     EE    Black Female  50.0        50.4         58.35
+#>  7:     EE      Black Male  58.6        50.4         60.95
+#>  8:     EE      Asian Male  57.7        50.4         61.10
+#>  9:     ME    Asian Female  14.3        63.1         35.70
+#> 10:     ME   Hispanic Male  53.2        63.1         45.50
+#> 11:     ME Hispanic Female  66.7        63.1         52.10
+#> 12:     ME    White Female  62.9        63.1         55.20
+#> 13:     ME      White Male  59.8        63.1         55.30
 #> 14:     ME    Black Female  66.7        63.1         58.35
 #> 15:     ME      Black Male  63.3        63.1         60.95
 #> 16:     ME      Asian Male  64.5        63.1         61.10
@@ -188,7 +225,16 @@ mw2
 #>  1:     EE    Asian Female    12    21  57.1        50.9          46.4
 #>  2:     EE   Hispanic Male    17    45  37.8        50.9          47.6
 #>  3:     EE Hispanic Female     3     8  37.5        50.9          55.0
-#> ---                                                                   
+#>  4:     EE    Black Female     3     6  50.0        50.9          55.6
+#>  5:     EE      White Male   439   864  50.8        50.9          56.7
+#>  6:     EE    White Female    56   118  47.5        50.9          57.4
+#>  7:     EE      Asian Male    71   123  57.7        50.9          60.3
+#>  8:     EE      Black Male    17    29  58.6        50.9          61.0
+#>  9:     ME    Asian Female     1     7  14.3        60.0          46.4
+#> 10:     ME   Hispanic Male    42    79  53.2        60.0          47.6
+#> 11:     ME Hispanic Female     8    12  66.7        60.0          55.0
+#> 12:     ME    Black Female     2     3  66.7        60.0          55.6
+#> 13:     ME      White Male   955  1596  59.8        60.0          56.7
 #> 14:     ME    White Female   134   213  62.9        60.0          57.4
 #> 15:     ME      Asian Male    49    76  64.5        60.0          60.3
 #> 16:     ME      Black Male    19    30  63.3        60.0          61.0

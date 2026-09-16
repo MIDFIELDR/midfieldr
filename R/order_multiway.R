@@ -46,9 +46,7 @@
 #' * Row order is preserved. Duplicated rows are removed.
 #' * Column specified by `quantity` is converted to type double.
 #'   Columns specified by `categories` are converted to factors and ordered.
-#' * Columns with names different from the two new columns (named below) are not
-#'   modified; columns with matching names are replaced. The two new column
-#'   names have the form:
+#' * `r add_cols_drop_duplic`
 #'   - `CATEGORY_1_LABEL`
 #'   - `CATEGORY_2_LABEL`
 #'

@@ -244,7 +244,8 @@ add_timely_term <- function(dframe,
     msg = "This function was deprecated as part of an update to all
     midfieldr functions. Please use `timely_term()` instead."
   )
-  # original function calls the new function
+
+  # invoking the old function calls the new function
   timely_term(
     dframe = dframe,
     midf_table = midfield_term,

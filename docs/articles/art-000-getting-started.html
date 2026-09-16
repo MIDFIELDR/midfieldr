@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9035</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9037</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,7 +88,7 @@
     
 <p>In this document, we introduce midfieldr’s basic tools and show how
 to apply them to data frames of student-level records (registrar’s
-data). We follow a typical workflow to organize these topics:</p>
+data). We organize the topics around a typical workflow:</p>
 <ul>
 <li>data</li>
 <li>population</li>
@@ -1896,9 +1896,28 @@ specific columns for a more compact display.</p>
 <span><span class="co">#&gt; 15:                                 Woodwind Instruments 500915    Music</span></span>
 <span><span class="co">#&gt; 16:                               Percussion Instruments 500916    Music</span></span>
 <span><span class="co">#&gt; 17:                                         Music, Other 500999    Music</span></span></code></pre></div>
-<p>We would continue in a similar fashion until we had determined all
-6-digit codes needed for our study, combining them into one
-<code>programs</code> data frame.</p>
+<p>The <code>negate</code> argument allows you to drop the rows that
+match the search patterns.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"^5009"</span><span class="op">)</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6name</span>, <span class="va">cip6</span>, <span class="va">cip4name</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Other"</span>, <span class="st">"General"</span><span class="op">)</span>, negate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                                 cip6name   cip6 cip4name</span></span>
+<span><span class="co">#&gt;                                   &lt;char&gt; &lt;char&gt;   &lt;char&gt;</span></span>
+<span><span class="co">#&gt;  1: Music History, Literature and Theory 500902    Music</span></span>
+<span><span class="co">#&gt;  2:         Music Theory and Composition 500904    Music</span></span>
+<span><span class="co">#&gt;  3:       Musicology and Ethnomusicology 500905    Music</span></span>
+<span><span class="co">#&gt;  4:                           Conducting 500906    Music</span></span>
+<span><span class="co">#&gt;  5:                      Piano and Organ 500907    Music</span></span>
+<span><span class="co">#&gt;  6:                      Voice and Opera 500908    Music</span></span>
+<span><span class="co">#&gt;  7:   Music Management and Merchandising 500909    Music</span></span>
+<span><span class="co">#&gt;  8:                   Jazz, Jazz Studies 500910    Music</span></span>
+<span><span class="co">#&gt;  9:                       Music Pedagogy 500912    Music</span></span>
+<span><span class="co">#&gt; 10:                     Music Technology 500913    Music</span></span>
+<span><span class="co">#&gt; 11:                    Brass Instruments 500914    Music</span></span>
+<span><span class="co">#&gt; 12:                 Woodwind Instruments 500915    Music</span></span>
+<span><span class="co">#&gt; 13:               Percussion Instruments 500916    Music</span></span></code></pre></div>
+<p>In a study, we would continue in a similar fashion until we had
+merged all the 6-digit codes we needed into one data frame.</p>
 </div>
 <div class="section level3">
 <h3 id="completion_status">completion_status()<a class="anchor" aria-label="anchor" href="#completion_status"></a>
@@ -2379,7 +2398,7 @@ following variables added:</p>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># setup</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
@@ -2406,15 +2425,64 @@ with completion “timely.”</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="commonalities">Commonalities<a class="anchor" aria-label="anchor" href="#commonalities"></a>
+</h2>
+<p>You may have noticed similarities in several of the midfieldr
+functions. For example, in these functions,</p>
+<ul>
+<li><code>timely_term(dframe, midf_table = term)</code></li>
+<li><code>data_sufficiency(dframe, midf_table = term)</code></li>
+<li><code>is_undergraduate(dframe, midf_table = degree)</code></li>
+<li><code>completion status(dframe, midf_table = degree)</code></li>
+</ul>
+<p>the similarities include:</p>
+<ul>
+<li>The first argument is a data frame.</li>
+<li>The second argument is one of the MIDFIELD data tables.</li>
+<li>The result is a new data frame with columns added that support the
+main finding.</li>
+<li>You can use the main finding to subset the result by rows.</li>
+</ul>
+<p>Moreover, because in each case the <code>midf_table</code> argument
+has a default value, it can be assigned explicitly or not. For example,
+the three formulations below all yield the same result as long as term
+data table in the computing environment is named <code>term.</code></p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># setup</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># equivalent statements</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span>dframe <span class="op">=</span> <span class="va">DT</span>, midf_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># equivalent results</span></span>
+<span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">z</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p>Of other functions used earlier,</p>
+<ul>
+<li><code><a href="../reference/filter_programs.html">filter_programs()</a></code></li>
+<li><code><a href="../reference/select_basic_cols.html">select_basic_cols()</a></code></li>
+</ul>
+<p>have in common that:</p>
+<ul>
+<li>The first argument is a data frame.</li>
+<li>The result is a new data frame, a subset of the input: “filter”
+chooses rows; “select” chooses columns.</li>
+</ul>
+</div>
+<div class="section level2">
 <h2 id="special-conditioning">Special conditioning<a class="anchor" aria-label="anchor" href="#special-conditioning"></a>
 </h2>
 <p>Relevant functions:</p>
 <ul>
-<li><code><a href="../reference/prep_fye_mice.html">prep_fye_mice()</a></code></li>
+<li><code><a href="../reference/initialize_fye_proxies.html">initialize_fye_proxies()</a></code></li>
 <li><code><a href="../reference/order_multiway.html">order_multiway()</a></code></li>
 </ul>
 <div class="section level3">
-<h3 id="prep_fye_mice">prep_fye_mice()<a class="anchor" aria-label="anchor" href="#prep_fye_mice"></a>
+<h3 id="initialize_fye_proxies">initialize_fye_proxies()<a class="anchor" aria-label="anchor" href="#initialize_fye_proxies"></a>
 </h3>
 <p>Contributes to assembling a bloc of starters.</p>
 <p>At some U.S. institutions, completing a <em>First-Year Engineering
@@ -2422,12 +2490,12 @@ with completion “timely.”</p>
 engineering majors. FYE programs complicate the identification of
 <em>starters</em> because the student’s preferred starting major is
 unknown.</p>
-<p><code><a href="../reference/prep_fye_mice.html">prep_fye_mice()</a></code> helps us develop an <em>FYE proxy,</em>
-a likely CIP code of the student’s starting program had FYE not been
-required. Results are a CIP code or NA, treated as missing data to be
-imputed.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/prep_fye_mice.html">prep_fye_mice</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span><span class="op">)</span></span>
+<p><code><a href="../reference/initialize_fye_proxies.html">initialize_fye_proxies()</a></code> takes a first pass at</p>
+<p>helps us develop an <em>FYE proxy,</em> a likely CIP code of the
+student’s starting program had FYE not been required. Results are a CIP
+code or NA, treated as missing data to be imputed.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/initialize_fye_proxies.html">initialize_fye_proxies</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                 mcid   institution          race    sex  proxy</span></span>
 <span><span class="co">#&gt;               &lt;char&gt;        &lt;fctr&gt;        &lt;fctr&gt; &lt;fctr&gt; &lt;fctr&gt;</span></span>
 <span><span class="co">#&gt;    1: MCID3111142290 Institution J         Asian   Male 141001</span></span>
@@ -2469,7 +2537,7 @@ and <code>people</code>. The quantity is <code>stick</code> (program
 stickiness) which is the ratio of <code>grad</code> (number of program
 graduates) to <code>ever</code> (number ever enrolled in the
 program).</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">case_results</span></span>
 <span><span class="co">#&gt;        program               people  ever  grad stick</span></span>
 <span><span class="co">#&gt;         &lt;char&gt;               &lt;char&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt;</span></span>
@@ -2488,7 +2556,7 @@ program).</p>
 aggregate stickiness calculated separately by category and reported in
 the new columns (suffix <code>_metric</code>). A multiway chart can be
 constructed from the data in this form.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span><span class="op">(</span><span class="va">case_results</span>,</span>
 <span>  quantity <span class="op">=</span> <span class="st">"stick"</span>,</span>
 <span>  categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span><span class="op">)</span>,</span>

@@ -13,7 +13,7 @@ internally in midfieldr functions that add columns to a data frame.'><meta prope
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9035</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9037</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,6 +98,140 @@ values and dot-split name duplicate a previous column. Columns are not
 dropped if their split names are unique nor if the row-wise values differ.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Construct a sample data frame</span></span></span>
+<span class="r-in"><span><span class="va">mcid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"mc_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"01"</span>, <span class="st">"02"</span>, <span class="st">"03"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"19911"</span>, <span class="st">"19912"</span>, <span class="st">"19913"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dframe</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913</span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span><span class="co"># No effect if all columns are distinct</span></span></span>
+<span class="r-in"><span><span class="fu">select_unique_cols</span><span class="op">(</span><span class="va">dframe</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># No effect if names are distinct even if values are the same</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">dframe</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">case</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">$</span><span class="va">term</span></span></span>
+<span class="r-in"><span><span class="va">x</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term  case</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911 19911</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912 19912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913 19913</span>
+<span class="r-in"><span><span class="fu">select_unique_cols</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term  case</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911 19911</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912 19912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913 19913</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Suffix-variable remains if there is no root-variable</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">case</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">temp.1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"abc"</span>, <span class="st">"def"</span>, <span class="st">"ghi"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term temp.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911    abc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912    def</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913    ghi</span>
+<span class="r-in"><span><span class="fu">select_unique_cols</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term temp.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911    abc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912    def</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913    ghi</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Suffix-variable remains if values different from root-variable</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">temp.1</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">case.1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"abc"</span>, <span class="st">"def"</span>, <span class="st">"ghi"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term case.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911    abc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912    def</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913    ghi</span>
+<span class="r-in"><span><span class="fu">select_unique_cols</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term case.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911    abc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912    def</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913    ghi</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Suffix-variable dropped if otherwise identical to root-variable</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">case.1</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">term.1</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">$</span><span class="va">term</span></span></span>
+<span class="r-in"><span><span class="va">x</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term term.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911  19911</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912  19912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913  19913</span>
+<span class="r-in"><span><span class="fu">select_unique_cols</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Multiple redundant columns are dropped </span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">term.1</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">$</span><span class="va">term</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">term.abc</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">$</span><span class="va">term</span></span></span>
+<span class="r-in"><span><span class="va">x</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term term.1 term.abc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911  19911    19911</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912  19912    19912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913  19913    19913</span>
+<span class="r-in"><span><span class="fu">select_unique_cols</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># If a midfieldr function introduces a column with a </span></span></span>
+<span class="r-in"><span><span class="co"># suffix ".1", ".2", etc., this points to a potential </span></span></span>
+<span class="r-in"><span><span class="co"># error. The two columns with the same root name </span></span></span>
+<span class="r-in"><span><span class="co"># are expected to be identical.</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">dframe</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">term.1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"19922"</span>, <span class="st">"19912"</span>, <span class="st">"19913"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term term.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911  19922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912  19912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913  19913</span>
+<span class="r-in"><span><span class="fu">select_unique_cols</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term term.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911  19922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912  19912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913  19913</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Names with other separators are treated as unique</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">term.1</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">term_1</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">$</span><span class="va">term</span></span></span>
+<span class="r-in"><span><span class="va">x</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term term_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911  19911</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912  19912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913  19913</span>
+<span class="r-in"><span><span class="fu">select_unique_cols</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    mcid  term term_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mc_01 19911  19911</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 mc_02 19912  19912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 mc_03 19913  19913</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># In removing a redundant column, the leftmost is retained</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>mcid.1 <span class="op">=</span> <span class="va">mcid</span>, <span class="va">term</span>, <span class="va">mcid</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mcid.1  term  mcid</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  mc_01 19911 mc_01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  mc_02 19912 mc_02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  mc_03 19913 mc_03</span>
+<span class="r-in"><span><span class="fu">select_unique_cols</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   mcid.1  term</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  mc_01 19911</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  mc_02 19912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  mc_03 19913</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

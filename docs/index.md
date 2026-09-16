@@ -14,12 +14,12 @@ calculate quantitative metrics, and prepare results for dissemination.
   Identifies IDs to exclude due to insufficient data.\
 - [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
   Helps in finding 6-digit program codes.\
-- [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
-  Conditions data for Cleveland multiway charts.\
-- [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
+- [`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
   Conditions data for imputing starting majors of FYE students.
 - [`is_undergrad()`](https://midfieldr.github.io/midfieldr/reference/is_undergrad.md)
   Identifies undergraduate terms to include.
+- [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
+  Conditions data for Cleveland multiway charts.\
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
   Determines the latest term for timely completion.
 
@@ -69,7 +69,7 @@ DT
 #> 350: MCID3112869843
 #> 351: MCID3112885339
 
-# Categorize records for data sufficiency
+# Categorize by data sufficiency
 DT <- timely_term(DT, midf_table = term)
 DT <- data_sufficiency(DT, midf_table = term)
 # -- result summary

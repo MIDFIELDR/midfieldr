@@ -99,13 +99,13 @@ required to enroll in FYE.
 ## Method
 
 We apply
-[`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
+[`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
 to the `student` and `term` source files to construct a data frame
 suitable for imputation using the mice R package. The procedure has four
 steps:
 
 1.  Use
-    [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
+    [`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
     from the midfieldr package to estimate some of the FYE proxy CIPs,
     treat the remainder as missing values, and structure the data frame
     for imputation.
@@ -189,10 +189,10 @@ student <- select_basic_cols(source_student)
 term <- select_basic_cols(source_term)
 ```
 
-## `prep_fye_mice()`
+## `initialize_fye_proxies()`
 
 The purpose of
-[`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
+[`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
 is preparing a data frame for the mice R package. Operates on the
 complete, unfiltered `student` and `term` source data to create a data
 frame with three predictor variables and an FYE proxy variable. The
@@ -231,10 +231,10 @@ results.
 ``` r
 
 # Required arguments in order and explicitly named
-x <- prep_fye_mice(m_student = student, m_term = term)
+x <- initialize_fye_proxies(m_student = student, m_term = term)
 
 # Required arguments in order, but not named
-y <- prep_fye_mice(student, term)
+y <- initialize_fye_proxies(student, term)
 
 # Demonstrate equivalence
 check_equiv_frames(x, y)
@@ -248,7 +248,7 @@ requirements of [`mice()`](https://amices.org/mice/reference/mice.html).
 ``` r
 
 # Working data frame
-DT <- prep_fye_mice(student, term)
+DT <- initialize_fye_proxies(student, term)
 DT
 #>                 mcid   institution          race    sex  proxy
 #>               <char>        <fctr>        <fctr> <fctr> <fctr>
@@ -514,7 +514,7 @@ predictor_matrix[, c("race", "sex", "institution")] <- c(0, 0, 0, 0, 1)
 ### Optional predictors
 
 The default predictors set up by
-[`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
+[`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
 are institution (required), race/ethnicity, and sex. If these are
 acceptable, you can skip to the next section, [Imputing missing
 values](#imputing-missing-values).

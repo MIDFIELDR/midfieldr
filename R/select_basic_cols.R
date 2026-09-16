@@ -127,7 +127,6 @@ select_required <- function(midfield_x, select_add = NULL) {
     msg = "This function was deprecated for consistency with midfieldr
     naming conventions. Please use `select_basic_cols()` instead."
   )
-
-  # old function still works, wraps the new function
+  # invoking the old function calls the new function
   select_basic_cols(dframe = midfield_x)
 }

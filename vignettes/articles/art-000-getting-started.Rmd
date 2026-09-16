@@ -44,7 +44,7 @@ added_variables_table <- function(df) {
 }
 ```
 
-In this document, we introduce midfieldr's basic tools and show how to apply them to data frames of student-level records (registrar's data). We follow a typical workflow to organize these topics:
+In this document, we introduce midfieldr's basic tools and show how to apply them to data frames of student-level records (registrar's data). We organize the topics around a typical workflow:
 
 - data
 - population
@@ -186,12 +186,12 @@ DT[order(-sufficiency)]
 We usually filter to retain rows with sufficiency labeled "satisfied," indicating that the entry term is at least one term later than the lower limit of the data range and the timely completion term is no later than the upper limit.
 
 
+
 ## Records
 
 Relevant functions:
 
 - `is_undergrad()`
-
 
 
 
@@ -236,6 +236,7 @@ term[order(-term_focus), .(mcid, term, bacc_term, term_focus)]
 In all cases, we filter to retain terms with an "undergrad" focus, dropping the post-baccalaureate terms. 
 
 
+
 ## Blocs
 
 A *bloc* is a grouping of student-level data dealt with as a unit, for example, administrative groupings such as transfer students and  traditional or non-traditional students, as well as program-based groupings such as students starting in, ever-enrolling in, migrating into or out of, or graduating from a program.
@@ -273,8 +274,14 @@ For music as a component of the Visual and Performing Arts, we filter `cip` agai
 filter_programs(cip, "^5009")[, .(cip6name, cip6, cip4name)]
 ```
 
-We would continue in a similar fashion until we had determined all 6-digit codes needed for our study, combining them into one `programs` data frame. 
+The `negate` argument allows you to drop the rows that match the search patterns.
 
+```{r}
+x <- filter_programs(cip, "^5009")[, .(cip6name, cip6, cip4name)]
+filter_programs(x, c("Other", "General"), negate = TRUE)
+```
+
+In a study, we would continue in a similar fashion until we had merged all the 6-digit codes we needed into one data frame.
 
 ```{r}
 #| echo: false
@@ -323,16 +330,60 @@ When we want of bloc of timely graduates, we filter to retain rows with completi
 
 
 
+## Commonalities
+
+You may have noticed similarities in several of the midfieldr functions. For example, in these functions,  
+
+- `timely_term(dframe, midf_table = term)`
+- `data_sufficiency(dframe, midf_table = term)`
+- `is_undergraduate(dframe, midf_table = degree)`
+- `completion status(dframe, midf_table = degree)`
+
+the similarities include: 
+
+- The first argument is a data frame.
+- The second argument is one of the MIDFIELD data tables.
+- The result is a new data frame with columns added that support the main finding.
+- You can use the main finding to subset the result by rows.
+ 
+Moreover, because in each case the `midf_table` argument has a default value, it can be assigned explicitly or not. For example, the three formulations below all yield the same result as long as term data table in the computing environment is named `term.`
+
+```{r}
+# setup
+DT <- student[, .(mcid)]
+
+# equivalent statements
+x <- timely_term(dframe = DT, midf_table = term)
+y <- timely_term(DT, term)
+z <- timely_term(DT)
+
+# equivalent results
+check_equiv_frames(x, y)
+check_equiv_frames(x, z)
+```
+
+Of other functions used earlier, 
+
+- `filter_programs()`
+- `select_basic_cols()`
+
+have in common that: 
+
+- The first argument is a data frame. 
+- The result is a new data frame, a subset of the input: "filter" chooses rows; "select" chooses columns. 
+
+
+
 ## Special conditioning
 
 Relevant functions:
 
-- `prep_fye_mice()`
+- `initialize_fye_proxies()`
 - `order_multiway()`
 
 
 
-### prep_fye_mice()
+### initialize_fye_proxies()
 
 Contributes to assembling a bloc of starters.
 
@@ -346,10 +397,13 @@ options(
 
 At some U.S. institutions, completing a *First-Year Engineering (FYE)* program is a prerequisite for admission to specific engineering majors. FYE programs complicate the identification of *starters* because the student's preferred starting major is unknown. 
 
-`prep_fye_mice()` helps us develop an *FYE proxy,* a likely CIP code of the  student's starting program had FYE not been required. Results are a CIP code or NA, treated as missing data to be imputed. 
+`initialize_fye_proxies()` takes a first pass at 
+
+
+helps us develop an *FYE proxy,* a likely CIP code of the  student's starting program had FYE not been required. Results are a CIP code or NA, treated as missing data to be imputed. 
 
 ```{r}
-prep_fye_mice(student, term)
+initialize_fye_proxies(student, term)
 ```
 
 If FYE programs are involved in your study, 

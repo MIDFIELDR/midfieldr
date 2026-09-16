@@ -36,7 +36,7 @@ Data frame with the following properties:
 
 - New columns are added and all unique columns are preserved. If
   required to prevent overwriting, new column names are suffixed
-  (`.1, .2,` etc.). Duplicate columns, differing by suffix only, are
+  (`.1, .2,` etc.). Redundant columns, differing by suffix only, are
   dropped. The new variables are:
 
   - `bacc_term`   Character. Term of a student's first baccalaureate,
@@ -67,7 +67,11 @@ term[order(-term_focus)]
 #>    1: MCID3111142897  19881      <NA>  undergrad
 #>    2: MCID3111157634  19881      <NA>  undergrad
 #>    3: MCID3111157634  19883      <NA>  undergrad
+#>    4: MCID3111157634  19891      <NA>  undergrad
+#>    5: MCID3111157634  19893      <NA>  undergrad
 #>   ---                                           
+#> 1817: MCID3112212659  20085     20083  post-bacc
+#> 1818: MCID3112217217  20091     20083  post-bacc
 #> 1819: MCID3112219157  20111     20091  post-bacc
 #> 1820: MCID3112291627  20101     20093  post-bacc
 #> 1821: MCID3112352960  20121     20114  post-bacc
@@ -83,7 +87,11 @@ course[order(-term_focus)]
 #>    1: MCID3111142897       19881      <NA>  undergrad
 #>    2: MCID3111142897       19883      <NA>  undergrad
 #>    3: MCID3111157634       19881      <NA>  undergrad
+#>    4: MCID3111157634       19883      <NA>  undergrad
+#>    5: MCID3111157634       19891      <NA>  undergrad
 #>   ---                                                
+#> 2023: MCID3112217217       20085     20083  post-bacc
+#> 2024: MCID3112217217       20091     20083  post-bacc
 #> 2025: MCID3112219157       20111     20091  post-bacc
 #> 2026: MCID3112291627       20101     20093  post-bacc
 #> 2027: MCID3112352960       20121     20114  post-bacc
@@ -99,7 +107,11 @@ degree[order(-term_focus)]
 #>   1: MCID3111169601       19903     19903  undergrad
 #>   2: MCID3111169729       19901     19901  undergrad
 #>   3: MCID3111213539       19923     19923  undergrad
+#>   4: MCID3111213856       19911     19911  undergrad
+#>   5: MCID3111254225       19923     19923  undergrad
 #>  ---                                                
+#> 189: MCID3112727716       20171     20171  undergrad
+#> 190: MCID3112749981       20173     20173  undergrad
 #> 191: MCID3112751130       20171     20171  undergrad
 #> 192: MCID3112839623       20181     20181  undergrad
 #> 193: MCID3112012180       20151     20043  post-bacc

@@ -8,7 +8,7 @@ student <- select_basic_cols(toy_student[mcid %chin% IDs])
 term <- select_basic_cols(toy_term[mcid %chin% IDs])
 
 # Obtain results
-proxy <- prep_fye_mice(student, term)
+proxy <- initialize_fye_proxies(student, term)
 proxy
 
 # ---------- Examine details
@@ -21,7 +21,7 @@ term_seq <- cip[term, .(mcid, term, cip6, cip6name), on = "cip6", nomatch = NULL
 f <- function(IDs, i) {
     cat(paste("Student", i, "record\n"))
     print(term_seq[mcid == IDs[i]])
-    cat("\nprep_fye_mice() results\n")
+    cat("\ninitialize_fye_proxies() results\n")
     print(proxy[mcid == IDs[i]])
 }
 

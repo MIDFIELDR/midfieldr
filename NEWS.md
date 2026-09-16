@@ -18,13 +18,15 @@
 
 New features
 
-- New function `qualification_level()` to identify rows of post-baccalaureate terms to exclude.
+- New function `is_undergrad()` to identify rows of post-baccalaureate terms to exclude.
+- New function `select_unique_cols()` used primarily internally yo prevent overwriting existing columns and drop redundant columns. 
 - New utilities  `look_at()`, `catch_error()`, and `sort_uniq()` that wrap base R functions with our preferred arguments. 
 - Add data set `cip2010`, constructed from a recent download of the source file (`CIPCode2010.csv`) from NCES. Has the same data structure as the existing `cip` dataset, but with more rows. 
 - Renamed/revised functions and their arguments:
   - `completion_status()` replaces the deprecated `add_completion_status()`
   - `data_sufficiency()` replaces the deprecated `add_data_sufficiency()`
   - `filter_programs()` replaces the deprecated `filter_cip()`
+  - `initialize_fye_proxies()` replaces the deprecated `prep_fye_mice()`
   - `select_basic_cols()` replaces the deprecated `select_required()`
   - `timely_term()` replaces the deprecated `add_timely_term()`
   

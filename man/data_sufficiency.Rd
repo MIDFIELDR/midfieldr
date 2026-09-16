@@ -22,7 +22,7 @@ are not preserved.
 of the required variables are removed. Duplicated rows are removed.
 \item New columns are added and all unique columns are
 preserved. If required to prevent overwriting, new column names are
-suffixed (\verb{.1, .2,} etc.). Duplicate columns, differing by suffix only,
+suffixed (\verb{.1, .2,} etc.). Redundant columns, differing by suffix only,
 are dropped. The new variables are:
 \itemize{
 \item \code{data_range}   Character. Institution data range, encoded

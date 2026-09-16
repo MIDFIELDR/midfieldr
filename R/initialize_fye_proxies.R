@@ -1,66 +1,35 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
-#' Prepare FYE data for imputation
+#' Initialize FYE proxies for imputing missing data
 #'
-#' Constructs a data frame of students ever enrolled in First-Year Engineering
-#' (FYE) programs based on information in the MIDFIELD
-#' (or equivalent) `student` and `term` data tables. Conditions the data for
-#' use as an input to the mice R package for multiple imputation. Sets up
-#' three variables as predictors  (institution, race/ethnicity, and sex) and
-#' one variable to be imputed (program CIP code) keyed by student ID.
+#' Assembles a data frame of students ever enrolled in First-Year Engineering
+#' (FYE) programs. Where practicable, a 6-digit CIP code is added to the data
+#' frame as a proxy for the student's preferred engineering major. If
+#' indeterminate, the proxy is NA and treated as missing data. The result is
+#' suitably formatted for input to the R mice package for multiple imputation.
 #'
-#' @section Background:  At some US institutions, engineering students are
-#' required to complete a First-Year Engineering (FYE) program as a
-#' prerequisite for enrolling in an engineering major. When one of these
-#' programs calculates a metric that requires a count of starters, e.g.,
-#' graduation rate, typically only those students entering the degree-granting
-#' program post-FYE are counted.
+#' At some US institutions, engineering students are required to complete a First-Year Engineering (FYE) curriculum before they can be admitted to a degree-granting major such as Civil, Electrical, or Mechanical Engineering. This poses a problem when trying to count the number of students starting in one of these programs: the students don't start in Civil, Electrical, or Mechanical Engineering; they start in FYE.
 #'
-#' Some FYE students do not subsequently enter an engineering major---they may
-#' switch to a non-engineering program or leave the database entirely. Had FYE
-#' not been required, they would have instead been admitted to a degree-granting engineering program of their choice, increasing the count of starters in those
-#' programs resulting in a lower graduation rate when they switched majors or
-#' left the database.
+#' For some metrics---graduation rate for example---correctly identifying starters is imperative. The problem posed by FYE programs is that we don't know the engineering starting majors these students would have selected had FYE not been required. We address the problem by constructing an *FYE proxy* variable.
 #'
-#' To improve the count of starters for FYE institutions, we introduce the
-#' concept of  "FYE proxies", that is, 6-digit CIP codes of the degree-granting
-#' engineering programs that FYE students might have declared had they not
-#' been required to enroll in FYE.
-#'
-#'
-#' @section Method: The function extracts all terms for all FYE students and
-#' identifies all engineering programs in which they were ever enrolled. A
-#' `proxy` variable is added with one of the following values:
+#' The FYE proxy has one of two values:
 #' \enumerate{
-#' \item{If a student record includes at least one, non-FYE, degree-granting
-#'       engineering program, the CIP code of the first such program is
+#' \item{If the record of an FYE student includes a degree-granting
+#'       engineering program, the 6-digit CIP code of the first such program is
 #'       returned as the student's FYE proxy.}
 #' \item{If not, the proxy is NA and is treated as a missing value to be
-#'       imputed by `mice()`.}
+#'       imputed later using the R mice package.}
 #' }
-#' This function does not perform the imputation. It produces a data frame
-#' that is ready to be used as an input to the `mice()` function in a
-#' separate step.
-#'
-#'
-#' Notes:
-#' * Missing values (NA) in the required columns are removed. However, a
-#'   value of "unknown" in a predictor column, e.g., race/ethnicity or sex,
-#'   is acceptable.
-#' * Accommodates only one 6-digit FYE CIP code per institution.
-#' * After running `prep_fye_mice()` but before running `mice()`, one can edit
-#'   the predictor variables if desired. The institution variable should remain
-#'   to ensure that a student's imputed program is available at their
-#'   institution.
-#' * The resulting data frame is ready for use as input for the mice package,
-#'   with all variables except `mcid` returned as factors.
+#' This function does not perform the imputation. It produces a data
+#' frame suitably formatted for input to the R mice package for multiple
+#' imputation.
 #'
 #' @param m_student `r dframe` with required character variables
-#'        `{mcid, race, sex}.` Typically based on one's original,
-#'        unfiltered `student` source data without regard to data sufficiency.
+#'        `{mcid, race, sex}.` Typically the original, unfiltered
+#'        `student` source data.
 #' @param m_term `r dframe` with required character variables
-#'        `{mcid, term, cip6, institution}.` Typically based on one's original,
-#'        unfiltered `term` source data without regard to data sufficiency.
+#'        `{mcid, term, cip6, institution}.` Typically the original,
+#'         unfiltered `term` source data.
 #' @param fye_cip Character, one 6-digit CIP code used for FYE programs. Default
 #'        "140102", applied to all institutions except those (if any)
 #'        optionally defined by user in `alt_fye.`
@@ -68,10 +37,11 @@
 #' @param alt_fye `r dframe` with character variables
 #'        `{institution, alt_cip}.` For users with institutions that use
 #'        a 6-digit CIP code other than the value in `fye_cip` for their FYE
-#'        programs. One FYE code per institution.
+#'        programs. One FYE code only per institution.
 #' @returns Data frame with the following properties:
 #' * `r preserv_class_not_grp_keys`
-#' * Rows: One row for every degree-seeking FYE student.
+#' * Rows: One row for every degree-seeking FYE student. Rows in `m_student`
+#'   or `m_term` with NA values in any of the required variables are removed.
 #' * Columns: Conditioned for later use as an input to the mice R
 #'   package for multiple imputation as follows:
 #'   - `mcid` &nbsp; Character, anonymized student identifier.
@@ -84,14 +54,14 @@
 #'   - `proxy` &nbsp; Factor, 6-digit CIP code of a student's known,
 #'      first degree-granting engineering program or NA representing missing
 #'      values to be imputed.
-#' @example man/examples/exa_prep_fye_mice.R
+#' @example man/examples/exa_initialize_fye_proxies.R
 #' @export
 #'
-prep_fye_mice <- function(m_student,
-                          m_term,
-                          fye_cip = NULL,
-                          ...,
-                          alt_fye = NULL) {
+initialize_fye_proxies <- function(m_student,
+                                   m_term,
+                                   fye_cip = NULL,
+                                   ...,
+                                   alt_fye = NULL) {
   #
   # ---------- initial assertions
 
@@ -223,4 +193,33 @@ prep_fye_mice <- function(m_student,
 
   # done
   dframe[]
+}
+
+
+# ========== deprecated version ==========
+#
+#' midfieldr deprecated functions
+#' @param midfield_student `r midfield_x("*student*")`
+#' @param midfield_term `r midfield_x("*term*")`
+#' @param fye_codes Character, one 6-digit CIP code used for FYE programs.
+#'        Default "140102"
+#' @rdname midfieldr-deprecated
+#' @export
+prep_fye_mice <- function(midfield_student,
+                          midfield_term,
+                          fye_codes = NULL) {
+  .Deprecated(
+    new = "initialize_fye_proxies",
+    package = "midfieldr",
+    msg = "This function was deprecated as part of an update to all
+    midfieldr functions. Please use `initialize_fye_proxies()` instead."
+  )
+
+  # invoking the old function calls the new function
+  initialize_fye_proxies(
+    m_student = midfield_student,
+    m_term = midfield_term,
+    fye_cip = fye_codes,
+    alt_fye = NULL
+  )
 }

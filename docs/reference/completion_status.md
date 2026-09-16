@@ -31,7 +31,7 @@ Data frame with the following properties:
 
 - New columns are added and all unique columns are preserved. If
   required to prevent overwriting, new column names are suffixed
-  (`.1, .2,` etc.). Duplicate columns, differing by suffix only, are
+  (`.1, .2,` etc.). Redundant columns, differing by suffix only, are
   dropped. The new variables are:
 
   - `bacc_term`   Character. Term of a student's first baccalaureate,
@@ -71,7 +71,15 @@ x
 #>  1: MCID3111169729
 #>  2: MCID3111170852
 #>  3: MCID3111173999
-#> ---               
+#>  4: MCID3111257807
+#>  5: MCID3111258275
+#>  6: MCID3111258347
+#>  7: MCID3111259642
+#>  8: MCID3111262210
+#>  9: MCID3111265287
+#> 10: MCID3111269576
+#> 11: MCID3111272691
+#> 12: MCID3111272880
 #> 13: MCID3111277081
 #> 14: MCID3112751130
 #> 15: MCID3112754537
@@ -85,7 +93,15 @@ x
 #>  1: MCID3111169729       19933
 #>  2: MCID3111170852       19933
 #>  3: MCID3111173999       19933
-#> ---                           
+#>  4: MCID3111257807       19953
+#>  5: MCID3111258275       19953
+#>  6: MCID3111258347       19953
+#>  7: MCID3111259642       19953
+#>  8: MCID3111262210       19953
+#>  9: MCID3111265287       19953
+#> 10: MCID3111269576       19953
+#> 11: MCID3111272691       19953
+#> 12: MCID3111272880       19953
 #> 13: MCID3111277081       19961
 #> 14: MCID3112751130       20203
 #> 15: MCID3112754537       20203
@@ -98,7 +114,15 @@ x
 #>  1: MCID3111169729       19933     19901     timely
 #>  2: MCID3111170852       19933      <NA>       <NA>
 #>  3: MCID3111173999       19933      <NA>       <NA>
-#> ---                                                
+#>  4: MCID3111257807       19953     19964       late
+#>  5: MCID3111258275       19953     19921     timely
+#>  6: MCID3111258347       19953     19923     timely
+#>  7: MCID3111259642       19953     19934     timely
+#>  8: MCID3111262210       19953     19951     timely
+#>  9: MCID3111265287       19953     19904     timely
+#> 10: MCID3111269576       19953     19943     timely
+#> 11: MCID3111272691       19953     19914     timely
+#> 12: MCID3111272880       19953     19934     timely
 #> 13: MCID3111277081       19961     19963       late
 #> 14: MCID3112751130       20203     20171     timely
 #> 15: MCID3112754537       20203      <NA>       <NA>
@@ -117,7 +141,15 @@ z
 #>  1: MCID3111169729       19933     19893     timely       19901
 #>  2: MCID3111170852       19933      <NA>       <NA>        <NA>
 #>  3: MCID3111173999       19933      <NA>       <NA>        <NA>
-#> ---                                                            
+#>  4: MCID3111257807       19953     19964       late       19964
+#>  5: MCID3111258275       19953     19921     timely       19921
+#>  6: MCID3111258347       19953     19923     timely       19923
+#>  7: MCID3111259642       19953     19934     timely       19934
+#>  8: MCID3111262210       19953     19951     timely       19951
+#>  9: MCID3111265287       19953     19904     timely       19904
+#> 10: MCID3111269576       19953     19943     timely       19943
+#> 11: MCID3111272691       19953     19914     timely       19914
+#> 12: MCID3111272880       19953     19934     timely       19934
 #> 13: MCID3111277081       19961     19963       late       19963
 #> 14: MCID3112751130       20203     20171     timely       20171
 #> 15: MCID3112754537       20203      <NA>       <NA>        <NA>
@@ -129,7 +161,10 @@ x[completion == "timely"]
 #>  1: MCID3111169729       19933     19901     timely
 #>  2: MCID3111258275       19953     19921     timely
 #>  3: MCID3111258347       19953     19923     timely
-#> ---                                                
+#>  4: MCID3111259642       19953     19934     timely
+#>  5: MCID3111262210       19953     19951     timely
+#>  6: MCID3111265287       19953     19904     timely
+#>  7: MCID3111269576       19953     19943     timely
 #>  8: MCID3111272691       19953     19914     timely
 #>  9: MCID3111272880       19953     19934     timely
 #> 10: MCID3112751130       20203     20171     timely

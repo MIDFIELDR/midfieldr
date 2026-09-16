@@ -2,7 +2,7 @@
 
 In this document, we introduce midfieldr’s basic tools and show how to
 apply them to data frames of student-level records (registrar’s data).
-We follow a typical workflow to organize these topics:
+We organize the topics around a typical workflow:
 
 - data
 - population
@@ -460,9 +460,32 @@ filter_programs(cip, "^5009")[, .(cip6name, cip6, cip4name)]
 #> 17:                                         Music, Other 500999    Music
 ```
 
-We would continue in a similar fashion until we had determined all
-6-digit codes needed for our study, combining them into one `programs`
-data frame.
+The `negate` argument allows you to drop the rows that match the search
+patterns.
+
+``` r
+
+x <- filter_programs(cip, "^5009")[, .(cip6name, cip6, cip4name)]
+filter_programs(x, c("Other", "General"), negate = TRUE)
+#>                                 cip6name   cip6 cip4name
+#>                                   <char> <char>   <char>
+#>  1: Music History, Literature and Theory 500902    Music
+#>  2:         Music Theory and Composition 500904    Music
+#>  3:       Musicology and Ethnomusicology 500905    Music
+#>  4:                           Conducting 500906    Music
+#>  5:                      Piano and Organ 500907    Music
+#>  6:                      Voice and Opera 500908    Music
+#>  7:   Music Management and Merchandising 500909    Music
+#>  8:                   Jazz, Jazz Studies 500910    Music
+#>  9:                       Music Pedagogy 500912    Music
+#> 10:                     Music Technology 500913    Music
+#> 11:                    Brass Instruments 500914    Music
+#> 12:                 Woodwind Instruments 500915    Music
+#> 13:               Percussion Instruments 500916    Music
+```
+
+In a study, we would continue in a similar fashion until we had merged
+all the 6-digit codes we needed into one data frame.
 
 ### completion_status()
 
@@ -511,14 +534,65 @@ DT[order(-completion)]
 When we want of bloc of timely graduates, we filter to retain rows with
 completion “timely.”
 
+## Commonalities
+
+You may have noticed similarities in several of the midfieldr functions.
+For example, in these functions,
+
+- `timely_term(dframe, midf_table = term)`
+- `data_sufficiency(dframe, midf_table = term)`
+- `is_undergraduate(dframe, midf_table = degree)`
+- `completion status(dframe, midf_table = degree)`
+
+the similarities include:
+
+- The first argument is a data frame.
+- The second argument is one of the MIDFIELD data tables.
+- The result is a new data frame with columns added that support the
+  main finding.
+- You can use the main finding to subset the result by rows.
+
+Moreover, because in each case the `midf_table` argument has a default
+value, it can be assigned explicitly or not. For example, the three
+formulations below all yield the same result as long as term data table
+in the computing environment is named `term.`
+
+``` r
+
+# setup
+DT <- student[, .(mcid)]
+
+# equivalent statements
+x <- timely_term(dframe = DT, midf_table = term)
+y <- timely_term(DT, term)
+z <- timely_term(DT)
+
+# equivalent results
+check_equiv_frames(x, y)
+#> [1] TRUE
+check_equiv_frames(x, z)
+#> [1] TRUE
+```
+
+Of other functions used earlier,
+
+- [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
+- [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
+
+have in common that:
+
+- The first argument is a data frame.
+- The result is a new data frame, a subset of the input: “filter”
+  chooses rows; “select” chooses columns.
+
 ## Special conditioning
 
 Relevant functions:
 
-- [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
+- [`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
 
-### prep_fye_mice()
+### initialize_fye_proxies()
 
 Contributes to assembling a bloc of starters.
 
@@ -527,14 +601,16 @@ program is a prerequisite for admission to specific engineering majors.
 FYE programs complicate the identification of *starters* because the
 student’s preferred starting major is unknown.
 
-[`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
+[`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
+takes a first pass at
+
 helps us develop an *FYE proxy,* a likely CIP code of the student’s
 starting program had FYE not been required. Results are a CIP code or
 NA, treated as missing data to be imputed.
 
 ``` r
 
-prep_fye_mice(student, term)
+initialize_fye_proxies(student, term)
 #>                 mcid   institution          race    sex  proxy
 #>               <char>        <fctr>        <fctr> <fctr> <fctr>
 #>    1: MCID3111142290 Institution J         Asian   Male 141001

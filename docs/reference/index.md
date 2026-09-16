@@ -8,6 +8,7 @@
 - [`add_completion_status()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
   [`add_data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
   [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+  [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
   [`select_required()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
   [`add_timely_term()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
   : midfieldr deprecated functions
@@ -20,12 +21,12 @@
   : Determine data sufficiency
 - [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
   : Choose rows of CIP data
+- [`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
+  : Initialize FYE proxies for imputing missing data
 - [`is_undergrad()`](https://midfieldr.github.io/midfieldr/reference/is_undergrad.md)
   : Categorize qualification level by term
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   : Order multiway categories
-- [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/prep_fye_mice.md)
-  : Prepare FYE data for imputation
 - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
   : Choose columns of student records
 - [`select_unique_cols()`](https://midfieldr.github.io/midfieldr/reference/select_unique_cols.md)

@@ -11,6 +11,8 @@ add_data_sufficiency(dframe, midfield_term = term)
 
 filter_cip(keep_text = NULL, drop_text = NULL, cip = NULL, select = NULL)
 
+prep_fye_mice(midfield_student, midfield_term, fye_codes = NULL)
+
 select_required(midfield_x, select_add = NULL)
 
 add_timely_term(
@@ -51,6 +53,15 @@ add_timely_term(
 - select:
 
   Deprecated `filter_cip()`. Character vector of column names to select.
+
+- midfield_student:
+
+  `*student*` data frame
+
+- fye_codes:
+
+  Character, one 6-digit CIP code used for FYE programs. Default
+  "140102"
 
 - midfield_x:
 

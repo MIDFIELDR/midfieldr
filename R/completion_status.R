@@ -137,6 +137,6 @@ add_completion_status <- function(dframe, midfield_degree = degree) {
     msg = "This function was deprecated as part of an update to all
     midfieldr functions. Please use `completion_status()` instead."
   )
-  # original function calls the new function
+  # invoking the old function calls the new function
   completion_status(dframe = dframe, midf_table = midfield_degree)
 }

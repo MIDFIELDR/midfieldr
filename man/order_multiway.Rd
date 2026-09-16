@@ -47,9 +47,10 @@ are not preserved.
 \item Row order is preserved. Duplicated rows are removed.
 \item Column specified by \code{quantity} is converted to type double.
 Columns specified by \code{categories} are converted to factors and ordered.
-\item Columns with names different from the two new columns (named below) are not
-modified; columns with matching names are replaced. The two new column
-names have the form:
+\item New columns are added and all unique columns are
+preserved. If required to prevent overwriting, new column names are
+suffixed (\verb{.1, .2,} etc.). Redundant columns, differing by suffix only,
+are dropped. The new variables are:
 \itemize{
 \item \code{CATEGORY_1_LABEL}
 \item \code{CATEGORY_2_LABEL}

@@ -89,9 +89,9 @@ Therefore, to avoid miscounting starters at FYE institutions, we estimate the 6-
 
 ## Method
 
-We apply `prep_fye_mice()` to the `student` and `term` source files to construct a data frame suitable for imputation using the mice R package. The procedure has four steps: 
+We apply `initialize_fye_proxies()` to the `student` and `term` source files to construct a data frame suitable for imputation using the mice R package. The procedure has four steps: 
 
-1. Use `prep_fye_mice()` from the midfieldr package to estimate some of the FYE proxy CIPs, treat the remainder as missing values, and structure the data frame for imputation. 
+1. Use `initialize_fye_proxies()` from the midfieldr package to estimate some of the FYE proxy CIPs, treat the remainder as missing values, and structure the data frame for imputation. 
 
 2. Optional. If the default predictor variables (institution, race/ethnicity, and sex) do not meet the needs of your study, you can define your own. 
 
@@ -165,9 +165,9 @@ term <- select_basic_cols(source_term)
 
 
 
-## `prep_fye_mice()`
+## `initialize_fye_proxies()`
 
-The purpose of `prep_fye_mice()` is preparing a data frame for the mice R package.  Operates on the complete, unfiltered `student` and `term` source data to create a data frame with three predictor variables and an FYE proxy variable. The values in `proxy` are determined by a student's first post-FYE program code, as follows:   
+The purpose of `initialize_fye_proxies()` is preparing a data frame for the mice R package.  Operates on the complete, unfiltered `student` and `term` source data to create a data frame with three predictor variables and an FYE proxy variable. The values in `proxy` are determined by a student's first post-FYE program code, as follows:   
 
 1. *Post-FYE in Engineering.*  &nbsp; The student completes FYE and enrolls in an engineering major. For this outcome, we know that at the student's first opportunity, they enrolled in an engineering major of their choosing. The CIP code of that program is returned as the student's FYE proxy. 
 
@@ -185,10 +185,10 @@ The purpose of `prep_fye_mice()` is preparing a data frame for the mice R packag
 
 ```{r}
 # Required arguments in order and explicitly named
-x <- prep_fye_mice(m_student = student, m_term = term)
+x <- initialize_fye_proxies(m_student = student, m_term = term)
 
 # Required arguments in order, but not named
-y <- prep_fye_mice(student, term)
+y <- initialize_fye_proxies(student, term)
 
 # Demonstrate equivalence
 check_equiv_frames(x, y)
@@ -198,7 +198,7 @@ check_equiv_frames(x, y)
 
 ```{r}
 # Working data frame
-DT <- prep_fye_mice(student, term)
+DT <- initialize_fye_proxies(student, term)
 DT
 ```
 
@@ -416,7 +416,7 @@ predictor_matrix[, c("race", "sex", "institution")] <- c(0, 0, 0, 0, 1)
 
 ### Optional predictors
 
-The default predictors set up by `prep_fye_mice()` are institution (required), race/ethnicity, and sex. If these are acceptable, you can skip to the next section, [Imputing missing values]. 
+The default predictors set up by `initialize_fye_proxies()` are institution (required), race/ethnicity, and sex. If these are acceptable, you can skip to the next section, [Imputing missing values]. 
 
 Predictors can be edited or added before invoking `mice()`. As before, ensure that the only missing values are in the proxy column. Other variables are expected to be complete (no NA values). A value of "unknown" in a predictor column, e.g., race/ethnicity or sex, is an acceptable value, not missing data. Observations with missing or unknown values in the ID or institution columns should be removed.
 

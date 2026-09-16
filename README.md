@@ -23,10 +23,10 @@ calculate quantitative metrics, and prepare results for dissemination.
 - `data_sufficiency()` Identifies IDs to exclude due to insufficient
   data.\
 - `filter_programs()` Helps in finding 6-digit program codes.\
-- `order_multiway()` Conditions data for Cleveland multiway charts.\
-- `prep_fye_mice()` Conditions data for imputing starting majors of FYE
-  students.
+- `initialize_fye_proxies()` Conditions data for imputing starting
+  majors of FYE students.
 - `is_undergrad()` Identifies undergraduate terms to include.
+- `order_multiway()` Conditions data for Cleveland multiway charts.\
 - `timely_term()` Determines the latest term for timely completion.
 
 ## Installation
