@@ -18,6 +18,8 @@
 #' completed. The adjusted span is added to their initial term at an
 #' institution to create the `timely_term` value for each observation.
 #'
+#' `r redundant_cols("timely_term")`
+#'
 #' @param dframe `r dframe` with required variable `{mcid}.`
 #' @param midf_table `r midfield_x("term")` with required variables
 #'        `{mcid, term, level}.`
@@ -30,7 +32,7 @@
 #' @returns Data frame with the following properties:
 #' * `r preserv_class_not_grp_keys`
 #' * `r omit_NA_dup_rows`
-#' * `r add_cols_drop_duplic`
+#' * `r add_new_cols` The new variables are:
 #'   - `entry_term` &nbsp; Character. Initial term of a student's longitudinal
 #'      record, encoded `YYYYT`. Extracted from `midf_table.`
 #'   - `entry_level` &nbsp; Character. Student level (01 Freshman, 02 Sophomore,

@@ -20,10 +20,9 @@ Data frame with the following properties:
 are not preserved.
 \item Row order is preserved. Rows with \code{NA} values in any
 of the required variables are removed. Duplicated rows are removed.
-\item New columns are added and all unique columns are
-preserved. If required to prevent overwriting, new column names are
-suffixed (\verb{.1, .2,} etc.). Redundant columns, differing by suffix only,
-are dropped. The new variables are:
+\item New columns are added unless they duplicate existing
+variables---redundant columns, whether new or existing, are dropped
+(see Details). The new variables are:
 \itemize{
 \item \code{bacc_term}    Character. Term of a student's first
 baccalaureate, encoded \code{YYYYT} or, if no degree recorded, \code{NA}.
@@ -41,24 +40,41 @@ first degree and “post-bacc” (post-baccalaureate) for terms after the first
 degree. Added columns support the findings. Post-baccalaureate terms are
 typically excluded from the \verb{term, course,} and \code{degree} data tables.
 }
+\details{
+When midfieldr functions add columns to a data frame, such as  \verb{bacc_term,}  they are dropped if they duplicate an existing variable. When an added variable has the same name as an existing variable but different values, the new variable name acquires a suffix, e.g., \code{bacc_term.1.} These details are managed by \verb{select_unique_cols().} See its help page for examples.
+
+An added variable with a suffix indicates one of two possibilities:
+\enumerate{
+\item The existing variable has inadvertently been named the same as the new variable. The two variables represent different information entirely and the existing variable should probably be re-named before running this function to add the new variable.
+\item The two variables represent the same information but their values disagree. Such differences are not expected---these added variables typically depend on fixed quantities, e.g., a student's admission term or an institution's data range, and should not change during an analysis. In such a case, the user should investigate the possibility of an error having been introduced at some point.
+}
+}
 \examples{
-# select min required columns
+# Select min required columns
 term <- toy_term[, .(mcid, term)]
 course <- toy_course[, .(mcid, term_course)]
 degree <- toy_degree[, .(mcid, term_degree)]
 
-# labeling terms by group: undergrad & grad
+# Example of starting data frame
+term
+
+# Labeling terms by group: undergrad & grad
 term <- is_undergrad(term, midf_table = degree)
 course <- is_undergrad(course, midf_table = degree)
 degree <- is_undergrad(degree, midf_table = degree)
 
-# results
+# Example result
 term[order(-term_focus)]
-term[, .N, by = "term_focus"][order(-N)]
 
-course[order(-term_focus)]
-course[, .N, by = "term_focus"][order(-N)]
+# No change if added columns are redundant
+x <- is_undergrad(term, midf_table = degree)
+check_equiv_frames(term, x)
 
-degree[order(-term_focus)]
-degree[, .N, by = "term_focus"][order(-N)]
+# Filter to retain "undergraduate" rows only
+term <- term[term_focus == "undergrad"]
+course <- course[term_focus == "undergrad"]
+degree <- degree[term_focus == "undergrad"]
+
+# Example result
+term
 }

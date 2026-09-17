@@ -19,10 +19,9 @@ Data frame with the following properties:
 are not preserved.
 \item Row order is preserved. Rows with \code{NA} values in any
 of the required variables are removed. Duplicated rows are removed.
-\item New columns are added and all unique columns are
-preserved. If required to prevent overwriting, new column names are
-suffixed (\verb{.1, .2,} etc.). Redundant columns, differing by suffix only,
-are dropped. The new variables are:
+\item New columns are added unless they duplicate existing
+variables---redundant columns, whether new or existing, are dropped
+(see Details). The new variables are:
 \itemize{
 \item \code{bacc_term}    Character. Term of a student's first
 baccalaureate, encoded \code{YYYYT} or, if no degree recorded, \code{NA.}
@@ -47,6 +46,14 @@ term at the end of that span is the \emph{timely completion term.}
 If the student's degree term is no later than their timely completion term,
 then their completion status is "timely"; if later, their status is "late".
 For students with no degree, completion status is NA.
+
+When midfieldr functions add columns to a data frame, such as  \verb{bacc_term,}  they are dropped if they duplicate an existing variable. When an added variable has the same name as an existing variable but different values, the new variable name acquires a suffix, e.g., \code{bacc_term.1.} These details are managed by \verb{select_unique_cols().} See its help page for examples.
+
+An added variable with a suffix indicates one of two possibilities:
+\enumerate{
+\item The existing variable has inadvertently been named the same as the new variable. The two variables represent different information entirely and the existing variable should probably be re-named before running this function to add the new variable.
+\item The two variables represent the same information but their values disagree. Such differences are not expected---these added variables typically depend on fixed quantities, e.g., a student's admission term or an institution's data range, and should not change during an analysis. In such a case, the user should investigate the possibility of an error having been introduced at some point.
+}
 }
 \examples{
 # Assign toy data sets
@@ -67,16 +74,9 @@ x
 x <- completion_status(x, midf_table = degree)
 x
 
-# No change if new columns match existing columns
-y = completion_status(x, midf_table = degree)
+# No change if added columns are redundant
+completion_status(x, midf_table = degree)
 
-# If new column should match existing but does not,
-# new column with suffix .1, .2, etc., is added. 
-# Indicates an error has occurred somewhere. 
-y$bacc_term[1] <- "19893"
-z = completion_status(y, midf_table = degree)
-z
-
-# Typical application retains "timely" rows only
+# Filter to retain "timely" rows only
 x[completion == "timely"]
 }

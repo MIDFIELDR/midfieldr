@@ -29,10 +29,9 @@ Data frame with the following properties:
 - Row order is preserved. Rows with `NA` values in any of the required
   variables are removed. Duplicated rows are removed.
 
-- New columns are added and all unique columns are preserved. If
-  required to prevent overwriting, new column names are suffixed
-  (`.1, .2,` etc.). Redundant columns, differing by suffix only, are
-  dropped. The new variables are:
+- New columns are added unless they duplicate existing
+  variables—redundant columns, whether new or existing, are dropped (see
+  Details). The new variables are:
 
   - `bacc_term`   Character. Term of a student's first baccalaureate,
     encoded `YYYYT` or, if no degree recorded, `NA.` Joined from the
@@ -54,6 +53,27 @@ completion term.*
 If the student's degree term is no later than their timely completion
 term, then their completion status is "timely"; if later, their status
 is "late". For students with no degree, completion status is NA.
+
+When midfieldr functions add columns to a data frame, such as
+`bacc_term,` they are dropped if they duplicate an existing variable.
+When an added variable has the same name as an existing variable but
+different values, the new variable name acquires a suffix, e.g.,
+`bacc_term.1.` These details are managed by `select_unique_cols().` See
+its help page for examples.
+
+An added variable with a suffix indicates one of two possibilities:
+
+1.  The existing variable has inadvertently been named the same as the
+    new variable. The two variables represent different information
+    entirely and the existing variable should probably be re-named
+    before running this function to add the new variable.
+
+2.  The two variables represent the same information but their values
+    disagree. Such differences are not expected—these added variables
+    typically depend on fixed quantities, e.g., a student's admission
+    term or an institution's data range, and should not change during an
+    analysis. In such a case, the user should investigate the
+    possibility of an error having been introduced at some point.
 
 ## Examples
 
@@ -127,34 +147,27 @@ x
 #> 14: MCID3112751130       20203     20171     timely
 #> 15: MCID3112754537       20203      <NA>       <NA>
 
-# No change if new columns match existing columns
-y = completion_status(x, midf_table = degree)
+# No change if added columns are redundant
+completion_status(x, midf_table = degree)
+#>               mcid timely_term bacc_term completion
+#>             <char>      <char>    <char>     <char>
+#>  1: MCID3111169729       19933     19901     timely
+#>  2: MCID3111170852       19933      <NA>       <NA>
+#>  3: MCID3111173999       19933      <NA>       <NA>
+#>  4: MCID3111257807       19953     19964       late
+#>  5: MCID3111258275       19953     19921     timely
+#>  6: MCID3111258347       19953     19923     timely
+#>  7: MCID3111259642       19953     19934     timely
+#>  8: MCID3111262210       19953     19951     timely
+#>  9: MCID3111265287       19953     19904     timely
+#> 10: MCID3111269576       19953     19943     timely
+#> 11: MCID3111272691       19953     19914     timely
+#> 12: MCID3111272880       19953     19934     timely
+#> 13: MCID3111277081       19961     19963       late
+#> 14: MCID3112751130       20203     20171     timely
+#> 15: MCID3112754537       20203      <NA>       <NA>
 
-# If new column should match existing but does not,
-# new column with suffix .1, .2, etc., is added. 
-# Indicates an error has occurred somewhere. 
-y$bacc_term[1] <- "19893"
-z = completion_status(y, midf_table = degree)
-z
-#>               mcid timely_term bacc_term completion bacc_term.1
-#>             <char>      <char>    <char>     <char>      <char>
-#>  1: MCID3111169729       19933     19893     timely       19901
-#>  2: MCID3111170852       19933      <NA>       <NA>        <NA>
-#>  3: MCID3111173999       19933      <NA>       <NA>        <NA>
-#>  4: MCID3111257807       19953     19964       late       19964
-#>  5: MCID3111258275       19953     19921     timely       19921
-#>  6: MCID3111258347       19953     19923     timely       19923
-#>  7: MCID3111259642       19953     19934     timely       19934
-#>  8: MCID3111262210       19953     19951     timely       19951
-#>  9: MCID3111265287       19953     19904     timely       19904
-#> 10: MCID3111269576       19953     19943     timely       19943
-#> 11: MCID3111272691       19953     19914     timely       19914
-#> 12: MCID3111272880       19953     19934     timely       19934
-#> 13: MCID3111277081       19961     19963       late       19963
-#> 14: MCID3112751130       20203     20171     timely       20171
-#> 15: MCID3112754537       20203      <NA>       <NA>        <NA>
-
-# Typical application retains "timely" rows only
+# Filter to retain "timely" rows only
 x[completion == "timely"]
 #>               mcid timely_term bacc_term completion
 #>             <char>      <char>    <char>     <char>

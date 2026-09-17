@@ -9,7 +9,7 @@ and add columns that support the findings."><meta property="og:image" content="h
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9037</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9038</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,10 +82,9 @@ and add columns that support the findings.</p>
 are not preserved.</p></li>
 <li><p>Row order is preserved. Rows with <code>NA</code> values in any
 of the required variables are removed. Duplicated rows are removed.</p></li>
-<li><p>New columns are added and all unique columns are
-preserved. If required to prevent overwriting, new column names are
-suffixed (<code>.1, .2,</code> etc.). Redundant columns, differing by suffix only,
-are dropped. The new variables are:</p><ul><li><p><code>data_range</code>   Character. Institution data range, encoded
+<li><p>New columns are added unless they duplicate existing
+variables—redundant columns, whether new or existing, are dropped
+(see Details). The new variables are:</p><ul><li><p><code>data_range</code>   Character. Institution data range, encoded
 <code>YYYYT-YYYYT,</code> indicating the institution's first and last term in the
 database. Extracted from <code>midf_table.</code></p></li>
 <li><p><code>sufficiency</code>   Character. Data sufficiency results.
@@ -112,7 +111,10 @@ limit of their institution's data range;  "exclude-lower" when their initial
 term matches the non-summer, lower limit of the data range; and "include"
 otherwise. The rationale for these specific filters is explained in our
 data sufficiency article (see references).</p>
-    </div>
+<p>When midfieldr functions add columns to a data frame, such as  <code>sufficiency,</code>  they are dropped if they duplicate an existing variable. When an added variable has the same name as an existing variable but different values, the new variable name acquires a suffix, e.g., <code>sufficiency.1.</code> These details are managed by <code>select_unique_cols().</code> See its help page for examples.</p>
+<p>An added variable with a suffix indicates one of two possibilities:</p><ol><li><p>The existing variable has inadvertently been named the same as the new variable. The two variables represent different information entirely and the existing variable should probably be re-named before running this function to add the new variable.</p></li>
+<li><p>The two variables represent the same information but their values disagree. Such differences are not expected—these added variables typically depend on fixed quantities, e.g., a student's admission term or an institution's data range, and should not change during an analysis. In such a case, the user should investigate the possibility of an error having been introduced at some point.</p></li>
+</ol></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>R. Layton, R. Long, M. Ohland, M. Orr, and S. Lord (2026), "Data sufficiency,"  <a href="https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.html">https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.html</a></p>
@@ -188,7 +190,7 @@ data sufficiency article (see references).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14: MCID3112751130      20151       20203 19881-20181  fail-upper</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15: MCID3112754537      20151       20203 19881-20181  fail-upper</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># If you repeat, the new columns are overwritten</span></span></span>
+<span class="r-in"><span><span class="co"># No change if columns to be added are redundant</span></span></span>
 <span class="r-in"><span><span class="fu">data_sufficiency</span><span class="op">(</span><span class="va">x</span>, midf_table <span class="op">=</span> <span class="va">term</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               mcid entry_term timely_term  data_range sufficiency</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;char&gt;     &lt;char&gt;      &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span>
@@ -208,7 +210,7 @@ data sufficiency article (see references).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14: MCID3112751130      20151       20203 19881-20181  fail-upper</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15: MCID3112754537      20151       20203 19881-20181  fail-upper</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Typical application retains "include" rows only</span></span></span>
+<span class="r-in"><span><span class="co"># Filter to retain "satisfied" rows only</span></span></span>
 <span class="r-in"><span><span class="va">x</span><span class="op">[</span><span class="va">sufficiency</span> <span class="op">==</span> <span class="st">"satisfied"</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              mcid entry_term timely_term  data_range sufficiency</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;char&gt;     &lt;char&gt;      &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span>

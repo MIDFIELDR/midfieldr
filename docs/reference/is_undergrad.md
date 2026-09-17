@@ -34,10 +34,9 @@ Data frame with the following properties:
 - Row order is preserved. Rows with `NA` values in any of the required
   variables are removed. Duplicated rows are removed.
 
-- New columns are added and all unique columns are preserved. If
-  required to prevent overwriting, new column names are suffixed
-  (`.1, .2,` etc.). Redundant columns, differing by suffix only, are
-  dropped. The new variables are:
+- New columns are added unless they duplicate existing
+  variables—redundant columns, whether new or existing, are dropped (see
+  Details). The new variables are:
 
   - `bacc_term`   Character. Term of a student's first baccalaureate,
     encoded `YYYYT` or, if no degree recorded, `NA`. Joined from the
@@ -47,20 +46,59 @@ Data frame with the following properties:
     before or after a student's first baccalaureate. Possible values are
     "undergrad" and "post-bacc."
 
+## Details
+
+When midfieldr functions add columns to a data frame, such as
+`bacc_term,` they are dropped if they duplicate an existing variable.
+When an added variable has the same name as an existing variable but
+different values, the new variable name acquires a suffix, e.g.,
+`bacc_term.1.` These details are managed by `select_unique_cols().` See
+its help page for examples.
+
+An added variable with a suffix indicates one of two possibilities:
+
+1.  The existing variable has inadvertently been named the same as the
+    new variable. The two variables represent different information
+    entirely and the existing variable should probably be re-named
+    before running this function to add the new variable.
+
+2.  The two variables represent the same information but their values
+    disagree. Such differences are not expected—these added variables
+    typically depend on fixed quantities, e.g., a student's admission
+    term or an institution's data range, and should not change during an
+    analysis. In such a case, the user should investigate the
+    possibility of an error having been introduced at some point.
+
 ## Examples
 
 ``` r
-# select min required columns
+# Select min required columns
 term <- toy_term[, .(mcid, term)]
 course <- toy_course[, .(mcid, term_course)]
 degree <- toy_degree[, .(mcid, term_degree)]
 
-# labeling terms by group: undergrad & grad
+# Example of starting data frame
+term
+#>                 mcid   term
+#>               <char> <char>
+#>    1: MCID3111142897  19881
+#>    2: MCID3111157634  19881
+#>    3: MCID3111157634  19883
+#>    4: MCID3111157634  19891
+#>    5: MCID3111157634  19893
+#>   ---                      
+#> 1817: MCID3112868072  20171
+#> 1818: MCID3112868072  20173
+#> 1819: MCID3112869843  20173
+#> 1820: MCID3112869843  20181
+#> 1821: MCID3112885339  20181
+
+# Labeling terms by group: undergrad & grad
 term <- is_undergrad(term, midf_table = degree)
 course <- is_undergrad(course, midf_table = degree)
 degree <- is_undergrad(degree, midf_table = degree)
 
-# results
+# Example result
 term[order(-term_focus)]
 #>                 mcid   term bacc_term term_focus
 #>               <char> <char>    <char>     <char>
@@ -75,49 +113,30 @@ term[order(-term_focus)]
 #> 1819: MCID3112219157  20111     20091  post-bacc
 #> 1820: MCID3112291627  20101     20093  post-bacc
 #> 1821: MCID3112352960  20121     20114  post-bacc
-term[, .N, by = "term_focus"][order(-N)]
-#>    term_focus     N
-#>        <char> <int>
-#> 1:  undergrad  1802
-#> 2:  post-bacc    19
 
-course[order(-term_focus)]
-#>                 mcid term_course bacc_term term_focus
-#>               <char>      <char>    <char>     <char>
-#>    1: MCID3111142897       19881      <NA>  undergrad
-#>    2: MCID3111142897       19883      <NA>  undergrad
-#>    3: MCID3111157634       19881      <NA>  undergrad
-#>    4: MCID3111157634       19883      <NA>  undergrad
-#>    5: MCID3111157634       19891      <NA>  undergrad
-#>   ---                                                
-#> 2023: MCID3112217217       20085     20083  post-bacc
-#> 2024: MCID3112217217       20091     20083  post-bacc
-#> 2025: MCID3112219157       20111     20091  post-bacc
-#> 2026: MCID3112291627       20101     20093  post-bacc
-#> 2027: MCID3112352960       20121     20114  post-bacc
-course[, .N, by = "term_focus"][order(-N)]
-#>    term_focus     N
-#>        <char> <int>
-#> 1:  undergrad  2004
-#> 2:  post-bacc    23
+# No change if added columns are redundant
+x <- is_undergrad(term, midf_table = degree)
+check_equiv_frames(term, x)
+#> [1] TRUE
 
-degree[order(-term_focus)]
-#>                mcid term_degree bacc_term term_focus
-#>              <char>      <char>    <char>     <char>
-#>   1: MCID3111169601       19903     19903  undergrad
-#>   2: MCID3111169729       19901     19901  undergrad
-#>   3: MCID3111213539       19923     19923  undergrad
-#>   4: MCID3111213856       19911     19911  undergrad
-#>   5: MCID3111254225       19923     19923  undergrad
-#>  ---                                                
-#> 189: MCID3112727716       20171     20171  undergrad
-#> 190: MCID3112749981       20173     20173  undergrad
-#> 191: MCID3112751130       20171     20171  undergrad
-#> 192: MCID3112839623       20181     20181  undergrad
-#> 193: MCID3112012180       20151     20043  post-bacc
-degree[, .N, by = "term_focus"][order(-N)]
-#>    term_focus     N
-#>        <char> <int>
-#> 1:  undergrad   192
-#> 2:  post-bacc     1
+# Filter to retain "undergraduate" rows only
+term <- term[term_focus == "undergrad"]
+course <- course[term_focus == "undergrad"]
+degree <- degree[term_focus == "undergrad"]
+
+# Example result
+term
+#>                 mcid   term bacc_term term_focus
+#>               <char> <char>    <char>     <char>
+#>    1: MCID3111142897  19881      <NA>  undergrad
+#>    2: MCID3111157634  19881      <NA>  undergrad
+#>    3: MCID3111157634  19883      <NA>  undergrad
+#>    4: MCID3111157634  19891      <NA>  undergrad
+#>    5: MCID3111157634  19893      <NA>  undergrad
+#>   ---                                           
+#> 1798: MCID3112868072  20171      <NA>  undergrad
+#> 1799: MCID3112868072  20173      <NA>  undergrad
+#> 1800: MCID3112869843  20173      <NA>  undergrad
+#> 1801: MCID3112869843  20181      <NA>  undergrad
+#> 1802: MCID3112885339  20181      <NA>  undergrad
 ```

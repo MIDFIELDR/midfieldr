@@ -47,25 +47,23 @@ are not preserved.
 \item Row order is preserved. Duplicated rows are removed.
 \item Column specified by \code{quantity} is converted to type double.
 Columns specified by \code{categories} are converted to factors and ordered.
-\item New columns are added and all unique columns are
-preserved. If required to prevent overwriting, new column names are
-suffixed (\verb{.1, .2,} etc.). Redundant columns, differing by suffix only,
-are dropped. The new variables are:
+\item New columns are added unless they duplicate existing
+variables---redundant columns, whether new or existing, are dropped
+(see Details). The new columns, with capital letters denoting
+placeholders, have the form:
 \itemize{
 \item \code{CATEGORY_1_LABEL}
 \item \code{CATEGORY_2_LABEL}
 }
-}
 
-The \code{CATEGORY} placeholder in the new column names is replaced with the
-column names from \code{categories.} The \code{LABEL} placeholder depends on the method.
-For \code{method = median}, the label is \code{median}. For \code{method = percent}, the
-label is \verb{metric,} indicating that the metric in percent has been
-recalculated for the entire category. For example, if
-\code{categories = c("program", "people")} and \verb{method = "median",} the new
-column names would be \code{program_median} and \code{people_median.}
-For \verb{method = "percent",} the new column names would be \code{program_metric}
-and \code{people_metric.}
+The \code{CATEGORY} placeholder is replaced with the column names from
+\code{categories.} The \code{LABEL} placeholder depends on the method. For
+example, suppose \verb{categories = c("program", "people").}For the \code{median}
+method, the new column names would be \code{program_median}
+and \code{people_median.} For the \code{percent} method, the new column names would
+be \code{program_metric} and \verb{people_metric,} indicating that the metric had
+been calculated for each category independently.
+}
 }
 \description{
 Condition data for Cleveland multiway charts. Two independent categorical
@@ -89,6 +87,14 @@ assumed that a response for every combination is at least feasible.
 In a multiway dot plot, one category is encoded by the panels, the second
 category is encoded by the rows of each panel, and the quantitative variable
 is encoded along identical horizontal scales.
+
+When midfieldr functions add columns to a data frame, such as  \verb{program_median,}  they are dropped if they duplicate an existing variable. When an added variable has the same name as an existing variable but different values, the new variable name acquires a suffix, e.g., \code{program_median.1.} These details are managed by \verb{select_unique_cols().} See its help page for examples.
+
+An added variable with a suffix indicates one of two possibilities:
+\enumerate{
+\item The existing variable has inadvertently been named the same as the new variable. The two variables represent different information entirely and the existing variable should probably be re-named before running this function to add the new variable.
+\item The two variables represent the same information but their values disagree. Such differences are not expected---these added variables typically depend on fixed quantities, e.g., a student's admission term or an institution's data range, and should not change during an analysis. In such a case, the user should investigate the possibility of an error having been introduced at some point.
+}
 }
 \examples{
 # Reconfigure built-in data set
@@ -110,6 +116,11 @@ mw1 <- order_multiway(DT1,
                       categories = c("prgm", "people"))
 data.table::setorderv(mw1, c("prgm_median", "people_median"))
 mw1
+
+# No effect if new variables are redundant
+order_multiway(mw1, 
+               quantity = "stk", 
+               categories = c("prgm", "people"))
 
 # Levels in increasing order
 levels(mw1$prgm)

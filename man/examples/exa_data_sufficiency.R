@@ -15,8 +15,8 @@ x
 x <- data_sufficiency(x, midf_table = term)
 x
 
-# If you repeat, the new columns are overwritten
+# No change if columns to be added are redundant
 data_sufficiency(x, midf_table = term)
 
-# Typical application retains "include" rows only
+# Filter to retain "satisfied" rows only
 x[sufficiency == "satisfied"]

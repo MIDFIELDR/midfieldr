@@ -18,6 +18,11 @@ mw1 <- order_multiway(DT1,
 data.table::setorderv(mw1, c("prgm_median", "people_median"))
 mw1
 
+# No effect if new variables are redundant
+order_multiway(mw1, 
+               quantity = "stk", 
+               categories = c("prgm", "people"))
+
 # Levels in increasing order
 levels(mw1$prgm)
 levels(mw1$people)

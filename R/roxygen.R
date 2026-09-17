@@ -18,10 +18,18 @@ preserv_class_not_grp_keys <- "Data frame class is preserved. Groups and keys
 omit_NA_dup_rows <- "Row order is preserved. Rows with `NA` values in any
         of the required variables are removed. Duplicated rows are removed."
 
-add_cols_drop_duplic <- "New columns are added and all unique columns are
-        preserved. If required to prevent overwriting, new column names are
-        suffixed (`.1, .2,` etc.). Redundant columns, differing by suffix only,
-        are dropped. The new variables are:"
+add_new_cols <- "New columns are added unless they duplicate existing
+        variables---redundant columns, whether new or existing, are dropped
+        (see Details)."
+
+redundant_cols <- function(x) {
+  paste0("When midfieldr functions add columns to a data frame, such as ", " `", x, ",` ", " they are dropped if they duplicate an existing variable. When an added variable has the same name as an existing variable but different values, the new variable name acquires a suffix, e.g.,", " `", x, ".1.` These details are managed by `select_unique_cols().` See its help page for examples.
+
+An added variable with a suffix indicates one of two possibilities:
+
+1. The existing variable has inadvertently been named the same as the new variable. The two variables represent different information entirely and the existing variable should probably be re-named before running this function to add the new variable.
+2. The two variables represent the same information but their values disagree. Such differences are not expected---these added variables typically depend on fixed quantities, e.g., a student's admission term or an institution's data range, and should not change during an analysis. In such a case, the user should investigate the possibility of an error having been introduced at some point.")
+}
 
 
 # ---------- Variable names used in data.R

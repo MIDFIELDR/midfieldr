@@ -8,6 +8,8 @@
 #' degree. Added columns support the findings. Post-baccalaureate terms are
 #' typically excluded from the `term, course,` and `degree` data tables.
 #'
+#' `r redundant_cols("bacc_term")`
+#'
 #' @param dframe `r dframe` with required variables `{mcid}` and one of
 #'        `{term, term_course, term_degree}.`
 #' @param midf_table `r midfield_x("degree")` with required variables
@@ -15,7 +17,7 @@
 #' @returns Data frame with the following properties:
 #' * `r preserv_class_not_grp_keys`
 #' * `r omit_NA_dup_rows`
-#' * `r add_cols_drop_duplic`
+#' * `r add_new_cols` The new variables are:
 #'   - `bacc_term` &nbsp;  Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA`.
 #'      Joined from the `term_degree` variable in `midf_table.`

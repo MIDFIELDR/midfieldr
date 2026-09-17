@@ -26,6 +26,8 @@
 #' otherwise. The rationale for these specific filters is explained in our
 #' data sufficiency article (see references).
 #'
+#' `r redundant_cols("sufficiency")`
+#'
 #' @param dframe `r dframe` with required variables
 #'        `{mcid, entry_term, timely_term}.`
 #' @param midf_table `r midfield_x("term")` with required variables
@@ -33,7 +35,7 @@
 #' @returns Data frame with the following properties:
 #' * `r preserv_class_not_grp_keys`
 #' * `r omit_NA_dup_rows`
-#' * `r add_cols_drop_duplic`
+#' * `r add_new_cols` The new variables are:
 #'   - `data_range` &nbsp; Character. Institution data range, encoded
 #'     `YYYYT-YYYYT,` indicating the institution's first and last term in the
 #'      database. Extracted from `midf_table.`

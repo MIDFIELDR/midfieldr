@@ -66,24 +66,22 @@ Data frame with the following properties:
 - Column specified by `quantity` is converted to type double. Columns
   specified by `categories` are converted to factors and ordered.
 
-- New columns are added and all unique columns are preserved. If
-  required to prevent overwriting, new column names are suffixed
-  (`.1, .2,` etc.). Redundant columns, differing by suffix only, are
-  dropped. The new variables are:
+- New columns are added unless they duplicate existing
+  variables—redundant columns, whether new or existing, are dropped (see
+  Details). The new columns, with capital letters denoting placeholders,
+  have the form:
 
   - `CATEGORY_1_LABEL`
 
   - `CATEGORY_2_LABEL`
 
-The `CATEGORY` placeholder in the new column names is replaced with the
-column names from `categories.` The `LABEL` placeholder depends on the
-method. For `method = median`, the label is `median`. For
-`method = percent`, the label is `metric,` indicating that the metric in
-percent has been recalculated for the entire category. For example, if
-`categories = c("program", "people")` and `method = "median",` the new
-column names would be `program_median` and `people_median.` For
-`method = "percent",` the new column names would be `program_metric` and
-`people_metric.`
+  The `CATEGORY` placeholder is replaced with the column names from
+  `categories.` The `LABEL` placeholder depends on the method. For
+  example, suppose `categories = c("program", "people").`For the
+  `median` method, the new column names would be `program_median` and
+  `people_median.` For the `percent` method, the new column names would
+  be `program_metric` and `people_metric,` indicating that the metric
+  had been calculated for each category independently.
 
 ## Details
 
@@ -103,6 +101,27 @@ assumed that a response for every combination is at least feasible.
 In a multiway dot plot, one category is encoded by the panels, the
 second category is encoded by the rows of each panel, and the
 quantitative variable is encoded along identical horizontal scales.
+
+When midfieldr functions add columns to a data frame, such as
+`program_median,` they are dropped if they duplicate an existing
+variable. When an added variable has the same name as an existing
+variable but different values, the new variable name acquires a suffix,
+e.g., `program_median.1.` These details are managed by
+`select_unique_cols().` See its help page for examples.
+
+An added variable with a suffix indicates one of two possibilities:
+
+1.  The existing variable has inadvertently been named the same as the
+    new variable. The two variables represent different information
+    entirely and the existing variable should probably be re-named
+    before running this function to add the new variable.
+
+2.  The two variables represent the same information but their values
+    disagree. Such differences are not expected—these added variables
+    typically depend on fixed quantities, e.g., a student's admission
+    term or an institution's data range, and should not change during an
+    analysis. In such a case, the user should investigate the
+    possibility of an error having been introduced at some point.
 
 ## References
 
@@ -184,6 +203,29 @@ mw1 <- order_multiway(DT1,
                       categories = c("prgm", "people"))
 data.table::setorderv(mw1, c("prgm_median", "people_median"))
 mw1
+#>       prgm          people   stk prgm_median people_median
+#>     <fctr>          <fctr> <num>       <num>         <num>
+#>  1:     EE    Asian Female  57.1        50.4         35.70
+#>  2:     EE   Hispanic Male  37.8        50.4         45.50
+#>  3:     EE Hispanic Female  37.5        50.4         52.10
+#>  4:     EE    White Female  47.5        50.4         55.20
+#>  5:     EE      White Male  50.8        50.4         55.30
+#>  6:     EE    Black Female  50.0        50.4         58.35
+#>  7:     EE      Black Male  58.6        50.4         60.95
+#>  8:     EE      Asian Male  57.7        50.4         61.10
+#>  9:     ME    Asian Female  14.3        63.1         35.70
+#> 10:     ME   Hispanic Male  53.2        63.1         45.50
+#> 11:     ME Hispanic Female  66.7        63.1         52.10
+#> 12:     ME    White Female  62.9        63.1         55.20
+#> 13:     ME      White Male  59.8        63.1         55.30
+#> 14:     ME    Black Female  66.7        63.1         58.35
+#> 15:     ME      Black Male  63.3        63.1         60.95
+#> 16:     ME      Asian Male  64.5        63.1         61.10
+
+# No effect if new variables are redundant
+order_multiway(mw1, 
+               quantity = "stk", 
+               categories = c("prgm", "people"))
 #>       prgm          people   stk prgm_median people_median
 #>     <fctr>          <fctr> <num>       <num>         <num>
 #>  1:     EE    Asian Female  57.1        50.4         35.70

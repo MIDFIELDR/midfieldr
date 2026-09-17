@@ -6,8 +6,17 @@
 
 New features
 
-- New function `qualification_level()` to identify rows of
-  post-baccalaureate terms to exclude.
+- Functions that add columns no longer overwrite existing columns of the
+  same names. New columns are added with name-suffixes .1, .2, etc., if
+  needed. If the variable (less the name suffix) duplicates an existing
+  column, it is dropped.\
+- New function
+  [`is_undergrad()`](https://midfieldr.github.io/midfieldr/reference/is_undergrad.md)
+  to identify rows of post-baccalaureate terms to exclude.
+- New function
+  [`select_unique_cols()`](https://midfieldr.github.io/midfieldr/reference/select_unique_cols.md)
+  used primarily internally yo prevent overwriting existing columns and
+  drop redundant columns.
 - New utilities
   [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md),
   [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md),
@@ -27,6 +36,9 @@ New features
   - [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
     replaces the deprecated
     [`filter_cip()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
+  - [`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
+    replaces the deprecated
+    [`prep_fye_mice()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)
   - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
     replaces the deprecated
     [`select_required()`](https://midfieldr.github.io/midfieldr/reference/midfieldr-deprecated.md)

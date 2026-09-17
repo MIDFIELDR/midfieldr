@@ -48,133 +48,113 @@ the row-wise values differ.
 
 ``` r
 # Construct a sample data frame
-mcid <- paste0("mc_", c("01", "02", "03"))
+mcid <- c("mc_01", "mc_02", "mc_03")
 term <- c("19911", "19912", "19913")
-dframe <- data.frame(mcid, term)
-dframe
-#>    mcid  term
-#> 1 mc_01 19911
-#> 2 mc_02 19912
-#> 3 mc_03 19913
+x <- data.frame(mcid, term)
+
+# In the following, column names "var" and "var.i" 
+# represent identical names except for the suffix ".i"
  
-# No effect if all columns are distinct
-select_unique_cols(dframe)
+# No effect if columns are unique
+x
+#>    mcid  term
+#> 1 mc_01 19911
+#> 2 mc_02 19912
+#> 3 mc_03 19913
+x <- select_unique_cols(x)
+x
 #>    mcid  term
 #> 1 mc_01 19911
 #> 2 mc_02 19912
 #> 3 mc_03 19913
 
-# No effect if names are distinct even if values are the same
-x <- dframe
-x$case <- x$term
-x
-#>    mcid  term  case
-#> 1 mc_01 19911 19911
-#> 2 mc_02 19912 19912
-#> 3 mc_03 19913 19913
-select_unique_cols(x)
-#>    mcid  term  case
-#> 1 mc_01 19911 19911
-#> 2 mc_02 19912 19912
-#> 3 mc_03 19913 19913
-
-# Suffix-variable remains if there is no root-variable
-x$case <- NULL
-x$temp.1 <- c("abc", "def", "ghi")
-x
-#>    mcid  term temp.1
-#> 1 mc_01 19911    abc
-#> 2 mc_02 19912    def
-#> 3 mc_03 19913    ghi
-select_unique_cols(x)
-#>    mcid  term temp.1
-#> 1 mc_01 19911    abc
-#> 2 mc_02 19912    def
-#> 3 mc_03 19913    ghi
-
-# Suffix-variable remains if values different from root-variable
-x$temp.1 <- NULL
-x$case.1 <- c("abc", "def", "ghi")
-x
-#>    mcid  term case.1
-#> 1 mc_01 19911    abc
-#> 2 mc_02 19912    def
-#> 3 mc_03 19913    ghi
-select_unique_cols(x)
-#>    mcid  term case.1
-#> 1 mc_01 19911    abc
-#> 2 mc_02 19912    def
-#> 3 mc_03 19913    ghi
-
-# Suffix-variable dropped if otherwise identical to root-variable
-x$case.1 <- NULL
+# Desired effect: drop new "var.i" if it duplicates existing "var"
 x$term.1 <- x$term
 x
 #>    mcid  term term.1
 #> 1 mc_01 19911  19911
 #> 2 mc_02 19912  19912
 #> 3 mc_03 19913  19913
-select_unique_cols(x)
+x <- select_unique_cols(x)
+x
 #>    mcid  term
 #> 1 mc_01 19911
 #> 2 mc_02 19912
 #> 3 mc_03 19913
 
-# Multiple redundant columns are dropped 
-x$term.1 <- x$term
-x$term.abc <- x$term
+# Retain "var.i" when "var" does not exist
+x <- data.frame(mcid, term.1 = term)
 x
-#>    mcid  term term.1 term.abc
-#> 1 mc_01 19911  19911    19911
-#> 2 mc_02 19912  19912    19912
-#> 3 mc_03 19913  19913    19913
-select_unique_cols(x)
-#>    mcid  term
-#> 1 mc_01 19911
-#> 2 mc_02 19912
-#> 3 mc_03 19913
-
-# If a midfieldr function introduces a column with a 
-# suffix ".1", ".2", etc., this points to a potential 
-# error. The two columns with the same root name 
-# are expected to be identical.
-x <- dframe
-x$term.1 <- c("19922", "19912", "19913")
+#>    mcid term.1
+#> 1 mc_01  19911
+#> 2 mc_02  19912
+#> 3 mc_03  19913
+x <- select_unique_cols(x)
 x
-#>    mcid  term term.1
-#> 1 mc_01 19911  19922
-#> 2 mc_02 19912  19912
-#> 3 mc_03 19913  19913
-select_unique_cols(x)
-#>    mcid  term term.1
-#> 1 mc_01 19911  19922
-#> 2 mc_02 19912  19912
-#> 3 mc_03 19913  19913
+#>    mcid term.1
+#> 1 mc_01  19911
+#> 2 mc_02  19912
+#> 3 mc_03  19913
 
-# Names with other separators are treated as unique
-x$term.1 <- NULL
-x$term_1 <- x$term
+# The leftmost of the redundant columns is retained
+x$term <- term
+x
+#>    mcid term.1  term
+#> 1 mc_01  19911 19911
+#> 2 mc_02  19912 19912
+#> 3 mc_03  19913 19913
+x <- select_unique_cols(x)
+x
+#>    mcid term.1
+#> 1 mc_01  19911
+#> 2 mc_02  19912
+#> 3 mc_03  19913
+
+# Redundancy is checked for the dot-separator only
+x <- data.frame(mcid, term, term_1 = term, term.1 = term)
+x
+#>    mcid  term term_1 term.1
+#> 1 mc_01 19911  19911  19911
+#> 2 mc_02 19912  19912  19912
+#> 3 mc_03 19913  19913  19913
+x <- select_unique_cols(x)
 x
 #>    mcid  term term_1
 #> 1 mc_01 19911  19911
 #> 2 mc_02 19912  19912
 #> 3 mc_03 19913  19913
-select_unique_cols(x)
-#>    mcid  term term_1
-#> 1 mc_01 19911  19911
-#> 2 mc_02 19912  19912
-#> 3 mc_03 19913  19913
 
-# In removing a redundant column, the leftmost is retained
-x <- data.frame(mcid.1 = mcid, term, mcid)
+# When a midfieldr function adds a variable, e.g., `bacc_term`, and
+# a subsequent operation adds it again, `bacc_term.1`, the second 
+# addition is usually expected to be redundant and dropped.
+x$term_1 <- NULL
+x$bacc_term <- c("19951", "19951", "19951")
+x$bacc_term.1 <- c("19951", "19951", "19951")
 x
-#>   mcid.1  term  mcid
-#> 1  mc_01 19911 mc_01
-#> 2  mc_02 19912 mc_02
-#> 3  mc_03 19913 mc_03
-select_unique_cols(x)
-#>   mcid.1  term
-#> 1  mc_01 19911
-#> 2  mc_02 19912
-#> 3  mc_03 19913
+#>    mcid  term bacc_term bacc_term.1
+#> 1 mc_01 19911     19951       19951
+#> 2 mc_02 19912     19951       19951
+#> 3 mc_03 19913     19951       19951
+x <- select_unique_cols(x)
+x
+#>    mcid  term bacc_term
+#> 1 mc_01 19911     19951
+#> 2 mc_02 19912     19951
+#> 3 mc_03 19913     19951
+
+# However, if the suffixed column remains, then the two columns 
+# have different values---likely indicating an error in the 
+# operations leading up to this point. 
+x$bacc_term.1 <- c("19953", "19951", "19951")
+x
+#>    mcid  term bacc_term bacc_term.1
+#> 1 mc_01 19911     19951       19953
+#> 2 mc_02 19912     19951       19951
+#> 3 mc_03 19913     19951       19951
+x <- select_unique_cols(x)
+x
+#>    mcid  term bacc_term bacc_term.1
+#> 1 mc_01 19911     19951       19953
+#> 2 mc_02 19912     19951       19951
+#> 3 mc_03 19913     19951       19951
 ```

@@ -29,10 +29,9 @@ Data frame with the following properties:
 are not preserved.
 \item Row order is preserved. Rows with \code{NA} values in any
 of the required variables are removed. Duplicated rows are removed.
-\item New columns are added and all unique columns are
-preserved. If required to prevent overwriting, new column names are
-suffixed (\verb{.1, .2,} etc.). Redundant columns, differing by suffix only,
-are dropped. The new variables are:
+\item New columns are added unless they duplicate existing
+variables---redundant columns, whether new or existing, are dropped
+(see Details). The new variables are:
 \itemize{
 \item \code{entry_term}   Character. Initial term of a student's longitudinal
 record, encoded \code{YYYYT}. Extracted from \code{midf_table.}
@@ -62,6 +61,14 @@ admitted at second-year level or higher, the span value is reduced by
 one academic year for each full year the student is assumed to have
 completed. The adjusted span is added to their initial term at an
 institution to create the \code{timely_term} value for each observation.
+
+When midfieldr functions add columns to a data frame, such as  \verb{timely_term,}  they are dropped if they duplicate an existing variable. When an added variable has the same name as an existing variable but different values, the new variable name acquires a suffix, e.g., \code{timely_term.1.} These details are managed by \verb{select_unique_cols().} See its help page for examples.
+
+An added variable with a suffix indicates one of two possibilities:
+\enumerate{
+\item The existing variable has inadvertently been named the same as the new variable. The two variables represent different information entirely and the existing variable should probably be re-named before running this function to add the new variable.
+\item The two variables represent the same information but their values disagree. Such differences are not expected---these added variables typically depend on fixed quantities, e.g., a student's admission term or an institution's data range, and should not change during an analysis. In such a case, the user should investigate the possibility of an error having been introduced at some point.
+}
 }
 \examples{
 # Assign toy data sets
@@ -77,12 +84,6 @@ x
 x <- timely_term(x, midf_table = term)
 x
 
-# If you repeat, the new columns are overwritten
+# No change if added columns are redundant
 timely_term(x, midf_table = term)
-
-# Application: data_sufficiency() requires entry_term and timely_term
-data_sufficiency(x[, .(mcid, entry_term, timely_term)], midf_table = term)
-
-# Application: completion_status() requires timely_term
-completion_status(x[, .(mcid, timely_term)], midf_table = degree)
 }

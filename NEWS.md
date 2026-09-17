@@ -18,6 +18,7 @@
 
 New features
 
+- Functions that add columns no longer overwrite existing columns of the same names. New columns are added with name-suffixes .1, .2, etc., if needed. If the variable (less the name suffix) duplicates an existing column, it is dropped.  
 - New function `is_undergrad()` to identify rows of post-baccalaureate terms to exclude.
 - New function `select_unique_cols()` used primarily internally yo prevent overwriting existing columns and drop redundant columns. 
 - New utilities  `look_at()`, `catch_error()`, and `sort_uniq()` that wrap base R functions with our preferred arguments. 

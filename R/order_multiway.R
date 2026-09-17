@@ -23,6 +23,8 @@
 #' category is encoded by the rows of each panel, and the quantitative variable
 #' is encoded along identical horizontal scales.
 #'
+#' `r redundant_cols("program_median")`
+#'
 #' @param dframe `r dframe` with the following required variables: two
 #'        independent categorical variables, one quantitative response
 #'        variable, and, if `method = percent`, its dividend and divisor
@@ -46,19 +48,18 @@
 #' * Row order is preserved. Duplicated rows are removed.
 #' * Column specified by `quantity` is converted to type double.
 #'   Columns specified by `categories` are converted to factors and ordered.
-#' * `r add_cols_drop_duplic`
+#' * `r add_new_cols` The new columns, with capital letters denoting
+#'   placeholders, have the form:
 #'   - `CATEGORY_1_LABEL`
 #'   - `CATEGORY_2_LABEL`
 #'
-#' The `CATEGORY` placeholder in the new column names is replaced with the
-#' column names from `categories.` The `LABEL` placeholder depends on the method.
-#' For `method = median`, the label is `median`. For `method = percent`, the
-#' label is `metric,` indicating that the metric in percent has been
-#' recalculated for the entire category. For example, if
-#' `categories = c("program", "people")` and `method = "median",` the new
-#'  column names would be `program_median` and `people_median.`
-#'  For `method = "percent",` the new column names would be `program_metric`
-#'  and `people_metric.`
+#'   The `CATEGORY` placeholder is replaced with the column names from
+#'   `categories.` The `LABEL` placeholder depends on the method. For
+#'   example, suppose `categories = c("program", "people").`For the `median`
+#'   method, the new column names would be `program_median`
+#'   and `people_median.` For the `percent` method, the new column names would
+#'   be `program_metric` and `people_metric,` indicating that the metric had
+#'   been calculated for each category independently.
 #' @references
 #'   Cleveland WS (1993). \emph{Visualizing Data}. Hobart Press, Summit, NJ.
 #' @example man/examples/exa_order_multiway.R

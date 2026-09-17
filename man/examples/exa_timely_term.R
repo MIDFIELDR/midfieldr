@@ -11,11 +11,5 @@ x
 x <- timely_term(x, midf_table = term)
 x
 
-# If you repeat, the new columns are overwritten
+# No change if added columns are redundant
 timely_term(x, midf_table = term)
-
-# Application: data_sufficiency() requires entry_term and timely_term
-data_sufficiency(x[, .(mcid, entry_term, timely_term)], midf_table = term)
-
-# Application: completion_status() requires timely_term
-completion_status(x[, .(mcid, timely_term)], midf_table = degree)

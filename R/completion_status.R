@@ -16,13 +16,15 @@
 #' then their completion status is "timely"; if later, their status is "late".
 #' For students with no degree, completion status is NA.
 #'
+#' `r redundant_cols("bacc_term")`
+#'
 #' @param dframe `r dframe` with required variables `{mcid, timely_term}.`
 #' @param midf_table `r midfield_x("degree")` with required
 #'        variables `{mcid, term_degree}.`
 #' @returns Data frame with the following properties:
 #' * `r preserv_class_not_grp_keys`
 #' * `r omit_NA_dup_rows`
-#' * `r add_cols_drop_duplic`
+#' * `r add_new_cols` The new variables are:
 #'   - `bacc_term` &nbsp;  Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA.`
 #'      Joined from the `term_degree` variable in `midf_table.`

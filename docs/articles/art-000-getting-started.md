@@ -598,15 +598,13 @@ Contributes to assembling a bloc of starters.
 
 At some U.S. institutions, completing a *First-Year Engineering (FYE)*
 program is a prerequisite for admission to specific engineering majors.
-FYE programs complicate the identification of *starters* because the
-student’s preferred starting major is unknown.
+FYE programs complicate the identification of *starters* because these
+students’ preferred starting majors are unknown.
 
 [`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
-takes a first pass at
-
-helps us develop an *FYE proxy,* a likely CIP code of the student’s
-starting program had FYE not been required. Results are a CIP code or
-NA, treated as missing data to be imputed.
+constructs a data frame with the IDs of all FYE students with an initial
+*FYE proxy,* the 6-digit CIP code of their first specific engineering
+major, if any, or NA if not.
 
 ``` r
 
@@ -626,7 +624,8 @@ initialize_fye_proxies(student, term)
 #> 5789: MCID3112447664 Institution J         White   Male   <NA>
 ```
 
-If FYE programs are involved in your study,
+The NAs are ultimately treated as missing data that are replaced by
+imputed CIP codes. If FYE programs are involved in your study,
 
 - [FYE
   proxies](https://midfieldr.github.io/midfieldr/articles/art-060-fye-proxies.md)

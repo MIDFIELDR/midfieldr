@@ -15,7 +15,7 @@ typically excluded from the term, course, and degree data tables."><meta propert
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9037</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9038</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,10 +91,9 @@ typically excluded from the <code>term, course,</code> and <code>degree</code> d
 are not preserved.</p></li>
 <li><p>Row order is preserved. Rows with <code>NA</code> values in any
 of the required variables are removed. Duplicated rows are removed.</p></li>
-<li><p>New columns are added and all unique columns are
-preserved. If required to prevent overwriting, new column names are
-suffixed (<code>.1, .2,</code> etc.). Redundant columns, differing by suffix only,
-are dropped. The new variables are:</p><ul><li><p><code>bacc_term</code>    Character. Term of a student's first
+<li><p>New columns are added unless they duplicate existing
+variables—redundant columns, whether new or existing, are dropped
+(see Details). The new variables are:</p><ul><li><p><code>bacc_term</code>    Character. Term of a student's first
 baccalaureate, encoded <code>YYYYT</code> or, if no degree recorded, <code>NA</code>.
 Joined from the <code>term_degree</code> variable in <code>midf_table.</code></p></li>
 <li><p><code>term_focus</code>    Character. Indicating a term contributes to study
@@ -102,20 +101,42 @@ before or after a student's first baccalaureate.
 Possible values are "undergrad" and "post-bacc."</p></li>
 </ul></li>
 </ul></div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>When midfieldr functions add columns to a data frame, such as  <code>bacc_term,</code>  they are dropped if they duplicate an existing variable. When an added variable has the same name as an existing variable but different values, the new variable name acquires a suffix, e.g., <code>bacc_term.1.</code> These details are managed by <code>select_unique_cols().</code> See its help page for examples.</p>
+<p>An added variable with a suffix indicates one of two possibilities:</p><ol><li><p>The existing variable has inadvertently been named the same as the new variable. The two variables represent different information entirely and the existing variable should probably be re-named before running this function to add the new variable.</p></li>
+<li><p>The two variables represent the same information but their values disagree. Such differences are not expected—these added variables typically depend on fixed quantities, e.g., a student's admission term or an institution's data range, and should not change during an analysis. In such a case, the user should investigate the possibility of an error having been introduced at some point.</p></li>
+</ol></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># select min required columns</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Select min required columns</span></span></span>
 <span class="r-in"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">toy_term</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">course</span> <span class="op">&lt;-</span> <span class="va">toy_course</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term_course</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">toy_degree</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term_degree</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># labeling terms by group: undergrad &amp; grad</span></span></span>
+<span class="r-in"><span><span class="co"># Example of starting data frame</span></span></span>
+<span class="r-in"><span><span class="va">term</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 mcid   term</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;char&gt; &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    1: MCID3111142897  19881</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    2: MCID3111157634  19881</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    3: MCID3111157634  19883</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    4: MCID3111157634  19891</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    5: MCID3111157634  19893</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ---                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1817: MCID3112868072  20171</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1818: MCID3112868072  20173</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1819: MCID3112869843  20173</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1820: MCID3112869843  20181</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1821: MCID3112885339  20181</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Labeling terms by group: undergrad &amp; grad</span></span></span>
 <span class="r-in"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu">is_undergrad</span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu">is_undergrad</span><span class="op">(</span><span class="va">course</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu">is_undergrad</span><span class="op">(</span><span class="va">degree</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># results</span></span></span>
+<span class="r-in"><span><span class="co"># Example result</span></span></span>
 <span class="r-in"><span><span class="va">term</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">term_focus</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 mcid   term bacc_term term_focus</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;char&gt; &lt;char&gt;    &lt;char&gt;     &lt;char&gt;</span>
@@ -130,51 +151,32 @@ Possible values are "undergrad" and "post-bacc."</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1819: MCID3112219157  20111     20091  post-bacc</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1820: MCID3112291627  20101     20093  post-bacc</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1821: MCID3112352960  20121     20114  post-bacc</span>
-<span class="r-in"><span><span class="va">term</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"term_focus"</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    term_focus     N</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        &lt;char&gt; &lt;int&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:  undergrad  1802</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:  post-bacc    19</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">course</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">term_focus</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 mcid term_course bacc_term term_focus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;char&gt;      &lt;char&gt;    &lt;char&gt;     &lt;char&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    1: MCID3111142897       19881      &lt;NA&gt;  undergrad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    2: MCID3111142897       19883      &lt;NA&gt;  undergrad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    3: MCID3111157634       19881      &lt;NA&gt;  undergrad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    4: MCID3111157634       19883      &lt;NA&gt;  undergrad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    5: MCID3111157634       19891      &lt;NA&gt;  undergrad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ---                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2023: MCID3112217217       20085     20083  post-bacc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2024: MCID3112217217       20091     20083  post-bacc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2025: MCID3112219157       20111     20091  post-bacc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026: MCID3112291627       20101     20093  post-bacc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2027: MCID3112352960       20121     20114  post-bacc</span>
-<span class="r-in"><span><span class="va">course</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"term_focus"</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    term_focus     N</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        &lt;char&gt; &lt;int&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:  undergrad  2004</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:  post-bacc    23</span>
+<span class="r-in"><span><span class="co"># No change if added columns are redundant</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">is_undergrad</span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">term</span>, <span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">degree</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">term_focus</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                mcid term_degree bacc_term term_focus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              &lt;char&gt;      &lt;char&gt;    &lt;char&gt;     &lt;char&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1: MCID3111169601       19903     19903  undergrad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2: MCID3111169729       19901     19901  undergrad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3: MCID3111213539       19923     19923  undergrad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4: MCID3111213856       19911     19911  undergrad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5: MCID3111254225       19923     19923  undergrad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ---                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 189: MCID3112727716       20171     20171  undergrad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 190: MCID3112749981       20173     20173  undergrad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 191: MCID3112751130       20171     20171  undergrad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 192: MCID3112839623       20181     20181  undergrad</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 193: MCID3112012180       20151     20043  post-bacc</span>
-<span class="r-in"><span><span class="va">degree</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"term_focus"</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">N</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    term_focus     N</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        &lt;char&gt; &lt;int&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1:  undergrad   192</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2:  post-bacc     1</span>
+<span class="r-in"><span><span class="co"># Filter to retain "undergraduate" rows only</span></span></span>
+<span class="r-in"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">term_focus</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">course</span> <span class="op">&lt;-</span> <span class="va">course</span><span class="op">[</span><span class="va">term_focus</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">term_focus</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example result</span></span></span>
+<span class="r-in"><span><span class="va">term</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 mcid   term bacc_term term_focus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               &lt;char&gt; &lt;char&gt;    &lt;char&gt;     &lt;char&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    1: MCID3111142897  19881      &lt;NA&gt;  undergrad</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    2: MCID3111157634  19881      &lt;NA&gt;  undergrad</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    3: MCID3111157634  19883      &lt;NA&gt;  undergrad</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    4: MCID3111157634  19891      &lt;NA&gt;  undergrad</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    5: MCID3111157634  19893      &lt;NA&gt;  undergrad</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ---                                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1798: MCID3112868072  20171      &lt;NA&gt;  undergrad</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1799: MCID3112868072  20173      &lt;NA&gt;  undergrad</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1800: MCID3112869843  20173      &lt;NA&gt;  undergrad</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1801: MCID3112869843  20181      &lt;NA&gt;  undergrad</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1802: MCID3112885339  20181      &lt;NA&gt;  undergrad</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -11,7 +11,7 @@ single quantitative response variable."><meta property="og:image" content="https
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9037</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9038</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -120,22 +120,19 @@ are not preserved.</p></li>
 <li><p>Row order is preserved. Duplicated rows are removed.</p></li>
 <li><p>Column specified by <code>quantity</code> is converted to type double.
 Columns specified by <code>categories</code> are converted to factors and ordered.</p></li>
-<li><p>New columns are added and all unique columns are
-preserved. If required to prevent overwriting, new column names are
-suffixed (<code>.1, .2,</code> etc.). Redundant columns, differing by suffix only,
-are dropped. The new variables are:</p><ul><li><p><code>CATEGORY_1_LABEL</code></p></li>
+<li><p>New columns are added unless they duplicate existing
+variables—redundant columns, whether new or existing, are dropped
+(see Details). The new columns, with capital letters denoting
+placeholders, have the form:</p><ul><li><p><code>CATEGORY_1_LABEL</code></p></li>
 <li><p><code>CATEGORY_2_LABEL</code></p></li>
-</ul></li>
-</ul><p>The <code>CATEGORY</code> placeholder in the new column names is replaced with the
-column names from <code>categories.</code> The <code>LABEL</code> placeholder depends on the method.
-For <code>method = median</code>, the label is <code>median</code>. For <code>method = percent</code>, the
-label is <code>metric,</code> indicating that the metric in percent has been
-recalculated for the entire category. For example, if
-<code>categories = c("program", "people")</code> and <code>method = "median",</code> the new
-column names would be <code>program_median</code> and <code>people_median.</code>
-For <code>method = "percent",</code> the new column names would be <code>program_metric</code>
-and <code>people_metric.</code></p>
-    </div>
+</ul><p>The <code>CATEGORY</code> placeholder is replaced with the column names from
+<code>categories.</code> The <code>LABEL</code> placeholder depends on the method. For
+example, suppose <code>categories = c("program", "people").</code>For the <code>median</code>
+method, the new column names would be <code>program_median</code>
+and <code>people_median.</code> For the <code>percent</code> method, the new column names would
+be <code>program_metric</code> and <code>people_metric,</code> indicating that the metric had
+been calculated for each category independently.</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Multiway data comprise a single quantitative value (or response) for
@@ -152,7 +149,10 @@ assumed that a response for every combination is at least feasible.</p>
 <p>In a multiway dot plot, one category is encoded by the panels, the second
 category is encoded by the rows of each panel, and the quantitative variable
 is encoded along identical horizontal scales.</p>
-    </div>
+<p>When midfieldr functions add columns to a data frame, such as  <code>program_median,</code>  they are dropped if they duplicate an existing variable. When an added variable has the same name as an existing variable but different values, the new variable name acquires a suffix, e.g., <code>program_median.1.</code> These details are managed by <code>select_unique_cols().</code> See its help page for examples.</p>
+<p>An added variable with a suffix indicates one of two possibilities:</p><ol><li><p>The existing variable has inadvertently been named the same as the new variable. The two variables represent different information entirely and the existing variable should probably be re-named before running this function to add the new variable.</p></li>
+<li><p>The two variables represent the same information but their values disagree. Such differences are not expected—these added variables typically depend on fixed quantities, e.g., a student's admission term or an institution's data range, and should not change during an analysis. In such a case, the user should investigate the possibility of an error having been introduced at some point.</p></li>
+</ol></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Cleveland WS (1993). <em>Visualizing Data</em>. Hobart Press, Summit, NJ.</p>
@@ -233,6 +233,29 @@ is encoded along identical horizontal scales.</p>
 <span class="r-in"><span>                      categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">mw1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm_median"</span>, <span class="st">"people_median"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">mw1</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       prgm          people   stk prgm_median people_median</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;fctr&gt;          &lt;fctr&gt; &lt;num&gt;       &lt;num&gt;         &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     EE    Asian Female  57.1        50.4         35.70</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     EE   Hispanic Male  37.8        50.4         45.50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     EE Hispanic Female  37.5        50.4         52.10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     EE    White Female  47.5        50.4         55.20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     EE      White Male  50.8        50.4         55.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     EE    Black Female  50.0        50.4         58.35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     EE      Black Male  58.6        50.4         60.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     EE      Asian Male  57.7        50.4         61.10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     ME    Asian Female  14.3        63.1         35.70</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     ME   Hispanic Male  53.2        63.1         45.50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:     ME Hispanic Female  66.7        63.1         52.10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     ME    White Female  62.9        63.1         55.20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:     ME      White Male  59.8        63.1         55.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:     ME    Black Female  66.7        63.1         58.35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:     ME      Black Male  63.3        63.1         60.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:     ME      Asian Male  64.5        63.1         61.10</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># No effect if new variables are redundant</span></span></span>
+<span class="r-in"><span><span class="fu">order_multiway</span><span class="op">(</span><span class="va">mw1</span>, </span></span>
+<span class="r-in"><span>               quantity <span class="op">=</span> <span class="st">"stk"</span>, </span></span>
+<span class="r-in"><span>               categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       prgm          people   stk prgm_median people_median</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;fctr&gt;          &lt;fctr&gt; &lt;num&gt;       &lt;num&gt;         &lt;num&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:     EE    Asian Female  57.1        50.4         35.70</span>
