@@ -11,7 +11,7 @@ single quantitative response variable."><meta property="og:image" content="https
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9038</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9039</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -149,10 +149,16 @@ assumed that a response for every combination is at least feasible.</p>
 <p>In a multiway dot plot, one category is encoded by the panels, the second
 category is encoded by the rows of each panel, and the quantitative variable
 is encoded along identical horizontal scales.</p>
-<p>When midfieldr functions add columns to a data frame, such as  <code>program_median,</code>  they are dropped if they duplicate an existing variable. When an added variable has the same name as an existing variable but different values, the new variable name acquires a suffix, e.g., <code>program_median.1.</code> These details are managed by <code>select_unique_cols().</code> See its help page for examples.</p>
-<p>An added variable with a suffix indicates one of two possibilities:</p><ol><li><p>The existing variable has inadvertently been named the same as the new variable. The two variables represent different information entirely and the existing variable should probably be re-named before running this function to add the new variable.</p></li>
-<li><p>The two variables represent the same information but their values disagree. Such differences are not expected—these added variables typically depend on fixed quantities, e.g., a student's admission term or an institution's data range, and should not change during an analysis. In such a case, the user should investigate the possibility of an error having been introduced at some point.</p></li>
-</ol></div>
+<p><em>Redundant columns.</em> To prevent overwriting, the name of an added
+variable such as  <code>program_median</code>  that matches that of an existing
+variable is made unique by adding a suffix, e.g., <code>program_median.1.</code>
+An added variable that otherwise duplicates the existing variable is
+redundant and dropped. If not, the presence of the suffixed variable
+indicates a potential error. The variables added by
+midfieldr functions depend on fixed quantities, e.g., a student's
+admission term or an institution's data range, and do not change
+during an analysis.</p>
+    </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Cleveland WS (1993). <em>Visualizing Data</em>. Hobart Press, Summit, NJ.</p>
@@ -202,8 +208,8 @@ is encoded along identical horizontal scales.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15:      ME            79        42       53.2   Hispanic Male</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16:      ME          1596       955       59.8      White Male</span>
 <span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setattr.html" class="external-link">setnames</a></span><span class="op">(</span><span class="va">DT</span>, </span></span>
-<span class="r-in"><span>         old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"graduates"</span>, <span class="st">"ever_enrolled"</span>, <span class="st">"stickiness"</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>         new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm"</span>, <span class="st">"grad"</span>, <span class="st">"ever"</span>, <span class="st">"stk"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                     old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"graduates"</span>, <span class="st">"ever_enrolled"</span>, <span class="st">"stickiness"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>                     new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm"</span>, <span class="st">"grad"</span>, <span class="st">"ever"</span>, <span class="st">"stk"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setcolorder.html" class="external-link">setcolorder</a></span><span class="op">(</span><span class="va">DT</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm"</span>, <span class="st">"people"</span>, <span class="st">"grad"</span>, <span class="st">"ever"</span>, <span class="st">"stk"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">DT</span><span class="op">[</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       prgm          people  grad  ever   stk</span>
@@ -252,29 +258,6 @@ is encoded along identical horizontal scales.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15:     ME      Black Male  63.3        63.1         60.95</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16:     ME      Asian Male  64.5        63.1         61.10</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># No effect if new variables are redundant</span></span></span>
-<span class="r-in"><span><span class="fu">order_multiway</span><span class="op">(</span><span class="va">mw1</span>, </span></span>
-<span class="r-in"><span>               quantity <span class="op">=</span> <span class="st">"stk"</span>, </span></span>
-<span class="r-in"><span>               categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       prgm          people   stk prgm_median people_median</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;fctr&gt;          &lt;fctr&gt; &lt;num&gt;       &lt;num&gt;         &lt;num&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     EE    Asian Female  57.1        50.4         35.70</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     EE   Hispanic Male  37.8        50.4         45.50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     EE Hispanic Female  37.5        50.4         52.10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     EE    White Female  47.5        50.4         55.20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     EE      White Male  50.8        50.4         55.30</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     EE    Black Female  50.0        50.4         58.35</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     EE      Black Male  58.6        50.4         60.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     EE      Asian Male  57.7        50.4         61.10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     ME    Asian Female  14.3        63.1         35.70</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     ME   Hispanic Male  53.2        63.1         45.50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:     ME Hispanic Female  66.7        63.1         52.10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     ME    White Female  62.9        63.1         55.20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:     ME      White Male  59.8        63.1         55.30</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:     ME    Black Female  66.7        63.1         58.35</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:     ME      Black Male  63.3        63.1         60.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:     ME      Asian Male  64.5        63.1         61.10</span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Levels in increasing order</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">mw1</span><span class="op">$</span><span class="va">prgm</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "EE" "ME"</span>
@@ -282,12 +265,19 @@ is encoded along identical horizontal scales.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Asian Female"    "Hispanic Male"   "Hispanic Female" "White Female"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "White Male"      "Black Female"    "Black Male"      "Asian Male"     </span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># No change if added columns duplicate existing</span></span></span>
+<span class="r-in"><span><span class="va">mw1a</span> <span class="op">&lt;-</span> <span class="fu">order_multiway</span><span class="op">(</span><span class="va">mw1</span>, </span></span>
+<span class="r-in"><span>                       quantity <span class="op">=</span> <span class="st">"stk"</span>, </span></span>
+<span class="r-in"><span>                       categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm"</span>, <span class="st">"people"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">mw1</span>, <span class="va">mw1a</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Ordering using percent method</span></span></span>
 <span class="r-in"><span><span class="va">mw2</span> <span class="op">&lt;-</span> <span class="fu">order_multiway</span><span class="op">(</span><span class="va">DT</span>, </span></span>
-<span class="r-in"><span>               quantity <span class="op">=</span> <span class="st">"stk"</span>, </span></span>
-<span class="r-in"><span>               categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm"</span>, <span class="st">"people"</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>               method <span class="op">=</span> <span class="st">"percent"</span>, </span></span>
-<span class="r-in"><span>               ratio_of <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grad"</span>, <span class="st">"ever"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                      quantity <span class="op">=</span> <span class="st">"stk"</span>, </span></span>
+<span class="r-in"><span>                      categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm"</span>, <span class="st">"people"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>                      method <span class="op">=</span> <span class="st">"percent"</span>, </span></span>
+<span class="r-in"><span>                      ratio_of <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grad"</span>, <span class="st">"ever"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setorder.html" class="external-link">setorderv</a></span><span class="op">(</span><span class="va">mw2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"prgm_metric"</span>, <span class="st">"people_metric"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The two ratio_of variables `ever` and `grad` are retained</span></span></span>

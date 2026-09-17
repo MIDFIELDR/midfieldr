@@ -66,26 +66,14 @@ their initial term matches the non-summer, lower limit of the data
 range; and "include" otherwise. The rationale for these specific filters
 is explained in our data sufficiency article (see references).
 
-When midfieldr functions add columns to a data frame, such as
-`sufficiency,` they are dropped if they duplicate an existing variable.
-When an added variable has the same name as an existing variable but
-different values, the new variable name acquires a suffix, e.g.,
-`sufficiency.1.` These details are managed by `select_unique_cols().`
-See its help page for examples.
-
-An added variable with a suffix indicates one of two possibilities:
-
-1.  The existing variable has inadvertently been named the same as the
-    new variable. The two variables represent different information
-    entirely and the existing variable should probably be re-named
-    before running this function to add the new variable.
-
-2.  The two variables represent the same information but their values
-    disagree. Such differences are not expected—these added variables
-    typically depend on fixed quantities, e.g., a student's admission
-    term or an institution's data range, and should not change during an
-    analysis. In such a case, the user should investigate the
-    possibility of an error having been introduced at some point.
+*Redundant columns.* To prevent overwriting, the name of an added
+variable such as `sufficiency` that matches that of an existing variable
+is made unique by adding a suffix, e.g., `sufficiency.1.` An added
+variable that otherwise duplicates the existing variable is redundant
+and dropped. If not, the presence of the suffixed variable indicates a
+potential error. The variables added by midfieldr functions depend on
+fixed quantities, e.g., a student's admission term or an institution's
+data range, and do not change during an analysis.
 
 ## References
 
@@ -121,7 +109,7 @@ x
 #> 14: MCID3112751130
 #> 15: MCID3112754537
 
-# Add the required columns from timely_term()
+# timely_term() to add required columns
 x <- timely_term(x, midf_table = term)
 x <- x[, .(mcid, entry_term, timely_term)]
 x
@@ -164,25 +152,10 @@ x
 #> 14: MCID3112751130      20151       20203 19881-20181  fail-upper
 #> 15: MCID3112754537      20151       20203 19881-20181  fail-upper
 
-# No change if columns to be added are redundant
-data_sufficiency(x, midf_table = term)
-#>               mcid entry_term timely_term  data_range sufficiency
-#>             <char>     <char>      <char>      <char>      <char>
-#>  1: MCID3111169729      19881       19933 19881-20181  fail-lower
-#>  2: MCID3111170852      19881       19933 19881-20181  fail-lower
-#>  3: MCID3111173999      19881       19933 19881-20181  fail-lower
-#>  4: MCID3111257807      19901       19953 19881-20181   satisfied
-#>  5: MCID3111258275      19901       19953 19881-20181   satisfied
-#>  6: MCID3111258347      19901       19953 19881-20181   satisfied
-#>  7: MCID3111259642      19901       19953 19901-20153  fail-lower
-#>  8: MCID3111262210      19901       19953 19881-20181   satisfied
-#>  9: MCID3111265287      19901       19953 19881-20181   satisfied
-#> 10: MCID3111269576      19901       19953 19881-20181   satisfied
-#> 11: MCID3111272691      19901       19953 19881-20181   satisfied
-#> 12: MCID3111272880      19901       19953 19881-20181   satisfied
-#> 13: MCID3111277081      19903       19961 19881-20181   satisfied
-#> 14: MCID3112751130      20151       20203 19881-20181  fail-upper
-#> 15: MCID3112754537      20151       20203 19881-20181  fail-upper
+# No change if added columns duplicate existing
+y <- data_sufficiency(x, midf_table = term)
+check_equiv_frames(x, y)
+#> [1] TRUE
 
 # Filter to retain "satisfied" rows only
 x[sufficiency == "satisfied"]

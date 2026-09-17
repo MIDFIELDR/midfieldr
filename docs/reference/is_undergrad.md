@@ -48,26 +48,14 @@ Data frame with the following properties:
 
 ## Details
 
-When midfieldr functions add columns to a data frame, such as
-`bacc_term,` they are dropped if they duplicate an existing variable.
-When an added variable has the same name as an existing variable but
-different values, the new variable name acquires a suffix, e.g.,
-`bacc_term.1.` These details are managed by `select_unique_cols().` See
-its help page for examples.
-
-An added variable with a suffix indicates one of two possibilities:
-
-1.  The existing variable has inadvertently been named the same as the
-    new variable. The two variables represent different information
-    entirely and the existing variable should probably be re-named
-    before running this function to add the new variable.
-
-2.  The two variables represent the same information but their values
-    disagree. Such differences are not expected—these added variables
-    typically depend on fixed quantities, e.g., a student's admission
-    term or an institution's data range, and should not change during an
-    analysis. In such a case, the user should investigate the
-    possibility of an error having been introduced at some point.
+*Redundant columns.* To prevent overwriting, the name of an added
+variable such as `bacc_term` that matches that of an existing variable
+is made unique by adding a suffix, e.g., `bacc_term.1.` An added
+variable that otherwise duplicates the existing variable is redundant
+and dropped. If not, the presence of the suffixed variable indicates a
+potential error. The variables added by midfieldr functions depend on
+fixed quantities, e.g., a student's admission term or an institution's
+data range, and do not change during an analysis.
 
 ## Examples
 
@@ -114,9 +102,10 @@ term[order(-term_focus)]
 #> 1820: MCID3112291627  20101     20093  post-bacc
 #> 1821: MCID3112352960  20121     20114  post-bacc
 
-# No change if added columns are redundant
-x <- is_undergrad(term, midf_table = degree)
-check_equiv_frames(term, x)
+# No change if added columns duplicate existing
+x <- copy(term)
+y <- is_undergrad(x, midf_table = degree)
+check_equiv_frames(x, y)
 #> [1] TRUE
 
 # Filter to retain "undergraduate" rows only

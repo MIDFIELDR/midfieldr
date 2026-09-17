@@ -23,12 +23,17 @@ add_new_cols <- "New columns are added unless they duplicate existing
         (see Details)."
 
 redundant_cols <- function(x) {
-  paste0("When midfieldr functions add columns to a data frame, such as ", " `", x, ",` ", " they are dropped if they duplicate an existing variable. When an added variable has the same name as an existing variable but different values, the new variable name acquires a suffix, e.g.,", " `", x, ".1.` These details are managed by `select_unique_cols().` See its help page for examples.
-
-An added variable with a suffix indicates one of two possibilities:
-
-1. The existing variable has inadvertently been named the same as the new variable. The two variables represent different information entirely and the existing variable should probably be re-named before running this function to add the new variable.
-2. The two variables represent the same information but their values disagree. Such differences are not expected---these added variables typically depend on fixed quantities, e.g., a student's admission term or an institution's data range, and should not change during an analysis. In such a case, the user should investigate the possibility of an error having been introduced at some point.")
+  paste0(
+    "*Redundant columns.* To prevent overwriting, the name of an added
+        variable such as ", " `", x, "` ", " that matches that of an existing
+        variable is made unique by adding a suffix, e.g.,", " `", x, ".1.`
+        An added variable that otherwise duplicates the existing variable is
+        redundant and dropped. If not, the presence of the suffixed variable
+        indicates a potential error. The variables added by
+        midfieldr functions depend on fixed quantities, e.g., a student's
+        admission term or an institution's data range, and do not change
+        during an analysis."
+  )
 }
 
 

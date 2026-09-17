@@ -102,26 +102,14 @@ In a multiway dot plot, one category is encoded by the panels, the
 second category is encoded by the rows of each panel, and the
 quantitative variable is encoded along identical horizontal scales.
 
-When midfieldr functions add columns to a data frame, such as
-`program_median,` they are dropped if they duplicate an existing
-variable. When an added variable has the same name as an existing
-variable but different values, the new variable name acquires a suffix,
-e.g., `program_median.1.` These details are managed by
-`select_unique_cols().` See its help page for examples.
-
-An added variable with a suffix indicates one of two possibilities:
-
-1.  The existing variable has inadvertently been named the same as the
-    new variable. The two variables represent different information
-    entirely and the existing variable should probably be re-named
-    before running this function to add the new variable.
-
-2.  The two variables represent the same information but their values
-    disagree. Such differences are not expected—these added variables
-    typically depend on fixed quantities, e.g., a student's admission
-    term or an institution's data range, and should not change during an
-    analysis. In such a case, the user should investigate the
-    possibility of an error having been introduced at some point.
+*Redundant columns.* To prevent overwriting, the name of an added
+variable such as `program_median` that matches that of an existing
+variable is made unique by adding a suffix, e.g., `program_median.1.` An
+added variable that otherwise duplicates the existing variable is
+redundant and dropped. If not, the presence of the suffixed variable
+indicates a potential error. The variables added by midfieldr functions
+depend on fixed quantities, e.g., a student's admission term or an
+institution's data range, and do not change during an analysis.
 
 ## References
 
@@ -172,8 +160,8 @@ DT[, c("race", "sex") := NULL]
 #> 15:      ME            79        42       53.2   Hispanic Male
 #> 16:      ME          1596       955       59.8      White Male
 data.table::setnames(DT, 
-         old = c("program", "graduates", "ever_enrolled", "stickiness"), 
-         new = c("prgm", "grad", "ever", "stk"))
+                     old = c("program", "graduates", "ever_enrolled", "stickiness"), 
+                     new = c("prgm", "grad", "ever", "stk"))
 data.table::setcolorder(DT, c("prgm", "people", "grad", "ever", "stk"))
 DT[]
 #>       prgm          people  grad  ever   stk
@@ -222,29 +210,6 @@ mw1
 #> 15:     ME      Black Male  63.3        63.1         60.95
 #> 16:     ME      Asian Male  64.5        63.1         61.10
 
-# No effect if new variables are redundant
-order_multiway(mw1, 
-               quantity = "stk", 
-               categories = c("prgm", "people"))
-#>       prgm          people   stk prgm_median people_median
-#>     <fctr>          <fctr> <num>       <num>         <num>
-#>  1:     EE    Asian Female  57.1        50.4         35.70
-#>  2:     EE   Hispanic Male  37.8        50.4         45.50
-#>  3:     EE Hispanic Female  37.5        50.4         52.10
-#>  4:     EE    White Female  47.5        50.4         55.20
-#>  5:     EE      White Male  50.8        50.4         55.30
-#>  6:     EE    Black Female  50.0        50.4         58.35
-#>  7:     EE      Black Male  58.6        50.4         60.95
-#>  8:     EE      Asian Male  57.7        50.4         61.10
-#>  9:     ME    Asian Female  14.3        63.1         35.70
-#> 10:     ME   Hispanic Male  53.2        63.1         45.50
-#> 11:     ME Hispanic Female  66.7        63.1         52.10
-#> 12:     ME    White Female  62.9        63.1         55.20
-#> 13:     ME      White Male  59.8        63.1         55.30
-#> 14:     ME    Black Female  66.7        63.1         58.35
-#> 15:     ME      Black Male  63.3        63.1         60.95
-#> 16:     ME      Asian Male  64.5        63.1         61.10
-
 # Levels in increasing order
 levels(mw1$prgm)
 #> [1] "EE" "ME"
@@ -252,12 +217,19 @@ levels(mw1$people)
 #> [1] "Asian Female"    "Hispanic Male"   "Hispanic Female" "White Female"   
 #> [5] "White Male"      "Black Female"    "Black Male"      "Asian Male"     
 
+# No change if added columns duplicate existing
+mw1a <- order_multiway(mw1, 
+                       quantity = "stk", 
+                       categories = c("prgm", "people"))
+check_equiv_frames(mw1, mw1a)
+#> [1] TRUE
+
 # Ordering using percent method
 mw2 <- order_multiway(DT, 
-               quantity = "stk", 
-               categories = c("prgm", "people"), 
-               method = "percent", 
-               ratio_of = c("grad", "ever"))
+                      quantity = "stk", 
+                      categories = c("prgm", "people"), 
+                      method = "percent", 
+                      ratio_of = c("grad", "ever"))
 data.table::setorderv(mw2, c("prgm_metric", "people_metric"))
 
 # The two ratio_of variables `ever` and `grad` are retained

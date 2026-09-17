@@ -14,9 +14,10 @@ degree <- is_undergrad(degree, midf_table = degree)
 # Example result
 term[order(-term_focus)]
 
-# No change if added columns are redundant
-x <- is_undergrad(term, midf_table = degree)
-check_equiv_frames(term, x)
+# No change if added columns duplicate existing
+x <- copy(term)
+y <- is_undergrad(x, midf_table = degree)
+check_equiv_frames(x, y)
 
 # Filter to retain "undergraduate" rows only
 term <- term[term_focus == "undergrad"]

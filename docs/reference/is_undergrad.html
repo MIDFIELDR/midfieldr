@@ -15,7 +15,7 @@ typically excluded from the term, course, and degree data tables."><meta propert
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9038</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9039</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,10 +103,16 @@ Possible values are "undergrad" and "post-bacc."</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>When midfieldr functions add columns to a data frame, such as  <code>bacc_term,</code>  they are dropped if they duplicate an existing variable. When an added variable has the same name as an existing variable but different values, the new variable name acquires a suffix, e.g., <code>bacc_term.1.</code> These details are managed by <code>select_unique_cols().</code> See its help page for examples.</p>
-<p>An added variable with a suffix indicates one of two possibilities:</p><ol><li><p>The existing variable has inadvertently been named the same as the new variable. The two variables represent different information entirely and the existing variable should probably be re-named before running this function to add the new variable.</p></li>
-<li><p>The two variables represent the same information but their values disagree. Such differences are not expected—these added variables typically depend on fixed quantities, e.g., a student's admission term or an institution's data range, and should not change during an analysis. In such a case, the user should investigate the possibility of an error having been introduced at some point.</p></li>
-</ol></div>
+    <p><em>Redundant columns.</em> To prevent overwriting, the name of an added
+variable such as  <code>bacc_term</code>  that matches that of an existing
+variable is made unique by adding a suffix, e.g., <code>bacc_term.1.</code>
+An added variable that otherwise duplicates the existing variable is
+redundant and dropped. If not, the presence of the suffixed variable
+indicates a potential error. The variables added by
+midfieldr functions depend on fixed quantities, e.g., a student's
+admission term or an institution's data range, and do not change
+during an analysis.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -152,9 +158,10 @@ Possible values are "undergrad" and "post-bacc."</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1820: MCID3112291627  20101     20093  post-bacc</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1821: MCID3112352960  20121     20114  post-bacc</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># No change if added columns are redundant</span></span></span>
-<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">is_undergrad</span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">term</span>, <span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># No change if added columns duplicate existing</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/copy.html" class="external-link">copy</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">is_undergrad</span><span class="op">(</span><span class="va">x</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://winvector.github.io/wrapr//reference/check_equiv_frames.html" class="external-link">check_equiv_frames</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Filter to retain "undergraduate" rows only</span></span></span>

@@ -4,8 +4,8 @@ DT <- DT[race %chin% c("Asian", "Black", "Hispanic", "White")]
 DT[, people := paste(race, sex)]
 DT[, c("race", "sex") := NULL]
 data.table::setnames(DT, 
-         old = c("program", "graduates", "ever_enrolled", "stickiness"), 
-         new = c("prgm", "grad", "ever", "stk"))
+                     old = c("program", "graduates", "ever_enrolled", "stickiness"), 
+                     new = c("prgm", "grad", "ever", "stk"))
 data.table::setcolorder(DT, c("prgm", "people", "grad", "ever", "stk"))
 DT[]
 
@@ -18,21 +18,22 @@ mw1 <- order_multiway(DT1,
 data.table::setorderv(mw1, c("prgm_median", "people_median"))
 mw1
 
-# No effect if new variables are redundant
-order_multiway(mw1, 
-               quantity = "stk", 
-               categories = c("prgm", "people"))
-
 # Levels in increasing order
 levels(mw1$prgm)
 levels(mw1$people)
 
+# No change if added columns duplicate existing
+mw1a <- order_multiway(mw1, 
+                       quantity = "stk", 
+                       categories = c("prgm", "people"))
+check_equiv_frames(mw1, mw1a)
+
 # Ordering using percent method
 mw2 <- order_multiway(DT, 
-               quantity = "stk", 
-               categories = c("prgm", "people"), 
-               method = "percent", 
-               ratio_of = c("grad", "ever"))
+                      quantity = "stk", 
+                      categories = c("prgm", "people"), 
+                      method = "percent", 
+                      ratio_of = c("grad", "ever"))
 data.table::setorderv(mw2, c("prgm_metric", "people_metric"))
 
 # The two ratio_of variables `ever` and `grad` are retained

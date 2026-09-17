@@ -54,26 +54,14 @@ If the student's degree term is no later than their timely completion
 term, then their completion status is "timely"; if later, their status
 is "late". For students with no degree, completion status is NA.
 
-When midfieldr functions add columns to a data frame, such as
-`bacc_term,` they are dropped if they duplicate an existing variable.
-When an added variable has the same name as an existing variable but
-different values, the new variable name acquires a suffix, e.g.,
-`bacc_term.1.` These details are managed by `select_unique_cols().` See
-its help page for examples.
-
-An added variable with a suffix indicates one of two possibilities:
-
-1.  The existing variable has inadvertently been named the same as the
-    new variable. The two variables represent different information
-    entirely and the existing variable should probably be re-named
-    before running this function to add the new variable.
-
-2.  The two variables represent the same information but their values
-    disagree. Such differences are not expected—these added variables
-    typically depend on fixed quantities, e.g., a student's admission
-    term or an institution's data range, and should not change during an
-    analysis. In such a case, the user should investigate the
-    possibility of an error having been introduced at some point.
+*Redundant columns.* To prevent overwriting, the name of an added
+variable such as `bacc_term` that matches that of an existing variable
+is made unique by adding a suffix, e.g., `bacc_term.1.` An added
+variable that otherwise duplicates the existing variable is redundant
+and dropped. If not, the presence of the suffixed variable indicates a
+potential error. The variables added by midfieldr functions depend on
+fixed quantities, e.g., a student's admission term or an institution's
+data range, and do not change during an analysis.
 
 ## Examples
 
@@ -104,7 +92,7 @@ x
 #> 14: MCID3112751130
 #> 15: MCID3112754537
 
-# Add the required columns from timely_term()
+# timely_term() to add required columns
 x <- timely_term(x, midf_table = term)
 x <- x[, .(mcid, timely_term)]
 x
@@ -147,25 +135,10 @@ x
 #> 14: MCID3112751130       20203     20171     timely
 #> 15: MCID3112754537       20203      <NA>       <NA>
 
-# No change if added columns are redundant
-completion_status(x, midf_table = degree)
-#>               mcid timely_term bacc_term completion
-#>             <char>      <char>    <char>     <char>
-#>  1: MCID3111169729       19933     19901     timely
-#>  2: MCID3111170852       19933      <NA>       <NA>
-#>  3: MCID3111173999       19933      <NA>       <NA>
-#>  4: MCID3111257807       19953     19964       late
-#>  5: MCID3111258275       19953     19921     timely
-#>  6: MCID3111258347       19953     19923     timely
-#>  7: MCID3111259642       19953     19934     timely
-#>  8: MCID3111262210       19953     19951     timely
-#>  9: MCID3111265287       19953     19904     timely
-#> 10: MCID3111269576       19953     19943     timely
-#> 11: MCID3111272691       19953     19914     timely
-#> 12: MCID3111272880       19953     19934     timely
-#> 13: MCID3111277081       19961     19963       late
-#> 14: MCID3112751130       20203     20171     timely
-#> 15: MCID3112754537       20203      <NA>       <NA>
+# No change if added columns duplicate existing
+y <- completion_status(x, midf_table = degree)
+check_equiv_frames(x, y)
+#> [1] TRUE
 
 # Filter to retain "timely" rows only
 x[completion == "timely"]

@@ -76,26 +76,14 @@ reduced by one academic year for each full year the student is assumed
 to have completed. The adjusted span is added to their initial term at
 an institution to create the `timely_term` value for each observation.
 
-When midfieldr functions add columns to a data frame, such as
-`timely_term,` they are dropped if they duplicate an existing variable.
-When an added variable has the same name as an existing variable but
-different values, the new variable name acquires a suffix, e.g.,
-`timely_term.1.` These details are managed by `select_unique_cols().`
-See its help page for examples.
-
-An added variable with a suffix indicates one of two possibilities:
-
-1.  The existing variable has inadvertently been named the same as the
-    new variable. The two variables represent different information
-    entirely and the existing variable should probably be re-named
-    before running this function to add the new variable.
-
-2.  The two variables represent the same information but their values
-    disagree. Such differences are not expected—these added variables
-    typically depend on fixed quantities, e.g., a student's admission
-    term or an institution's data range, and should not change during an
-    analysis. In such a case, the user should investigate the
-    possibility of an error having been introduced at some point.
+*Redundant columns.* To prevent overwriting, the name of an added
+variable such as `timely_term` that matches that of an existing variable
+is made unique by adding a suffix, e.g., `timely_term.1.` An added
+variable that otherwise duplicates the existing variable is redundant
+and dropped. If not, the presence of the suffixed variable indicates a
+potential error. The variables added by midfieldr functions depend on
+fixed quantities, e.g., a student's admission term or an institution's
+data range, and do not change during an analysis.
 
 ## Examples
 
@@ -103,7 +91,6 @@ An added variable with a suffix indicates one of two possibilities:
 # Assign toy data sets
 student <- toy_student
 term <- toy_term
-degree <- toy_degree
 
 # Start with a selected population
 x <- student[c(9:11, 21:30, 344:345), .(mcid)]
@@ -147,23 +134,8 @@ x
 #> 14: MCID3112751130      20151 01 First-year        6       20203
 #> 15: MCID3112754537      20151 01 First-year        6       20203
 
-# No change if added columns are redundant
-timely_term(x, midf_table = term)
-#>               mcid entry_term   entry_level adj_span timely_term
-#>             <char>     <char>        <char>    <num>      <char>
-#>  1: MCID3111169729      19881 01 First-year        6       19933
-#>  2: MCID3111170852      19881 01 First-year        6       19933
-#>  3: MCID3111173999      19881 01 First-year        6       19933
-#>  4: MCID3111257807      19901 01 First-year        6       19953
-#>  5: MCID3111258275      19901 01 First-year        6       19953
-#>  6: MCID3111258347      19901 01 First-year        6       19953
-#>  7: MCID3111259642      19901 01 First-year        6       19953
-#>  8: MCID3111262210      19901 01 First-year        6       19953
-#>  9: MCID3111265287      19901 01 First-year        6       19953
-#> 10: MCID3111269576      19901 01 First-year        6       19953
-#> 11: MCID3111272691      19901 01 First-year        6       19953
-#> 12: MCID3111272880      19901 01 First-year        6       19953
-#> 13: MCID3111277081      19903 01 First-year        6       19961
-#> 14: MCID3112751130      20151 01 First-year        6       20203
-#> 15: MCID3112754537      20151 01 First-year        6       20203
+# No change if added columns duplicate existing
+y <- timely_term(x, midf_table = term)
+check_equiv_frames(x, y)
+#> [1] TRUE
 ```

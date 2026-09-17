@@ -7,7 +7,7 @@ degree <- toy_degree
 x <- student[c(9:11, 21:30, 344:345), .(mcid)]
 x
 
-# Add the required columns from timely_term()
+# timely_term() to add required columns
 x <- timely_term(x, midf_table = term)
 x <- x[, .(mcid, timely_term)]
 x
@@ -16,8 +16,9 @@ x
 x <- completion_status(x, midf_table = degree)
 x
 
-# No change if added columns are redundant
-completion_status(x, midf_table = degree)
+# No change if added columns duplicate existing
+y <- completion_status(x, midf_table = degree)
+check_equiv_frames(x, y)
 
 # Filter to retain "timely" rows only
 x[completion == "timely"]

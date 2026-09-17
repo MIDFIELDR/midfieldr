@@ -60,13 +60,15 @@ term matches the non-summer, lower limit of the data range; and "include"
 otherwise. The rationale for these specific filters is explained in our
 data sufficiency article (see references).
 
-When midfieldr functions add columns to a data frame, such as  \verb{sufficiency,}  they are dropped if they duplicate an existing variable. When an added variable has the same name as an existing variable but different values, the new variable name acquires a suffix, e.g., \code{sufficiency.1.} These details are managed by \verb{select_unique_cols().} See its help page for examples.
-
-An added variable with a suffix indicates one of two possibilities:
-\enumerate{
-\item The existing variable has inadvertently been named the same as the new variable. The two variables represent different information entirely and the existing variable should probably be re-named before running this function to add the new variable.
-\item The two variables represent the same information but their values disagree. Such differences are not expected---these added variables typically depend on fixed quantities, e.g., a student's admission term or an institution's data range, and should not change during an analysis. In such a case, the user should investigate the possibility of an error having been introduced at some point.
-}
+\emph{Redundant columns.} To prevent overwriting, the name of an added
+variable such as  \code{sufficiency}  that matches that of an existing
+variable is made unique by adding a suffix, e.g., \code{sufficiency.1.}
+An added variable that otherwise duplicates the existing variable is
+redundant and dropped. If not, the presence of the suffixed variable
+indicates a potential error. The variables added by
+midfieldr functions depend on fixed quantities, e.g., a student's
+admission term or an institution's data range, and do not change
+during an analysis.
 }
 \examples{
 # Assign toy data sets
@@ -77,7 +79,7 @@ term <- toy_term
 x <- student[c(9:11, 21:30, 344:345), .(mcid)]
 x
 
-# Add the required columns from timely_term()
+# timely_term() to add required columns
 x <- timely_term(x, midf_table = term)
 x <- x[, .(mcid, entry_term, timely_term)]
 x
@@ -86,8 +88,9 @@ x
 x <- data_sufficiency(x, midf_table = term)
 x
 
-# No change if columns to be added are redundant
-data_sufficiency(x, midf_table = term)
+# No change if added columns duplicate existing
+y <- data_sufficiency(x, midf_table = term)
+check_equiv_frames(x, y)
 
 # Filter to retain "satisfied" rows only
 x[sufficiency == "satisfied"]

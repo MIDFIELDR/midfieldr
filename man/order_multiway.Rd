@@ -88,13 +88,15 @@ In a multiway dot plot, one category is encoded by the panels, the second
 category is encoded by the rows of each panel, and the quantitative variable
 is encoded along identical horizontal scales.
 
-When midfieldr functions add columns to a data frame, such as  \verb{program_median,}  they are dropped if they duplicate an existing variable. When an added variable has the same name as an existing variable but different values, the new variable name acquires a suffix, e.g., \code{program_median.1.} These details are managed by \verb{select_unique_cols().} See its help page for examples.
-
-An added variable with a suffix indicates one of two possibilities:
-\enumerate{
-\item The existing variable has inadvertently been named the same as the new variable. The two variables represent different information entirely and the existing variable should probably be re-named before running this function to add the new variable.
-\item The two variables represent the same information but their values disagree. Such differences are not expected---these added variables typically depend on fixed quantities, e.g., a student's admission term or an institution's data range, and should not change during an analysis. In such a case, the user should investigate the possibility of an error having been introduced at some point.
-}
+\emph{Redundant columns.} To prevent overwriting, the name of an added
+variable such as  \code{program_median}  that matches that of an existing
+variable is made unique by adding a suffix, e.g., \code{program_median.1.}
+An added variable that otherwise duplicates the existing variable is
+redundant and dropped. If not, the presence of the suffixed variable
+indicates a potential error. The variables added by
+midfieldr functions depend on fixed quantities, e.g., a student's
+admission term or an institution's data range, and do not change
+during an analysis.
 }
 \examples{
 # Reconfigure built-in data set
@@ -103,8 +105,8 @@ DT <- DT[race \%chin\% c("Asian", "Black", "Hispanic", "White")]
 DT[, people := paste(race, sex)]
 DT[, c("race", "sex") := NULL]
 data.table::setnames(DT, 
-         old = c("program", "graduates", "ever_enrolled", "stickiness"), 
-         new = c("prgm", "grad", "ever", "stk"))
+                     old = c("program", "graduates", "ever_enrolled", "stickiness"), 
+                     new = c("prgm", "grad", "ever", "stk"))
 data.table::setcolorder(DT, c("prgm", "people", "grad", "ever", "stk"))
 DT[]
 
@@ -117,21 +119,22 @@ mw1 <- order_multiway(DT1,
 data.table::setorderv(mw1, c("prgm_median", "people_median"))
 mw1
 
-# No effect if new variables are redundant
-order_multiway(mw1, 
-               quantity = "stk", 
-               categories = c("prgm", "people"))
-
 # Levels in increasing order
 levels(mw1$prgm)
 levels(mw1$people)
 
+# No change if added columns duplicate existing
+mw1a <- order_multiway(mw1, 
+                       quantity = "stk", 
+                       categories = c("prgm", "people"))
+check_equiv_frames(mw1, mw1a)
+
 # Ordering using percent method
 mw2 <- order_multiway(DT, 
-               quantity = "stk", 
-               categories = c("prgm", "people"), 
-               method = "percent", 
-               ratio_of = c("grad", "ever"))
+                      quantity = "stk", 
+                      categories = c("prgm", "people"), 
+                      method = "percent", 
+                      ratio_of = c("grad", "ever"))
 data.table::setorderv(mw2, c("prgm_metric", "people_metric"))
 
 # The two ratio_of variables `ever` and `grad` are retained
