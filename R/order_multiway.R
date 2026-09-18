@@ -231,7 +231,7 @@ order_multiway <- function(dframe,
   dframe <- utils_prep_return(dframe, return_vars, prior_class)
 
   # drop cols or cols.1 duplicates if any
-  dframe <- select_unique_cols(dframe)
+  dframe <- rm_redundant_cols(dframe)
 
   # done
   dframe[]

@@ -7,17 +7,16 @@ degree <- toy_degree[, .(mcid, term_degree)]
 term
 
 # Labeling terms by group: undergrad & grad
-term <- is_undergrad(term, midf_table = degree)
-course <- is_undergrad(course, midf_table = degree)
-degree <- is_undergrad(degree, midf_table = degree)
+term <- term_qual_focus(term, midf_table = degree)
+course <- term_qual_focus(course, midf_table = degree)
+degree <- term_qual_focus(degree, midf_table = degree)
 
 # Example result
 term[order(-term_focus)]
 
 # No change if added columns duplicate existing
-x <- copy(term)
-y <- is_undergrad(x, midf_table = degree)
-check_equiv_frames(x, y)
+x <- term_qual_focus(term, midf_table = degree)
+check_equiv_frames(term, x)
 
 # Filter to retain "undergraduate" rows only
 term <- term[term_focus == "undergrad"]
@@ -26,3 +25,4 @@ degree <- degree[term_focus == "undergrad"]
 
 # Example result
 term
+

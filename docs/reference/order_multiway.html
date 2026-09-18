@@ -120,9 +120,7 @@ are not preserved.</p></li>
 <li><p>Row order is preserved. Duplicated rows are removed.</p></li>
 <li><p>Column specified by <code>quantity</code> is converted to type double.
 Columns specified by <code>categories</code> are converted to factors and ordered.</p></li>
-<li><p>New columns are added unless they duplicate existing
-variables—redundant columns, whether new or existing, are dropped
-(see Details). The new columns, with capital letters denoting
+<li><p>New columns are added unless they are redundant (see Details). The new columns, with capital letters denoting
 placeholders, have the form:</p><ul><li><p><code>CATEGORY_1_LABEL</code></p></li>
 <li><p><code>CATEGORY_2_LABEL</code></p></li>
 </ul><p>The <code>CATEGORY</code> placeholder is replaced with the column names from
@@ -149,15 +147,11 @@ assumed that a response for every combination is at least feasible.</p>
 <p>In a multiway dot plot, one category is encoded by the panels, the second
 category is encoded by the rows of each panel, and the quantitative variable
 is encoded along identical horizontal scales.</p>
-<p><em>Redundant columns.</em> To prevent overwriting, the name of an added
-variable such as  <code>program_median</code>  that matches that of an existing
-variable is made unique by adding a suffix, e.g., <code>program_median.1.</code>
-An added variable that otherwise duplicates the existing variable is
-redundant and dropped. If not, the presence of the suffixed variable
-indicates a potential error. The variables added by
-midfieldr functions depend on fixed quantities, e.g., a student's
-admission term or an institution's data range, and do not change
-during an analysis.</p>
+<p><em>Redundant columns.</em> To prevent overwriting, a variable such as
+<code>program_median</code>  is not added to the data frame if it duplicates
+an existing variable. The test for redundancy is managed internally
+by calling <code><a href="rm_redundant_cols.html">rm_redundant_cols()</a></code> before the final data frame is
+returned. For documentation, see <code><a href="rm_redundant_cols.html">?rm_redundant_cols</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -175,16 +169,7 @@ during an analysis.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:      EE Female    Asian            21        12       57.1    Asian Female</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:      EE Female    Black             6         3       50.0    Black Female</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:      EE Female Hispanic             8         3       37.5 Hispanic Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:      EE Female    White           118        56       47.5    White Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:      EE   Male    Asian           123        71       57.7      Asian Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:      EE   Male    Black            29        17       58.6      Black Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:      EE   Male Hispanic            45        17       37.8   Hispanic Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:      EE   Male    White           864       439       50.8      White Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:      ME Female    Asian             7         1       14.3    Asian Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:      ME Female    Black             3         2       66.7    Black Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:      ME Female Hispanic            12         8       66.7 Hispanic Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:      ME Female    White           213       134       62.9    White Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:      ME   Male    Asian            76        49       64.5      Asian Male</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---                                                                           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14:      ME   Male    Black            30        19       63.3      Black Male</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15:      ME   Male Hispanic            79        42       53.2   Hispanic Male</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16:      ME   Male    White          1596       955       59.8      White Male</span>
@@ -194,16 +179,7 @@ during an analysis.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:      EE            21        12       57.1    Asian Female</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:      EE             6         3       50.0    Black Female</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:      EE             8         3       37.5 Hispanic Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:      EE           118        56       47.5    White Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:      EE           123        71       57.7      Asian Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:      EE            29        17       58.6      Black Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:      EE            45        17       37.8   Hispanic Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:      EE           864       439       50.8      White Male</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:      ME             7         1       14.3    Asian Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:      ME             3         2       66.7    Black Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:      ME            12         8       66.7 Hispanic Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:      ME           213       134       62.9    White Female</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:      ME            76        49       64.5      Asian Male</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---                                                           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14:      ME            30        19       63.3      Black Male</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15:      ME            79        42       53.2   Hispanic Male</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16:      ME          1596       955       59.8      White Male</span>
@@ -217,16 +193,7 @@ during an analysis.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:     EE    Asian Female    12    21  57.1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:     EE    Black Female     3     6  50.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:     EE Hispanic Female     3     8  37.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     EE    White Female    56   118  47.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     EE      Asian Male    71   123  57.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     EE      Black Male    17    29  58.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     EE   Hispanic Male    17    45  37.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     EE      White Male   439   864  50.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     ME    Asian Female     1     7  14.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     ME    Black Female     2     3  66.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:     ME Hispanic Female     8    12  66.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     ME    White Female   134   213  62.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:     ME      Asian Male    49    76  64.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---                                         </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14:     ME      Black Male    19    30  63.3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15:     ME   Hispanic Male    42    79  53.2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16:     ME      White Male   955  1596  59.8</span>
@@ -244,16 +211,7 @@ during an analysis.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:     EE    Asian Female  57.1        50.4         35.70</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:     EE   Hispanic Male  37.8        50.4         45.50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:     EE Hispanic Female  37.5        50.4         52.10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     EE    White Female  47.5        50.4         55.20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     EE      White Male  50.8        50.4         55.30</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     EE    Black Female  50.0        50.4         58.35</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     EE      Black Male  58.6        50.4         60.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     EE      Asian Male  57.7        50.4         61.10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     ME    Asian Female  14.3        63.1         35.70</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     ME   Hispanic Male  53.2        63.1         45.50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:     ME Hispanic Female  66.7        63.1         52.10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     ME    White Female  62.9        63.1         55.20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:     ME      White Male  59.8        63.1         55.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---                                                       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14:     ME    Black Female  66.7        63.1         58.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15:     ME      Black Male  63.3        63.1         60.95</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16:     ME      Asian Male  64.5        63.1         61.10</span>
@@ -287,16 +245,7 @@ during an analysis.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:     EE    Asian Female    12    21  57.1        50.9          46.4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:     EE   Hispanic Male    17    45  37.8        50.9          47.6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:     EE Hispanic Female     3     8  37.5        50.9          55.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     EE    Black Female     3     6  50.0        50.9          55.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     EE      White Male   439   864  50.8        50.9          56.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     EE    White Female    56   118  47.5        50.9          57.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     EE      Asian Male    71   123  57.7        50.9          60.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     EE      Black Male    17    29  58.6        50.9          61.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     ME    Asian Female     1     7  14.3        60.0          46.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:     ME   Hispanic Male    42    79  53.2        60.0          47.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:     ME Hispanic Female     8    12  66.7        60.0          55.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     ME    Black Female     2     3  66.7        60.0          55.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:     ME      White Male   955  1596  59.8        60.0          56.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---                                                                   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14:     ME    White Female   134   213  62.9        60.0          57.4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15:     ME      Asian Male    49    76  64.5        60.0          60.3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16:     ME      Black Male    19    30  63.3        60.0          61.0</span>

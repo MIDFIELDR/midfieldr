@@ -24,14 +24,14 @@ t <- toy_term[mcid \%chin\% sel_ids, .(mcid, term)]
 d <- toy_degree[mcid \%chin\% sel_ids, .(mcid, term_degree)]
 
 # No error
-catch_error(is_undergrad(t, d))
+catch_error(term_qual_focus(t, d))
 
 # Error, no term variable 
-catch_error(is_undergrad(s, d))
+catch_error(term_qual_focus(s, d))
 
 # Error, missing dframe argument
-catch_error(is_undergrad())
+catch_error(term_qual_focus())
 
 # Error, missing degree argumeny
-catch_error(is_undergrad(t))
+catch_error(term_qual_focus(t))
 }

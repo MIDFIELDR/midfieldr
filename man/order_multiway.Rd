@@ -47,9 +47,7 @@ are not preserved.
 \item Row order is preserved. Duplicated rows are removed.
 \item Column specified by \code{quantity} is converted to type double.
 Columns specified by \code{categories} are converted to factors and ordered.
-\item New columns are added unless they duplicate existing
-variables---redundant columns, whether new or existing, are dropped
-(see Details). The new columns, with capital letters denoting
+\item New columns are added unless they are redundant (see Details). The new columns, with capital letters denoting
 placeholders, have the form:
 \itemize{
 \item \code{CATEGORY_1_LABEL}
@@ -88,15 +86,11 @@ In a multiway dot plot, one category is encoded by the panels, the second
 category is encoded by the rows of each panel, and the quantitative variable
 is encoded along identical horizontal scales.
 
-\emph{Redundant columns.} To prevent overwriting, the name of an added
-variable such as  \code{program_median}  that matches that of an existing
-variable is made unique by adding a suffix, e.g., \code{program_median.1.}
-An added variable that otherwise duplicates the existing variable is
-redundant and dropped. If not, the presence of the suffixed variable
-indicates a potential error. The variables added by
-midfieldr functions depend on fixed quantities, e.g., a student's
-admission term or an institution's data range, and do not change
-during an analysis.
+\emph{Redundant columns.} To prevent overwriting, a variable such as
+\code{program_median}  is not added to the data frame if it duplicates
+an existing variable. The test for redundancy is managed internally
+by calling \code{rm_redundant_cols()} before the final data frame is
+returned. For documentation, see \code{?rm_redundant_cols}.
 }
 \examples{
 # Reconfigure built-in data set

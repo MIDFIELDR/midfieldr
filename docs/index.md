@@ -16,7 +16,7 @@ calculate quantitative metrics, and prepare results for dissemination.
   Helps in finding 6-digit program codes.\
 - [`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
   Conditions data for imputing starting majors of FYE students.
-- [`is_undergrad()`](https://midfieldr.github.io/midfieldr/reference/is_undergrad.md)
+- [`term_qual_focus()`](https://midfieldr.github.io/midfieldr/reference/term_qual_focus.md)
   Identifies undergraduate terms to include.
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   Conditions data for Cleveland multiway charts.\
@@ -100,9 +100,9 @@ course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
 # Categorize pre- and post-baccalaureate terms
-term <- is_undergrad(term, midf_table = degree)
-course <- is_undergrad(course, midf_table = degree)
-degree <- is_undergrad(degree, midf_table = degree)
+term <- term_qual_focus(term, midf_table = degree)
+course <- term_qual_focus(course, midf_table = degree)
+degree <- term_qual_focus(degree, midf_table = degree)
 # -- example summary
 term[, .N, by = "term_focus"]
 #>    term_focus     N

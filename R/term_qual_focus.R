@@ -1,11 +1,12 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
-#' Categorize qualification level by term
+#' Categorize the qualification focus of a term
 #'
-#' Categorize the qualification level towards which a student is working in
-#' each term. Two levels are used: “undergrad” for terms before a student's
-#' first degree and “post-bacc” (post-baccalaureate) for terms after the first
-#' degree. Added columns support the findings. Post-baccalaureate terms are
+#' Determine the qualification focus (undergraduate or post-baccalaureate) of every term for each student in a data frame and add columns to the data frame to support the finding.
+#'
+#' Every term in a student's record can be categorized as "undergraduate" if
+#' the term predates their first degree and "post-baccalaureate" if it postdates
+#' the degree. Post-baccalaureate terms are
 #' typically excluded from the `term, course,` and `degree` data tables.
 #'
 #' `r redundant_cols("bacc_term")`
@@ -24,10 +25,10 @@
 #'   - `term_focus` &nbsp;  Character. Indicating a term contributes to study
 #'      before or after a student's first baccalaureate.
 #'      Possible values are "undergrad" and "post-bacc."
-#' @example man/examples/exa_is_undergrad.R
+#' @example man/examples/exa_term_qual_focus.R
 #' @export
 #'
-is_undergrad <- function(dframe, midf_table = degree) {
+term_qual_focus <- function(dframe, midf_table = degree) {
   #
   # ---------- initial assertions
 
@@ -126,7 +127,7 @@ is_undergrad <- function(dframe, midf_table = degree) {
   dframe <- utils_prep_return(dframe, return_vars, prior_class)
 
   # drop cols or cols.1 duplicates if any
-  dframe <- select_unique_cols(dframe)
+  dframe <- rm_redundant_cols(dframe)
 
   # done
   dframe[]

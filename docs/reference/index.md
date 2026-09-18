@@ -23,14 +23,14 @@
   : Choose rows of CIP data
 - [`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
   : Initialize FYE proxies for imputing missing data
-- [`is_undergrad()`](https://midfieldr.github.io/midfieldr/reference/is_undergrad.md)
-  : Categorize qualification level by term
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   : Order multiway categories
+- [`rm_redundant_cols()`](https://midfieldr.github.io/midfieldr/reference/rm_redundant_cols.md)
+  : Remove redundant columns
 - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
   : Choose columns of student records
-- [`select_unique_cols()`](https://midfieldr.github.io/midfieldr/reference/select_unique_cols.md)
-  : Choose unique columns
+- [`term_qual_focus()`](https://midfieldr.github.io/midfieldr/reference/term_qual_focus.md)
+  : Categorize the qualification focus of a term
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
   : Determine timely completion terms
 

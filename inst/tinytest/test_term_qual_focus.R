@@ -28,10 +28,10 @@ expect_class_preserved <- function(x, y, fnc) {
   rm(x, y)
 }
 
-test_is_undergrad <- function() {
+test_term_qual_focus <- function() {
   
   # usage
-  # is_undergrad(dframe, midf_table = degree)
+  # term_qual_focus(dframe, midf_table = degree)
   
   # ---------- setup
   
@@ -44,41 +44,41 @@ test_is_undergrad <- function() {
   # ---------- start tests
   
   # check that class is preserved function
-  expect_class_preserved(toy_term, toy_degree, is_undergrad)
+  expect_class_preserved(toy_term, toy_degree, term_qual_focus)
   
   # check for incorrect input class / required variables
-  expect_error(is_undergrad(1))
-  expect_error(is_undergrad(toy_term, "sat"))
-  expect_error(is_undergrad(toy_student, toy_degree))
-  expect_error(is_undergrad(toy_degree, toy_student))
+  expect_error(term_qual_focus(1))
+  expect_error(term_qual_focus(toy_term, "sat"))
+  expect_error(term_qual_focus(toy_student, toy_degree))
+  expect_error(term_qual_focus(toy_degree, toy_student))
   
   # term added columns correct
   x <- copy(toy_term)
   y <- copy(toy_degree)
-  z <- is_undergrad(x, y)
+  z <- term_qual_focus(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
 
   # course added columns correct
   x <- copy(toy_course)
-  z <- is_undergrad(x, y)
+  z <- term_qual_focus(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
    
   # degree added columns correct
   x <- copy(toy_degree)
-  z <- is_undergrad(x, y)
+  z <- term_qual_focus(x, y)
   expect_equal(new_cols, setdiff(colnames(z), colnames(x)))
   
   # confirm NO changes by reference
   term <- copy(toy_term)
   degr <- copy(toy_degree)
-  z <- is_undergrad(term, degr)
+  z <- term_qual_focus(term, degr)
   expect_true(check_equiv_frames(term, toy_term))
   expect_true(check_equiv_frames(degr, toy_degree))
   
   # overwrite prevention works, character idx remains, temp idx dropped
   x <- copy(toy_term)
   x[, idx := as.character(.I * 2)]
-  y <- is_undergrad(x, toy_degree)
+  y <- term_qual_focus(x, toy_degree)
   expect_equal(x[["idx"]], y[["idx"]])
   expect_equal(new_cols, setdiff(colnames(y), colnames(x)))
   
@@ -89,7 +89,7 @@ test_is_undergrad <- function() {
   # existing name that matches internals protected
   x <- copy(toy_term)
   x[, idx := as.character(.I * 2)]
-  y <- is_undergrad(x, toy_degree)
+  y <- term_qual_focus(x, toy_degree)
   expect_equal(x[["idx"]], y[["idx"]])
   
   
@@ -131,7 +131,7 @@ test_is_undergrad <- function() {
       "4", "20053"
   )
   setDT(x_degr)
-  ans <- is_undergrad(x_term, x_degr)[["term_focus"]]
+  ans <- term_qual_focus(x_term, x_degr)[["term_focus"]]
   expected_ans <- c("undergrad", "undergrad", "post-bacc", 
                     "undergrad", "undergrad", 
                     "undergrad", "undergrad",  
@@ -148,7 +148,7 @@ test_is_undergrad <- function() {
   invisible(NULL)
 }
 
-test_is_undergrad()
+test_term_qual_focus()
 
 
 

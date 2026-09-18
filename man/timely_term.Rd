@@ -29,9 +29,7 @@ Data frame with the following properties:
 are not preserved.
 \item Row order is preserved. Rows with \code{NA} values in any
 of the required variables are removed. Duplicated rows are removed.
-\item New columns are added unless they duplicate existing
-variables---redundant columns, whether new or existing, are dropped
-(see Details). The new variables are:
+\item New columns are added unless they are redundant (see Details). The new variables are:
 \itemize{
 \item \code{entry_term}   Character. Initial term of a student's longitudinal
 record, encoded \code{YYYYT}. Extracted from \code{midf_table.}
@@ -62,15 +60,11 @@ one academic year for each full year the student is assumed to have
 completed. The adjusted span is added to their initial term at an
 institution to create the \code{timely_term} value for each observation.
 
-\emph{Redundant columns.} To prevent overwriting, the name of an added
-variable such as  \code{timely_term}  that matches that of an existing
-variable is made unique by adding a suffix, e.g., \code{timely_term.1.}
-An added variable that otherwise duplicates the existing variable is
-redundant and dropped. If not, the presence of the suffixed variable
-indicates a potential error. The variables added by
-midfieldr functions depend on fixed quantities, e.g., a student's
-admission term or an institution's data range, and do not change
-during an analysis.
+\emph{Redundant columns.} To prevent overwriting, a variable such as
+\code{timely_term}  is not added to the data frame if it duplicates
+an existing variable. The test for redundancy is managed internally
+by calling \code{rm_redundant_cols()} before the final data frame is
+returned. For documentation, see \code{?rm_redundant_cols}.
 }
 \examples{
 # Assign toy data sets

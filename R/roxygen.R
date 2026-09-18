@@ -18,21 +18,15 @@ preserv_class_not_grp_keys <- "Data frame class is preserved. Groups and keys
 omit_NA_dup_rows <- "Row order is preserved. Rows with `NA` values in any
         of the required variables are removed. Duplicated rows are removed."
 
-add_new_cols <- "New columns are added unless they duplicate existing
-        variables---redundant columns, whether new or existing, are dropped
-        (see Details)."
+add_new_cols <- "New columns are added unless they are redundant (see Details)."
 
 redundant_cols <- function(x) {
   paste0(
-    "*Redundant columns.* To prevent overwriting, the name of an added
-        variable such as ", " `", x, "` ", " that matches that of an existing
-        variable is made unique by adding a suffix, e.g.,", " `", x, ".1.`
-        An added variable that otherwise duplicates the existing variable is
-        redundant and dropped. If not, the presence of the suffixed variable
-        indicates a potential error. The variables added by
-        midfieldr functions depend on fixed quantities, e.g., a student's
-        admission term or an institution's data range, and do not change
-        during an analysis."
+    "*Redundant columns.* To prevent overwriting, a variable such as
+        ", " `", x, "` ", " is not added to the data frame if it duplicates
+        an existing variable. The test for redundancy is managed internally
+        by calling `rm_redundant_cols()` before the final data frame is
+        returned. For documentation, see `?rm_redundant_cols`."
   )
 }
 

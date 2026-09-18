@@ -219,14 +219,14 @@ quarto-disable-processing="false" quarto-bootstrap="false"}
 
 We are interested in *undergraduate* records: academic terms before a
 student’s first degree. We use
-[`is_undergrad()`](https://midfieldr.github.io/midfieldr/reference/is_undergrad.md)
+[`term_qual_focus()`](https://midfieldr.github.io/midfieldr/reference/term_qual_focus.md)
 to categorize terms as “undergrad” for terms before the first degree or
 “post-bacc” (post-baccalaureate) for terms after the first degree.
 
 ``` r
 
-term <- is_undergrad(term, midf_table = degree)
-degree <- is_undergrad(degree, midf_table = degree)
+term <- term_qual_focus(term, midf_table = degree)
+degree <- term_qual_focus(degree, midf_table = degree)
 
 term[order(-term_focus), .(mcid, term, bacc_term, term_focus)]
 #>                   mcid   term bacc_term term_focus

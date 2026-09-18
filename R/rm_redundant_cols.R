@@ -1,31 +1,26 @@
-#' Choose unique columns
+#' Remove redundant columns
 #'
-#' Subset a data frame to retain unique columns. A variable in a data frame is
-#' dropped if, after splitting its name at a period separator ("."), its name
-#' and values are identical to those of another variable. Primarily used
-#' internally in midfieldr functions that add columns to a data frame.
+#' Subset a data frame to remove redundant columns. The goal
+#' of this function is to prevent overwriting existing columns and to avoid
+#' duplicating columns. Primarily used internally in midfieldr functions that
+#' add columns to a data frame.
 #'
-#' Several midfieldr functions add columns to a working data frame. The goal
-#' of this function is to prevent overwriting existing columns in the data
-#' frame that happen to have the same name as one of the added columns. At
-#' the same time, if both the name and values of a new column duplicate
-#' an existing column, the new column is redundant and can be dropped.
-#'
-#' If the name of an existing column happens to match that of a new variable,
-#' the new variable name is made unique by adding a suffix such as ".1", ".2",
-#' etc. Before the final data frame is returned, all variable names are
-#' temporarily split from their dot suffixes. Columns are dropped if their
-#' values and dot-split name duplicate a previous column. Columns are not
-#' dropped if their split names are unique nor if the row-wise values differ.
+#' Several midfieldr functions add columns to a working data frame. If the name
+#' of a new variable matches that of an existing  variable,
+#' the new variable name acquires a suffix ".1", ".2", etc., provided by
+#' `base::make.unique().` Before the final data frame is returned, all variable names
+#' (including existing variables) are temporarily split from their dot suffixes, if any.
+#' Resulting columns are dropped if they duplicate a previous column (where
+#' 'previous' means to the left of the duplicate in the data frame).
 #'
 #' @param dframe `r dframe`
 #' @returns Data frame with the following properties:
 #' * `r preserv_class_not_grp_keys`
 #' * Rows are preserved.
 #' * Unique columns preserved. Redundant columns dropped.
-#' @example man/examples/exa_select_unique_cols.R
+#' @example man/examples/exa_rm_redundant_cols.R
 #' @export
-select_unique_cols <- function(dframe) {
+rm_redundant_cols <- function(dframe) {
   #
   # ---------- initial assertions
 

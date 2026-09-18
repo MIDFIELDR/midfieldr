@@ -261,23 +261,23 @@ the upper limit.
 
 Relevant functions:
 
-- [`is_undergrad()`](https://midfieldr.github.io/midfieldr/reference/is_undergrad.md)
+- [`term_qual_focus()`](https://midfieldr.github.io/midfieldr/reference/term_qual_focus.md)
 
-### is_undergrad()
+### term_qual_focus()
 
 *Undergraduate terms* are those prior to (and including) the first
 degree term.
 
-[`is_undergrad()`](https://midfieldr.github.io/midfieldr/reference/is_undergrad.md)
+[`term_qual_focus()`](https://midfieldr.github.io/midfieldr/reference/term_qual_focus.md)
 evaluates whether a term is before or after a student’s first degree.
 The principal data frame is any of the data tables having a term-value
 variable:
 
 ``` r
 
-term <- is_undergrad(term)
-course <- is_undergrad(course)
-degree <- is_undergrad(degree)
+term <- term_qual_focus(term)
+course <- term_qual_focus(course)
+degree <- term_qual_focus(degree)
 ```
 
 In all cases, the term of the student’s first degree is pulled from the
@@ -293,7 +293,7 @@ For example,
 
 ``` r
 
-is_undergrad(term)
+term_qual_focus(term)
 #>                   mcid   term   cip6   institution         level
 #>                 <char> <char> <char>        <char>        <char>
 #>      1: MCID3111142225  19881 140901 Institution B 01 First-year
@@ -328,7 +328,7 @@ if we view a selection of columns,
 
 ``` r
 
-term <- is_undergrad(term)
+term <- term_qual_focus(term)
 term[order(-term_focus), .(mcid, term, bacc_term, term_focus)]
 #>                   mcid   term bacc_term term_focus
 #>                 <char> <char>    <char>     <char>
@@ -541,7 +541,7 @@ For example, in these functions,
 
 - `timely_term(dframe, midf_table = term)`
 - `data_sufficiency(dframe, midf_table = term)`
-- `is_undergraduate(dframe, midf_table = degree)`
+- `term_qual_focusuate(dframe, midf_table = degree)`
 - `completion status(dframe, midf_table = degree)`
 
 the similarities include:
@@ -719,7 +719,7 @@ e.g. [`?catch_error`](https://midfieldr.github.io/midfieldr/reference/catch_err
 - [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)
   for data frames, wraps base
   [`str()`](https://rdrr.io/r/utils/str.html) with preset arguments.
-- [`select_unique_cols()`](https://midfieldr.github.io/midfieldr/reference/select_unique_cols.md)
+- [`rm_redundant_cols()`](https://midfieldr.github.io/midfieldr/reference/rm_redundant_cols.md)
   primarily used internally to drop duplicate columns.
 - [`sort_uniq()`](https://midfieldr.github.io/midfieldr/reference/sort_uniq.md)
   for vectors, wraps base `sort(unique())` with preset arguments.

@@ -81,9 +81,7 @@ variables <code>{mcid, term_degree}.</code></p></dd>
 are not preserved.</p></li>
 <li><p>Row order is preserved. Rows with <code>NA</code> values in any
 of the required variables are removed. Duplicated rows are removed.</p></li>
-<li><p>New columns are added unless they duplicate existing
-variables—redundant columns, whether new or existing, are dropped
-(see Details). The new variables are:</p><ul><li><p><code>bacc_term</code>    Character. Term of a student's first
+<li><p>New columns are added unless they are redundant (see Details). The new variables are:</p><ul><li><p><code>bacc_term</code>    Character. Term of a student's first
 baccalaureate, encoded <code>YYYYT</code> or, if no degree recorded, <code>NA.</code>
 Joined from the <code>term_degree</code> variable in <code>midf_table.</code></p></li>
 <li><p><code>completion</code>   Character. Completion status, possible values of
@@ -101,15 +99,11 @@ term at the end of that span is the <em>timely completion term.</em></p>
 <p>If the student's degree term is no later than their timely completion term,
 then their completion status is "timely"; if later, their status is "late".
 For students with no degree, completion status is NA.</p>
-<p><em>Redundant columns.</em> To prevent overwriting, the name of an added
-variable such as  <code>bacc_term</code>  that matches that of an existing
-variable is made unique by adding a suffix, e.g., <code>bacc_term.1.</code>
-An added variable that otherwise duplicates the existing variable is
-redundant and dropped. If not, the presence of the suffixed variable
-indicates a potential error. The variables added by
-midfieldr functions depend on fixed quantities, e.g., a student's
-admission term or an institution's data range, and do not change
-during an analysis.</p>
+<p><em>Redundant columns.</em> To prevent overwriting, a variable such as
+<code>bacc_term</code>  is not added to the data frame if it duplicates
+an existing variable. The test for redundancy is managed internally
+by calling <code><a href="rm_redundant_cols.html">rm_redundant_cols()</a></code> before the final data frame is
+returned. For documentation, see <code><a href="rm_redundant_cols.html">?rm_redundant_cols</a></code>.</p>
     </div>
 
     <div class="section level2">
@@ -127,15 +121,7 @@ during an analysis.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1: MCID3111169729</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2: MCID3111170852</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3: MCID3111173999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4: MCID3111257807</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: MCID3111258275</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: MCID3111258347</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: MCID3111259642</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8: MCID3111262210</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9: MCID3111265287</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10: MCID3111269576</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11: MCID3111272691</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12: MCID3111272880</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---               </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 13: MCID3111277081</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14: MCID3112751130</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15: MCID3112754537</span>
@@ -149,15 +135,7 @@ during an analysis.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1: MCID3111169729       19933</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2: MCID3111170852       19933</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3: MCID3111173999       19933</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4: MCID3111257807       19953</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: MCID3111258275       19953</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: MCID3111258347       19953</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: MCID3111259642       19953</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8: MCID3111262210       19953</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9: MCID3111265287       19953</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10: MCID3111269576       19953</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11: MCID3111272691       19953</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12: MCID3111272880       19953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---                           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 13: MCID3111277081       19961</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14: MCID3112751130       20203</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15: MCID3112754537       20203</span>
@@ -170,15 +148,7 @@ during an analysis.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1: MCID3111169729       19933     19901     timely</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2: MCID3111170852       19933      &lt;NA&gt;       &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3: MCID3111173999       19933      &lt;NA&gt;       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4: MCID3111257807       19953     19964       late</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: MCID3111258275       19953     19921     timely</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: MCID3111258347       19953     19923     timely</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: MCID3111259642       19953     19934     timely</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8: MCID3111262210       19953     19951     timely</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9: MCID3111265287       19953     19904     timely</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10: MCID3111269576       19953     19943     timely</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11: MCID3111272691       19953     19914     timely</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12: MCID3111272880       19953     19934     timely</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---                                                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 13: MCID3111277081       19961     19963       late</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14: MCID3112751130       20203     20171     timely</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15: MCID3112754537       20203      &lt;NA&gt;       &lt;NA&gt;</span>
@@ -195,10 +165,7 @@ during an analysis.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1: MCID3111169729       19933     19901     timely</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2: MCID3111258275       19953     19921     timely</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3: MCID3111258347       19953     19923     timely</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4: MCID3111259642       19953     19934     timely</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5: MCID3111262210       19953     19951     timely</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: MCID3111265287       19953     19904     timely</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7: MCID3111269576       19953     19943     timely</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---                                                </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  8: MCID3111272691       19953     19914     timely</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  9: MCID3111272880       19953     19934     timely</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10: MCID3112751130       20203     20171     timely</span>
