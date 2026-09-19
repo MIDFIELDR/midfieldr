@@ -35,8 +35,7 @@ For this article we load all four midfielddata tables.
 
 ``` r
 
-# data(student, term, course, degree)
-data(student, term, degree)
+data(student, term, course, degree)
 ```
 
 [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
@@ -68,7 +67,16 @@ select_basic_cols(term)
 #> 639914: MCID3112898895  20181 302001 Institution B 01 First-year
 #> 639915: MCID3112898940  20181 050103 Institution B 01 First-year
 
-# select_basic_cols(course)
+select_basic_cols(course)
+#>                    mcid term_course abbrev number
+#>                  <char>      <char> <char> <char>
+#>       1: MCID3111142225       19881   ECEN   2230
+#>       2: MCID3111142225       19881   ECEN   4811
+#>       3: MCID3111142225       19881   MCEN   4147
+#>      ---                                         
+#> 3289530: MCID3112898940       20181   JPNS   1010
+#> 3289531: MCID3112898940       20181   MATH   1150
+#> 3289532: MCID3112898940       20181   SOCY   1004
 
 select_basic_cols(degree)
 #>                  mcid term_degree   cip6
@@ -208,7 +216,9 @@ timely_term(DT, span = 8)[order(-adj_span)]
 *Data sufficiency* is a necessary condition for including a student in a
 population if a metric depends on program completion. To meet the
 condition, an institution’s data range must bracket a student’s entry
-and timely completion terms.
+and timely completion terms, i.e., the entry term is at least one term
+later than the lower limit of the data range and the timely completion
+term is no later than the upper limit.
 
 [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
 evaluates whether the condition is met for each student. The principal
@@ -244,70 +254,110 @@ DT[order(-sufficiency)]
 #> 97555: MCID3112056754      19881       19933 19881-20096  fail-lower
 ```
 
-We usually filter to retain rows with sufficiency labeled “satisfied,”
-indicating that the entry term is at least one term later than the lower
-limit of the data range and the timely completion term is no later than
-the upper limit.
+We usually follow up by filtering for rows labeled “satisfied”, e.g.,
+
+``` r
+
+DT <- DT[sufficiency == "satisfied"]
+DT
+#>                  mcid entry_term timely_term  data_range sufficiency
+#>                <char>     <char>      <char>      <char>      <char>
+#>     1: MCID3111142689      19883       19941 19881-20181   satisfied
+#>     2: MCID3111142782      19883       19941 19881-20096   satisfied
+#>     3: MCID3111142881      19893       19951 19881-20181   satisfied
+#>    ---                                                              
+#> 76873: MCID3112785480      20071       20123 19901-20154   satisfied
+#> 76874: MCID3112800920      20101       20153 19881-20181   satisfied
+#> 76875: MCID3112870009      19951       20003 19881-20181   satisfied
+```
 
 ## Records
 
 Relevant functions:
 
-- [`filter_undergrad()`](https://midfieldr.github.io/midfieldr/reference/filter_undergrad.md)
+- [`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
 
-### filter_undergrad()
+### undergrad_term_id()
 
-*Undergraduate terms* are those prior to (and including) the first
-degree term.
+[`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
+distinguishes undergraduate terms—those leading up a student’s first
+degree—from post-baccalaureate terms. The principal data frame must
+include the variable `{mcid}` and a term-valued variable, one of
+`{term, term_course, term_degree}.` The first degree term is pulled from
+the `degree` table. The data frame is returned with the following
+variables added:
 
-[`filter_undergrad()`](https://midfieldr.github.io/midfieldr/reference/filter_undergrad.md)
-distinguishes post-baccalaureate terms from undergraduate terms and
-retains the undergraduate terms. Here we filter the `term` table and
-count the rows before and after the operation.
+| variable | description |
+|----|----|
+| `bacc_term` | term of a student's first baccalaureate |
+| `term_id` | indicates whether a term is undergraduate or post-baccalaureate |
 
 ``` r
 
-nrow(term)
-#> [1] 639915
-x <- filter_undergrad(term, midf_table = degree)
-nrow(x)
-#> [1] 632917
+undergrad_term_id(term, midf_table = degree)
+#>                   mcid   term   cip6   institution         level
+#>                 <char> <char> <char>        <char>        <char>
+#>      1: MCID3111142225  19881 140901 Institution B 01 First-year
+#>      2: MCID3111142283  19881 240102 Institution J 01 First-year
+#>      3: MCID3111142283  19883 240102 Institution J 01 First-year
+#>     ---                                                         
+#> 639913: MCID3112898894  20181 451001 Institution B 01 First-year
+#> 639914: MCID3112898895  20181 302001 Institution B 01 First-year
+#> 639915: MCID3112898940  20181 050103 Institution B 01 First-year
+#>                   standing   coop hours_term hours_term_attempt hours_cumul
+#>                     <char> <char>      <num>              <num>       <num>
+#>      1:      Good Standing     No          7                  7           7
+#>      2: Academic Probation     No          6                  6           6
+#>      3: Academic Probation     No         12                 12          18
+#>     ---                                                                    
+#> 639913:      Good Standing     No         13                 13          13
+#> 639914:      Good Standing     No         18                 18          18
+#> 639915:      Good Standing     No         15                 15          15
+#>         hours_cumul_attempt gpa_term gpa_cumul bacc_term   term_id
+#>                       <num>    <num>     <num>    <char>    <char>
+#>      1:                   7     2.56      2.56     19881 undergrad
+#>      2:                   6     1.85      1.85      <NA> undergrad
+#>      3:                  18     1.93      1.90      <NA> undergrad
+#>     ---                                                           
+#> 639913:                  13     3.52      3.52      <NA> undergrad
+#> 639914:                  18     3.50      3.50      <NA> undergrad
+#> 639915:                  15     2.18      2.18      <NA> undergrad
 ```
 
-The optional `add_bacc_term` argument adds the baccalaureate term to the
-data frame if you want verify the result; test for yourself that only
-terms predating the degree are retained. The results match those above.
+The results are clearer if we limit the number of columns we review.
 
 ``` r
 
-y <- filter_undergrad(term, add_bacc_term = TRUE)
-y <- y[, .(mcid, term, bacc_term)][order(bacc_term)]
-y
-#>                   mcid   term bacc_term
-#>                 <char> <char>    <char>
-#>      1: MCID3111142225  19881     19881
-#>      2: MCID3111143056  19881     19881
-#>      3: MCID3111142729  19881     19883
-#>     ---                                
-#> 639913: MCID3112898894  20181      <NA>
-#> 639914: MCID3112898895  20181      <NA>
-#> 639915: MCID3112898940  20181      <NA>
-
-# Filter and compare to previous result
-y <- y[bacc_term >= term | is.na(bacc_term)]
-check_equiv_frames(x[, .(mcid, term)], y[, .(mcid, term)])
-#> [1] TRUE
+x <- undergrad_term_id(term, midf_table = degree)
+x[order(-term_id), .(mcid, term, bacc_term, term_id)]
+#>                   mcid   term bacc_term   term_id
+#>                 <char> <char>    <char>    <char>
+#>      1: MCID3111142225  19881     19881 undergrad
+#>      2: MCID3111142283  19881      <NA> undergrad
+#>      3: MCID3111142283  19883      <NA> undergrad
+#>     ---                                          
+#> 639913: MCID3112760306  20181     20174 post-bacc
+#> 639914: MCID3112768322  20181     20174 post-bacc
+#> 639915: MCID3112773810  20181     20174 post-bacc
 ```
 
-The principal data frame is any of the data tables having a term-value
-variable. In all cases, the term of the student’s first degree is pulled
-from the `degree` table.
+The function is applied to each data table having a term-valued
+variable.
 
 ``` r
 
-term <- filter_undergrad(term)
-course <- filter_undergrad(course)
-degree <- filter_undergrad(degree)
+term <- undergrad_term_id(term)
+course <- undergrad_term_id(course)
+degree <- undergrad_term_id(degree)
+```
+
+We usually follow up by filtering for rows labeled “undergrad” and
+dropping the extra columns, e.g.,
+
+``` r
+
+term <- term[term_id == "undergrad"]
+term[, c("bacc_term", "term_id") := NULL]
 ```
 
 ## Blocs
@@ -492,13 +542,28 @@ DT[order(-completion)]
 #>     2: MCID3111142782       19941     19903     timely
 #>     3: MCID3111142881       19951     19894     timely
 #>    ---                                                
-#> 76919: MCID3112785480       20123      <NA>       <NA>
-#> 76920: MCID3112800920       20153      <NA>       <NA>
-#> 76921: MCID3112870009       20003      <NA>       <NA>
+#> 76909: MCID3112785480       20123      <NA>       <NA>
+#> 76910: MCID3112800920       20153      <NA>       <NA>
+#> 76911: MCID3112870009       20003      <NA>       <NA>
 ```
 
-When we want of bloc of timely graduates, we filter to retain rows with
-completion “timely.”
+When we want a bloc of timely graduates, we follow up by filtering for
+rows labeled “timely.”, e.g.,
+
+``` r
+
+DT <- DT[completion == "timely"]
+DT
+#>                  mcid timely_term bacc_term completion
+#>                <char>      <char>    <char>     <char>
+#>     1: MCID3111142689       19941     19913     timely
+#>     2: MCID3111142782       19941     19903     timely
+#>     3: MCID3111142881       19951     19894     timely
+#>    ---                                                
+#> 40442: MCID3112692944       20163     20153     timely
+#> 40443: MCID3112694738       20161     20143     timely
+#> 40444: MCID3112730841       20173     20164     timely
+```
 
 ## Commonalities
 
@@ -507,7 +572,7 @@ For example, in these functions,
 
 - `timely_term(dframe, midf_table = term)`
 - `data_sufficiency(dframe, midf_table = term)`
-- `filter_undergrad(dframe, midf_table = degree)`
+- `undergrad_term_id(dframe, midf_table = degree)`
 - `completion status(dframe, midf_table = degree)`
 
 the similarities include:
@@ -516,7 +581,7 @@ the similarities include:
 - The second argument is one of the MIDFIELD data tables.
 - The result is a new data frame with columns added that support the
   main finding.
-- You can use the main finding to subset the result by rows.
+- We use the main finding to subset the result by rows.
 
 Moreover, because in each case the `midf_table` argument has a default
 value, it can be assigned explicitly or not. For example, the three
@@ -538,17 +603,6 @@ check_equiv_frames(x, y)
 check_equiv_frames(x, z)
 #> [1] TRUE
 ```
-
-Of other functions used earlier,
-
-- [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
-- [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
-
-have in common that:
-
-- The first argument is a data frame.
-- The result is a new data frame, a subset of the input: “filter”
-  chooses rows; “select” chooses columns.
 
 ## Special conditioning
 
@@ -686,6 +740,9 @@ e.g. [`?catch_error`](https://midfieldr.github.io/midfieldr/reference/catch_err
   [`str()`](https://rdrr.io/r/utils/str.html) with preset arguments.
 - [`rm_redundant_cols()`](https://midfieldr.github.io/midfieldr/reference/rm_redundant_cols.md)
   primarily used internally to drop duplicate columns.
+- [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
+  subsets a MIDFIELD data table to retain the variables required by one
+  or more midfieldr functions.
 - [`sort_uniq()`](https://midfieldr.github.io/midfieldr/reference/sort_uniq.md)
   for vectors, wraps base `sort(unique())` with preset arguments.
 

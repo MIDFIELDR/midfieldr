@@ -21,8 +21,6 @@
   : Determine data sufficiency
 - [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
   : Choose rows of CIP data
-- [`filter_undergrad()`](https://midfieldr.github.io/midfieldr/reference/filter_undergrad.md)
-  : Choose rows of undergraduate terms only
 - [`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
   : Initialize FYE proxies for imputing missing data
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
@@ -33,6 +31,8 @@
   : Choose columns of student records
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
   : Determine timely completion terms
+- [`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
+  : Identify undergraduate terms
 
 ## Utility
 

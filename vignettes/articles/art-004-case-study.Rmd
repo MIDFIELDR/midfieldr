@@ -165,7 +165,7 @@ DT[order(-sufficiency)]
 DT[, .N, by = c("sufficiency")][order(-N)]
 ```
 
-We retain rows labeled "include" and drop all but the ID column. This set of IDs is our baseline population.
+Retain rows labeled "satisfied" and drop all but the ID column. This set of IDs is our baseline population.
 
 ```{r}
 population <- DT[sufficiency == "satisfied", .(mcid)]
@@ -202,11 +202,37 @@ make_table(Ncompare, "Table 1(b). Number of observations")
 
 ### *Filter for undergraduate terms*
 
-We are interested in *undergraduate* records: academic terms before a student's  first degree. We use `filter_undergrad()` to differentiate between post-baccalaureate terms and undergraduate terms and filter to retain only the latter. The reduced number of rows is shown in the table below. 
+We are interested in *undergraduate* records: academic terms before a student's  first degree. We use `undergrad_term_id()` to differentiate between undergraduate terms and post-baccalaureate terms.  
 
 ```{r}
-term <- filter_undergrad(term, midf_table = degree)
-degree <- filter_undergrad(degree, midf_table = degree)
+term <- undergrad_term_id(term, midf_table = degree)
+degree <- undergrad_term_id(degree, midf_table = degree)
+```
+
+*Summary check.* &nbsp; Number of students in each category.
+
+```{r}
+term[, .N, by = c("term_id")][order(-N)]
+
+degree[, .N, by = c("term_id")][order(-N)]
+```
+
+Retain rows labeled "undergrad" and drop the extra columns. 
+
+```{r}
+term <- term[term_id == "undergrad"]
+degree <- degree[term_id == "undergrad"]
+
+term[, c("bacc_term", "term_id") := NULL]
+degree[, c("bacc_term", "term_id") := NULL]
+```
+
+We copy the current data tables to reserve them as our "baseline" records. From this point forward, anytime we need a fresh copy of any of the data tables, we copy the `*_baseline` version. Anytime we need a starting population, we copy  `population.`
+
+```{r}
+student_baseline <- copy(student)
+term_baseline <- copy(term)
+degree_baseline <- copy(degree)
 ```
 
 ```{r}
@@ -218,14 +244,6 @@ Ncompare[, x := c(
 )]
 setnames(Ncompare, old = "x", new = "Undergrad filter")
 make_table(Ncompare, "Table 1(c). Number of observations")
-```
-
-We copy the current data tables to reserve them as our "baseline" records. From this point forward, anytime we need a fresh copy of any of the data tables, we copy the `*_baseline` version. Anytime we need a starting population, we copy  `population.`
-
-```{r}
-student_baseline <- copy(student)
-term_baseline <- copy(term)
-degree_baseline <- copy(degree)
 ```
 
 

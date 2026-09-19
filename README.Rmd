@@ -41,13 +41,12 @@ options(
 midfieldr is an R package that supplies tools for working with longitudinal undergraduate records from the MIDFIELD database [@ohland:midfield:2023] or similarly structured data tables. These tools help you develop credible populations, subset records to calculate quantitative metrics, and prepare results for dissemination. 
 
 - `completion_status()` `r phrase_completion_status`
-- `data_sufficiency()` `r phrase_data_sufficiency`  
-- `filter_programs()` `r phrase_filter_programs`  
+- `data_sufficiency()` `r phrase_data_sufficiency`
+- `filter_programs()` `r phrase_filter_programs`
 - `initialize_fye_proxies()` `r phrase_initialize_fye_proxies`
-- `filter_undergrad()` `r phrase_filter_undergrad` 
-- `order_multiway()` `r phrase_order_multiway`  
+- `order_multiway()` `r phrase_order_multiway`
 - `timely_term()` `r phrase_timely_term`
- 
+- `undergrad_term_id()` `r phrase_undergrad_term_id`
  
  
 ## Installation
@@ -103,10 +102,17 @@ term <- population[term, on = "mcid", nomatch = NULL]
 course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-# Filter records to exclude post-baccalaureate terms
-term <- filter_undergrad(term, midf_table = degree)
-course <- filter_undergrad(course, midf_table = degree)
-degree <- filter_undergrad(degree, midf_table = degree)
+# Identify post-baccalaureate terms to exclude
+term <- undergrad_term_id(term, midf_table = degree)
+course <- undergrad_term_id(course, midf_table = degree)
+degree <- undergrad_term_id(degree, midf_table = degree)
+# -- result summary
+term[, .N, by = "term_id"][order(-term_id)]
+
+# Subset to obtain baseline records
+term <- term[term_id == "undergrad"]
+course <- course[term_id == "undergrad"]
+degree <- degree[term_id == "undergrad"]
 
 # Obtain 6-digit CIP codes for Engineering (14), Psychology (42),
 # and Business (52)

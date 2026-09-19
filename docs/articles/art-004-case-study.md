@@ -171,8 +171,8 @@ DT[, .N, by = c("sufficiency")][order(-N)]
 #> 3:  fail-lower  2746
 ```
 
-We retain rows labeled “include” and drop all but the ID column. This
-set of IDs is our baseline population.
+Retain rows labeled “satisfied” and drop all but the ID column. This set
+of IDs is our baseline population.
 
 ``` r
 
@@ -219,25 +219,43 @@ quarto-disable-processing="false" quarto-bootstrap="false"}
 
 We are interested in *undergraduate* records: academic terms before a
 student’s first degree. We use
-[`filter_undergrad()`](https://midfieldr.github.io/midfieldr/reference/filter_undergrad.md)
-to differentiate between post-baccalaureate terms and undergraduate
-terms and filter to retain only the latter. The reduced number of rows
-is shown in the table below.
+[`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
+to differentiate between undergraduate terms and post-baccalaureate
+terms.
 
 ``` r
 
-term <- filter_undergrad(term, midf_table = degree)
-degree <- filter_undergrad(degree, midf_table = degree)
+term <- undergrad_term_id(term, midf_table = degree)
+degree <- undergrad_term_id(degree, midf_table = degree)
 ```
 
-| Table   | Original tables | Population filter | Undergrad filter |
-|---------|-----------------|-------------------|------------------|
-| student | 97,555          | 76,875            | 76,875           |
-| term    | 639,915         | 531,419           | 525,446          |
-| degree  | 49,665          | 43,903            | 43,857           |
+*Summary check.*   Number of students in each category.
 
-Table 1(c). Number of observations {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
+``` r
+
+term[, .N, by = c("term_id")][order(-N)]
+#>      term_id      N
+#>       <char>  <int>
+#> 1: undergrad 525446
+#> 2: post-bacc   5973
+
+degree[, .N, by = c("term_id")][order(-N)]
+#>      term_id     N
+#>       <char> <int>
+#> 1: undergrad 43857
+#> 2: post-bacc    46
+```
+
+Retain rows labeled “undergrad” and drop the extra columns.
+
+``` r
+
+term <- term[term_id == "undergrad"]
+degree <- degree[term_id == "undergrad"]
+
+term[, c("bacc_term", "term_id") := NULL]
+degree[, c("bacc_term", "term_id") := NULL]
+```
 
 We copy the current data tables to reserve them as our “baseline”
 records. From this point forward, anytime we need a fresh copy of any of
@@ -250,6 +268,15 @@ student_baseline <- copy(student)
 term_baseline <- copy(term)
 degree_baseline <- copy(degree)
 ```
+
+| Table   | Original tables | Population filter | Undergrad filter |
+|---------|-----------------|-------------------|------------------|
+| student | 97,555          | 76,875            | 76,875           |
+| term    | 639,915         | 531,419           | 525,446          |
+| degree  | 49,665          | 43,903            | 43,857           |
+
+Table 1(c). Number of observations {.table .gt_table
+quarto-disable-processing="false" quarto-bootstrap="false"}
 
 Review the baseline records.
 [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)

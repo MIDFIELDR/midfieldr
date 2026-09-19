@@ -21,13 +21,13 @@ calculate quantitative metrics, and prepare results for dissemination.
 
 - `completion_status()` Identifies IDs to include for timely completion.
 - `data_sufficiency()` Identifies IDs to exclude due to insufficient
-  data.\
-- `filter_programs()` Helps in finding 6-digit program codes.\
+  data.
+- `filter_programs()` Helps in finding 6-digit program codes.
 - `initialize_fye_proxies()` Conditions data for imputing starting
   majors of FYE students.
-- `filter_undergrad()` Identifies undergraduate terms to include.
-- `order_multiway()` Conditions data for Cleveland multiway charts.\
+- `order_multiway()` Conditions data for Cleveland multiway charts.
 - `timely_term()` Determines the latest term for timely completion.
+- `undergrad_term_id()` Identifies undergraduate terms to include.
 
 ## Installation
 
@@ -103,10 +103,21 @@ term <- population[term, on = "mcid", nomatch = NULL]
 course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-# Filter records to exclude post-baccalaureate terms
-term <- filter_undergrad(term, midf_table = degree)
-course <- filter_undergrad(course, midf_table = degree)
-degree <- filter_undergrad(degree, midf_table = degree)
+# Identify post-baccalaureate terms to exclude
+term <- undergrad_term_id(term, midf_table = degree)
+course <- undergrad_term_id(course, midf_table = degree)
+degree <- undergrad_term_id(degree, midf_table = degree)
+# -- result summary
+term[, .N, by = "term_id"][order(-term_id)]
+#>      term_id     N
+#>       <char> <int>
+#> 1: undergrad  1330
+#> 2: post-bacc    17
+
+# Subset to obtain baseline records
+term <- term[term_id == "undergrad"]
+course <- course[term_id == "undergrad"]
+degree <- degree[term_id == "undergrad"]
 
 # Obtain 6-digit CIP codes for Engineering (14), Psychology (42),
 # and Business (52)
