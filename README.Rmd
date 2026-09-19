@@ -44,7 +44,7 @@ midfieldr is an R package that supplies tools for working with longitudinal unde
 - `data_sufficiency()` `r phrase_data_sufficiency`  
 - `filter_programs()` `r phrase_filter_programs`  
 - `initialize_fye_proxies()` `r phrase_initialize_fye_proxies`
-- `term_qual_focus()` `r phrase_term_qual_focus` 
+- `filter_undergrad()` `r phrase_filter_undergrad` 
 - `order_multiway()` `r phrase_order_multiway`  
 - `timely_term()` `r phrase_timely_term`
  
@@ -103,22 +103,10 @@ term <- population[term, on = "mcid", nomatch = NULL]
 course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-# Categorize pre- and post-baccalaureate terms
-term <- term_qual_focus(term, midf_table = degree)
-course <- term_qual_focus(course, midf_table = degree)
-degree <- term_qual_focus(degree, midf_table = degree)
-# -- example summary
-term[, .N, by = "term_focus"]
-
 # Filter records to exclude post-baccalaureate terms
-term <- term[term_focus == "undergrad"]
-course <- course[term_focus == "undergrad"]
-degree <- degree[term_focus == "undergrad"]
-
-# Omit temporary columns to obtain baseline records
-term[, c("bacc_term", "term_focus") := NULL]
-course[, c("bacc_term", "term_focus") := NULL]
-degree[, c("bacc_term", "term_focus") := NULL]
+term <- filter_undergrad(term, midf_table = degree)
+course <- filter_undergrad(course, midf_table = degree)
+degree <- filter_undergrad(degree, midf_table = degree)
 
 # Obtain 6-digit CIP codes for Engineering (14), Psychology (42),
 # and Business (52)

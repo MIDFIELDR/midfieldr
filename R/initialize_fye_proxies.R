@@ -39,7 +39,7 @@
 #'        a 6-digit CIP code other than the value in `fye_cip` for their FYE
 #'        programs. One FYE code only per institution.
 #' @returns Data frame with the following properties:
-#' * `r preserv_class_not_grp_keys`
+#' * `r keep_class_rm_groups_rm_keys`
 #' * Rows: One row for every degree-seeking FYE student. Rows in `m_student`
 #'   or `m_term` with NA values in any of the required variables are removed.
 #' * Columns: Conditioned for later use as an input to the mice R

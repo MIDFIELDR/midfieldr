@@ -17,7 +17,7 @@
 #' @param negate Logical (default FALSE). If TRUE, inverts the
 #'        resulting Boolean vector.
 #' @returns Data frame with the following properties:
-#' * `r preserv_class_not_grp_keys`
+#' * `r keep_class_rm_groups_rm_keys`
 #' * Rows are a subset of the input; row order is preserved. Duplicated rows
 #'   are removed.
 #' * Columns are not modified.

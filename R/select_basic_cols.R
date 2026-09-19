@@ -20,7 +20,7 @@
 #' @param dframe `r dframe` equivalent to or derived from one of the MIDFIELD
 #'        data tables: `{student, term, course, degree}.`
 #' @returns Data frame with the following properties:
-#' * `r preserv_class_not_grp_keys`
+#' * `r keep_class_rm_groups_rm_keys`
 #' * Rows are not modified.
 #' * Columns are a subset of the input, appearing in the same order.
 #' @example man/examples/exa_select_basic_cols.R

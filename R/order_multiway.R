@@ -44,7 +44,7 @@
 #'        must be in order, as in `c(dividend, divisor).` Required
 #'        when `method = "percent,"` ignored otherwise.
 #' @returns Data frame with the following properties:
-#' * `r preserv_class_not_grp_keys`
+#' * `r keep_class_rm_groups_rm_keys`
 #' * Row order is preserved. Duplicated rows are removed.
 #' * Column specified by `quantity` is converted to type double.
 #'   Columns specified by `categories` are converted to factors and ordered.

@@ -74,7 +74,8 @@ midfieldr is designed to work with the MIDFIELD research database or any  databa
 For this article we load all four midfielddata tables. 
 
 ```{r, chunk06}
-data(student, term, course, degree)
+# data(student, term, course, degree)
+data(student, term, degree)
 ```
 
 `select_basic_cols()` returns a subset of each table with the variables most often encountered in the early stages of a project. The tables are linked by the anonymized student ID variable `mcid.`
@@ -84,7 +85,7 @@ select_basic_cols(student)
 
 select_basic_cols(term)
 
-select_basic_cols(course)
+# select_basic_cols(course)
 
 select_basic_cols(degree)
 ```
@@ -191,49 +192,44 @@ We usually filter to retain rows with sufficiency labeled "satisfied," indicatin
 
 Relevant functions:
 
-- `term_qual_focus()`
+- `filter_undergrad()`
 
 
 
-### term_qual_focus()
+### filter_undergrad()
 
 *Undergraduate terms* are those prior to (and including) the first degree term.
 
-`term_qual_focus()` evaluates whether a term is before or after a student's first degree. The principal data frame is any of the data tables having a term-value variable:
+`filter_undergrad()` distinguishes post-baccalaureate terms from undergraduate terms and retains the undergraduate terms. Here we filter the `term` table and count the rows before and after the operation. 
+
+```{r}
+nrow(term)
+x <- filter_undergrad(term, midf_table = degree)
+nrow(x)
+```
+
+The optional `add_bacc_term` argument adds the baccalaureate term to the data frame if you want verify the result; test for yourself that only terms predating the degree are retained. The results match those above. 
+
+```{r}
+y <- filter_undergrad(term, add_bacc_term = TRUE)
+y <- y[, .(mcid, term, bacc_term)][order(bacc_term)]
+y
+
+# Filter and compare to previous result
+y <- y[bacc_term >= term | is.na(bacc_term)]
+check_equiv_frames(x[, .(mcid, term)], y[, .(mcid, term)])
+```
+
+The principal data frame is any of the data tables having a term-value variable. In all cases, the term of the student's first degree is pulled from the `degree` table.
 
 ```{r}
 #| eval: false
-term <- term_qual_focus(term)
-course <- term_qual_focus(course)
-degree <- term_qual_focus(degree)
+term <- filter_undergrad(term)
+course <- filter_undergrad(course)
+degree <- filter_undergrad(degree)
 ```
 
-In all cases, the term of the student's first degree is pulled from the `degree` table. The input data frame is returned with the following variables added:
 
-```{r}
-#| echo: false
-x <- wrapr::build_frame(
-  "var", "val" |
-    "`bacc_term`", "term of a student's first baccalaureate or NA" |
-    "`term_focus`", "indicates whether a term is before or after a first degree"
-)
-added_variables_table(x)
-```
-
-For example, 
-
-```{r}
-term_qual_focus(term)
-```
-
-While we usually retain all columns, the results are easier to examine if we view a selection of columns,
-
-```{r}
-term <- term_qual_focus(term)
-term[order(-term_focus), .(mcid, term, bacc_term, term_focus)]
-```
-
-In all cases, we filter to retain terms with an "undergrad" focus, dropping the post-baccalaureate terms. 
 
 
 
@@ -336,7 +332,7 @@ You may have noticed similarities in several of the midfieldr functions. For exa
 
 - `timely_term(dframe, midf_table = term)`
 - `data_sufficiency(dframe, midf_table = term)`
-- `term_qual_focusuate(dframe, midf_table = degree)`
+- `filter_undergrad(dframe, midf_table = degree)`
 - `completion status(dframe, midf_table = degree)`
 
 the similarities include: 
@@ -346,7 +342,7 @@ the similarities include:
 - The result is a new data frame with columns added that support the main finding.
 - You can use the main finding to subset the result by rows.
  
-Moreover, because in each case the `midf_table` argument has a default value, it can be assigned explicitly or not. For example, the three formulations below all yield the same result as long as term data table in the computing environment is named `term.`
+Moreover, because in each case the `midf_table` argument has a default value, it can be assigned explicitly or not. For example, the three formulations below all yield the same result.
 
 ```{r}
 # setup

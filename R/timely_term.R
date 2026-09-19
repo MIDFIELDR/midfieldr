@@ -30,8 +30,8 @@
 #' @param sched_span Integer scalar (default 4), the number of years an
 #'        institution officially schedules for completing a program.
 #' @returns Data frame with the following properties:
-#' * `r preserv_class_not_grp_keys`
-#' * `r omit_NA_dup_rows`
+#' * `r keep_class_rm_groups_rm_keys`
+#' * `r keep_row_order_rm_NA_rm_duplic_rows`
 #' * `r add_new_cols` The new variables are:
 #'   - `entry_term` &nbsp; Character. Initial term of a student's longitudinal
 #'      record, encoded `YYYYT`. Extracted from `midf_table.`

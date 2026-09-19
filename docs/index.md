@@ -16,7 +16,7 @@ calculate quantitative metrics, and prepare results for dissemination.
   Helps in finding 6-digit program codes.\
 - [`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
   Conditions data for imputing starting majors of FYE students.
-- [`term_qual_focus()`](https://midfieldr.github.io/midfieldr/reference/term_qual_focus.md)
+- [`filter_undergrad()`](https://midfieldr.github.io/midfieldr/reference/filter_undergrad.md)
   Identifies undergraduate terms to include.
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   Conditions data for Cleveland multiway charts.\
@@ -99,26 +99,10 @@ term <- population[term, on = "mcid", nomatch = NULL]
 course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-# Categorize pre- and post-baccalaureate terms
-term <- term_qual_focus(term, midf_table = degree)
-course <- term_qual_focus(course, midf_table = degree)
-degree <- term_qual_focus(degree, midf_table = degree)
-# -- example summary
-term[, .N, by = "term_focus"]
-#>    term_focus     N
-#>        <char> <int>
-#> 1:  undergrad  1330
-#> 2:  post-bacc    17
-
 # Filter records to exclude post-baccalaureate terms
-term <- term[term_focus == "undergrad"]
-course <- course[term_focus == "undergrad"]
-degree <- degree[term_focus == "undergrad"]
-
-# Omit temporary columns to obtain baseline records
-term[, c("bacc_term", "term_focus") := NULL]
-course[, c("bacc_term", "term_focus") := NULL]
-degree[, c("bacc_term", "term_focus") := NULL]
+term <- filter_undergrad(term, midf_table = degree)
+course <- filter_undergrad(course, midf_table = degree)
+degree <- filter_undergrad(degree, midf_table = degree)
 
 # Obtain 6-digit CIP codes for Engineering (14), Psychology (42),
 # and Business (52)

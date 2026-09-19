@@ -1,7 +1,4 @@
 # R code used for documentation
-#
-#
-#
 
 param_dots <- "Not used for passing values; forces subsequent arguments to be
         referable only by name."
@@ -12,10 +9,10 @@ midfield_x <- function(x) {
   paste("`", x, "`", "data frame")
 }
 
-preserv_class_not_grp_keys <- "Data frame class is preserved. Groups and keys
+keep_class_rm_groups_rm_keys <- "Data frame class is preserved. Groups and keys
         are not preserved."
 
-omit_NA_dup_rows <- "Row order is preserved. Rows with `NA` values in any
+keep_row_order_rm_NA_rm_duplic_rows <- "Row order is preserved. Rows with `NA` values in any
         of the required variables are removed. Duplicated rows are removed."
 
 add_new_cols <- "New columns are added unless they are redundant (see Details)."

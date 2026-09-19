@@ -202,42 +202,11 @@ make_table(Ncompare, "Table 1(b). Number of observations")
 
 ### *Filter for undergraduate terms*
 
-We are interested in *undergraduate* records: academic terms before a student's  first degree. We use `term_qual_focus()` to categorize terms as "undergrad" for terms before the first degree or "post-bacc" (post-baccalaureate) for terms after the first degree.
+We are interested in *undergraduate* records: academic terms before a student's  first degree. We use `filter_undergrad()` to differentiate between post-baccalaureate terms and undergraduate terms and filter to retain only the latter. The reduced number of rows is shown in the table below. 
 
 ```{r}
-term <- term_qual_focus(term, midf_table = degree)
-degree <- term_qual_focus(degree, midf_table = degree)
-
-term[order(-term_focus), .(mcid, term, bacc_term, term_focus)]
-
-degree[order(-term_focus), .(mcid, term_degree, bacc_term, term_focus)]
-```
-
-*Summary check.* &nbsp; Summarize the numbers of students in each category.
-
-```{r}
-term[, .N, by = c("term_focus")][order(-N)]
-
-degree[, .N, by = c("term_focus")][order(-N)]
-```
-
-We keep the terms at the undergraduate level.  
-
-```{r}
-term <- term[term_focus == "undergrad"]
-degree <- degree[term_focus == "undergrad"]
-
-# drop temporary columns
-term[, c("bacc_term", "term_focus") := NULL]
-degree[, c("bacc_term", "term_focus") := NULL]
-```
-
-We copy the current data tables to reserve them as our "baseline" records. From this point forward, anytime we need a fresh copy of any of the data tables, we copy the `*_baseline` version. Anytime we need a starting population, we copy  `population.`
-
-```{r}
-student_baseline <- copy(student)
-term_baseline <- copy(term)
-degree_baseline <- copy(degree)
+term <- filter_undergrad(term, midf_table = degree)
+degree <- filter_undergrad(degree, midf_table = degree)
 ```
 
 ```{r}
@@ -250,6 +219,15 @@ Ncompare[, x := c(
 setnames(Ncompare, old = "x", new = "Undergrad filter")
 make_table(Ncompare, "Table 1(c). Number of observations")
 ```
+
+We copy the current data tables to reserve them as our "baseline" records. From this point forward, anytime we need a fresh copy of any of the data tables, we copy the `*_baseline` version. Anytime we need a starting population, we copy  `population.`
+
+```{r}
+student_baseline <- copy(student)
+term_baseline <- copy(term)
+degree_baseline <- copy(degree)
+```
+
 
 Review the baseline records. `look_at()` is a midfieldr convenience function that wraps `base::str()` using our preferred arguments. 
 
@@ -265,6 +243,8 @@ look_at(population)
 
 
 
+```{r}
+```
 
 
 

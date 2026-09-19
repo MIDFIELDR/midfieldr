@@ -219,66 +219,25 @@ quarto-disable-processing="false" quarto-bootstrap="false"}
 
 We are interested in *undergraduate* records: academic terms before a
 student’s first degree. We use
-[`term_qual_focus()`](https://midfieldr.github.io/midfieldr/reference/term_qual_focus.md)
-to categorize terms as “undergrad” for terms before the first degree or
-“post-bacc” (post-baccalaureate) for terms after the first degree.
+[`filter_undergrad()`](https://midfieldr.github.io/midfieldr/reference/filter_undergrad.md)
+to differentiate between post-baccalaureate terms and undergraduate
+terms and filter to retain only the latter. The reduced number of rows
+is shown in the table below.
 
 ``` r
 
-term <- term_qual_focus(term, midf_table = degree)
-degree <- term_qual_focus(degree, midf_table = degree)
-
-term[order(-term_focus), .(mcid, term, bacc_term, term_focus)]
-#>                   mcid   term bacc_term term_focus
-#>                 <char> <char>    <char>     <char>
-#>      1: MCID3111142689  19883     19913  undergrad
-#>      2: MCID3111142782  19883     19903  undergrad
-#>      3: MCID3111142782  19885     19903  undergrad
-#>     ---                                           
-#> 531417: MCID3112501004  20161     20133  post-bacc
-#> 531418: MCID3112595308  20161     20154  post-bacc
-#> 531419: MCID3112619703  20161     20154  post-bacc
-
-degree[order(-term_focus), .(mcid, term_degree, bacc_term, term_focus)]
-#>                  mcid term_degree bacc_term term_focus
-#>                <char>      <char>    <char>     <char>
-#>     1: MCID3111142689       19913     19913  undergrad
-#>     2: MCID3111142782       19903     19903  undergrad
-#>     3: MCID3111142881       19894     19894  undergrad
-#>    ---                                                
-#> 43901: MCID3112290406       20143     20111  post-bacc
-#> 43902: MCID3112347391       20133     20101  post-bacc
-#> 43903: MCID3112407729       20133     20123  post-bacc
+term <- filter_undergrad(term, midf_table = degree)
+degree <- filter_undergrad(degree, midf_table = degree)
 ```
 
-*Summary check.*   Summarize the numbers of students in each category.
+| Table   | Original tables | Population filter | Undergrad filter |
+|---------|-----------------|-------------------|------------------|
+| student | 97,555          | 76,875            | 76,875           |
+| term    | 639,915         | 531,419           | 525,446          |
+| degree  | 49,665          | 43,903            | 43,857           |
 
-``` r
-
-term[, .N, by = c("term_focus")][order(-N)]
-#>    term_focus      N
-#>        <char>  <int>
-#> 1:  undergrad 525446
-#> 2:  post-bacc   5973
-
-degree[, .N, by = c("term_focus")][order(-N)]
-#>    term_focus     N
-#>        <char> <int>
-#> 1:  undergrad 43857
-#> 2:  post-bacc    46
-```
-
-We keep the terms at the undergraduate level.
-
-``` r
-
-term <- term[term_focus == "undergrad"]
-degree <- degree[term_focus == "undergrad"]
-
-# drop temporary columns
-term[, c("bacc_term", "term_focus") := NULL]
-degree[, c("bacc_term", "term_focus") := NULL]
-```
+Table 1(c). Number of observations {.table .gt_table
+quarto-disable-processing="false" quarto-bootstrap="false"}
 
 We copy the current data tables to reserve them as our “baseline”
 records. From this point forward, anytime we need a fresh copy of any of
@@ -291,15 +250,6 @@ student_baseline <- copy(student)
 term_baseline <- copy(term)
 degree_baseline <- copy(degree)
 ```
-
-| Table   | Original tables | Population filter | Undergrad filter |
-|---------|-----------------|-------------------|------------------|
-| student | 97,555          | 76,875            | 76,875           |
-| term    | 639,915         | 531,419           | 525,446          |
-| degree  | 49,665          | 43,903            | 43,857           |
-
-Table 1(c). Number of observations {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
 
 Review the baseline records.
 [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md)

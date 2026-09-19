@@ -16,7 +16,7 @@ calculate quantitative metrics, and prepare results for dissemination.
   Helps in finding 6-digit program codes.\
 - [`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
   Conditions data for imputing starting majors of FYE students.
-- [`term_qual_focus()`](https://midfieldr.github.io/midfieldr/reference/term_qual_focus.md)
+- [`filter_undergrad()`](https://midfieldr.github.io/midfieldr/reference/filter_undergrad.md)
   Identifies undergraduate terms to include.
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   Conditions data for Cleveland multiway charts.\
@@ -99,26 +99,10 @@ term <- population[term, on = "mcid", nomatch = NULL]
 course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-# Categorize pre- and post-baccalaureate terms
-term <- term_qual_focus(term, midf_table = degree)
-course <- term_qual_focus(course, midf_table = degree)
-degree <- term_qual_focus(degree, midf_table = degree)
-# -- example summary
-term[, .N, by = "term_focus"]
-#>    term_focus     N
-#>        <char> <int>
-#> 1:  undergrad  1330
-#> 2:  post-bacc    17
-
 # Filter records to exclude post-baccalaureate terms
-term <- term[term_focus == "undergrad"]
-course <- course[term_focus == "undergrad"]
-degree <- degree[term_focus == "undergrad"]
-
-# Omit temporary columns to obtain baseline records
-term[, c("bacc_term", "term_focus") := NULL]
-course[, c("bacc_term", "term_focus") := NULL]
-degree[, c("bacc_term", "term_focus") := NULL]
+term <- filter_undergrad(term, midf_table = degree)
+course <- filter_undergrad(course, midf_table = degree)
+degree <- filter_undergrad(degree, midf_table = degree)
 
 # Obtain 6-digit CIP codes for Engineering (14), Psychology (42),
 # and Business (52)
@@ -234,6 +218,8 @@ Ohland, Matthew. 2023. *MIDFIELD, 2004–2023*.
   : Determine data sufficiency
 - [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
   : Choose rows of CIP data
+- [`filter_undergrad()`](https://midfieldr.github.io/midfieldr/reference/filter_undergrad.md)
+  : Choose rows of undergraduate terms only
 - [`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
   : Initialize FYE proxies for imputing missing data
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
@@ -242,8 +228,6 @@ Ohland, Matthew. 2023. *MIDFIELD, 2004–2023*.
   : Remove redundant columns
 - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
   : Choose columns of student records
-- [`term_qual_focus()`](https://midfieldr.github.io/midfieldr/reference/term_qual_focus.md)
-  : Categorize the qualification focus of a term
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
   : Determine timely completion terms
 
@@ -296,31 +280,6 @@ Ohland, Matthew. 2023. *MIDFIELD, 2004–2023*.
 
 - [Introduction to
   midfieldr](https://midfieldr.github.io/midfieldr/articles/art-000-getting-started.md):
-- [Notes on
-  syntax](https://midfieldr.github.io/midfieldr/articles/art-001-code-notes.md):
 - [Case
   study](https://midfieldr.github.io/midfieldr/articles/art-004-case-study.md):
-- [Planning a
-  workflow](https://midfieldr.github.io/midfieldr/articles/art-010-planning.md):
-- [Planning](https://midfieldr.github.io/midfieldr/articles/art-011-planning.md):
-- [Data
-  sufficiency](https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.md):
-- [Degree
-  seeking](https://midfieldr.github.io/midfieldr/articles/art-030-degree-seeking.md):
-- [Programs](https://midfieldr.github.io/midfieldr/articles/art-040-programs.md):
-- [Alternative
-  CIPs](https://midfieldr.github.io/midfieldr/articles/art-041-alternative-cip.md):
-- [Blocs](https://midfieldr.github.io/midfieldr/articles/art-050-blocs.md):
-- [FYE
-  proxies](https://midfieldr.github.io/midfieldr/articles/art-060-fye-proxies.md):
-- [Starters](https://midfieldr.github.io/midfieldr/articles/art-070-starters.md):
-- [Graduates](https://midfieldr.github.io/midfieldr/articles/art-080-graduates.md):
-- [Groupings](https://midfieldr.github.io/midfieldr/articles/art-090-groupings.md):
-- [Graduation
-  rate](https://midfieldr.github.io/midfieldr/articles/art-100-grad-rate.md):
-- [Stickiness](https://midfieldr.github.io/midfieldr/articles/art-110-stickiness.md):
-- [Multiway data and
-  charts](https://midfieldr.github.io/midfieldr/articles/art-120-multiway.md):
 - [midfieldr](https://midfieldr.github.io/midfieldr/articles/midfieldr.md):
-- [Try a QMD
-  script](https://midfieldr.github.io/midfieldr/articles/try_qmd.md):

@@ -15,7 +15,7 @@
 #'
 #' @param dframe `r dframe`
 #' @returns Data frame with the following properties:
-#' * `r preserv_class_not_grp_keys`
+#' * `r keep_class_rm_groups_rm_keys`
 #' * Rows are preserved.
 #' * Unique columns preserved. Redundant columns dropped.
 #' @example man/examples/exa_rm_redundant_cols.R

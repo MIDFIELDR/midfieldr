@@ -1,34 +1,35 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
-#' Categorize the qualification focus of a term
+#' Choose rows of undergraduate terms only
 #'
-#' Determine the qualification focus (undergraduate or post-baccalaureate) of every term for each student in a data frame and add columns to the data frame to support the finding.
-#'
-#' Every term in a student's record can be categorized as "undergraduate" if
-#' the term predates their first degree and "post-baccalaureate" if it postdates
-#' the degree. Post-baccalaureate terms are
-#' typically excluded from the `term, course,` and `degree` data tables.
+#' Distinguish post-baccalaureate terms from undergraduate terms for each
+#' student in a data frame and retain the undergraduate terms. Applied
+#' to a data table having an academic term variable, e.g., the `term, course,`
+#' and `degree` tables.
 #'
 #' `r redundant_cols("bacc_term")`
 #'
-#' @param dframe `r dframe` with required variables `{mcid}` and one of
-#'        `{term, term_course, term_degree}.`
+#' @param dframe `r dframe` with required variables `{mcid}` and one of the
+#'        following: `{term, term_course, term_degree}.`
 #' @param midf_table `r midfield_x("degree")` with required variables
 #'        `{mcid, term_degree}.`
+#' @param ... `r param_dots`
+#' @param add_bacc_term Logical, default false. If true, a column for the first
+#'        degree term is added and post-baccalaureate rows are not removed.
 #' @returns Data frame with the following properties:
-#' * `r preserv_class_not_grp_keys`
-#' * `r omit_NA_dup_rows`
-#' * `r add_new_cols` The new variables are:
+#' * `r keep_class_rm_groups_rm_keys`
+#' * Post-baccalaureate rows are removed (default) unless `add_bacc_term` is true.
+#'   In all cases, duplicated rows are removed.
+#' * Columns are not modified (default). When `add_bacc_term` true, one new
+#'   column is added unless it is redundant (see Details). The new variable is:
 #'   - `bacc_term` &nbsp;  Character. Term of a student's first
-#'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA`.
+#'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA.`
 #'      Joined from the `term_degree` variable in `midf_table.`
-#'   - `term_focus` &nbsp;  Character. Indicating a term contributes to study
-#'      before or after a student's first baccalaureate.
-#'      Possible values are "undergrad" and "post-bacc."
-#' @example man/examples/exa_term_qual_focus.R
+#'
+#' @example man/examples/exa_filter_undergrad.R
 #' @export
 #'
-term_qual_focus <- function(dframe, midf_table = degree) {
+filter_undergrad <- function(dframe, midf_table = degree, ..., add_bacc_term = NULL) {
   #
   # ---------- initial assertions
 
@@ -46,10 +47,11 @@ term_qual_focus <- function(dframe, midf_table = degree) {
   reqd_dframe_vars <- c("mcid", term_var)
   reqd_table_vars <- c("mcid", "term_degree")
 
+  add_bacc_term <- add_bacc_term %?% FALSE
+
   # bind names for R CMD check
   BACC_TERM <- NULL
   IDX <- NULL
-  TERM_FOCUS <- NULL
   TERM_VAR <- NULL
 
   # ---------- variable assertions
@@ -76,21 +78,19 @@ term_qual_focus <- function(dframe, midf_table = degree) {
 
   # ---------- prevent overwriting
 
-  added_vars <- c("bacc_term", "term_focus")
-  temp_vars <- c("idx")
-  proposed <- c(added_vars, temp_vars)
-
-  new_vars <- utils_edit_colnames(dframe, proposed)
+  temp_vars <- c("bacc_term", "idx")
+  new_vars <- utils_edit_colnames(dframe, temp_vars)
 
   q_bacc_term <- new_vars[1]
-  q_term_focus <- new_vars[2]
-  q_idx <- new_vars[3]
+  q_idx <- new_vars[2]
 
-  return_vars <- c(names(dframe), new_vars[1:2])
+  return_vars <- copy(colnames(dframe))
+  if (add_bacc_term) return_vars <- c(return_vars, q_bacc_term)
 
   # ---------- do the work
 
   # for restoring row order
+
   dframe[, IDX := as.double(.I), env = list(IDX = q_idx)]
 
   # edit name before join
@@ -104,19 +104,15 @@ term_qual_focus <- function(dframe, midf_table = degree) {
   # left-join to dframe, introduces NAs in bacc_term col
   dframe <- DT[dframe, on = "mcid"]
 
-  # assign term status labels
-  dframe[, TERM_FOCUS := fifelse(
-    TERM_VAR > BACC_TERM,
-    "post-bacc",
-    "undergrad",
-    na = "undergrad"
-  ),
-  env = list(
-    TERM_VAR = term_var,
-    TERM_FOCUS = q_term_focus,
-    BACC_TERM = q_bacc_term
-  )
-  ]
+  # filter to retain undergrad terms (default)
+  if (!isTRUE(add_bacc_term)) {
+    dframe <- dframe[is.na(BACC_TERM) | BACC_TERM >= TERM_VAR,
+      env = list(
+        TERM_VAR = term_var,
+        BACC_TERM = q_bacc_term
+      )
+    ]
+  }
 
   # ---------- prepare to return
 

@@ -31,34 +31,47 @@ t <- toy_term[mcid %chin% sel_ids, .(mcid, term)]
 d <- toy_degree[mcid %chin% sel_ids, .(mcid, term_degree)]
 
 # No error
-catch_error(term_qual_focus(t, d))
-#>               mcid   term bacc_term term_focus
-#>             <char> <char>    <char>     <char>
-#>  1: MCID3111213539  19891     19923  undergrad
-#>  2: MCID3111213539  19893     19923  undergrad
-#>  3: MCID3111213539  19901     19923  undergrad
-#> ---                                           
-#> 25: MCID3111254412  19921     19933  undergrad
-#> 26: MCID3111254412  19931     19933  undergrad
-#> 27: MCID3111254412  19933     19933  undergrad
+catch_error(filter_undergrad(t, d))
+#>               mcid   term
+#>             <char> <char>
+#>  1: MCID3111213539  19891
+#>  2: MCID3111213539  19893
+#>  3: MCID3111213539  19901
+#>  4: MCID3111213539  19903
+#>  5: MCID3111213539  19911
+#>  6: MCID3111213539  19913
+#>  7: MCID3111213539  19921
+#>  8: MCID3111213539  19923
+#>  9: MCID3111213856  19891
+#> 10: MCID3111213856  19893
+#> 11: MCID3111213856  19901
+#> 12: MCID3111213856  19903
+#> 13: MCID3111213856  19904
+#> 14: MCID3111246563  19901
+#> 15: MCID3111246563  19903
+#> 16: MCID3111254225  19901
+#> 17: MCID3111254225  19903
+#> 18: MCID3111254225  19911
+#> 19: MCID3111254225  19923
+#> 20: MCID3111254412  19901
+#> 21: MCID3111254412  19903
+#> 22: MCID3111254412  19911
+#> 23: MCID3111254412  19913
+#> 24: MCID3111254412  19921
+#> 25: MCID3111254412  19931
+#> 26: MCID3111254412  19933
+#>               mcid   term
+#>             <char> <char>
 
 # Error, no term variable 
-catch_error(term_qual_focus(s, d))
+catch_error(filter_undergrad(s, d))
 #> Error: Assertion on 'term_var' failed. Must be of length == 1, but has length 0. 
 
 # Error, missing dframe argument
-catch_error(term_qual_focus())
+catch_error(filter_undergrad())
 #> Error: argument "dframe" is missing, with no default 
 
 # Error, missing degree argumeny
-catch_error(term_qual_focus(t))
-#>               mcid   term bacc_term term_focus
-#>             <char> <char>    <char>     <char>
-#>  1: MCID3111213539  19891     19923  undergrad
-#>  2: MCID3111213539  19893     19923  undergrad
-#>  3: MCID3111213539  19901     19923  undergrad
-#> ---                                           
-#> 25: MCID3111254412  19921     19933  undergrad
-#> 26: MCID3111254412  19931     19933  undergrad
-#> 27: MCID3111254412  19933     19933  undergrad
+catch_error(filter_undergrad(t))
+#> Error: object 'degree' not found 
 ```

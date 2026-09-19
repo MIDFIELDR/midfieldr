@@ -22,8 +22,8 @@
 #' @param midf_table `r midfield_x("degree")` with required
 #'        variables `{mcid, term_degree}.`
 #' @returns Data frame with the following properties:
-#' * `r preserv_class_not_grp_keys`
-#' * `r omit_NA_dup_rows`
+#' * `r keep_class_rm_groups_rm_keys`
+#' * `r keep_row_order_rm_NA_rm_duplic_rows`
 #' * `r add_new_cols` The new variables are:
 #'   - `bacc_term` &nbsp;  Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA.`

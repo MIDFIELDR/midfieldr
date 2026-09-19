@@ -42,24 +42,6 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="articles/art-000-getting-started.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="articles/art-004-case-study.html">Case study</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/art-010-planning.html">Planning</a></li>
-    <li><a class="dropdown-item" href="articles/art-020-data-sufficiency.html">Data sufficiency</a></li>
-    <li><a class="dropdown-item" href="articles/art-030-degree-seeking.html">Degree seeking</a></li>
-    <li><a class="dropdown-item" href="articles/art-040-programs.html">Programs</a></li>
-    <li><a class="dropdown-item" href="articles/art-041-alternative-cip.html">Alternative CIPs</a></li>
-    <li><a class="dropdown-item" href="articles/art-050-blocs.html">Blocs</a></li>
-    <li><a class="dropdown-item" href="articles/art-060-fye-proxies.html">FYE proxies</a></li>
-    <li><a class="dropdown-item" href="articles/art-070-starters.html">Starters</a></li>
-    <li><a class="dropdown-item" href="articles/art-080-graduates.html">Graduates</a></li>
-    <li><a class="dropdown-item" href="articles/art-090-groupings.html">Groupings</a></li>
-    <li><a class="dropdown-item" href="articles/art-100-grad-rate.html">Graduation rate</a></li>
-    <li><a class="dropdown-item" href="articles/art-110-stickiness.html">Stickiness</a></li>
-    <li><a class="dropdown-item" href="articles/art-120-multiway.html">Multiway data and charts</a></li>
-  </ul>
-</li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">News</a></li>
       </ul>
@@ -98,7 +80,7 @@
 <li>
 <code><a href="reference/initialize_fye_proxies.html">initialize_fye_proxies()</a></code> Conditions data for imputing starting majors of FYE students.</li>
 <li>
-<code><a href="reference/term_qual_focus.html">term_qual_focus()</a></code> Identifies undergraduate terms to include.</li>
+<code><a href="reference/filter_undergrad.html">filter_undergrad()</a></code> Identifies undergraduate terms to include.</li>
 <li>
 <code><a href="reference/order_multiway.html">order_multiway()</a></code> Conditions data for Cleveland multiway charts.<br>
 </li>
@@ -179,26 +161,10 @@
 <span><span class="va">course</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">course</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">population</span><span class="op">[</span><span class="va">degree</span>, on <span class="op">=</span> <span class="st">"mcid"</span>, nomatch <span class="op">=</span> <span class="cn">NULL</span><span class="op">]</span></span>
 <span></span>
-<span><span class="co"># Categorize pre- and post-baccalaureate terms</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/term_qual_focus.html">term_qual_focus</a></span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/term_qual_focus.html">term_qual_focus</a></span><span class="op">(</span><span class="va">course</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/term_qual_focus.html">term_qual_focus</a></span><span class="op">(</span><span class="va">degree</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="co"># -- example summary</span></span>
-<span><span class="va">term</span><span class="op">[</span>, <span class="va">.N</span>, by <span class="op">=</span> <span class="st">"term_focus"</span><span class="op">]</span></span>
-<span><span class="co">#&gt;    term_focus     N</span></span>
-<span><span class="co">#&gt;        &lt;char&gt; &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1:  undergrad  1330</span></span>
-<span><span class="co">#&gt; 2:  post-bacc    17</span></span>
-<span></span>
 <span><span class="co"># Filter records to exclude post-baccalaureate terms</span></span>
-<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">term_focus</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span>
-<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="va">course</span><span class="op">[</span><span class="va">term_focus</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="va">degree</span><span class="op">[</span><span class="va">term_focus</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span>
-<span></span>
-<span><span class="co"># Omit temporary columns to obtain baseline records</span></span>
-<span><span class="va">term</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc_term"</span>, <span class="st">"term_focus"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">course</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc_term"</span>, <span class="st">"term_focus"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
-<span><span class="va">degree</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc_term"</span>, <span class="st">"term_focus"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span>
+<span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_undergrad.html">filter_undergrad</a></span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_undergrad.html">filter_undergrad</a></span><span class="op">(</span><span class="va">course</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/filter_undergrad.html">filter_undergrad</a></span><span class="op">(</span><span class="va">degree</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Obtain 6-digit CIP codes for Engineering (14), Psychology (42),</span></span>
 <span><span class="co"># and Business (52)</span></span>

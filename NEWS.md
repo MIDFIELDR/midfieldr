@@ -18,9 +18,10 @@
 
 New features
 
-- Functions that add columns no longer overwrite existing columns of the same names. New columns are added with name-suffixes .1, .2, etc., if needed. If the variable (less the name suffix) duplicates an existing column, it is dropped.  
-- New function `is_undergrad()` to identify rows of post-baccalaureate terms to exclude.
-- New function `select_unique_cols()` used primarily internally yo prevent overwriting existing columns and drop redundant columns. 
+- Functions that add columns no longer overwrite existing columns of the same names. New columns are added with name-suffixes .1, .2, etc., if needed. A new variable (less the name suffix) that duplicates an existing column is dropped.  
+- New function `rm_redundant_cols()` that helps with the above. 
+- New function `filter_undergrad()` to remove rows of post-baccalaureate terms.
+- New function `select_unique_cols()` used primarily internally to prevent overwriting existing columns and drop redundant columns. 
 - New utilities  `look_at()`, `catch_error()`, and `sort_uniq()` that wrap base R functions with our preferred arguments. 
 - Add data set `cip2010`, constructed from a recent download of the source file (`CIPCode2010.csv`) from NCES. Has the same data structure as the existing `cip` dataset, but with more rows. 
 - Renamed/revised functions and their arguments:

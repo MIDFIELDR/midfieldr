@@ -8,11 +8,15 @@ New features
 
 - Functions that add columns no longer overwrite existing columns of the
   same names. New columns are added with name-suffixes .1, .2, etc., if
-  needed. If the variable (less the name suffix) duplicates an existing
-  column, it is dropped.\
-- New function `is_undergrad()` to identify rows of post-baccalaureate
-  terms to exclude.
-- New function `select_unique_cols()` used primarily internally yo
+  needed. A new variable (less the name suffix) that duplicates an
+  existing column is dropped.\
+- New function
+  [`rm_redundant_cols()`](https://midfieldr.github.io/midfieldr/reference/rm_redundant_cols.md)
+  that helps with the above.
+- New function
+  [`filter_undergrad()`](https://midfieldr.github.io/midfieldr/reference/filter_undergrad.md)
+  to remove rows of post-baccalaureate terms.
+- New function `select_unique_cols()` used primarily internally to
   prevent overwriting existing columns and drop redundant columns.
 - New utilities
   [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md),

@@ -35,7 +35,8 @@ For this article we load all four midfielddata tables.
 
 ``` r
 
-data(student, term, course, degree)
+# data(student, term, course, degree)
+data(student, term, degree)
 ```
 
 [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
@@ -67,16 +68,7 @@ select_basic_cols(term)
 #> 639914: MCID3112898895  20181 302001 Institution B 01 First-year
 #> 639915: MCID3112898940  20181 050103 Institution B 01 First-year
 
-select_basic_cols(course)
-#>                    mcid term_course abbrev number
-#>                  <char>      <char> <char> <char>
-#>       1: MCID3111142225       19881   ECEN   2230
-#>       2: MCID3111142225       19881   ECEN   4811
-#>       3: MCID3111142225       19881   MCEN   4147
-#>      ---                                         
-#> 3289530: MCID3112898940       20181   JPNS   1010
-#> 3289531: MCID3112898940       20181   MATH   1150
-#> 3289532: MCID3112898940       20181   SOCY   1004
+# select_basic_cols(course)
 
 select_basic_cols(degree)
 #>                  mcid term_degree   cip6
@@ -261,88 +253,62 @@ the upper limit.
 
 Relevant functions:
 
-- [`term_qual_focus()`](https://midfieldr.github.io/midfieldr/reference/term_qual_focus.md)
+- [`filter_undergrad()`](https://midfieldr.github.io/midfieldr/reference/filter_undergrad.md)
 
-### term_qual_focus()
+### filter_undergrad()
 
 *Undergraduate terms* are those prior to (and including) the first
 degree term.
 
-[`term_qual_focus()`](https://midfieldr.github.io/midfieldr/reference/term_qual_focus.md)
-evaluates whether a term is before or after a student’s first degree.
+[`filter_undergrad()`](https://midfieldr.github.io/midfieldr/reference/filter_undergrad.md)
+distinguishes post-baccalaureate terms from undergraduate terms and
+retains the undergraduate terms. Here we filter the `term` table and
+count the rows before and after the operation.
+
+``` r
+
+nrow(term)
+#> [1] 639915
+x <- filter_undergrad(term, midf_table = degree)
+nrow(x)
+#> [1] 632917
+```
+
+The optional `add_bacc_term` argument adds the baccalaureate term to the
+data frame if you want verify the result; test for yourself that only
+terms predating the degree are retained. The results match those above.
+
+``` r
+
+y <- filter_undergrad(term, add_bacc_term = TRUE)
+y <- y[, .(mcid, term, bacc_term)][order(bacc_term)]
+y
+#>                   mcid   term bacc_term
+#>                 <char> <char>    <char>
+#>      1: MCID3111142225  19881     19881
+#>      2: MCID3111143056  19881     19881
+#>      3: MCID3111142729  19881     19883
+#>     ---                                
+#> 639913: MCID3112898894  20181      <NA>
+#> 639914: MCID3112898895  20181      <NA>
+#> 639915: MCID3112898940  20181      <NA>
+
+# Filter and compare to previous result
+y <- y[bacc_term >= term | is.na(bacc_term)]
+check_equiv_frames(x[, .(mcid, term)], y[, .(mcid, term)])
+#> [1] TRUE
+```
+
 The principal data frame is any of the data tables having a term-value
-variable:
+variable. In all cases, the term of the student’s first degree is pulled
+from the `degree` table.
 
 ``` r
 
-term <- term_qual_focus(term)
-course <- term_qual_focus(course)
-degree <- term_qual_focus(degree)
+term <- filter_undergrad(term)
+course <- filter_undergrad(course)
+degree <- filter_undergrad(degree)
 ```
-
-In all cases, the term of the student’s first degree is pulled from the
-`degree` table. The input data frame is returned with the following
-variables added:
-
-| variable     | description                                                |
-|--------------|------------------------------------------------------------|
-| `bacc_term`  | term of a student's first baccalaureate or NA              |
-| `term_focus` | indicates whether a term is before or after a first degree |
-
-For example,
-
-``` r
-
-term_qual_focus(term)
-#>                   mcid   term   cip6   institution         level
-#>                 <char> <char> <char>        <char>        <char>
-#>      1: MCID3111142225  19881 140901 Institution B 01 First-year
-#>      2: MCID3111142283  19881 240102 Institution J 01 First-year
-#>      3: MCID3111142283  19883 240102 Institution J 01 First-year
-#>     ---                                                         
-#> 639913: MCID3112898894  20181 451001 Institution B 01 First-year
-#> 639914: MCID3112898895  20181 302001 Institution B 01 First-year
-#> 639915: MCID3112898940  20181 050103 Institution B 01 First-year
-#>                   standing   coop hours_term hours_term_attempt hours_cumul
-#>                     <char> <char>      <num>              <num>       <num>
-#>      1:      Good Standing     No          7                  7           7
-#>      2: Academic Probation     No          6                  6           6
-#>      3: Academic Probation     No         12                 12          18
-#>     ---                                                                    
-#> 639913:      Good Standing     No         13                 13          13
-#> 639914:      Good Standing     No         18                 18          18
-#> 639915:      Good Standing     No         15                 15          15
-#>         hours_cumul_attempt gpa_term gpa_cumul bacc_term term_focus
-#>                       <num>    <num>     <num>    <char>     <char>
-#>      1:                   7     2.56      2.56     19881  undergrad
-#>      2:                   6     1.85      1.85      <NA>  undergrad
-#>      3:                  18     1.93      1.90      <NA>  undergrad
-#>     ---                                                            
-#> 639913:                  13     3.52      3.52      <NA>  undergrad
-#> 639914:                  18     3.50      3.50      <NA>  undergrad
-#> 639915:                  15     2.18      2.18      <NA>  undergrad
-```
-
-While we usually retain all columns, the results are easier to examine
-if we view a selection of columns,
-
-``` r
-
-term <- term_qual_focus(term)
-term[order(-term_focus), .(mcid, term, bacc_term, term_focus)]
-#>                   mcid   term bacc_term term_focus
-#>                 <char> <char>    <char>     <char>
-#>      1: MCID3111142225  19881     19881  undergrad
-#>      2: MCID3111142283  19881      <NA>  undergrad
-#>      3: MCID3111142283  19883      <NA>  undergrad
-#>     ---                                           
-#> 639913: MCID3112760306  20181     20174  post-bacc
-#> 639914: MCID3112768322  20181     20174  post-bacc
-#> 639915: MCID3112773810  20181     20174  post-bacc
-```
-
-In all cases, we filter to retain terms with an “undergrad” focus,
-dropping the post-baccalaureate terms.
 
 ## Blocs
 
@@ -541,7 +507,7 @@ For example, in these functions,
 
 - `timely_term(dframe, midf_table = term)`
 - `data_sufficiency(dframe, midf_table = term)`
-- `term_qual_focusuate(dframe, midf_table = degree)`
+- `filter_undergrad(dframe, midf_table = degree)`
 - `completion status(dframe, midf_table = degree)`
 
 the similarities include:
@@ -554,8 +520,7 @@ the similarities include:
 
 Moreover, because in each case the `midf_table` argument has a default
 value, it can be assigned explicitly or not. For example, the three
-formulations below all yield the same result as long as term data table
-in the computing environment is named `term.`
+formulations below all yield the same result.
 
 ``` r
 
