@@ -13,8 +13,9 @@ New features
 - New function
   [`rm_redundant_cols()`](https://midfieldr.github.io/midfieldr/reference/rm_redundant_cols.md)
   that helps with the above.
-- New function `filter_undergrad()` to remove rows of post-baccalaureate
-  terms.
+- New function
+  [`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
+  to distinguish undergraduate terms from post-baccalaureate terms.
 - New function `select_unique_cols()` used primarily internally to
   prevent overwriting existing columns and drop redundant columns.
 - New utilities
