@@ -2,8 +2,7 @@
 
 #' Determine completion status
 #'
-#' Determine the *completion status* for each student in a data frame and
-#' add columns that support the findings.
+#' `r completion_status_one_line` `r add_cols_support_finding`
 #'
 #' If a population has been filtered for data sufficiency, then determining
 #' every student's *completion status* is feasible. Completing an academic

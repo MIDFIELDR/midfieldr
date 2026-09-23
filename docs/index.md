@@ -9,19 +9,22 @@ These tools help you develop credible populations, subset records to
 calculate quantitative metrics, and prepare results for dissemination.
 
 - [`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
-  Identifies IDs to include for timely completion.
+  Identifies students completing a program in a timely manner.
 - [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
-  Identifies IDs to exclude due to insufficient data.
+  Identifies records to exclude due to insufficient data.
 - [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
   Helps in finding 6-digit program codes.
 - [`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
-  Conditions data for imputing starting majors of FYE students.
+  Conditions data for imputing starting majors of First-Year Engineering
+  (FYE) students.
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
-  Conditions data for Cleveland multiway charts.
+  Conditions multiway data for Cleveland multiway charts.
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
-  Determines the latest term for timely completion.
+  Determines the latest term by which program completion would be
+  considered timely.
 - [`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
-  Identifies undergraduate terms to include.
+  Distinguishes between undergraduate terms (to retain) and
+  post-baccalaureate terms (to exclude).
 
 ## Installation
 

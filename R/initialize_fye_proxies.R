@@ -2,11 +2,13 @@
 
 #' Initialize FYE proxies for imputing missing data
 #'
+#' `r initialize_fye_proxies_one_line` The result is suitably formatted for
+#' input to the R mice package for multiple imputation.
+#'
 #' Assembles a data frame of students ever enrolled in First-Year Engineering
 #' (FYE) programs. Where practicable, a 6-digit CIP code is added to the data
 #' frame as a proxy for the student's preferred engineering major. If
-#' indeterminate, the proxy is NA and treated as missing data. The result is
-#' suitably formatted for input to the R mice package for multiple imputation.
+#' indeterminate, the proxy is NA and treated as missing data.
 #'
 #' At some US institutions, engineering students are required to complete a First-Year Engineering (FYE) curriculum before they can be admitted to a degree-granting major such as Civil, Electrical, or Mechanical Engineering. This poses a problem when trying to count the number of students starting in one of these programs: the students don't start in Civil, Electrical, or Mechanical Engineering; they start in FYE.
 #'

@@ -51,13 +51,16 @@ values to be imputed.
 }
 }
 \description{
+Conditions data for imputing starting
+majors of First-Year Engineering (FYE) students. The result is suitably formatted for
+input to the R mice package for multiple imputation.
+}
+\details{
 Assembles a data frame of students ever enrolled in First-Year Engineering
 (FYE) programs. Where practicable, a 6-digit CIP code is added to the data
 frame as a proxy for the student's preferred engineering major. If
-indeterminate, the proxy is NA and treated as missing data. The result is
-suitably formatted for input to the R mice package for multiple imputation.
-}
-\details{
+indeterminate, the proxy is NA and treated as missing data.
+
 At some US institutions, engineering students are required to complete a First-Year Engineering (FYE) curriculum before they can be admitted to a degree-granting major such as Civil, Electrical, or Mechanical Engineering. This poses a problem when trying to count the number of students starting in one of these programs: the students don't start in Civil, Electrical, or Mechanical Engineering; they start in FYE.
 
 For some metrics---graduation rate for example---correctly identifying starters is imperative. The problem posed by FYE programs is that we don't know the engineering starting majors these students would have selected had FYE not been required. We address the problem by constructing an \emph{FYE proxy} variable.

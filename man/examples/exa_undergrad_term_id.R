@@ -14,7 +14,7 @@ x[order(-term_id)]
 y <- undergrad_term_id(x, midf_table = degree)
 check_equiv_frames(x, y)
 
-# Filter to retain "satisfied" rows only
+# Filter to retain "undergrad" rows only
 x[term_id == "undergrad"]
 
 # Function is applied to all tables containing a term-value

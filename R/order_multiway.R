@@ -2,9 +2,9 @@
 
 #' Order multiway categories
 #'
-#' Condition data for Cleveland multiway charts. Two independent categorical
-#' variables are converted to factors with their levels ordered by the
-#' single quantitative response variable.
+#' `r order_multiway_one_line` Two independent categorical variables are
+#' converted to factors with their levels ordered by the single quantitative
+#' response variable.
 #'
 #' Multiway data comprise a single quantitative value (or response) for
 #' every combination of levels of two categorical variables. The ordering of

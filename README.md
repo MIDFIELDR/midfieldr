@@ -19,15 +19,19 @@ longitudinal undergraduate records from the MIDFIELD database ([Ohland
 These tools help you develop credible populations, subset records to
 calculate quantitative metrics, and prepare results for dissemination.
 
-- `completion_status()` Identifies IDs to include for timely completion.
-- `data_sufficiency()` Identifies IDs to exclude due to insufficient
+- `completion_status()` Identifies students completing a program in a
+  timely manner.
+- `data_sufficiency()` Identifies records to exclude due to insufficient
   data.
 - `filter_programs()` Helps in finding 6-digit program codes.
 - `initialize_fye_proxies()` Conditions data for imputing starting
-  majors of FYE students.
-- `order_multiway()` Conditions data for Cleveland multiway charts.
-- `timely_term()` Determines the latest term for timely completion.
-- `undergrad_term_id()` Identifies undergraduate terms to include.
+  majors of First-Year Engineering (FYE) students.
+- `order_multiway()` Conditions multiway data for Cleveland multiway
+  charts.
+- `timely_term()` Determines the latest term by which program completion
+  would be considered timely.
+- `undergrad_term_id()` Distinguishes between undergraduate terms (to
+  retain) and post-baccalaureate terms (to exclude).
 
 ## Installation
 

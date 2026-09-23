@@ -154,6 +154,9 @@ Relevant functions:
 
 ### timely_term()
 
+*Determines the latest term by which program completion would be
+considered timely.*
+
 The *timely-completion term* is the latest term by which a student’s
 program completion would be considered timely (default 6 academic years
 after admission). *Program completion* means satisfying the requirements

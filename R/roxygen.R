@@ -28,6 +28,28 @@ redundant_cols <- function(x) {
 }
 
 
+
+
+# -------- Short descriptions that start the help pages.
+#          Text copies the one-liners in common-setup.Rmd used by Rmd files.
+
+add_cols_support_finding <- "Adds columns to the data frame that support the
+        finding."
+completion_status_one_line <- "Identifies students completing a program in a
+        timely manner."
+data_sufficiency_one_line <- "Identifies records to exclude due to
+        insufficient data."
+filter_programs_one_line <- "Helps in finding 6-digit program codes."
+initialize_fye_proxies_one_line <- "Conditions data for imputing starting
+        majors of First-Year Engineering (FYE) students."
+order_multiway_one_line <- "Conditions multiway data for Cleveland multiway
+        charts."
+timely_term_one_line <- "Determines the latest term by which program
+        completion would be considered timely."
+undergrad_term_id_one_line <- "Distinguishes between undergraduate terms
+        (to retain) and post-baccalaureate terms (to exclude)."
+
+
 # ---------- Variable names used in data.R
 
 var_abbrev <- '\\item{`abbrev`}{Character. Course alphabetical identifier,

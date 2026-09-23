@@ -43,8 +43,9 @@ would be considered timely. Encoded \code{YYYYT.}
 }
 }
 \description{
-Determine the \emph{timely completion term} for each student in a data frame
-and add columns that support the findings.
+Determines the latest term by which program
+completion would be considered timely. Adds columns to the data frame that support the
+finding.
 }
 \details{
 Completing an academic program in a "timely" manner means that a student

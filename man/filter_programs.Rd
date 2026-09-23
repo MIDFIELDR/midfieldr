@@ -30,8 +30,7 @@ are removed.
 }
 }
 \description{
-Subset a CIP data frame, retaining rows that match or partially match
-any string in a vector of character strings.
+Helps in finding 6-digit program codes. Subsets a CIP data frame, retaining rows that match or partially match any string in a vector of character strings.
 }
 \details{
 Each element of the \code{pattern} vector is matched row-wise to every

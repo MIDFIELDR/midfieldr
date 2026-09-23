@@ -2,8 +2,7 @@
 
 #' Identify undergraduate terms
 #'
-#' Distinguish post-baccalaureate terms from undergraduate terms for each
-#' student in a data frame and add columns that support the findings.
+#' `r undergrad_term_id_one_line` `r add_cols_support_finding`
 #'
 #' Typically used in refining student records to obtain a baseline for further
 #' analysis, thus the principal argument is the `term, course,` or `degree`

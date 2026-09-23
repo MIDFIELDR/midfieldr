@@ -1,7 +1,7 @@
 # Determine completion status
 
-Determine the *completion status* for each student in a data frame and
-add columns that support the findings.
+Identifies students completing a program in a timely manner. Adds
+columns to the data frame that support the finding.
 
 ## Usage
 
@@ -76,7 +76,15 @@ x
 #>  1: MCID3111169729
 #>  2: MCID3111170852
 #>  3: MCID3111173999
-#> ---               
+#>  4: MCID3111257807
+#>  5: MCID3111258275
+#>  6: MCID3111258347
+#>  7: MCID3111259642
+#>  8: MCID3111262210
+#>  9: MCID3111265287
+#> 10: MCID3111269576
+#> 11: MCID3111272691
+#> 12: MCID3111272880
 #> 13: MCID3111277081
 #> 14: MCID3112751130
 #> 15: MCID3112754537
@@ -90,7 +98,15 @@ x
 #>  1: MCID3111169729       19933
 #>  2: MCID3111170852       19933
 #>  3: MCID3111173999       19933
-#> ---                           
+#>  4: MCID3111257807       19953
+#>  5: MCID3111258275       19953
+#>  6: MCID3111258347       19953
+#>  7: MCID3111259642       19953
+#>  8: MCID3111262210       19953
+#>  9: MCID3111265287       19953
+#> 10: MCID3111269576       19953
+#> 11: MCID3111272691       19953
+#> 12: MCID3111272880       19953
 #> 13: MCID3111277081       19961
 #> 14: MCID3112751130       20203
 #> 15: MCID3112754537       20203
@@ -103,7 +119,15 @@ x
 #>  1: MCID3111169729       19933     19901     timely
 #>  2: MCID3111170852       19933      <NA>       <NA>
 #>  3: MCID3111173999       19933      <NA>       <NA>
-#> ---                                                
+#>  4: MCID3111257807       19953     19964       late
+#>  5: MCID3111258275       19953     19921     timely
+#>  6: MCID3111258347       19953     19923     timely
+#>  7: MCID3111259642       19953     19934     timely
+#>  8: MCID3111262210       19953     19951     timely
+#>  9: MCID3111265287       19953     19904     timely
+#> 10: MCID3111269576       19953     19943     timely
+#> 11: MCID3111272691       19953     19914     timely
+#> 12: MCID3111272880       19953     19934     timely
 #> 13: MCID3111277081       19961     19963       late
 #> 14: MCID3112751130       20203     20171     timely
 #> 15: MCID3112754537       20203      <NA>       <NA>
@@ -120,7 +144,10 @@ x[completion == "timely"]
 #>  1: MCID3111169729       19933     19901     timely
 #>  2: MCID3111258275       19953     19921     timely
 #>  3: MCID3111258347       19953     19923     timely
-#> ---                                                
+#>  4: MCID3111259642       19953     19934     timely
+#>  5: MCID3111262210       19953     19951     timely
+#>  6: MCID3111265287       19953     19904     timely
+#>  7: MCID3111269576       19953     19943     timely
 #>  8: MCID3111272691       19953     19914     timely
 #>  9: MCID3111272880       19953     19934     timely
 #> 10: MCID3112751130       20203     20171     timely

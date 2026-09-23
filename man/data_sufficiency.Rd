@@ -31,8 +31,9 @@ Possible values are "satisfied", "fail-lower," and "fail-upper."
 }
 }
 \description{
-Determine institutional \emph{data sufficiency} for each student in a data frame
-and add columns that support the findings.
+Identifies records to exclude due to
+insufficient data. Adds columns to the data frame that support the
+finding.
 }
 \details{
 In most studies, the population must satisfy the \emph{data sufficiency}

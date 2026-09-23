@@ -1,10 +1,7 @@
 # Initialize FYE proxies for imputing missing data
 
-Assembles a data frame of students ever enrolled in First-Year
-Engineering (FYE) programs. Where practicable, a 6-digit CIP code is
-added to the data frame as a proxy for the student's preferred
-engineering major. If indeterminate, the proxy is NA and treated as
-missing data. The result is suitably formatted for input to the R mice
+Conditions data for imputing starting majors of First-Year Engineering
+(FYE) students. The result is suitably formatted for input to the R mice
 package for multiple imputation.
 
 ## Usage
@@ -75,6 +72,12 @@ Data frame with the following properties:
 
 ## Details
 
+Assembles a data frame of students ever enrolled in First-Year
+Engineering (FYE) programs. Where practicable, a 6-digit CIP code is
+added to the data frame as a proxy for the student's preferred
+engineering major. If indeterminate, the proxy is NA and treated as
+missing data.
+
 At some US institutions, engineering students are required to complete a
 First-Year Engineering (FYE) curriculum before they can be admitted to a
 degree-granting major such as Civil, Electrical, or Mechanical
@@ -116,15 +119,16 @@ term <- select_basic_cols(toy_term[mcid %chin% IDs])
 # Obtain results
 proxy <- initialize_fye_proxies(student, term)
 proxy
-#>               mcid   institution     race    sex  proxy
-#>             <char>        <fctr>   <fctr> <fctr> <fctr>
-#>  1: MCID3111447797 Institution J    White   Male 141901
-#>  2: MCID3111566004 Institution J    Black Female   <NA>
-#>  3: MCID3111697452 Institution J    Asian   Male   <NA>
-#> ---                                                    
-#>  6: MCID3112319668 Institution J    Asian Female 140701
-#>  7: MCID3112320295 Institution J Hispanic   Male   <NA>
-#>  8: MCID3112328548 Institution J Hispanic Female 141001
+#>              mcid   institution          race    sex  proxy
+#>            <char>        <fctr>        <fctr> <fctr> <fctr>
+#> 1: MCID3111447797 Institution J         White   Male 141901
+#> 2: MCID3111566004 Institution J         Black Female   <NA>
+#> 3: MCID3111697452 Institution J         Asian   Male   <NA>
+#> 4: MCID3112214437 Institution J Other/Unknown   Male 140901
+#> 5: MCID3112268500 Institution J         White   Male   <NA>
+#> 6: MCID3112319668 Institution J         Asian Female 140701
+#> 7: MCID3112320295 Institution J      Hispanic   Male   <NA>
+#> 8: MCID3112328548 Institution J      Hispanic Female 141001
 
 # ---------- Examine details
 # Note: the CIP code and name for FYE is 140102 Pre-Engineering
@@ -205,15 +209,17 @@ f(IDs, 3)
 # FYE proxy is 141901 
 f(IDs, 4)
 #> Student 4 record
-#>               mcid   term   cip6               cip6name
-#>             <char> <char> <char>                 <char>
-#>  1: MCID3111447797  19941 140102        Pre-Engineering
-#>  2: MCID3111447797  19943 141901 Mechanical Engineering
-#>  3: MCID3111447797  19945 141901 Mechanical Engineering
-#> ---                                                    
-#>  7: MCID3111447797  19976 143501 Industrial Engineering
-#>  8: MCID3111447797  19981 143501 Industrial Engineering
-#>  9: MCID3111447797  19983 143501 Industrial Engineering
+#>              mcid   term   cip6               cip6name
+#>            <char> <char> <char>                 <char>
+#> 1: MCID3111447797  19941 140102        Pre-Engineering
+#> 2: MCID3111447797  19943 141901 Mechanical Engineering
+#> 3: MCID3111447797  19945 141901 Mechanical Engineering
+#> 4: MCID3111447797  19946 141901 Mechanical Engineering
+#> 5: MCID3111447797  19971 141901 Mechanical Engineering
+#> 6: MCID3111447797  19973 141901 Mechanical Engineering
+#> 7: MCID3111447797  19976 143501 Industrial Engineering
+#> 8: MCID3111447797  19981 143501 Industrial Engineering
+#> 9: MCID3111447797  19983 143501 Industrial Engineering
 #> 
 #> initialize_fye_proxies() results
 #>              mcid   institution   race    sex  proxy

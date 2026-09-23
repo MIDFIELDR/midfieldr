@@ -64,9 +64,10 @@ been calculated for each category independently.
 }
 }
 \description{
-Condition data for Cleveland multiway charts. Two independent categorical
-variables are converted to factors with their levels ordered by the
-single quantitative response variable.
+Conditions multiway data for Cleveland multiway
+charts. Two independent categorical variables are
+converted to factors with their levels ordered by the single quantitative
+response variable.
 }
 \details{
 Multiway data comprise a single quantitative value (or response) for

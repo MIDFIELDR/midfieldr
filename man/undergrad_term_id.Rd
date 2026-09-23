@@ -31,8 +31,9 @@ undergraduate terms. Possible values are "undergrad" and "post-bacc."
 }
 }
 \description{
-Distinguish post-baccalaureate terms from undergraduate terms for each
-student in a data frame and add columns that support the findings.
+Distinguishes between undergraduate terms
+(to retain) and post-baccalaureate terms (to exclude). Adds columns to the data frame that support the
+finding.
 }
 \details{
 Typically used in refining student records to obtain a baseline for further
@@ -63,7 +64,7 @@ x[order(-term_id)]
 y <- undergrad_term_id(x, midf_table = degree)
 check_equiv_frames(x, y)
 
-# Filter to retain "satisfied" rows only
+# Filter to retain "undergrad" rows only
 x[term_id == "undergrad"]
 
 # Function is applied to all tables containing a term-value

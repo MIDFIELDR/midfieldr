@@ -2,8 +2,7 @@
 
 #' Determine timely completion terms
 #'
-#' Determine the *timely completion term* for each student in a data frame
-#' and add columns that support the findings.
+#' `r timely_term_one_line` `r add_cols_support_finding`
 #'
 #' Completing an academic program in a "timely" manner means that a student
 #' completes the requirements for a degree within a set time span, typically

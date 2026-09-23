@@ -30,8 +30,9 @@ Joined from the \code{term_degree} variable in \code{midf_table.}
 }
 }
 \description{
-Determine the \emph{completion status} for each student in a data frame and
-add columns that support the findings.
+Identifies students completing a program in a
+timely manner. Adds columns to the data frame that support the
+finding.
 }
 \details{
 If a population has been filtered for data sufficiency, then determining

@@ -2,8 +2,7 @@
 
 #' Determine data sufficiency
 #'
-#' Determine institutional *data sufficiency* for each student in a data frame
-#' and add columns that support the findings.
+#' `r data_sufficiency_one_line` `r add_cols_support_finding`
 #'
 #' In most studies, the population must satisfy the *data sufficiency*
 #' criterion, developed as follows:

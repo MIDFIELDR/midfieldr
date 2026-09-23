@@ -2,8 +2,7 @@
 
 #' Choose rows of CIP data
 #'
-#' Subset a CIP data frame, retaining rows that match or partially match
-#' any string in a vector of character strings.
+#' `r filter_programs_one_line` Subsets a CIP data frame, retaining rows that match or partially match any string in a vector of character strings.
 #'
 #' Each element of the `pattern` vector is matched row-wise to every
 #' value in `dframe` using `grepl().` If `negate = FALSE` (default), a
