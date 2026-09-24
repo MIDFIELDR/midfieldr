@@ -230,107 +230,6 @@
 #'   }
 "toy_degree"
 
-# -------------------------------------------------------------------
-
-#' Case-study program labels and codes
-#'
-#' Data table of program CIP codes and labels of the four programs of the case
-#' study. Keyed by 6-digit CIPs. Provided for the convenience of vignette users.
-#'
-#' Starting with the midfieldr `cip` data set, we extracted the CIPs of the four
-#' programs of the case study and assigned them a custom label to be used for
-#' grouping and summarizing.
-#'
-#' @usage study_programs
-#' @family case-study-data
-#'
-#' @format `data.table` with 15 rows and 2 columns. The variables are:
-#' \describe{
-#'  `r var_cip6`
-#'  \item{`program`}{Character, abbreviated labels for four engineering
-#'  programs. Values are "CE" (Civil Engineering), "EE" (Electrical
-#'  Engineering), "ISE" (Industrial/Systems Engineering), and  "ME" (Mechanical
-#'  Engineering).}
-#' }
-"study_programs"
-
-# -------------------------------------------------------------------
-
-#' Case-study observations
-#'
-#' Data table of post-processed observations of students ever enrolled in, and
-#' students graduating from, the four programs of the case study. Keyed by
-#' student ID. Provided for the convenience of vignette users.
-#'
-#' Starting with the case-study starting pool of students ever enrolled in the
-#' four programs of the study (Civil, Electrical, Industrial/Systems, and
-#' Mechanical Engineering), we filtered the data for data sufficiency, degree
-#' seeking, program, and timely completion.
-#'
-#' A data frame of "ever enrolled" and a data frame of "timely graduates" were
-#' bound using shared column names and are distinguished in the `bloc` variable.
-#' This data structure facilitates grouping and summarizing by race, sex,
-#' program, and group.
-#'
-#' @usage study_observations
-#' @family case-study-data
-#'
-#' @format `data.table` with 8919 rows and 5 columns.
-#' The variables are:
-#' \describe{
-#'  `r var_mcid`
-#'  `r var_race`
-#'  `r var_sex`
-#'  `r var_program`
-#'  `r var_bloc`
-#' }
-"study_observations"
-
-# -------------------------------------------------------------------
-
-#' Case-study results
-#'
-#' Data table of longitudinal stickiness for the four programs of the case study
-#' (Civil, Electrical, Industrial/Systems, and Mechanical Engineering) grouped
-#' by program, race/ethnicity, and sex. Provided for the convenience of vignette
-#' users.
-#'
-#' Longitudinal stickiness is the ratio of the number of students graduating
-#' from a program to the number of students ever enrolled in the program over
-#' the time span of available data. Results are based on data that have been
-#' filtered for data sufficiency, degree seeking, and timely completion.
-#'
-#' @usage study_results
-#' @family case-study-data
-#'
-#' @format `data.table` with 50 rows and 6 columns:
-#' \describe{
-#'  `r var_program`
-#'  `r var_sex`
-#'  `r var_race`
-#'  `r var_ever_enrolled`
-#'  `r var_graduates`
-#'  `r var_stickiness`
-#' }
-"study_results"
-
-# -------------------------------------------------------------------
-
-#' Baseline ID bloc to start a typical analysis
-#'
-#' Data frame of IDs after processing the practice data for data sufficiency and
-#' degree seeking. Provides a convenient bloc to start many of the analysis
-#' illustrated in the package articles.
-#'
-#' @usage baseline_mcid
-#' @family case-study-data
-#'
-#' @format `data.table` with 76875 rows and 1 column:
-#' \describe{
-#'   `r var_mcid`
-#' }
-"baseline_mcid"
-
 
 # -------------------------------------------------------------------
 
@@ -375,6 +274,22 @@
 #' }
 "act_sat_scale"
 
+# -------------------------------------------------------------------
+
+#' Baseline population to start a typical analysis
+#'
+#' Data frame of IDs after processing the practice data for data sufficiency and
+#' degree seeking. Provides a convenient bloc to start many of the analysis
+#' illustrated in the package articles.
+#'
+#' @usage population_baseline
+#' @family case-study-data
+#'
+#' @format `data.table` with 76875 rows and 1 column:
+#' \describe{
+#'   `r var_mcid`
+#' }
+"population_baseline"
 
 # -------------------------------------------------------------------
 

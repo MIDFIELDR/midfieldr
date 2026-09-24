@@ -1,5 +1,6 @@
 # Data sufficiency
 
+
 The requirement that an institution’s data range brackets a student’s
 entry term and timely completion term for the student to be included in
 a research population.
@@ -36,20 +37,16 @@ students admitted in different terms with representative time spans
 shown for timely completion. In this scenario, we assume institution
 data is available from 1986 to 1996.
 
-\
+<br>
 
-![Figure 1: Upper limit data sufficiency.](figures/art-020-fig01-1.png)
+<img src="figures/art-020-fig01-1.png" style="width:100.0%"
+alt="Figure 1: Upper limit data sufficiency." />
 
-Figure 1: Upper limit data sufficiency.
-
-- Student A:
-
-  Student A enters in Fall 1988 with a timely completion (TC) term of
-  Spring 1994. In both of the following cases, the data sufficiency
-  criteria are satisfied and the students are included in the research
-  population.
-
-&nbsp;
+Student A  
+Student A enters in Fall 1988 with a timely completion (TC) term of
+Spring 1994. In both of the following cases, the data sufficiency
+criteria are satisfied and the students are included in the research
+population.
 
 - A-1: First time in college (FTIC), so we know their first term is
   their entry term (i.e., they are not a continuing student) and we can
@@ -61,14 +58,9 @@ Figure 1: Upper limit data sufficiency.
   term with respect to their “level” at entry, that is, entering as a
   first-year student, second-year student, etc.
 
-&nbsp;
-
-- Student B:
-
-  Student B enters in Fall 1993 with a TC term of Spring 1998, two years
-  beyond the range of the data. We have several possible cases,
-
-&nbsp;
+Student B  
+Student B enters in Fall 1993 with a TC term of Spring 1998, two years
+beyond the range of the data. We have several possible cases,
 
 - B-1: On or before the data limit, the student completes their program
   (documented timely completion)
@@ -95,24 +87,19 @@ data range (also non-summer). When these two terms are identical, the
 student is excluded from the research population. We illustrate with the
 three scenarios described below.
 
-\
+<br>
 
-![Figure 2: Lower limit data sufficiency.](figures/art-020-fig02-1.png)
+<img src="figures/art-020-fig02-1.png" style="width:100.0%"
+alt="Figure 2: Lower limit data sufficiency." />
 
-Figure 2: Lower limit data sufficiency.
+Student A  
+Like Student A in Figure 1, they enter the dataset in a term following
+the data lower limit and are included in the research population.
 
-- Student A:
-
-  Like Student A in Figure 1, they enter the dataset in a term following
-  the data lower limit and are included in the research population.
-
-- Student C:
-
-  Student C enters the institution before the lower limit of the data
-  range (a “continuing” student) or they enter the institution at the
-  lower limit precisely.
-
-&nbsp;
+Student C  
+Student C enters the institution before the lower limit of the data
+range (a “continuing” student) or they enter the institution at the
+lower limit precisely.
 
 - C-1: If student C is continuing, regardless of status (FTIC or
   transfer), making an estimate of their TC term invariably leads to
@@ -127,14 +114,9 @@ Figure 2: Lower limit data sufficiency.
   distinguish them from continuing students. Having to exclude C-1
   inherently excludes C-2 as well.
 
-&nbsp;
-
-- Student D:
-
-  Student D enters the institution at the same time as continuing
-  student C but leaves the database before the data lower limit term.
-
-&nbsp;
+Student D  
+Student D enters the institution at the same time as continuing student
+C but leaves the database before the data lower limit term.
 
 - D-1: Student D did not timely-complete their program. In this case, if
   we include student C our count of *non-completers* is low (D-1 cases
@@ -154,7 +136,6 @@ We examine the records of specific students in the practice data and
 interpret the results.
 
 ``` r
-
 # packages
 library("midfieldr")
 library("midfielddata")
@@ -171,7 +152,6 @@ DT <- student[, .(mcid)]
 considered timely.*
 
 ``` r
-
 timely_term(dframe,  # requires mcid
   midf_table = term, # requires mcid, term, level
   span,              # default 6
@@ -183,7 +163,6 @@ In the examples, we use the default span of 6 years based on 150% of the
 default scheduled span of 4 years.
 
 ``` r
-
 DT <- timely_term(DT, term)
 DT[order(-adj_span)]
 #>                  mcid entry_term    entry_level adj_span timely_term
@@ -200,7 +179,6 @@ DT[order(-adj_span)]
 #### *Example 1*
 
 ``` r
-
 DT[mcid == "MCID3111142225"]
 #>              mcid entry_term   entry_level adj_span timely_term
 #>            <char>     <char>        <char>    <num>      <char>
@@ -218,7 +196,6 @@ Spring 1990, 91, 92, 93, 94, yielding a timely completion term of Spring
 #### *Example 2*
 
 ``` r
-
 DT[mcid == "MCID3111860641"]
 #>              mcid entry_term   entry_level adj_span timely_term
 #>            <char>     <char>        <char>    <num>      <char>
@@ -239,7 +216,6 @@ Fall 02 as the first year, the three subsequent years end in Fall 2003,
 *Identifies records to exclude due to insufficient data.*
 
 ``` r
-
 data_sufficiency(dframe, # requires mcid, entry_term, timely_term
   midf_table = term      # requires mcid, term, institution
 ) 
@@ -249,7 +225,6 @@ We select the required columns in the input to reduce clutter in the
 output.
 
 ``` r
-
 # setup
 DT <- DT[, .(mcid, entry_term, timely_term)]
 
@@ -272,7 +247,6 @@ DT[order(sufficiency)]
 Exemplifies “Student A” in Figure 1 or Figure 2.
 
 ``` r
-
 DT[mcid == "MCID3112785480"]
 #>              mcid entry_term timely_term  data_range sufficiency
 #>            <char>     <char>      <char>      <char>      <char>
@@ -291,7 +265,6 @@ term.
 Exemplifies “Student B” in Figure 1.
 
 ``` r
-
 DT[mcid == "MCID3111170322"]
 #>              mcid entry_term timely_term  data_range sufficiency
 #>            <char>     <char>      <char>      <char>      <char>
@@ -309,7 +282,6 @@ range. Timely completion term is after the upper limit.
 Exemplifies “Student C” in Figure 2.
 
 ``` r
-
 DT[mcid == "MCID3112056754"]
 #>              mcid entry_term timely_term  data_range sufficiency
 #>            <char>     <char>      <char>      <char>      <char>
@@ -323,3 +295,7 @@ Spring 1993; institution data range of Fall 1988 through Summer 2009
 range. Entry term and lower limit are identical.
 
 ## References
+
+<div id="refs">
+
+</div>

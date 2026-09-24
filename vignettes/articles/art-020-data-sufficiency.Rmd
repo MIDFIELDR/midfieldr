@@ -309,10 +309,7 @@ The balance of these two effects is unknowable. Since student D cannot possibly 
 
 ## Application
 
-We examine the records of specific students in the practice data and interpret the results. Relevant functions:
-
-- `timely_term()` `r timely_term_one_line`
-- `data_sufficiency()` `r data_sufficiency_one_line`
+We examine the records of specific students in the practice data and interpret the results.
 
 ```{r}
 # packages
@@ -325,17 +322,19 @@ data(student, term)
 DT <- student[, .(mcid)]
 ```
 
+
+
 ### `timely_term()`
 
-Usage:
+*`r timely_term_one_line`*
 
 ```{r}
 #| eval: false
-timely_term(dframe, # requires mcid
+timely_term(dframe,  # requires mcid
   midf_table = term, # requires mcid, term, level
-  span, # default 6
-  sched_span
-) # default 4
+  span,              # default 6
+  sched_span         # default 4
+) 
 ```
 
 In the examples, we use the default span of 6 years based on 150% of the default scheduled span of 4 years.
@@ -345,7 +344,9 @@ DT <- timely_term(DT, term)
 DT[order(-adj_span)]
 ```
 
-***Example 1.***
+
+
+#### *Example 1*
 
 ```{r}
 DT[mcid == "MCID3111142225"]
@@ -356,7 +357,9 @@ DT[mcid == "MCID3111142225"]
 
 *Output values:* Adjusted span is the default 6 years. Counting Fall 88 through Spring 89 as the first year, the five subsequent years end in Spring 1990, 91, 92, 93, 94, yielding a timely completion term of Spring 1994 (encoded `19933`).
 
-***Example 2.*** 
+
+
+#### *Example 2*
 
 ```{r}
 DT[mcid == "MCID3111860641"]
@@ -368,16 +371,15 @@ DT[mcid == "MCID3111860641"]
 
 
 
-
 ### `data_sufficiency()`
 
-Usage:
+*`r data_sufficiency_one_line`*
 
 ```{r}
 #| eval: false
 data_sufficiency(dframe, # requires mcid, entry_term, timely_term
-  midf_table = term
-) # requires mcid, term, institution
+  midf_table = term      # requires mcid, term, institution
+) 
 ```
 
 We select the required columns in the input to reduce clutter in the output. 
@@ -391,7 +393,11 @@ DT <- data_sufficiency(DT, term)
 DT[order(sufficiency)]
 ```
 
-***Example 3.***  Exemplifies "Student A" in Figure 1 or Figure 2. 
+
+
+#### *Example 3*  
+
+Exemplifies "Student A" in Figure 1 or Figure 2. 
 
 ```{r}
 DT[mcid == "MCID3112785480"]
@@ -401,7 +407,11 @@ DT[mcid == "MCID3112785480"]
 
 *Output values:* Data sufficiency is satisfied. Data range lower limit is before the entry term; upper limit is after the timely completion term. 
 
-***Example 4.***  Exemplifies "Student B" in Figure 1. 
+
+
+#### *Example 4*  
+
+Exemplifies "Student B" in Figure 1. 
 
 ```{r}
 DT[mcid == "MCID3111170322"]
@@ -411,7 +421,11 @@ DT[mcid == "MCID3111170322"]
 
 *Output values:* Data sufficiency fails at the upper limit of the data range. Timely completion term is after the upper limit. 
 
-***Example 5.***  Exemplifies "Student C" in Figure 2. 
+
+
+#### *Example 5*  
+
+Exemplifies "Student C" in Figure 2. 
 
 ```{r}
 DT[mcid == "MCID3112056754"]

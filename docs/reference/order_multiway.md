@@ -116,159 +116,105 @@ Cleveland WS (1993). *Visualizing Data*. Hobart Press, Summit, NJ.
 
 ``` r
 # Reconfigure built-in data set
-DT <- study_results[program == "EE" | program == "ME"]
-DT <- DT[race %chin% c("Asian", "Black", "Hispanic", "White")]
-DT[, people := paste(race, sex)]
-#>     program    sex     race ever_enrolled graduates stickiness          people
-#>      <char> <char>   <char>         <int>     <int>      <num>          <char>
-#>  1:      EE Female    Asian            21        12       57.1    Asian Female
-#>  2:      EE Female    Black             6         3       50.0    Black Female
-#>  3:      EE Female Hispanic             8         3       37.5 Hispanic Female
-#>  4:      EE Female    White           118        56       47.5    White Female
-#>  5:      EE   Male    Asian           123        71       57.7      Asian Male
-#>  6:      EE   Male    Black            29        17       58.6      Black Male
-#>  7:      EE   Male Hispanic            45        17       37.8   Hispanic Male
-#>  8:      EE   Male    White           864       439       50.8      White Male
-#>  9:      ME Female    Asian             7         1       14.3    Asian Female
-#> 10:      ME Female    Black             3         2       66.7    Black Female
-#> 11:      ME Female Hispanic            12         8       66.7 Hispanic Female
-#> 12:      ME Female    White           213       134       62.9    White Female
-#> 13:      ME   Male    Asian            76        49       64.5      Asian Male
-#> 14:      ME   Male    Black            30        19       63.3      Black Male
-#> 15:      ME   Male Hispanic            79        42       53.2   Hispanic Male
-#> 16:      ME   Male    White          1596       955       59.8      White Male
-DT[, c("race", "sex") := NULL]
-#>     program ever_enrolled graduates stickiness          people
-#>      <char>         <int>     <int>      <num>          <char>
-#>  1:      EE            21        12       57.1    Asian Female
-#>  2:      EE             6         3       50.0    Black Female
-#>  3:      EE             8         3       37.5 Hispanic Female
-#>  4:      EE           118        56       47.5    White Female
-#>  5:      EE           123        71       57.7      Asian Male
-#>  6:      EE            29        17       58.6      Black Male
-#>  7:      EE            45        17       37.8   Hispanic Male
-#>  8:      EE           864       439       50.8      White Male
-#>  9:      ME             7         1       14.3    Asian Female
-#> 10:      ME             3         2       66.7    Black Female
-#> 11:      ME            12         8       66.7 Hispanic Female
-#> 12:      ME           213       134       62.9    White Female
-#> 13:      ME            76        49       64.5      Asian Male
-#> 14:      ME            30        19       63.3      Black Male
-#> 15:      ME            79        42       53.2   Hispanic Male
-#> 16:      ME          1596       955       59.8      White Male
-data.table::setnames(DT, 
-                     old = c("program", "graduates", "ever_enrolled", "stickiness"), 
-                     new = c("prgm", "grad", "ever", "stk"))
-data.table::setcolorder(DT, c("prgm", "people", "grad", "ever", "stk"))
-DT[]
-#>       prgm          people  grad  ever   stk
-#>     <char>          <char> <int> <int> <num>
-#>  1:     EE    Asian Female    12    21  57.1
-#>  2:     EE    Black Female     3     6  50.0
-#>  3:     EE Hispanic Female     3     8  37.5
-#>  4:     EE    White Female    56   118  47.5
-#>  5:     EE      Asian Male    71   123  57.7
-#>  6:     EE      Black Male    17    29  58.6
-#>  7:     EE   Hispanic Male    17    45  37.8
-#>  8:     EE      White Male   439   864  50.8
-#>  9:     ME    Asian Female     1     7  14.3
-#> 10:     ME    Black Female     2     3  66.7
-#> 11:     ME Hispanic Female     8    12  66.7
-#> 12:     ME    White Female   134   213  62.9
-#> 13:     ME      Asian Male    49    76  64.5
-#> 14:     ME      Black Male    19    30  63.3
-#> 15:     ME   Hispanic Male    42    79  53.2
-#> 16:     ME      White Male   955  1596  59.8
+DT <- case_results[grepl("^Elec|^Mech", program)]
+DT <- DT[grepl("^Asian|^Black|^Hispanic|^White", people)]
+DT
+#>        program          people  ever  grad stick
+#>         <char>          <char> <num> <num> <num>
+#>  1: Electrical    Asian Female    21    12  57.1
+#>  2: Electrical      Asian Male   122    71  58.2
+#>  3: Electrical    Black Female     6     3  50.0
+#>  4: Electrical      Black Male    29    17  58.6
+#>  5: Electrical Hispanic Female     8     3  37.5
+#>  6: Electrical   Hispanic Male    44    17  38.6
+#>  7: Electrical    White Female   117    56  47.9
+#>  8: Electrical      White Male   848   439  51.8
+#>  9: Mechanical      Asian Male    77    49  63.6
+#> 10: Mechanical    Black Female     3     2  66.7
+#> 11: Mechanical      Black Male    29    19  65.5
+#> 12: Mechanical Hispanic Female    12     8  66.7
+#> 13: Mechanical   Hispanic Male    78    42  53.8
+#> 14: Mechanical    White Female   213   134  62.9
+#> 15: Mechanical      White Male  1587   952  60.0
 
-# Factor levels ordered by median
+# Order factor levels by median
 DT1 <- data.table::copy(DT)
 DT1 <- DT1[, c("ever", "grad") := NULL]
 mw1 <- order_multiway(DT1, 
-                      quantity = "stk", 
-                      categories = c("prgm", "people"))
-data.table::setorderv(mw1, c("prgm_median", "people_median"))
+                      quantity = "stick", 
+                      categories = c("program", "people"))
+data.table::setorderv(mw1, c("program_median", "people_median"))
 mw1
-#>       prgm          people   stk prgm_median people_median
-#>     <fctr>          <fctr> <num>       <num>         <num>
-#>  1:     EE    Asian Female  57.1        50.4         35.70
-#>  2:     EE   Hispanic Male  37.8        50.4         45.50
-#>  3:     EE Hispanic Female  37.5        50.4         52.10
-#>  4:     EE    White Female  47.5        50.4         55.20
-#>  5:     EE      White Male  50.8        50.4         55.30
-#>  6:     EE    Black Female  50.0        50.4         58.35
-#>  7:     EE      Black Male  58.6        50.4         60.95
-#>  8:     EE      Asian Male  57.7        50.4         61.10
-#>  9:     ME    Asian Female  14.3        63.1         35.70
-#> 10:     ME   Hispanic Male  53.2        63.1         45.50
-#> 11:     ME Hispanic Female  66.7        63.1         52.10
-#> 12:     ME    White Female  62.9        63.1         55.20
-#> 13:     ME      White Male  59.8        63.1         55.30
-#> 14:     ME    Black Female  66.7        63.1         58.35
-#> 15:     ME      Black Male  63.3        63.1         60.95
-#> 16:     ME      Asian Male  64.5        63.1         61.10
+#>        program          people stick program_median people_median
+#>         <fctr>          <fctr> <num>          <num>         <num>
+#>  1: Electrical   Hispanic Male  38.6           50.9         46.20
+#>  2: Electrical Hispanic Female  37.5           50.9         52.10
+#>  3: Electrical    White Female  47.9           50.9         55.40
+#>  4: Electrical      White Male  51.8           50.9         55.90
+#>  5: Electrical    Asian Female  57.1           50.9         57.10
+#>  6: Electrical    Black Female  50.0           50.9         58.35
+#>  7: Electrical      Asian Male  58.2           50.9         60.90
+#>  8: Electrical      Black Male  58.6           50.9         62.05
+#>  9: Mechanical   Hispanic Male  53.8           63.6         46.20
+#> 10: Mechanical Hispanic Female  66.7           63.6         52.10
+#> 11: Mechanical    White Female  62.9           63.6         55.40
+#> 12: Mechanical      White Male  60.0           63.6         55.90
+#> 13: Mechanical    Black Female  66.7           63.6         58.35
+#> 14: Mechanical      Asian Male  63.6           63.6         60.90
+#> 15: Mechanical      Black Male  65.5           63.6         62.05
 
 # Levels in increasing order
-levels(mw1$prgm)
-#> [1] "EE" "ME"
+levels(mw1$program)
+#> [1] "Electrical" "Mechanical"
 levels(mw1$people)
-#> [1] "Asian Female"    "Hispanic Male"   "Hispanic Female" "White Female"   
-#> [5] "White Male"      "Black Female"    "Black Male"      "Asian Male"     
+#> [1] "Hispanic Male"   "Hispanic Female" "White Female"    "White Male"     
+#> [5] "Asian Female"    "Black Female"    "Asian Male"      "Black Male"     
 
-# No change if added columns duplicate existing
+# No change if added columns are redundant
 mw1a <- order_multiway(mw1, 
-                       quantity = "stk", 
-                       categories = c("prgm", "people"))
+                       quantity = "stick", 
+                       categories = c("program", "people"))
 check_equiv_frames(mw1, mw1a)
 #> [1] TRUE
 
-# Ordering using percent method
+# Retain the `ratio_of` variables and order by percentage
 mw2 <- order_multiway(DT, 
-                      quantity = "stk", 
-                      categories = c("prgm", "people"), 
+                      quantity = "stick", 
+                      categories = c("program", "people"), 
                       method = "percent", 
                       ratio_of = c("grad", "ever"))
-data.table::setorderv(mw2, c("prgm_metric", "people_metric"))
-
-# The two ratio_of variables `ever` and `grad` are retained
+data.table::setorderv(mw2, c("program_metric", "people_metric"))
 mw2
-#>       prgm          people  grad  ever   stk prgm_metric people_metric
-#>     <fctr>          <fctr> <num> <num> <num>       <num>         <num>
-#>  1:     EE    Asian Female    12    21  57.1        50.9          46.4
-#>  2:     EE   Hispanic Male    17    45  37.8        50.9          47.6
-#>  3:     EE Hispanic Female     3     8  37.5        50.9          55.0
-#>  4:     EE    Black Female     3     6  50.0        50.9          55.6
-#>  5:     EE      White Male   439   864  50.8        50.9          56.7
-#>  6:     EE    White Female    56   118  47.5        50.9          57.4
-#>  7:     EE      Asian Male    71   123  57.7        50.9          60.3
-#>  8:     EE      Black Male    17    29  58.6        50.9          61.0
-#>  9:     ME    Asian Female     1     7  14.3        60.0          46.4
-#> 10:     ME   Hispanic Male    42    79  53.2        60.0          47.6
-#> 11:     ME Hispanic Female     8    12  66.7        60.0          55.0
-#> 12:     ME    Black Female     2     3  66.7        60.0          55.6
-#> 13:     ME      White Male   955  1596  59.8        60.0          56.7
-#> 14:     ME    White Female   134   213  62.9        60.0          57.4
-#> 15:     ME      Asian Male    49    76  64.5        60.0          60.3
-#> 16:     ME      Black Male    19    30  63.3        60.0          61.0
-
-# Levels in same increasing order as shown above
-levels(mw2$prgm)
-#> [1] "EE" "ME"
-levels(mw2$people)
-#> [1] "Asian Female"    "Hispanic Male"   "Hispanic Female" "Black Female"   
-#> [5] "White Male"      "White Female"    "Asian Male"      "Black Male"     
+#>        program          people  ever  grad stick program_metric people_metric
+#>         <fctr>          <fctr> <num> <num> <num>          <num>         <num>
+#>  1: Electrical   Hispanic Male    44    17  38.6           51.7          48.4
+#>  2: Electrical Hispanic Female     8     3  37.5           51.7          55.0
+#>  3: Electrical    Black Female     6     3  50.0           51.7          55.6
+#>  4: Electrical    Asian Female    21    12  57.1           51.7          57.1
+#>  5: Electrical      White Male   848   439  51.8           51.7          57.1
+#>  6: Electrical    White Female   117    56  47.9           51.7          57.6
+#>  7: Electrical      Asian Male   122    71  58.2           51.7          60.3
+#>  8: Electrical      Black Male    29    17  58.6           51.7          62.1
+#>  9: Mechanical   Hispanic Male    78    42  53.8           60.3          48.4
+#> 10: Mechanical Hispanic Female    12     8  66.7           60.3          55.0
+#> 11: Mechanical    Black Female     3     2  66.7           60.3          55.6
+#> 12: Mechanical      White Male  1587   952  60.0           60.3          57.1
+#> 13: Mechanical    White Female   213   134  62.9           60.3          57.6
+#> 14: Mechanical      Asian Male    77    49  63.6           60.3          60.3
+#> 15: Mechanical      Black Male    29    19  65.5           60.3          62.1
 
 # Order of factor levels depends on the method. Here, for example, 
 # program levels are the same for median and percent methods, 
-all.equal(levels(mw1$prgm), levels(mw2$prgm))
+all.equal(levels(mw1$program), levels(mw2$program))
 #> [1] TRUE
 
 # but people levels do not have the same order. 
 all.equal(levels(mw1$people), levels(mw2$people))
 #> [1] "4 string mismatches"
 levels(mw1$people)
-#> [1] "Asian Female"    "Hispanic Male"   "Hispanic Female" "White Female"   
-#> [5] "White Male"      "Black Female"    "Black Male"      "Asian Male"     
+#> [1] "Hispanic Male"   "Hispanic Female" "White Female"    "White Male"     
+#> [5] "Asian Female"    "Black Female"    "Asian Male"      "Black Male"     
 levels(mw2$people)
-#> [1] "Asian Female"    "Hispanic Male"   "Hispanic Female" "Black Female"   
+#> [1] "Hispanic Male"   "Hispanic Female" "Black Female"    "Asian Female"   
 #> [5] "White Male"      "White Female"    "Asian Male"      "Black Male"     
 ```

@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9041</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9042</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,8 +43,6 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/art-020-data-sufficiency.html">Data sufficiency</a></li>
-    <li><a class="dropdown-item" href="../articles/art-040-programs.html">Programs</a></li>
-    <li><a class="dropdown-item" href="../articles/art-041-alternative-cip.html">Alternative CIPs</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -235,15 +233,7 @@ cannot possibly be included, Student C must also be excluded.</p>
 <h2 id="application">Application<a class="anchor" aria-label="anchor" href="#application"></a>
 </h2>
 <p>We examine the records of specific students in the practice data and
-interpret the results. Relevant functions:</p>
-<ul>
-<li>
-<code><a href="../reference/timely_term.html">timely_term()</a></code> Determines the latest term by which
-program completion would be considered timely.</li>
-<li>
-<code><a href="../reference/data_sufficiency.html">data_sufficiency()</a></code> Identifies records to exclude due to
-insufficient data.</li>
-</ul>
+interpret the results.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfieldr/">"midfieldr"</a></span><span class="op">)</span></span>
@@ -257,13 +247,14 @@ insufficient data.</li>
 <h3 id="timely_term">
 <code>timely_term()</code><a class="anchor" aria-label="anchor" href="#timely_term"></a>
 </h3>
-<p>Usage:</p>
+<p><em>Determines the latest term by which program completion would be
+considered timely.</em></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">dframe</span>, <span class="co"># requires mcid</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">dframe</span>,  <span class="co"># requires mcid</span></span>
 <span>  midf_table <span class="op">=</span> <span class="va">term</span>, <span class="co"># requires mcid, term, level</span></span>
-<span>  <span class="va">span</span>, <span class="co"># default 6</span></span>
-<span>  <span class="va">sched_span</span></span>
-<span><span class="op">)</span> <span class="co"># default 4</span></span></code></pre></div>
+<span>  <span class="va">span</span>,              <span class="co"># default 6</span></span>
+<span>  <span class="va">sched_span</span>         <span class="co"># default 4</span></span>
+<span><span class="op">)</span> </span></code></pre></div>
 <p>In the examples, we use the default span of 6 years based on 150% of
 the default scheduled span of 4 years.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -278,7 +269,10 @@ the default scheduled span of 4 years.</p>
 <span><span class="co">#&gt; 97553: MCID3111858641      20013  03 Third-year        4       20051</span></span>
 <span><span class="co">#&gt; 97554: MCID3111860641      20013  03 Third-year        4       20051</span></span>
 <span><span class="co">#&gt; 97555: MCID3111602161      19991 04 Fourth-year        3       20013</span></span></code></pre></div>
-<p><strong><em>Example 1.</em></strong></p>
+<div class="section level4">
+<h4 id="example-1">
+<em>Example 1</em><a class="anchor" aria-label="anchor" href="#example-1"></a>
+</h4>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3111142225"</span><span class="op">]</span></span>
 <span><span class="co">#&gt;              mcid entry_term   entry_level adj_span timely_term</span></span>
@@ -291,7 +285,11 @@ the default scheduled span of 4 years.</p>
 Counting Fall 88 through Spring 89 as the first year, the five
 subsequent years end in Spring 1990, 91, 92, 93, 94, yielding a timely
 completion term of Spring 1994 (encoded <code>19933</code>).</p>
-<p><strong><em>Example 2.</em></strong></p>
+</div>
+<div class="section level4">
+<h4 id="example-2">
+<em>Example 2</em><a class="anchor" aria-label="anchor" href="#example-2"></a>
+</h4>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3111860641"</span><span class="op">]</span></span>
 <span><span class="co">#&gt;              mcid entry_term   entry_level adj_span timely_term</span></span>
@@ -306,15 +304,16 @@ through Fall 02 as the first year, the three subsequent years end in
 Fall 2003, 04, and 05, yielding a timely completion term of Fall 2005
 (encoded <code>20051</code>).</p>
 </div>
+</div>
 <div class="section level3">
 <h3 id="data_sufficiency">
 <code>data_sufficiency()</code><a class="anchor" aria-label="anchor" href="#data_sufficiency"></a>
 </h3>
-<p>Usage:</p>
+<p><em>Identifies records to exclude due to insufficient data.</em></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/data_sufficiency.html">data_sufficiency</a></span><span class="op">(</span><span class="va">dframe</span>, <span class="co"># requires mcid, entry_term, timely_term</span></span>
-<span>  midf_table <span class="op">=</span> <span class="va">term</span></span>
-<span><span class="op">)</span> <span class="co"># requires mcid, term, institution</span></span></code></pre></div>
+<span>  midf_table <span class="op">=</span> <span class="va">term</span>      <span class="co"># requires mcid, term, institution</span></span>
+<span><span class="op">)</span> </span></code></pre></div>
 <p>We select the required columns in the input to reduce clutter in the
 output.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -333,8 +332,11 @@ output.</p>
 <span><span class="co">#&gt; 97553: MCID3112785480      20071       20123 19901-20154   satisfied</span></span>
 <span><span class="co">#&gt; 97554: MCID3112800920      20101       20153 19881-20181   satisfied</span></span>
 <span><span class="co">#&gt; 97555: MCID3112870009      19951       20003 19881-20181   satisfied</span></span></code></pre></div>
-<p><strong><em>Example 3.</em></strong> Exemplifies “Student A” in
-Figure 1 or Figure 2.</p>
+<div class="section level4">
+<h4 id="example-3">
+<em>Example 3</em><a class="anchor" aria-label="anchor" href="#example-3"></a>
+</h4>
+<p>Exemplifies “Student A” in Figure 1 or Figure 2.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3112785480"</span><span class="op">]</span></span>
 <span><span class="co">#&gt;              mcid entry_term timely_term  data_range sufficiency</span></span>
@@ -346,8 +348,12 @@ term of Spring 2013; institution data range of Fall 1990 through Summer
 <p><em>Output values:</em> Data sufficiency is satisfied. Data range
 lower limit is before the entry term; upper limit is after the timely
 completion term.</p>
-<p><strong><em>Example 4.</em></strong> Exemplifies “Student B” in
-Figure 1.</p>
+</div>
+<div class="section level4">
+<h4 id="example-4">
+<em>Example 4</em><a class="anchor" aria-label="anchor" href="#example-4"></a>
+</h4>
+<p>Exemplifies “Student B” in Figure 1.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3111170322"</span><span class="op">]</span></span>
 <span><span class="co">#&gt;              mcid entry_term timely_term  data_range sufficiency</span></span>
@@ -358,8 +364,12 @@ term of Fall 2019; institution data range of Fall 1988 through Fall
 2018.</p>
 <p><em>Output values:</em> Data sufficiency fails at the upper limit of
 the data range. Timely completion term is after the upper limit.</p>
-<p><strong><em>Example 5.</em></strong> Exemplifies “Student C” in
-Figure 2.</p>
+</div>
+<div class="section level4">
+<h4 id="example-5">
+<em>Example 5</em><a class="anchor" aria-label="anchor" href="#example-5"></a>
+</h4>
+<p>Exemplifies “Student C” in Figure 2.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3112056754"</span><span class="op">]</span></span>
 <span><span class="co">#&gt;              mcid entry_term timely_term  data_range sufficiency</span></span>
@@ -370,6 +380,7 @@ term of Spring 1993; institution data range of Fall 1988 through Summer
 2009</p>
 <p><em>Output values:</em> Data sufficiency fails at the lower limit of
 the data range. Entry term and lower limit are identical.</p>
+</div>
 </div>
 </div>
 <div class="section level2">

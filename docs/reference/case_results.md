@@ -48,7 +48,4 @@ undergraduate terms, and timely completion.
 ## See also
 
 Other case-study-data:
-[`baseline_mcid`](https://midfieldr.github.io/midfieldr/reference/baseline_mcid.md),
-[`study_observations`](https://midfieldr.github.io/midfieldr/reference/study_observations.md),
-[`study_programs`](https://midfieldr.github.io/midfieldr/reference/study_programs.md),
-[`study_results`](https://midfieldr.github.io/midfieldr/reference/study_results.md)
+[`population_baseline`](https://midfieldr.github.io/midfieldr/reference/population_baseline.md)

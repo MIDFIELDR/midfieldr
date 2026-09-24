@@ -45,8 +45,6 @@
 
 ## Prepared data
 
-- [`baseline_mcid`](https://midfieldr.github.io/midfieldr/reference/baseline_mcid.md)
-  : Baseline ID bloc to start a typical analysis
 - [`cip`](https://midfieldr.github.io/midfieldr/reference/cip.md) :
   Table of academic programs
 - [`cip2010`](https://midfieldr.github.io/midfieldr/reference/cip2010.md)
@@ -57,12 +55,8 @@
   : Grade scale
 - [`act_sat_scale`](https://midfieldr.github.io/midfieldr/reference/act_sat_scale.md)
   : ACT-SAT conversion scale
-- [`study_observations`](https://midfieldr.github.io/midfieldr/reference/study_observations.md)
-  : Case-study observations
-- [`study_programs`](https://midfieldr.github.io/midfieldr/reference/study_programs.md)
-  : Case-study program labels and codes
-- [`study_results`](https://midfieldr.github.io/midfieldr/reference/study_results.md)
-  : Case-study results
+- [`population_baseline`](https://midfieldr.github.io/midfieldr/reference/population_baseline.md)
+  : Baseline population to start a typical analysis
 - [`case_results`](https://midfieldr.github.io/midfieldr/reference/case_results.md)
   : Case-study results
 

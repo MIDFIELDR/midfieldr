@@ -37,10 +37,7 @@ timely completion.
 }
 \seealso{
 Other case-study-data:
-\code{\link{baseline_mcid}},
-\code{\link{study_observations}},
-\code{\link{study_programs}},
-\code{\link{study_results}}
+\code{\link{population_baseline}}
 }
 \concept{case-study-data}
 \keyword{datasets}
