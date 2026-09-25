@@ -147,20 +147,15 @@ cip
 
 ## Population
 
-Relevant functions:
-
-- [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
-- [`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
-
 ### timely_term()
 
-*Determines the latest term by which program completion would be
-considered timely.*
+Determines the latest term by which program completion would be
+considered timely.
 
-The *timely-completion term* is the latest term by which a student’s
-program completion would be considered timely (default 6 academic years
-after admission). *Program completion* means satisfying the requirements
-for a degree.
+*Program completion* means satisfying the requirements for a degree.
+Completion is *timely* if accomplished no later than a specified span
+after admission (default 6 years). The academic term at the end of that
+span is the *timely completion term.*
 
 [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
 determines the timely completion term for each student. The principal
@@ -215,6 +210,8 @@ timely_term(DT, span = 8)[order(-adj_span)]
 ```
 
 ### data_sufficiency()
+
+Identifies records to exclude due to insufficient data.
 
 *Data sufficiency* is a necessary condition for including a student in a
 population if a metric depends on program completion. To meet the
@@ -276,19 +273,17 @@ DT
 
 ## Records
 
-Relevant functions:
-
-- [`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
-
 ### undergrad_term_id()
 
+Distinguishes between undergraduate and post-baccalaureate terms.
+
 [`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
-distinguishes undergraduate terms—those leading up a student’s first
-degree—from post-baccalaureate terms. The principal data frame must
-include the variable `{mcid}` and a term-valued variable, one of
-`{term, term_course, term_degree}.` The first degree term is pulled from
-the `degree` table. The data frame is returned with the following
-variables added:
+distinguishes undergraduate terms (those leading up a student’s first
+degree)- from post-baccalaureate terms (after a first degree). The
+principal data frame must include the variable `{mcid}` and a
+term-valued variable, one of `{term, term_course, term_degree}.` The
+first degree term is pulled from the `degree` table. The data frame is
+returned with the following variables added:
 
 | variable | description |
 |----|----|
@@ -371,14 +366,9 @@ traditional or non-traditional students, as well as program-based
 groupings such as students starting in, ever-enrolling in, migrating
 into or out of, or graduating from a program.
 
-Relevant functions:
-
-- [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
-- [`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
-
 ### filter_programs()
 
-Contributes to assembling a bloc of programs.
+Helps in finding 6-digit program codes.
 
 *Programs* are academic fields of study—specialties within a field or a
 collection of fields within a Department, College, or University—encoded
@@ -508,14 +498,14 @@ all the 6-digit codes we needed into one data frame.
 
 ### completion_status()
 
-Contributes to assembling a bloc of graduates.
+Identifies students completing a program in a timely manner.
 
 *Completion status* is “timely” for students graduating no later than
 their timely-completion term; “late” or “NA” otherwise. Only records
 satisfying data sufficiency can be processed for completion status.
 
 [`completion_status()`](https://midfieldr.github.io/midfieldr/reference/completion_status.md)
-yields a status label for each student. The principal data frame must
+assigns a status label to each student. The principal data frame must
 include the variables `{mcid, timely_term}.` The first degree term is
 pulled from the `degree` table. The data frame is returned with the
 following variables added:
@@ -609,14 +599,10 @@ check_equiv_frames(x, z)
 
 ## Special conditioning
 
-Relevant functions:
-
-- [`initialize_fye_proxies()`](https://midfieldr.github.io/midfieldr/reference/initialize_fye_proxies.md)
-- [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
-
 ### initialize_fye_proxies()
 
-Contributes to assembling a bloc of starters.
+Conditions data for imputing starting majors of First-Year Engineering
+(FYE) students.
 
 At some U.S. institutions, completing a *First-Year Engineering (FYE)*
 program is a prerequisite for admission to specific engineering majors.
@@ -658,7 +644,7 @@ imputed CIP codes. If FYE programs are involved in your study,
 
 ### order_multiway()
 
-Conditions data for Cleveland multiway charts.
+Conditions multiway data for Cleveland multiway charts.
 
 *Multiway data* comprise two independent categorical variables and one
 quantitative variable with a value for each combination of levels of the
@@ -730,8 +716,7 @@ charts](https://midfieldr.github.io/midfieldr/articles/art-120-multiway.md).
 
 ## Utilities
 
-See the relevant help page for more information,
-e.g. [`?catch_error`](https://midfieldr.github.io/midfieldr/reference/catch_error.md).
+See the relevant help page for more information.
 
 - [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md)
   wraps base [`tryCatch()`](https://rdrr.io/r/base/conditions.html) for
@@ -742,10 +727,10 @@ e.g. [`?catch_error`](https://midfieldr.github.io/midfieldr/reference/catch_err
   for data frames, wraps base
   [`str()`](https://rdrr.io/r/utils/str.html) with preset arguments.
 - [`rm_redundant_cols()`](https://midfieldr.github.io/midfieldr/reference/rm_redundant_cols.md)
-  primarily used internally to drop duplicate columns.
+  primarily used internally to drop redundant columns.
 - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
   subsets a MIDFIELD data table to retain the variables required by one
-  or more midfieldr functions.
+  or more midfieldr functions
 - [`sort_uniq()`](https://midfieldr.github.io/midfieldr/reference/sort_uniq.md)
   for vectors, wraps base `sort(unique())` with preset arguments.
 

@@ -107,20 +107,15 @@ The US Classification of Instructional Programs (CIP) is a taxonomy of fields of
 cip
 ```
 
+
+
 ## Population
-
-Relevant functions:
-
-- `timely_term()`
-- `data_sufficiency()`
-
-
 
 ### timely_term()
 
-*`r timely_term_one_line`*
+`r timely_term_one_line`
 
-The *timely-completion term* is the latest term by which a student's program completion would be considered timely (default 6 academic years after admission). *Program completion* means satisfying the requirements for a degree. 
+*Program completion* means satisfying the requirements for a degree. Completion is *timely* if accomplished no later than a specified span after admission (default 6 years). The academic term at the end of that span is the *timely completion term.* 
 
 `timely_term()` determines the timely completion term for each student. The principal data frame must include the variable `{mcid}.` Entry term and level are pulled from the `term` table. The data frame is returned with the following variables added:
 
@@ -158,6 +153,8 @@ timely_term(DT, span = 8)[order(-adj_span)]
 
 ### data_sufficiency()
 
+`r data_sufficiency_one_line`
+
 *Data sufficiency* is a necessary condition for including a student in a population if a metric depends on program completion. To meet the condition, an institution's data range must bracket a student's entry and timely completion terms, i.e., the entry term is at least one term later than the lower limit of the data range and the timely completion term is no later than the upper limit.
 
 `data_sufficiency()` evaluates whether the condition is met for each student. The principal data frame must include the variables `{mcid, entry_term, timely_term}.`  Institutions' data ranges are pulled from the `term` table. The data frame is returned with the following variables added:
@@ -194,18 +191,13 @@ DT
 
 
 
-
 ## Records
-
-Relevant functions:
-
-- `undergrad_term_id()`
-
-
 
 ### undergrad_term_id()
 
-`undergrad_term_id()` distinguishes undergraduate terms---those leading up a student's first degree---from post-baccalaureate terms. The principal data frame must include the variable `{mcid}` and a term-valued variable, one of `{term, term_course, term_degree}.`  The first degree term is pulled from the `degree` table. The data frame is returned with the following variables added:
+`r undergrad_term_id_one_line`
+
+`undergrad_term_id()` distinguishes undergraduate terms  (those leading up a student's first degree)- from post-baccalaureate terms (after a first degree). The principal data frame must include the variable `{mcid}` and a term-valued variable, one of `{term, term_course, term_degree}.`  The first degree term is pulled from the `degree` table. The data frame is returned with the following variables added:
 
 ```{r}
 #| echo: false
@@ -245,21 +237,15 @@ term[, c("bacc_term", "term_id") := NULL]
 
 
 
-
 ## Blocs
 
 A *bloc* is a grouping of student-level data dealt with as a unit, for example, administrative groupings such as transfer students and  traditional or non-traditional students, as well as program-based groupings such as students starting in, ever-enrolling in, migrating into or out of, or graduating from a program.
-
-Relevant functions:
-
-- `filter_programs()`
-- `completion_status()`
 
 
 
 ### filter_programs()
 
-Contributes to assembling a bloc of programs.
+`r filter_programs_one_line`
 
 *Programs* are academic fields of study---specialties within a field or a collection of fields within a Department, College, or University---encoded in the `cip` dataset. 
 
@@ -304,11 +290,11 @@ options(
 
 ### completion_status()
 
-Contributes to assembling a bloc of graduates.
+`r completion_status_one_line` 
 
  *Completion status* is "timely" for students graduating no later than their timely-completion term; "late" or "NA" otherwise. Only records satisfying data sufficiency can be processed for completion status.
 
-`completion_status()` yields a status label for each student. The principal data frame must include the variables `{mcid, timely_term}.` The first degree term is pulled from the `degree` table. The data frame is returned with the following variables added:
+`completion_status()` assigns a status label to each student. The principal data frame must include the variables `{mcid, timely_term}.` The first degree term is pulled from the `degree` table. The data frame is returned with the following variables added:
 
 ```{r}
 #| echo: false
@@ -344,7 +330,6 @@ DT
 
 
 
-
 ## Commonalities
 
 You may have noticed similarities in several of the midfieldr functions. For example, in these functions,  
@@ -353,7 +338,6 @@ You may have noticed similarities in several of the midfieldr functions. For exa
 - `data_sufficiency(dframe, midf_table = term)`
 - `undergrad_term_id(dframe, midf_table = degree)`
 - `completion status(dframe, midf_table = degree)`
-
 
 the similarities include: 
 
@@ -380,20 +364,13 @@ check_equiv_frames(x, z)
 
 
 
-
-
 ## Special conditioning
-
-Relevant functions:
-
-- `initialize_fye_proxies()`
-- `order_multiway()`
 
 
 
 ### initialize_fye_proxies()
 
-Contributes to assembling a bloc of starters.
+`r initialize_fye_proxies_one_line` 
 
 ```{r}
 #| echo: false
@@ -417,16 +394,9 @@ The NAs are ultimately treated as missing data that are replaced by imputed CIP 
 - [Starters](art-070-starters.html) describes how FYE proxies are incorporated in a starter bloc.
 
 
-
-
-
-
-
-
-
 ### order_multiway()
 
-Conditions data for Cleveland multiway charts.
+`r order_multiway_one_line`
 
 *Multiway data* comprise two independent categorical variables and one quantitative variable with a value for each combination of levels of the two categories.
 
@@ -455,17 +425,15 @@ Complete information on using `order_multiway()` and constructing multiway chart
 
 
 
-
-
 ## Utilities
 
-See the relevant help page for more information, e.g. `?catch_error`. 
+See the relevant help page for more information. 
 
 - `catch_error()` wraps base `tryCatch()` for errors with preset arguments.
 - `check_equiv_frames()` re-exported from the wrapr package.
 - `look_at()` for data frames, wraps base `str()` with preset arguments.
-- `rm_redundant_cols()` primarily used internally to drop duplicate columns.
-- `select_basic_cols()` subsets a MIDFIELD data table to retain the variables required by one or more midfieldr functions.
+- `rm_redundant_cols()` primarily used internally to drop redundant columns.
+- `select_basic_cols()` subsets a MIDFIELD data table to retain the variables required by one or more midfieldr functions
 - `sort_uniq()` for vectors, wraps base `sort(unique())` with preset arguments.
 
 

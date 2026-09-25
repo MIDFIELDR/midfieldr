@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9041</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9043</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,8 +43,6 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/art-020-data-sufficiency.html">Data sufficiency</a></li>
-    <li><a class="dropdown-item" href="../articles/art-040-programs.html">Programs</a></li>
-    <li><a class="dropdown-item" href="../articles/art-041-alternative-cip.html">Alternative CIPs</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -215,20 +213,15 @@ level.</p>
 <div class="section level2">
 <h2 id="population">Population<a class="anchor" aria-label="anchor" href="#population"></a>
 </h2>
-<p>Relevant functions:</p>
-<ul>
-<li><code><a href="../reference/timely_term.html">timely_term()</a></code></li>
-<li><code><a href="../reference/data_sufficiency.html">data_sufficiency()</a></code></li>
-</ul>
 <div class="section level3">
 <h3 id="timely_term">timely_term()<a class="anchor" aria-label="anchor" href="#timely_term"></a>
 </h3>
-<p><em>Determines the latest term by which program completion would be
-considered timely.</em></p>
-<p>The <em>timely-completion term</em> is the latest term by which a
-student’s program completion would be considered timely (default 6
-academic years after admission). <em>Program completion</em> means
-satisfying the requirements for a degree.</p>
+<p>Determines the latest term by which program completion would be
+considered timely.</p>
+<p><em>Program completion</em> means satisfying the requirements for a
+degree. Completion is <em>timely</em> if accomplished no later than a
+specified span after admission (default 6 years). The academic term at
+the end of that span is the <em>timely completion term.</em></p>
 <p><code><a href="../reference/timely_term.html">timely_term()</a></code> determines the timely completion term for
 each student. The principal data frame must include the variable
 <code>{mcid}.</code> Entry term and level are pulled from the
@@ -744,6 +737,7 @@ span you consider “timely.”</p>
 <div class="section level3">
 <h3 id="data_sufficiency">data_sufficiency()<a class="anchor" aria-label="anchor" href="#data_sufficiency"></a>
 </h3>
+<p>Identifies records to exclude due to insufficient data.</p>
 <p><em>Data sufficiency</em> is a necessary condition for including a
 student in a population if a metric depends on program completion. To
 meet the condition, an institution’s data range must bracket a student’s
@@ -1260,17 +1254,14 @@ e.g.,</p>
 <div class="section level2">
 <h2 id="records">Records<a class="anchor" aria-label="anchor" href="#records"></a>
 </h2>
-<p>Relevant functions:</p>
-<ul>
-<li><code><a href="../reference/undergrad_term_id.html">undergrad_term_id()</a></code></li>
-</ul>
 <div class="section level3">
 <h3 id="undergrad_term_id">undergrad_term_id()<a class="anchor" aria-label="anchor" href="#undergrad_term_id"></a>
 </h3>
-<p><code><a href="../reference/undergrad_term_id.html">undergrad_term_id()</a></code> distinguishes undergraduate
-terms—those leading up a student’s first degree—from post-baccalaureate
-terms. The principal data frame must include the variable
-<code>{mcid}</code> and a term-valued variable, one of
+<p>Distinguishes between undergraduate and post-baccalaureate terms.</p>
+<p><code><a href="../reference/undergrad_term_id.html">undergrad_term_id()</a></code> distinguishes undergraduate terms
+(those leading up a student’s first degree)- from post-baccalaureate
+terms (after a first degree). The principal data frame must include the
+variable <code>{mcid}</code> and a term-valued variable, one of
 <code>{term, term_course, term_degree}.</code> The first degree term is
 pulled from the <code>degree</code> table. The data frame is returned
 with the following variables added:</p>
@@ -1804,15 +1795,10 @@ unit, for example, administrative groupings such as transfer students
 and traditional or non-traditional students, as well as program-based
 groupings such as students starting in, ever-enrolling in, migrating
 into or out of, or graduating from a program.</p>
-<p>Relevant functions:</p>
-<ul>
-<li><code><a href="../reference/filter_programs.html">filter_programs()</a></code></li>
-<li><code><a href="../reference/completion_status.html">completion_status()</a></code></li>
-</ul>
 <div class="section level3">
 <h3 id="filter_programs">filter_programs()<a class="anchor" aria-label="anchor" href="#filter_programs"></a>
 </h3>
-<p>Contributes to assembling a bloc of programs.</p>
+<p>Helps in finding 6-digit program codes.</p>
 <p><em>Programs</em> are academic fields of study—specialties within a
 field or a collection of fields within a Department, College, or
 University—encoded in the <code>cip</code> dataset.</p>
@@ -1929,12 +1915,12 @@ merged all the 6-digit codes we needed into one data frame.</p>
 <div class="section level3">
 <h3 id="completion_status">completion_status()<a class="anchor" aria-label="anchor" href="#completion_status"></a>
 </h3>
-<p>Contributes to assembling a bloc of graduates.</p>
+<p>Identifies students completing a program in a timely manner.</p>
 <p><em>Completion status</em> is “timely” for students graduating no
 later than their timely-completion term; “late” or “NA” otherwise. Only
 records satisfying data sufficiency can be processed for completion
 status.</p>
-<p><code><a href="../reference/completion_status.html">completion_status()</a></code> yields a status label for each
+<p><code><a href="../reference/completion_status.html">completion_status()</a></code> assigns a status label to each
 student. The principal data frame must include the variables
 <code>{mcid, timely_term}.</code> The first degree term is pulled from
 the <code>degree</code> table. The data frame is returned with the
@@ -2483,15 +2469,11 @@ the three formulations below all yield the same result.</p>
 <div class="section level2">
 <h2 id="special-conditioning">Special conditioning<a class="anchor" aria-label="anchor" href="#special-conditioning"></a>
 </h2>
-<p>Relevant functions:</p>
-<ul>
-<li><code><a href="../reference/initialize_fye_proxies.html">initialize_fye_proxies()</a></code></li>
-<li><code><a href="../reference/order_multiway.html">order_multiway()</a></code></li>
-</ul>
 <div class="section level3">
 <h3 id="initialize_fye_proxies">initialize_fye_proxies()<a class="anchor" aria-label="anchor" href="#initialize_fye_proxies"></a>
 </h3>
-<p>Contributes to assembling a bloc of starters.</p>
+<p>Conditions data for imputing starting majors of First-Year
+Engineering (FYE) students.</p>
 <p>At some U.S. institutions, completing a <em>First-Year Engineering
 (FYE)</em> program is a prerequisite for admission to specific
 engineering majors. FYE programs complicate the identification of
@@ -2531,7 +2513,7 @@ proxies are incorporated in a starter bloc.</li>
 <div class="section level3">
 <h3 id="order_multiway">order_multiway()<a class="anchor" aria-label="anchor" href="#order_multiway"></a>
 </h3>
-<p>Conditions data for Cleveland multiway charts.</p>
+<p>Conditions multiway data for Cleveland multiway charts.</p>
 <p><em>Multiway data</em> comprise two independent categorical variables
 and one quantitative variable with a value for each combination of
 levels of the two categories.</p>
@@ -2593,8 +2575,7 @@ constructing multiway charts can be found in <a href="art-120-multiway.html">Mul
 <div class="section level2">
 <h2 id="utilities">Utilities<a class="anchor" aria-label="anchor" href="#utilities"></a>
 </h2>
-<p>See the relevant help page for more information,
-e.g. <code><a href="../reference/catch_error.html">?catch_error</a></code>.</p>
+<p>See the relevant help page for more information.</p>
 <ul>
 <li>
 <code><a href="../reference/catch_error.html">catch_error()</a></code> wraps base <code><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch()</a></code> for
@@ -2607,10 +2588,10 @@ package.</li>
 <code><a href="https://rdrr.io/r/utils/str.html" class="external-link">str()</a></code> with preset arguments.</li>
 <li>
 <code><a href="../reference/rm_redundant_cols.html">rm_redundant_cols()</a></code> primarily used internally to drop
-duplicate columns.</li>
+redundant columns.</li>
 <li>
 <code><a href="../reference/select_basic_cols.html">select_basic_cols()</a></code> subsets a MIDFIELD data table to
-retain the variables required by one or more midfieldr functions.</li>
+retain the variables required by one or more midfieldr functions</li>
 <li>
 <code><a href="../reference/sort_uniq.html">sort_uniq()</a></code> for vectors, wraps base
 <code>sort(unique())</code> with preset arguments.</li>
