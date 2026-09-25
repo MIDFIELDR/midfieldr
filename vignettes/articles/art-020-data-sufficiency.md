@@ -176,7 +176,7 @@ DT[order(-adj_span)]
 #> 97555: MCID3111602161      19991 04 Fourth-year        3       20013
 ```
 
-#### *Example 1*
+#### Example 1
 
 ``` r
 DT[mcid == "MCID3111142225"]
@@ -193,7 +193,7 @@ through Spring 89 as the first year, the five subsequent years end in
 Spring 1990, 91, 92, 93, 94, yielding a timely completion term of Spring
 1994 (encoded `19933`).
 
-#### *Example 2*
+#### Example 2
 
 ``` r
 DT[mcid == "MCID3111860641"]
@@ -242,7 +242,7 @@ DT[order(sufficiency)]
 #> 97555: MCID3112870009      19951       20003 19881-20181   satisfied
 ```
 
-#### *Example 3*
+#### Example 3
 
 Exemplifies “Student A” in Figure 1 or Figure 2.
 
@@ -260,7 +260,7 @@ Spring 2013; institution data range of Fall 1990 through Summer 2015.
 is before the entry term; upper limit is after the timely completion
 term.
 
-#### *Example 4*
+#### Example 4
 
 Exemplifies “Student B” in Figure 1.
 
@@ -277,7 +277,7 @@ Fall 2019; institution data range of Fall 1988 through Fall 2018.
 *Output values:* Data sufficiency fails at the upper limit of the data
 range. Timely completion term is after the upper limit.
 
-#### *Example 5*
+#### Example 5
 
 Exemplifies “Student C” in Figure 2.
 

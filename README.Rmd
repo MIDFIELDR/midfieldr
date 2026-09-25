@@ -86,10 +86,11 @@ degree <- copy(toy_degree)
 DT <- student[, .(mcid)]
 DT
 
-# Categorize by data sufficiency
+# Determine data sufficiency
 DT <- timely_term(DT, midf_table = term)
 DT <- data_sufficiency(DT, midf_table = term)
-# -- result summary
+
+# Summarize data sufficiency
 DT[, .N, by = "sufficiency"][order(-N)]
 
 # Subset to obtain baseline population
@@ -102,20 +103,23 @@ term <- population[term, on = "mcid", nomatch = NULL]
 course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-# Identify post-baccalaureate terms to exclude
+# Distinguish undergraduate and post-baccalaureate terms
 term <- undergrad_term_id(term, midf_table = degree)
 course <- undergrad_term_id(course, midf_table = degree)
 degree <- undergrad_term_id(degree, midf_table = degree)
-# -- result summary
-term[, .N, by = "term_id"][order(-term_id)]
 
-# Subset to obtain baseline records
+# Summarize term types
+term[, .N, by = "term_id"][order(-term_id)]
+course[, .N, by = "term_id"][order(-term_id)]
+degree[, .N, by = "term_id"][order(-term_id)]
+
+# Retain undergraduate terms
 term <- term[term_id == "undergrad"]
 course <- course[term_id == "undergrad"]
 degree <- degree[term_id == "undergrad"]
 
-# Obtain 6-digit CIP codes for Engineering (14), Psychology (42),
-# and Business (52)
+# Obtain 6-digit CIP codes, e.g., Engineering (14), 
+# Psychology (42), and Business (52).
 programs <- filter_programs(cip, c("^14", "^42", "^52"))
 programs <- programs[, .(cip6name, cip6)]
 
@@ -128,31 +132,35 @@ programs[, program := fcase(
 programs <- programs[, .(cip6, program)]
 programs
 
-# Categorize completion status
-pop <- copy(population)
-pop <- timely_term(pop, midf_table = term)
-pop <- completion_status(pop, midf_table = degree)
-# -- result summary
-pop[, .N, by = "completion"][order(-N)]
+# Determine completion status
+DT <- timely_term(population, midf_table = term)
+DT <- completion_status(DT, midf_table = degree)
 
-# Filter population for timely completion
-pop <- unique(pop[completion == "timely", .(mcid)])
-pop
+# Summarize completion status
+DT[, .N, by = "completion"][order(-N)]
+
+# Filter for timely graduates
+DT <- unique(DT[completion == "timely", .(mcid)])
 
 # Join degree CIP codes
-DT <- degree[, .(mcid, cip6)][pop, on = "mcid"]
+degree_codes <- degree[, .(mcid, cip6)]
+DT <- degree_codes[DT, on = "mcid"]
+DT
 
 # Inner join to filter graduates by program
-DT <- programs[, .(cip6, program)][DT, on = "cip6", nomatch = NULL]
+program_labels <- programs[, .(cip6, program)]
+DT <- program_labels[DT, on = "cip6", nomatch = NULL]
 DT <- DT[, .(mcid, program, cip6 = NULL)]
 DT
 
 # Join demographics
-DT <- student[, .(mcid, sex)][DT, on = "mcid"]
+demographics <- student[, .(mcid, sex)]
+DT <- demographics[DT, on = "mcid"]
+DT
 
 # Group and summarize timely graduates
-DT <- DT[, .(grad = .N), by = c("program", "sex")]
-DT[order(program, sex)]
+DT <- DT[, .(grad = .N), by = c("sex", "program")]
+DT[order(sex, program)]
 ```
 
 ## Acknowledgments

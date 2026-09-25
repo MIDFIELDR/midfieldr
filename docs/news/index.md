@@ -16,8 +16,6 @@ New features
 - New function
   [`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
   to distinguish undergraduate terms from post-baccalaureate terms.
-- New function `select_unique_cols()` used primarily internally to
-  prevent overwriting existing columns and drop redundant columns.
 - New utilities
   [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md),
   [`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md),

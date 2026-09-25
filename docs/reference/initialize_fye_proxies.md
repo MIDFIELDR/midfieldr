@@ -112,9 +112,6 @@ library(data.table)
 #> Latest news: r-datatable.com
 #> 
 #> Attaching package: ‘data.table’
-#> The following object is masked _by_ ‘.GlobalEnv’:
-#> 
-#>     .N
 #> The following object is masked from ‘package:base’:
 #> 
 #>     %notin%
