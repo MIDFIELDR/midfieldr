@@ -65,7 +65,7 @@ institution to create the \code{timely_term} value for each observation.
 \code{timely_term}  is not added to the data frame if it duplicates
 an existing variable. The test for redundancy is managed internally
 by calling \code{rm_redundant_cols()} before the final data frame is
-returned. For documentation, see \code{?rm_redundant_cols}.
+returned.
 }
 \examples{
 # Assign toy data sets

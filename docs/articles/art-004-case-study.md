@@ -219,42 +219,42 @@ quarto-disable-processing="false" quarto-bootstrap="false"}
 
 We are interested in *undergraduate* records: academic terms before a
 student’s first degree. We use
-[`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
+[`pre_or_post_bacc()`](https://midfieldr.github.io/midfieldr/reference/pre_or_post_bacc.md)
 to differentiate between undergraduate terms and post-baccalaureate
 terms.
 
 ``` r
 
-term <- undergrad_term_id(term, midf_table = degree)
-degree <- undergrad_term_id(degree, midf_table = degree)
+term <- pre_or_post_bacc(term, midf_table = degree)
+degree <- pre_or_post_bacc(degree, midf_table = degree)
 ```
 
 *Summary check.*   Number of students in each category.
 
 ``` r
 
-term[, .N, by = c("term_id")][order(-N)]
-#>      term_id      N
-#>       <char>  <int>
-#> 1: undergrad 525446
-#> 2: post-bacc   5973
+term[, .N, by = c("pre_or_post")][order(-N)]
+#>    pre_or_post      N
+#>         <char>  <int>
+#> 1:    pre-bacc 525446
+#> 2:   post-bacc   5973
 
-degree[, .N, by = c("term_id")][order(-N)]
-#>      term_id     N
-#>       <char> <int>
-#> 1: undergrad 43857
-#> 2: post-bacc    46
+degree[, .N, by = c("pre_or_post")][order(-N)]
+#>    pre_or_post     N
+#>         <char> <int>
+#> 1:    pre-bacc 43857
+#> 2:   post-bacc    46
 ```
 
 Retain rows labeled “undergrad” and drop the extra columns.
 
 ``` r
 
-term <- term[term_id == "undergrad"]
-degree <- degree[term_id == "undergrad"]
+term <- term[pre_or_post == "pre-bacc"]
+degree <- degree[pre_or_post == "pre-bacc"]
 
-term[, c("bacc_term", "term_id") := NULL]
-degree[, c("bacc_term", "term_id") := NULL]
+term[, c("bacc_term", "pre_or_post") := NULL]
+degree[, c("bacc_term", "pre_or_post") := NULL]
 ```
 
 We copy the current data tables to reserve them as our “baseline”

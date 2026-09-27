@@ -202,29 +202,29 @@ make_table(Ncompare, "Table 1(b). Number of observations")
 
 ### *Filter for undergraduate terms*
 
-We are interested in *undergraduate* records: academic terms before a student's  first degree. We use `undergrad_term_id()` to differentiate between undergraduate terms and post-baccalaureate terms.  
+We are interested in *undergraduate* records: academic terms before a student's  first degree. We use `pre_or_post_bacc()` to differentiate between undergraduate terms and post-baccalaureate terms.  
 
 ```{r}
-term <- undergrad_term_id(term, midf_table = degree)
-degree <- undergrad_term_id(degree, midf_table = degree)
+term <- pre_or_post_bacc(term, midf_table = degree)
+degree <- pre_or_post_bacc(degree, midf_table = degree)
 ```
 
 *Summary check.* &nbsp; Number of students in each category.
 
 ```{r}
-term[, .N, by = c("term_id")][order(-N)]
+term[, .N, by = c("pre_or_post")][order(-N)]
 
-degree[, .N, by = c("term_id")][order(-N)]
+degree[, .N, by = c("pre_or_post")][order(-N)]
 ```
 
 Retain rows labeled "undergrad" and drop the extra columns. 
 
 ```{r}
-term <- term[term_id == "undergrad"]
-degree <- degree[term_id == "undergrad"]
+term <- term[pre_or_post == "pre-bacc"]
+degree <- degree[pre_or_post == "pre-bacc"]
 
-term[, c("bacc_term", "term_id") := NULL]
-degree[, c("bacc_term", "term_id") := NULL]
+term[, c("bacc_term", "pre_or_post") := NULL]
+degree[, c("bacc_term", "pre_or_post") := NULL]
 ```
 
 We copy the current data tables to reserve them as our "baseline" records. From this point forward, anytime we need a fresh copy of any of the data tables, we copy the `*_baseline` version. Anytime we need a starting population, we copy  `population.`

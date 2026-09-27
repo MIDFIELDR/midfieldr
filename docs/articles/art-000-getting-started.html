@@ -84,8 +84,8 @@ data). We organize the topics around a typical workflow:</p>
 <li>blocs</li>
 <li>special conditioning</li>
 </ul>
-<p><em>Packages.</em> We load midfielddata for its practice data and
-data.table for its data manipulation syntax.</p>
+<p><em>Packages.</em> For the practice data we load midfielddata; for
+data manipulation we load data.table.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfieldr/">"midfieldr"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfielddata/" class="external-link">"midfielddata"</a></span><span class="op">)</span></span>
@@ -94,8 +94,8 @@ data.table for its data manipulation syntax.</p>
 <h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
 </h2>
 <div class="section level3">
-<h3 id="student-records">
-<em>Student records</em><a class="anchor" aria-label="anchor" href="#student-records"></a>
+<h3 id="student-level-records">
+<em>Student-level records</em><a class="anchor" aria-label="anchor" href="#student-level-records"></a>
 </h3>
 <p>midfieldr is designed to work with the MIDFIELD research database or
 any database with a similar structure such as the practice data in the
@@ -106,11 +106,16 @@ structure</a>.</p>
 <p>For this article we load all four midfielddata tables.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span>, <span class="va">course</span>, <span class="va">degree</span><span class="op">)</span></span></code></pre></div>
-<p><code><a href="../reference/select_basic_cols.html">select_basic_cols()</a></code> returns a subset of each table with
-the variables most often encountered in the early stages of a project.
-The tables are linked by the anonymized student ID variable
-<code>mcid.</code></p>
+<p>In developing a population, we can work with a minimum set of
+columns. <code><a href="../reference/select_basic_cols.html">select_basic_cols()</a></code> returns a subset of each table
+with the variables most often encountered in the early stages of a
+project.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># usage: operates on student, term, course, or degree</span></span>
+<span><span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">dframe</span><span class="op">)</span></span></code></pre></div>
+<p>The tables are linked by the anonymized student ID variable
+<code>mcid.</code></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/select_basic_cols.html">select_basic_cols</a></span><span class="op">(</span><span class="va">student</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                  mcid          race    sex</span></span>
 <span><span class="co">#&gt;                &lt;char&gt;        &lt;char&gt; &lt;char&gt;</span></span>
@@ -179,7 +184,7 @@ of fields of study <span class="citation">(<a href="#ref-NCES:2010">NCES
 2010</a>)</span>. The dataset <code>cip</code> that loads with midfieldr
 contains program names and codes at the 2-digit, 4-digit, and 6-digit
 level.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cip</span></span>
 <span><span class="co">#&gt;                                             cip6name   cip6</span></span>
 <span><span class="co">#&gt;                                               &lt;char&gt; &lt;char&gt;</span></span>
@@ -222,11 +227,14 @@ considered timely.</p>
 degree. Completion is <em>timely</em> if accomplished no later than a
 specified span after admission (default 6 years). The academic term at
 the end of that span is the <em>timely completion term.</em></p>
-<p><code><a href="../reference/timely_term.html">timely_term()</a></code> determines the timely completion term for
-each student. The principal data frame must include the variable
-<code>{mcid}.</code> Entry term and level are pulled from the
-<code>term</code> table. The data frame is returned with the following
-variables added:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># usage</span></span>
+<span><span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">dframe</span>,  <span class="co"># requires mcid</span></span>
+<span>  midf_table <span class="op">=</span> <span class="va">term</span>, <span class="co"># requires mcid, term, level</span></span>
+<span>  <span class="va">span</span>,              <span class="co"># default 6</span></span>
+<span>  <span class="va">sched_span</span>         <span class="co"># default 4</span></span>
+<span><span class="op">)</span> </span></code></pre></div>
+<p>The data frame is returned with the following variables added:</p>
 <div id="mwlefoodfi" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:80%;">
 <style>#mwlefoodfi table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -701,7 +709,7 @@ variables added:</p>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># setup</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -721,7 +729,7 @@ variables added:</p>
 <span><span class="co">#&gt; 97555: MCID3111602161      19991 04 Fourth-year        3       20013</span></span></code></pre></div>
 <p>The optional <code>span</code> argument allows you to change the time
 span you consider “timely.”</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span>, span <span class="op">=</span> <span class="fl">8</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">adj_span</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                  mcid entry_term    entry_level adj_span timely_term</span></span>
@@ -738,17 +746,16 @@ span you consider “timely.”</p>
 <h3 id="data_sufficiency">data_sufficiency()<a class="anchor" aria-label="anchor" href="#data_sufficiency"></a>
 </h3>
 <p>Identifies records to exclude due to insufficient data.</p>
-<p><em>Data sufficiency</em> is a necessary condition for including a
-student in a population if a metric depends on program completion. To
-meet the condition, an institution’s data range must bracket a student’s
-entry and timely completion terms, i.e., the entry term is at least one
-term later than the lower limit of the data range and the timely
-completion term is no later than the upper limit.</p>
-<p><code><a href="../reference/data_sufficiency.html">data_sufficiency()</a></code> evaluates whether the condition is
-met for each student. The principal data frame must include the
-variables <code>{mcid, entry_term, timely_term}.</code> Institutions’
-data ranges are pulled from the <code>term</code> table. The data frame
-is returned with the following variables added:</p>
+<p>When program completion contributes to a metric, <em>data
+sufficiency</em> is a necessary condition for including a student in a
+research population. To meet the condition, an institution’s data range
+must bracket a student’s entry and timely completion terms.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># usage</span></span>
+<span><span class="fu"><a href="../reference/data_sufficiency.html">data_sufficiency</a></span><span class="op">(</span><span class="va">dframe</span>, <span class="co"># requires mcid, entry_term, timely_term</span></span>
+<span>  midf_table <span class="op">=</span> <span class="va">term</span>      <span class="co"># requires mcid, term, institution</span></span>
+<span><span class="op">)</span> </span></code></pre></div>
+<p>The data frame is returned with the following variables added:</p>
 <div id="ufivjubqtx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:80%;">
 <style>#ufivjubqtx table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -1215,7 +1222,7 @@ is returned with the following variables added:</p>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># setup</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
@@ -1237,7 +1244,7 @@ is returned with the following variables added:</p>
 <span><span class="co">#&gt; 97555: MCID3112056754      19881       19933 19881-20096  fail-lower</span></span></code></pre></div>
 <p>We usually follow up by filtering for rows labeled “satisfied”,
 e.g.,</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">sufficiency</span> <span class="op">==</span> <span class="st">"satisfied"</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid entry_term timely_term  data_range sufficiency</span></span>
@@ -1255,16 +1262,18 @@ e.g.,</p>
 <h2 id="records">Records<a class="anchor" aria-label="anchor" href="#records"></a>
 </h2>
 <div class="section level3">
-<h3 id="undergrad_term_id">undergrad_term_id()<a class="anchor" aria-label="anchor" href="#undergrad_term_id"></a>
+<h3 id="pre_or_post_bacc">pre_or_post_bacc()<a class="anchor" aria-label="anchor" href="#pre_or_post_bacc"></a>
 </h3>
-<p>Distinguishes between undergraduate and post-baccalaureate terms.</p>
-<p><code><a href="../reference/undergrad_term_id.html">undergrad_term_id()</a></code> distinguishes undergraduate terms
-(those leading up a student’s first degree)- from post-baccalaureate
-terms (after a first degree). The principal data frame must include the
-variable <code>{mcid}</code> and a term-valued variable, one of
-<code>{term, term_course, term_degree}.</code> The first degree term is
-pulled from the <code>degree</code> table. The data frame is returned
-with the following variables added:</p>
+<p>Distinguishes between pre- and post-baccalaureate terms.</p>
+<p>Because research using MIDFIELD data focuses on undergraduate
+students, any academic terms that postdate a student’s baccalaureate are
+dropped from the data tables.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># usage</span></span>
+<span><span class="fu"><a href="../reference/pre_or_post_bacc.html">pre_or_post_bacc</a></span><span class="op">(</span><span class="va">dframe</span>,  <span class="co"># requires mcid &amp; term, term_course, or term_degree</span></span>
+<span>  midf_table <span class="op">=</span> <span class="va">degree</span>      <span class="co"># requires mcid, term_degree</span></span>
+<span><span class="op">)</span> </span></code></pre></div>
+<p>The data frame is returned with the following variables added:</p>
 <div id="lspkzcbwjc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:80%;">
 <style>#lspkzcbwjc table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -1725,14 +1734,14 @@ with the following variables added:</p>
 <td headers="val" class="gt_row gt_left">term of a student's first baccalaureate</td>
 </tr>
 <tr>
-<td headers="var" class="gt_row gt_left"><span class="gt_from_md"><code>term_id</code></span></td>
+<td headers="var" class="gt_row gt_left"><span class="gt_from_md"><code>pre_or_post</code></span></td>
 <td headers="val" class="gt_row gt_left">indicates whether a term is undergraduate or post-baccalaureate</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/undergrad_term_id.html">undergrad_term_id</a></span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pre_or_post_bacc.html">pre_or_post_bacc</a></span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                   mcid   term   cip6   institution         level</span></span>
 <span><span class="co">#&gt;                 &lt;char&gt; &lt;char&gt; &lt;char&gt;        &lt;char&gt;        &lt;char&gt;</span></span>
 <span><span class="co">#&gt;      1: MCID3111142225  19881 140901 Institution B 01 First-year</span></span>
@@ -1751,40 +1760,40 @@ with the following variables added:</p>
 <span><span class="co">#&gt; 639913:      Good Standing     No         13                 13          13</span></span>
 <span><span class="co">#&gt; 639914:      Good Standing     No         18                 18          18</span></span>
 <span><span class="co">#&gt; 639915:      Good Standing     No         15                 15          15</span></span>
-<span><span class="co">#&gt;         hours_cumul_attempt gpa_term gpa_cumul bacc_term   term_id</span></span>
-<span><span class="co">#&gt;                       &lt;num&gt;    &lt;num&gt;     &lt;num&gt;    &lt;char&gt;    &lt;char&gt;</span></span>
-<span><span class="co">#&gt;      1:                   7     2.56      2.56     19881 undergrad</span></span>
-<span><span class="co">#&gt;      2:                   6     1.85      1.85      &lt;NA&gt; undergrad</span></span>
-<span><span class="co">#&gt;      3:                  18     1.93      1.90      &lt;NA&gt; undergrad</span></span>
-<span><span class="co">#&gt;     ---                                                           </span></span>
-<span><span class="co">#&gt; 639913:                  13     3.52      3.52      &lt;NA&gt; undergrad</span></span>
-<span><span class="co">#&gt; 639914:                  18     3.50      3.50      &lt;NA&gt; undergrad</span></span>
-<span><span class="co">#&gt; 639915:                  15     2.18      2.18      &lt;NA&gt; undergrad</span></span></code></pre></div>
+<span><span class="co">#&gt;         hours_cumul_attempt gpa_term gpa_cumul bacc_term pre_or_post</span></span>
+<span><span class="co">#&gt;                       &lt;num&gt;    &lt;num&gt;     &lt;num&gt;    &lt;char&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt;      1:                   7     2.56      2.56     19881    pre-bacc</span></span>
+<span><span class="co">#&gt;      2:                   6     1.85      1.85      &lt;NA&gt;    pre-bacc</span></span>
+<span><span class="co">#&gt;      3:                  18     1.93      1.90      &lt;NA&gt;    pre-bacc</span></span>
+<span><span class="co">#&gt;     ---                                                             </span></span>
+<span><span class="co">#&gt; 639913:                  13     3.52      3.52      &lt;NA&gt;    pre-bacc</span></span>
+<span><span class="co">#&gt; 639914:                  18     3.50      3.50      &lt;NA&gt;    pre-bacc</span></span>
+<span><span class="co">#&gt; 639915:                  15     2.18      2.18      &lt;NA&gt;    pre-bacc</span></span></code></pre></div>
 <p>The results are clearer if we limit the number of columns we
 review.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/undergrad_term_id.html">undergrad_term_id</a></span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
-<span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">term_id</span><span class="op">)</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span>, <span class="va">bacc_term</span>, <span class="va">term_id</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                   mcid   term bacc_term   term_id</span></span>
-<span><span class="co">#&gt;                 &lt;char&gt; &lt;char&gt;    &lt;char&gt;    &lt;char&gt;</span></span>
-<span><span class="co">#&gt;      1: MCID3111142225  19881     19881 undergrad</span></span>
-<span><span class="co">#&gt;      2: MCID3111142283  19881      &lt;NA&gt; undergrad</span></span>
-<span><span class="co">#&gt;      3: MCID3111142283  19883      &lt;NA&gt; undergrad</span></span>
-<span><span class="co">#&gt;     ---                                          </span></span>
-<span><span class="co">#&gt; 639913: MCID3112760306  20181     20174 post-bacc</span></span>
-<span><span class="co">#&gt; 639914: MCID3112768322  20181     20174 post-bacc</span></span>
-<span><span class="co">#&gt; 639915: MCID3112773810  20181     20174 post-bacc</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pre_or_post_bacc.html">pre_or_post_bacc</a></span><span class="op">(</span><span class="va">term</span>, midf_table <span class="op">=</span> <span class="va">degree</span><span class="op">)</span></span>
+<span><span class="va">x</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">term</span>, <span class="va">bacc_term</span>, <span class="va">pre_or_post</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">pre_or_post</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;                   mcid   term bacc_term pre_or_post</span></span>
+<span><span class="co">#&gt;                 &lt;char&gt; &lt;char&gt;    &lt;char&gt;      &lt;char&gt;</span></span>
+<span><span class="co">#&gt;      1: MCID3111142225  19881     19881    pre-bacc</span></span>
+<span><span class="co">#&gt;      2: MCID3111142283  19881      &lt;NA&gt;    pre-bacc</span></span>
+<span><span class="co">#&gt;      3: MCID3111142283  19883      &lt;NA&gt;    pre-bacc</span></span>
+<span><span class="co">#&gt;     ---                                            </span></span>
+<span><span class="co">#&gt; 639913: MCID3112760306  20181     20174   post-bacc</span></span>
+<span><span class="co">#&gt; 639914: MCID3112768322  20181     20174   post-bacc</span></span>
+<span><span class="co">#&gt; 639915: MCID3112773810  20181     20174   post-bacc</span></span></code></pre></div>
 <p>The function is applied to each data table having a term-valued
 variable.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/undergrad_term_id.html">undergrad_term_id</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
-<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/undergrad_term_id.html">undergrad_term_id</a></span><span class="op">(</span><span class="va">course</span><span class="op">)</span></span>
-<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/undergrad_term_id.html">undergrad_term_id</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pre_or_post_bacc.html">pre_or_post_bacc</a></span><span class="op">(</span><span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">course</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pre_or_post_bacc.html">pre_or_post_bacc</a></span><span class="op">(</span><span class="va">course</span><span class="op">)</span></span>
+<span><span class="va">degree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pre_or_post_bacc.html">pre_or_post_bacc</a></span><span class="op">(</span><span class="va">degree</span><span class="op">)</span></span></code></pre></div>
 <p>We usually follow up by filtering for rows labeled “undergrad” and
 dropping the extra columns, e.g.,</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">term_id</span> <span class="op">==</span> <span class="st">"undergrad"</span><span class="op">]</span></span>
-<span><span class="va">term</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc_term"</span>, <span class="st">"term_id"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">term</span> <span class="op">&lt;-</span> <span class="va">term</span><span class="op">[</span><span class="va">pre_or_post</span> <span class="op">==</span> <span class="st">"pre-bacc"</span><span class="op">]</span></span>
+<span><span class="va">term</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bacc_term"</span>, <span class="st">"pre_or_post"</span><span class="op">)</span> <span class="op">:=</span> <span class="cn">NULL</span><span class="op">]</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -1803,10 +1812,15 @@ into or out of, or graduating from a program.</p>
 field or a collection of fields within a Department, College, or
 University—encoded in the <code>cip</code> dataset.</p>
 <p><code><a href="../reference/filter_programs.html">filter_programs()</a></code> acts on a CIP data frame to choose
-rows that match or partially match search strings. Search strings are
-case-independent. For example, to search for music programs, we might
-start with,</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+rows that match or partially match search strings.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># usage</span></span>
+<span><span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">dframe</span>, <span class="co"># cip or equivalent</span></span>
+<span>  <span class="va">pattern</span>,              <span class="co"># search string</span></span>
+<span>  <span class="va">negate</span>                <span class="co"># default FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>For example, to search for music programs, we might start with,</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"music"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                      cip6name   cip6</span></span>
 <span><span class="co">#&gt;                                        &lt;char&gt; &lt;char&gt;</span></span>
@@ -1868,7 +1882,7 @@ start with,</p>
 <p>For music as a component of the Visual and Performing Arts, we filter
 <code>cip</code> again using a regular expression. We can also select
 specific columns for a more compact display.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"^5009"</span><span class="op">)</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6name</span>, <span class="va">cip6</span>, <span class="va">cip4name</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                                                 cip6name   cip6 cip4name</span></span>
 <span><span class="co">#&gt;                                                   &lt;char&gt; &lt;char&gt;   &lt;char&gt;</span></span>
@@ -1891,7 +1905,7 @@ specific columns for a more compact display.</p>
 <span><span class="co">#&gt; 17:                                         Music, Other 500999    Music</span></span></code></pre></div>
 <p>The <code>negate</code> argument allows you to drop the rows that
 match the search patterns.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">cip</span>, <span class="st">"^5009"</span><span class="op">)</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">cip6name</span>, <span class="va">cip6</span>, <span class="va">cip4name</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="../reference/filter_programs.html">filter_programs</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Other"</span>, <span class="st">"General"</span><span class="op">)</span>, negate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                 cip6name   cip6 cip4name</span></span>
@@ -2391,7 +2405,7 @@ following variables added:</p>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># setup</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
@@ -2415,7 +2429,7 @@ following variables added:</p>
 <span><span class="co">#&gt; 76911: MCID3112870009       20003      &lt;NA&gt;       &lt;NA&gt;</span></span></code></pre></div>
 <p>When we want a bloc of timely graduates, we follow up by filtering
 for rows labeled “timely.”, e.g.,</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span><span class="va">completion</span> <span class="op">==</span> <span class="st">"timely"</span><span class="op">]</span></span>
 <span><span class="va">DT</span></span>
 <span><span class="co">#&gt;                  mcid timely_term bacc_term completion</span></span>
@@ -2437,7 +2451,7 @@ functions. For example, in these functions,</p>
 <ul>
 <li><code>timely_term(dframe, midf_table = term)</code></li>
 <li><code>data_sufficiency(dframe, midf_table = term)</code></li>
-<li><code>undergrad_term_id(dframe, midf_table = degree)</code></li>
+<li><code>pre_or_post_bacc(dframe, midf_table = degree)</code></li>
 <li><code>completion status(dframe, midf_table = degree)</code></li>
 </ul>
 <p>the similarities include:</p>
@@ -2451,7 +2465,7 @@ main finding.</li>
 <p>Moreover, because in each case the <code>midf_table</code> argument
 has a default value, it can be assigned explicitly or not. For example,
 the three formulations below all yield the same result.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># setup</span></span>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
@@ -2483,7 +2497,7 @@ unknown.</p>
 the IDs of all FYE students with an initial <em>FYE proxy,</em> the
 6-digit CIP code of their first specific engineering major, if any, or
 NA if not.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/initialize_fye_proxies.html">initialize_fye_proxies</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                 mcid   institution          race    sex  proxy</span></span>
 <span><span class="co">#&gt;               &lt;char&gt;        &lt;fctr&gt;        &lt;fctr&gt; &lt;fctr&gt; &lt;fctr&gt;</span></span>
@@ -2527,7 +2541,7 @@ and <code>people</code>. The quantity is <code>stick</code> (program
 stickiness) which is the ratio of <code>grad</code> (number of program
 graduates) to <code>ever</code> (number ever enrolled in the
 program).</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">case_results</span></span>
 <span><span class="co">#&gt;        program               people  ever  grad stick</span></span>
 <span><span class="co">#&gt;         &lt;char&gt;               &lt;char&gt; &lt;num&gt; &lt;num&gt; &lt;num&gt;</span></span>
@@ -2546,7 +2560,7 @@ program).</p>
 aggregate stickiness calculated separately by category and reported in
 the new columns (suffix <code>_metric</code>). A multiway chart can be
 constructed from the data in this form.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/order_multiway.html">order_multiway</a></span><span class="op">(</span><span class="va">case_results</span>,</span>
 <span>  quantity <span class="op">=</span> <span class="st">"stick"</span>,</span>
 <span>  categories <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"program"</span>, <span class="st">"people"</span><span class="op">)</span>,</span>

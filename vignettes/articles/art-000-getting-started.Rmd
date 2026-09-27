@@ -23,12 +23,7 @@ path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
 
 ```{r, chunk02}
 #| echo: false
-options(
-  datatable.print.nrows = 6,
-  datatable.print.topn = 3
-)
-
-# display variables added by midfieldr functions
+# display the variables added by midfieldr functions
 library(gt)
 added_variables_table <- function(df) {
   gt(df) |>
@@ -52,7 +47,7 @@ In this document, we introduce midfieldr's basic tools and show how to apply the
 - blocs
 - special conditioning
 
-*Packages.* We load midfielddata for its practice data and data.table for its data manipulation syntax. 
+*Packages.* For the practice data we load midfielddata; for data manipulation we load data.table. 
 
 ```{r, chunk04}
 library("midfieldr")
@@ -67,7 +62,7 @@ library("data.table")
 ## Data
 
 
-### *Student records*
+### *Student-level records*
 
 midfieldr is designed to work with the MIDFIELD research database or any  database with a similar structure such as the practice data in the [midfielddata](https://midfieldr.github.io/midfielddata/index.html) package. If you are new to MIDFIELD, the best place to start is the article on [Data structure](https://midfieldr.github.io/midfielddata/articles/data-structure.html).
 
@@ -77,7 +72,15 @@ For this article we load all four midfielddata tables.
 data(student, term, course, degree)
 ```
 
-`select_basic_cols()` returns a subset of each table with the variables most often encountered in the early stages of a project. The tables are linked by the anonymized student ID variable `mcid.`
+In developing a population, we can work with a minimum set of columns. `select_basic_cols()` returns a subset of each table with the variables most often encountered in the early stages of a project. 
+
+```{r}
+#| eval: false
+# usage: operates on student, term, course, or degree
+select_basic_cols(dframe)
+```
+
+The tables are linked by the anonymized student ID variable `mcid.`
 
 ```{r, chunk07}
 select_basic_cols(student)
@@ -117,7 +120,17 @@ cip
 
 *Program completion* means satisfying the requirements for a degree. Completion is *timely* if accomplished no later than a specified span after admission (default 6 years). The academic term at the end of that span is the *timely completion term.* 
 
-`timely_term()` determines the timely completion term for each student. The principal data frame must include the variable `{mcid}.` Entry term and level are pulled from the `term` table. The data frame is returned with the following variables added:
+```{r}
+#| eval: false
+# usage
+timely_term(dframe,  # requires mcid
+  midf_table = term, # requires mcid, term, level
+  span,              # default 6
+  sched_span         # default 4
+) 
+```
+
+The data frame is returned with the following variables added:
 
 ```{r, chunk09}
 #| echo: false
@@ -155,9 +168,17 @@ timely_term(DT, span = 8)[order(-adj_span)]
 
 `r data_sufficiency_one_line`
 
-*Data sufficiency* is a necessary condition for including a student in a population if a metric depends on program completion. To meet the condition, an institution's data range must bracket a student's entry and timely completion terms, i.e., the entry term is at least one term later than the lower limit of the data range and the timely completion term is no later than the upper limit.
+When program completion contributes to a metric, *data sufficiency* is a necessary condition for including a student in a research population. To meet the condition, an institution's data range must bracket a student's entry and timely completion terms.
 
-`data_sufficiency()` evaluates whether the condition is met for each student. The principal data frame must include the variables `{mcid, entry_term, timely_term}.`  Institutions' data ranges are pulled from the `term` table. The data frame is returned with the following variables added:
+```{r}
+#| eval: false
+# usage
+data_sufficiency(dframe, # requires mcid, entry_term, timely_term
+  midf_table = term      # requires mcid, term, institution
+) 
+```
+
+The data frame is returned with the following variables added:
 
 ```{r}
 #| echo: false
@@ -193,46 +214,56 @@ DT
 
 ## Records
 
-### undergrad_term_id()
+### pre_or_post_bacc()
 
-`r undergrad_term_id_one_line`
+`r pre_or_post_bacc_one_line`
 
-`undergrad_term_id()` distinguishes undergraduate terms  (those leading up a student's first degree)- from post-baccalaureate terms (after a first degree). The principal data frame must include the variable `{mcid}` and a term-valued variable, one of `{term, term_course, term_degree}.`  The first degree term is pulled from the `degree` table. The data frame is returned with the following variables added:
+Because research using MIDFIELD data focuses on undergraduate students, any academic terms that postdate a student's baccalaureate are dropped from the data tables.  
+
+```{r}
+#| eval: false
+# usage
+pre_or_post_bacc(dframe,  # requires mcid & term, term_course, or term_degree
+  midf_table = degree      # requires mcid, term_degree
+) 
+```
+
+The data frame is returned with the following variables added:
 
 ```{r}
 #| echo: false
 x <- wrapr::build_frame(
   "var", "val" |
     "`bacc_term`", "term of a student's first baccalaureate" |
-    "`term_id`", "indicates whether a term is undergraduate or post-baccalaureate"
+    "`pre_or_post`", "indicates whether a term is undergraduate or post-baccalaureate"
 )
 added_variables_table(x)
 ```
 
 ```{r}
-undergrad_term_id(term, midf_table = degree)
+pre_or_post_bacc(term, midf_table = degree)
 ```
 
 The results are clearer if we limit the number of columns we review.
 
 ```{r}
-x <- undergrad_term_id(term, midf_table = degree)
-x[order(-term_id), .(mcid, term, bacc_term, term_id)]
+x <- pre_or_post_bacc(term, midf_table = degree)
+x[, .(mcid, term, bacc_term, pre_or_post)][order(-pre_or_post)]
 ```
 
 The function is applied to each data table having a term-valued variable.
 
 ```{r}
-term <- undergrad_term_id(term)
-course <- undergrad_term_id(course)
-degree <- undergrad_term_id(degree)
+term <- pre_or_post_bacc(term)
+course <- pre_or_post_bacc(course)
+degree <- pre_or_post_bacc(degree)
 ```
 
 We usually follow up by filtering for rows labeled “undergrad" and  dropping the extra columns, e.g., 
 
 ```{r}
-term <- term[term_id == "undergrad"]
-term[, c("bacc_term", "term_id") := NULL]
+term <- term[pre_or_post == "pre-bacc"]
+term[, c("bacc_term", "pre_or_post") := NULL]
 ```
 
 
@@ -249,7 +280,16 @@ A *bloc* is a grouping of student-level data dealt with as a unit, for example, 
 
 *Programs* are academic fields of study---specialties within a field or a collection of fields within a Department, College, or University---encoded in the `cip` dataset. 
 
-`filter_programs()` acts on a CIP data frame to choose rows that match or partially match search strings. Search strings are case-independent. For example, to search for music programs, we might start with, 
+`filter_programs()` acts on a CIP data frame to choose rows that match or partially match search strings. 
+
+```{r}
+#| eval: false
+# usage
+filter_programs(dframe, # cip or equivalent
+  pattern,              # search string
+  negate                # default FALSE
+)
+```
 
 ```{r}
 #| echo: false
@@ -258,6 +298,8 @@ options(
   datatable.print.topn = 8
 )
 ```
+
+For example, to search for music programs, we might start with, 
 
 ```{r}
 filter_programs(cip, "music")
@@ -336,7 +378,7 @@ You may have noticed similarities in several of the midfieldr functions. For exa
 
 - `timely_term(dframe, midf_table = term)`
 - `data_sufficiency(dframe, midf_table = term)`
-- `undergrad_term_id(dframe, midf_table = degree)`
+- `pre_or_post_bacc(dframe, midf_table = degree)`
 - `completion status(dframe, midf_table = degree)`
 
 the similarities include: 

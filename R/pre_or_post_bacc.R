@@ -1,13 +1,15 @@
 # See R/roxygen.R for documentation below that uses inline R code
 
-#' Identify undergraduate terms
+#' Label terms as pre- or post-baccalaureate
 #'
-#' `r undergrad_term_id_one_line` `r add_cols_support_finding`
+#' `r pre_or_post_bacc_one_line` `r add_cols_support_finding`
 #'
-#' Typically used in refining student records to obtain a baseline for further
-#' analysis, thus the principal argument is the `term, course,` or `degree`
-#' data table with all columns. Can be applied however to any data frame
-#' containing the required variables.
+#' The dividing event between pre- and post-baccalaureate terms is the student's 
+#' first bachelor's degree. Post-baccalaureate records are usually dropped as a 
+#' step in constructing baseline records for further analysis. The data frame 
+#' for the principal argument is the `term, course,` or `degree` data table 
+#' with all columns. Can be applied however to any data frame containing the 
+#' required variables.
 #'
 #' `r redundant_cols("bacc_term")`
 #'
@@ -22,13 +24,12 @@
 #'   - `bacc_term` Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA.`
 #'      Joined from the `term_degree` variable in `midf_table.`
-#'   - `term_id` Character. Distinguish post-baccalaureate terms from
-#'      undergraduate terms. Possible values are "undergrad" and "post-bacc."
-#'
-#' @example man/examples/exa_undergrad_term_id.R
+#'   - `pre_or_post` Character. Term label. Possible values are "pre-bacc" 
+#'      (pre-baccalaureate/undergraduate) and "post-bacc."
+#' @example man/examples/exa_pre_or_post_bacc.R
 #' @export
 #'
-undergrad_term_id <- function(dframe, midf_table = degree) {
+pre_or_post_bacc <- function(dframe, midf_table = degree) {
   #
   # ---------- initial assertions
 
@@ -76,17 +77,17 @@ undergrad_term_id <- function(dframe, midf_table = degree) {
 
   # ---------- prevent overwriting
 
-  added_vars <- c("bacc_term", "term_id")
+  added_vars <- c("bacc_term", "pre_or_post")
   temp_vars <- c("idx")
   proposed <- c(added_vars, temp_vars)
 
   new_vars <- utils_edit_colnames(dframe, proposed)
 
   q_bacc_term <- new_vars[1]
-  q_term_id <- new_vars[2]
+  q_pre_or_post <- new_vars[2]
   q_idx <- new_vars[3]
 
-  return_vars <- c(names(dframe), q_bacc_term, q_term_id)
+  return_vars <- c(names(dframe), q_bacc_term, q_pre_or_post)
 
   # ---------- do the work
 
@@ -104,15 +105,15 @@ undergrad_term_id <- function(dframe, midf_table = degree) {
   # left-join to dframe, introduces NAs in bacc_term col
   dframe <- DT[dframe, on = "mcid"]
 
-  # term_id is post-bacc or undergrad
+  # pre_or_post is post-bacc or undergrad
   dframe[, TERM_ID := fifelse(
     TERM_VAR > BACC_TERM,
     "post-bacc",
-    "undergrad",
-    na = "undergrad"
+    "pre-bacc",
+    na = "pre-bacc"
   ),
   env = list(
-    TERM_ID = q_term_id,
+    TERM_ID = q_pre_or_post,
     TERM_VAR = term_var,
     BACC_TERM = q_bacc_term
   )

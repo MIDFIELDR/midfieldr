@@ -20,7 +20,7 @@ New features
 
 - Functions that add columns no longer overwrite existing columns of the same names. New columns are added with name-suffixes .1, .2, etc., if needed. A new variable (less the name suffix) that duplicates an existing column is dropped.  
 - New function `rm_redundant_cols()` that helps with the above. 
-- New function `undergrad_term_id()` to distinguish undergraduate terms from post-baccalaureate terms. 
+- New function `pre_or_post_bacc()` to distinguish undergraduate terms from post-baccalaureate terms. 
 - New utilities  `look_at()`, `catch_error()`, and `sort_uniq()` that wrap base R functions with our preferred arguments. 
 - Add data set `cip2010`, constructed from a recent download of the source file (`CIPCode2010.csv`) from NCES. Has the same data structure as the existing `cip` dataset, but with more rows. 
 - Renamed/revised functions and their arguments:

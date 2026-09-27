@@ -57,8 +57,7 @@ is "late". For students with no degree, completion status is NA.
 `bacc_term` is not added to the data frame if it duplicates an existing
 variable. The test for redundancy is managed internally by calling
 [`rm_redundant_cols()`](https://midfieldr.github.io/midfieldr/reference/rm_redundant_cols.md)
-before the final data frame is returned. For documentation, see
-[`?rm_redundant_cols`](https://midfieldr.github.io/midfieldr/reference/rm_redundant_cols.md).
+before the final data frame is returned.
 
 ## Examples
 

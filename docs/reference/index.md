@@ -25,14 +25,14 @@
   : Initialize FYE proxies for imputing missing data
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   : Order multiway categories
+- [`pre_or_post_bacc()`](https://midfieldr.github.io/midfieldr/reference/pre_or_post_bacc.md)
+  : Label terms as pre- or post-baccalaureate
 - [`rm_redundant_cols()`](https://midfieldr.github.io/midfieldr/reference/rm_redundant_cols.md)
   : Remove redundant columns
 - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
   : Choose columns of student records
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
   : Determine timely completion terms
-- [`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
-  : Identify undergraduate terms
 
 ## Utility
 

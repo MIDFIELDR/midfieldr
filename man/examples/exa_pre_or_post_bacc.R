@@ -7,17 +7,17 @@ degree <- toy_degree[, .(mcid, term_degree)]
 term
 
 # Add term ID columns
-x <- undergrad_term_id(term, midf_table = degree)
-x[order(-term_id)]
+x <- pre_or_post_bacc(term, midf_table = degree)
+x[order(-pre_or_post)]
 
 # No change if added columns duplicate existing
-y <- undergrad_term_id(x, midf_table = degree)
+y <- pre_or_post_bacc(x, midf_table = degree)
 check_equiv_frames(x, y)
 
 # Filter to retain "undergrad" rows only
-x[term_id == "undergrad"]
+x[pre_or_post == "pre-bacc"]
 
 # Function is applied to all tables containing a term-value
-term <- undergrad_term_id(term, midf_table = degree)
-course <- undergrad_term_id(course, midf_table = degree)
-degree <- undergrad_term_id(degree, midf_table = degree)
+term <- pre_or_post_bacc(term, midf_table = degree)
+course <- pre_or_post_bacc(course, midf_table = degree)
+degree <- pre_or_post_bacc(degree, midf_table = degree)

@@ -14,7 +14,7 @@ New features
   [`rm_redundant_cols()`](https://midfieldr.github.io/midfieldr/reference/rm_redundant_cols.md)
   that helps with the above.
 - New function
-  [`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
+  [`pre_or_post_bacc()`](https://midfieldr.github.io/midfieldr/reference/pre_or_post_bacc.md)
   to distinguish undergraduate terms from post-baccalaureate terms.
 - New utilities
   [`look_at()`](https://midfieldr.github.io/midfieldr/reference/look_at.md),

@@ -23,7 +23,7 @@ redundant_cols <- function(x) {
         ", " `", x, "` ", " is not added to the data frame if it duplicates
         an existing variable. The test for redundancy is managed internally
         by calling `rm_redundant_cols()` before the final data frame is
-        returned. For documentation, see `?rm_redundant_cols`."
+        returned."
   )
 }
 
@@ -46,8 +46,8 @@ order_multiway_one_line <- "Conditions multiway data for Cleveland multiway
         charts."
 timely_term_one_line <- "Determines the latest term by which program
         completion would be considered timely."
-undergrad_term_id_one_line <- "Distinguishes between undergraduate terms
-        (to retain) and post-baccalaureate terms (to exclude)."
+pre_or_post_bacc_one_line <- "Distinguishes between 
+        pre- and post-baccalaureate terms."
 
 
 # ---------- Variable names used in data.R

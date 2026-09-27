@@ -28,10 +28,10 @@ expect_class_preserved <- function(x, y, fnc) {
   rm(x, y)
 }
 
-test_undergrad_term_id <- function() {
+test_pre_or_post_bacc <- function() {
   
   # usage
-  # undergrad_term_id(dframe, midf_table = degree)
+  # pre_or_post_bacc(dframe, midf_table = degree)
   
   # ---------- setup
   
@@ -39,12 +39,12 @@ test_undergrad_term_id <- function() {
   suppressPackageStartupMessages(require("data.table"))
   
   # column names to be added (optional)
-  new_cols <- c("bacc_term", "term_id")
+  new_cols <- c("bacc_term", "pre_or_post")
   
   # ---------- correct answers
   
   # check that class is preserved function
-  expect_class_preserved(toy_term, toy_degree, undergrad_term_id)
+  expect_class_preserved(toy_term, toy_degree, pre_or_post_bacc)
   
   # dframe required variables: mcid, term (or term_course or term_degree)
   # degree required variables: mcid, term_degree
@@ -79,23 +79,23 @@ test_undergrad_term_id <- function() {
       "4", "20053"
   )
   setDT(x_degr)
-  ans01 <- undergrad_term_id(x_term, x_degr)
+  ans01 <- pre_or_post_bacc(x_term, x_degr)
   
   # answer is correct
   ans02 <- copy(ans01)
-  ans02 <- ans02[term_id == "undergrad", .(mcid, term)]
+  ans02 <- ans02[pre_or_post == "pre-bacc", .(mcid, term)]
   exp_ans <- x_term[-c(3, 8, 11)]
   expect_equal(ans02, exp_ans)
   
   # no effect if re-applied
   x <- copy(ans01)
-  y <- undergrad_term_id(x, x_degr)
+  y <- pre_or_post_bacc(x, x_degr)
   expect_equal(x, y)
   
   # confirm NO changes by reference
   term <- copy(toy_term)
   degr <- copy(toy_degree)
-  z <- undergrad_term_id(term, degr)
+  z <- pre_or_post_bacc(term, degr)
   expect_true(check_equiv_frames(term, toy_term))
   expect_true(check_equiv_frames(degr, toy_degree))
   expect_equal(x[["idx"]], y[["idx"]])
@@ -103,16 +103,16 @@ test_undergrad_term_id <- function() {
   # ---------- errors
   
   # check for incorrect input class / required variables
-  expect_error(undergrad_term_id(1))
-  expect_error(undergrad_term_id(toy_term, "sat"))
-  expect_error(undergrad_term_id(toy_student, toy_degree))
-  expect_error(undergrad_term_id(toy_degree, toy_student))
+  expect_error(pre_or_post_bacc(1))
+  expect_error(pre_or_post_bacc(toy_term, "sat"))
+  expect_error(pre_or_post_bacc(toy_student, toy_degree))
+  expect_error(pre_or_post_bacc(toy_degree, toy_student))
   
   # function output not printed
   invisible(NULL)
 }
 
-test_undergrad_term_id()
+test_pre_or_post_bacc()
 
 
 

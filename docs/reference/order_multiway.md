@@ -105,8 +105,7 @@ quantitative variable is encoded along identical horizontal scales.
 existing variable. The test for redundancy is managed internally by
 calling
 [`rm_redundant_cols()`](https://midfieldr.github.io/midfieldr/reference/rm_redundant_cols.md)
-before the final data frame is returned. For documentation, see
-[`?rm_redundant_cols`](https://midfieldr.github.io/midfieldr/reference/rm_redundant_cols.md).
+before the final data frame is returned.
 
 ## References
 

@@ -10,8 +10,8 @@ We organize the topics around a typical workflow:
 - blocs
 - special conditioning
 
-*Packages.* We load midfielddata for its practice data and data.table
-for its data manipulation syntax.
+*Packages.* For the practice data we load midfielddata; for data
+manipulation we load data.table.
 
 ``` r
 
@@ -22,7 +22,7 @@ library("data.table")
 
 ## Data
 
-### *Student records*
+### *Student-level records*
 
 midfieldr is designed to work with the MIDFIELD research database or any
 database with a similar structure such as the practice data in the
@@ -38,10 +38,18 @@ For this article we load all four midfielddata tables.
 data(student, term, course, degree)
 ```
 
+In developing a population, we can work with a minimum set of columns.
 [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
 returns a subset of each table with the variables most often encountered
-in the early stages of a project. The tables are linked by the
-anonymized student ID variable `mcid.`
+in the early stages of a project.
+
+``` r
+
+# usage: operates on student, term, course, or degree
+select_basic_cols(dframe)
+```
+
+The tables are linked by the anonymized student ID variable `mcid.`
 
 ``` r
 
@@ -157,11 +165,17 @@ Completion is *timely* if accomplished no later than a specified span
 after admission (default 6 years). The academic term at the end of that
 span is the *timely completion term.*
 
-[`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
-determines the timely completion term for each student. The principal
-data frame must include the variable `{mcid}.` Entry term and level are
-pulled from the `term` table. The data frame is returned with the
-following variables added:
+``` r
+
+# usage
+timely_term(dframe,  # requires mcid
+  midf_table = term, # requires mcid, term, level
+  span,              # default 6
+  sched_span         # default 4
+) 
+```
+
+The data frame is returned with the following variables added:
 
 | variable      | description                                      |
 |---------------|--------------------------------------------------|
@@ -213,18 +227,20 @@ timely_term(DT, span = 8)[order(-adj_span)]
 
 Identifies records to exclude due to insufficient data.
 
-*Data sufficiency* is a necessary condition for including a student in a
-population if a metric depends on program completion. To meet the
-condition, an institution’s data range must bracket a student’s entry
-and timely completion terms, i.e., the entry term is at least one term
-later than the lower limit of the data range and the timely completion
-term is no later than the upper limit.
+When program completion contributes to a metric, *data sufficiency* is a
+necessary condition for including a student in a research population. To
+meet the condition, an institution’s data range must bracket a student’s
+entry and timely completion terms.
 
-[`data_sufficiency()`](https://midfieldr.github.io/midfieldr/reference/data_sufficiency.md)
-evaluates whether the condition is met for each student. The principal
-data frame must include the variables `{mcid, entry_term, timely_term}.`
-Institutions’ data ranges are pulled from the `term` table. The data
-frame is returned with the following variables added:
+``` r
+
+# usage
+data_sufficiency(dframe, # requires mcid, entry_term, timely_term
+  midf_table = term      # requires mcid, term, institution
+) 
+```
+
+The data frame is returned with the following variables added:
 
 | variable      | description                                        |
 |---------------|----------------------------------------------------|
@@ -273,26 +289,32 @@ DT
 
 ## Records
 
-### undergrad_term_id()
+### pre_or_post_bacc()
 
-Distinguishes between undergraduate and post-baccalaureate terms.
+Distinguishes between pre- and post-baccalaureate terms.
 
-[`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
-distinguishes undergraduate terms (those leading up a student’s first
-degree)- from post-baccalaureate terms (after a first degree). The
-principal data frame must include the variable `{mcid}` and a
-term-valued variable, one of `{term, term_course, term_degree}.` The
-first degree term is pulled from the `degree` table. The data frame is
-returned with the following variables added:
+Because research using MIDFIELD data focuses on undergraduate students,
+any academic terms that postdate a student’s baccalaureate are dropped
+from the data tables.
+
+``` r
+
+# usage
+pre_or_post_bacc(dframe,  # requires mcid & term, term_course, or term_degree
+  midf_table = degree      # requires mcid, term_degree
+) 
+```
+
+The data frame is returned with the following variables added:
 
 | variable | description |
 |----|----|
 | `bacc_term` | term of a student's first baccalaureate |
-| `term_id` | indicates whether a term is undergraduate or post-baccalaureate |
+| `pre_or_post` | indicates whether a term is undergraduate or post-baccalaureate |
 
 ``` r
 
-undergrad_term_id(term, midf_table = degree)
+pre_or_post_bacc(term, midf_table = degree)
 #>                   mcid   term   cip6   institution         level
 #>                 <char> <char> <char>        <char>        <char>
 #>      1: MCID3111142225  19881 140901 Institution B 01 First-year
@@ -311,32 +333,32 @@ undergrad_term_id(term, midf_table = degree)
 #> 639913:      Good Standing     No         13                 13          13
 #> 639914:      Good Standing     No         18                 18          18
 #> 639915:      Good Standing     No         15                 15          15
-#>         hours_cumul_attempt gpa_term gpa_cumul bacc_term   term_id
-#>                       <num>    <num>     <num>    <char>    <char>
-#>      1:                   7     2.56      2.56     19881 undergrad
-#>      2:                   6     1.85      1.85      <NA> undergrad
-#>      3:                  18     1.93      1.90      <NA> undergrad
-#>     ---                                                           
-#> 639913:                  13     3.52      3.52      <NA> undergrad
-#> 639914:                  18     3.50      3.50      <NA> undergrad
-#> 639915:                  15     2.18      2.18      <NA> undergrad
+#>         hours_cumul_attempt gpa_term gpa_cumul bacc_term pre_or_post
+#>                       <num>    <num>     <num>    <char>      <char>
+#>      1:                   7     2.56      2.56     19881    pre-bacc
+#>      2:                   6     1.85      1.85      <NA>    pre-bacc
+#>      3:                  18     1.93      1.90      <NA>    pre-bacc
+#>     ---                                                             
+#> 639913:                  13     3.52      3.52      <NA>    pre-bacc
+#> 639914:                  18     3.50      3.50      <NA>    pre-bacc
+#> 639915:                  15     2.18      2.18      <NA>    pre-bacc
 ```
 
 The results are clearer if we limit the number of columns we review.
 
 ``` r
 
-x <- undergrad_term_id(term, midf_table = degree)
-x[order(-term_id), .(mcid, term, bacc_term, term_id)]
-#>                   mcid   term bacc_term   term_id
-#>                 <char> <char>    <char>    <char>
-#>      1: MCID3111142225  19881     19881 undergrad
-#>      2: MCID3111142283  19881      <NA> undergrad
-#>      3: MCID3111142283  19883      <NA> undergrad
-#>     ---                                          
-#> 639913: MCID3112760306  20181     20174 post-bacc
-#> 639914: MCID3112768322  20181     20174 post-bacc
-#> 639915: MCID3112773810  20181     20174 post-bacc
+x <- pre_or_post_bacc(term, midf_table = degree)
+x[, .(mcid, term, bacc_term, pre_or_post)][order(-pre_or_post)]
+#>                   mcid   term bacc_term pre_or_post
+#>                 <char> <char>    <char>      <char>
+#>      1: MCID3111142225  19881     19881    pre-bacc
+#>      2: MCID3111142283  19881      <NA>    pre-bacc
+#>      3: MCID3111142283  19883      <NA>    pre-bacc
+#>     ---                                            
+#> 639913: MCID3112760306  20181     20174   post-bacc
+#> 639914: MCID3112768322  20181     20174   post-bacc
+#> 639915: MCID3112773810  20181     20174   post-bacc
 ```
 
 The function is applied to each data table having a term-valued
@@ -344,9 +366,9 @@ variable.
 
 ``` r
 
-term <- undergrad_term_id(term)
-course <- undergrad_term_id(course)
-degree <- undergrad_term_id(degree)
+term <- pre_or_post_bacc(term)
+course <- pre_or_post_bacc(course)
+degree <- pre_or_post_bacc(degree)
 ```
 
 We usually follow up by filtering for rows labeled “undergrad” and
@@ -354,8 +376,8 @@ dropping the extra columns, e.g.,
 
 ``` r
 
-term <- term[term_id == "undergrad"]
-term[, c("bacc_term", "term_id") := NULL]
+term <- term[pre_or_post == "pre-bacc"]
+term[, c("bacc_term", "pre_or_post") := NULL]
 ```
 
 ## Blocs
@@ -376,8 +398,18 @@ in the `cip` dataset.
 
 [`filter_programs()`](https://midfieldr.github.io/midfieldr/reference/filter_programs.md)
 acts on a CIP data frame to choose rows that match or partially match
-search strings. Search strings are case-independent. For example, to
-search for music programs, we might start with,
+search strings.
+
+``` r
+
+# usage
+filter_programs(dframe, # cip or equivalent
+  pattern,              # search string
+  negate                # default FALSE
+)
+```
+
+For example, to search for music programs, we might start with,
 
 ``` r
 
@@ -565,7 +597,7 @@ For example, in these functions,
 
 - `timely_term(dframe, midf_table = term)`
 - `data_sufficiency(dframe, midf_table = term)`
-- `undergrad_term_id(dframe, midf_table = degree)`
+- `pre_or_post_bacc(dframe, midf_table = degree)`
 - `completion status(dframe, midf_table = degree)`
 
 the similarities include:

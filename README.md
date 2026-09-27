@@ -28,10 +28,10 @@ calculate quantitative metrics, and prepare results for dissemination.
   majors of First-Year Engineering (FYE) students.
 - `order_multiway()` Conditions multiway data for Cleveland multiway
   charts.
+- `pre_or_post_bacc()` Distinguishes between pre- and post-baccalaureate
+  terms.
 - `timely_term()` Determines the latest term by which program completion
   would be considered timely.
-- `undergrad_term_id()` Distinguishes between undergraduate and
-  post-baccalaureate terms.
 
 ## Installation
 
@@ -109,31 +109,31 @@ course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
 # Distinguish undergraduate and post-baccalaureate terms
-term <- undergrad_term_id(term, midf_table = degree)
-course <- undergrad_term_id(course, midf_table = degree)
-degree <- undergrad_term_id(degree, midf_table = degree)
+term <- pre_or_post_bacc(term, midf_table = degree)
+course <- pre_or_post_bacc(course, midf_table = degree)
+degree <- pre_or_post_bacc(degree, midf_table = degree)
 
 # Summarize term types
-term[, .N, by = "term_id"][order(-term_id)]
-#>      term_id     N
-#>       <char> <int>
-#> 1: undergrad  1330
-#> 2: post-bacc    17
-course[, .N, by = "term_id"][order(-term_id)]
-#>      term_id     N
-#>       <char> <int>
-#> 1: undergrad  6380
-#> 2: post-bacc    41
-degree[, .N, by = "term_id"][order(-term_id)]
-#>      term_id     N
-#>       <char> <int>
-#> 1: undergrad   169
-#> 2: post-bacc     1
+term[, .N, by = "pre_or_post"][order(-pre_or_post)]
+#>    pre_or_post     N
+#>         <char> <int>
+#> 1:    pre-bacc  1330
+#> 2:   post-bacc    17
+course[, .N, by = "pre_or_post"][order(-pre_or_post)]
+#>    pre_or_post     N
+#>         <char> <int>
+#> 1:    pre-bacc  6380
+#> 2:   post-bacc    41
+degree[, .N, by = "pre_or_post"][order(-pre_or_post)]
+#>    pre_or_post     N
+#>         <char> <int>
+#> 1:    pre-bacc   169
+#> 2:   post-bacc     1
 
 # Retain undergraduate terms
-term <- term[term_id == "undergrad"]
-course <- course[term_id == "undergrad"]
-degree <- degree[term_id == "undergrad"]
+term <- term[pre_or_post == "pre-bacc"]
+course <- course[pre_or_post == "pre-bacc"]
+degree <- degree[pre_or_post == "pre-bacc"]
 
 # Obtain 6-digit CIP codes, e.g., Engineering (14), 
 # Psychology (42), and Business (52).

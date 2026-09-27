@@ -19,11 +19,11 @@ calculate quantitative metrics, and prepare results for dissemination.
   (FYE) students.
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   Conditions multiway data for Cleveland multiway charts.
+- [`pre_or_post_bacc()`](https://midfieldr.github.io/midfieldr/reference/pre_or_post_bacc.md)
+  Distinguishes between pre- and post-baccalaureate terms.
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
   Determines the latest term by which program completion would be
   considered timely.
-- [`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
-  Distinguishes between undergraduate and post-baccalaureate terms.
 
 ## Installation
 
@@ -103,31 +103,31 @@ course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
 # Distinguish undergraduate and post-baccalaureate terms
-term <- undergrad_term_id(term, midf_table = degree)
-course <- undergrad_term_id(course, midf_table = degree)
-degree <- undergrad_term_id(degree, midf_table = degree)
+term <- pre_or_post_bacc(term, midf_table = degree)
+course <- pre_or_post_bacc(course, midf_table = degree)
+degree <- pre_or_post_bacc(degree, midf_table = degree)
 
 # Summarize term types
-term[, .N, by = "term_id"][order(-term_id)]
-#>      term_id     N
-#>       <char> <int>
-#> 1: undergrad  1330
-#> 2: post-bacc    17
-course[, .N, by = "term_id"][order(-term_id)]
-#>      term_id     N
-#>       <char> <int>
-#> 1: undergrad  6380
-#> 2: post-bacc    41
-degree[, .N, by = "term_id"][order(-term_id)]
-#>      term_id     N
-#>       <char> <int>
-#> 1: undergrad   169
-#> 2: post-bacc     1
+term[, .N, by = "pre_or_post"][order(-pre_or_post)]
+#>    pre_or_post     N
+#>         <char> <int>
+#> 1:    pre-bacc  1330
+#> 2:   post-bacc    17
+course[, .N, by = "pre_or_post"][order(-pre_or_post)]
+#>    pre_or_post     N
+#>         <char> <int>
+#> 1:    pre-bacc  6380
+#> 2:   post-bacc    41
+degree[, .N, by = "pre_or_post"][order(-pre_or_post)]
+#>    pre_or_post     N
+#>         <char> <int>
+#> 1:    pre-bacc   169
+#> 2:   post-bacc     1
 
 # Retain undergraduate terms
-term <- term[term_id == "undergrad"]
-course <- course[term_id == "undergrad"]
-degree <- degree[term_id == "undergrad"]
+term <- term[pre_or_post == "pre-bacc"]
+course <- course[pre_or_post == "pre-bacc"]
+degree <- degree[pre_or_post == "pre-bacc"]
 
 # Obtain 6-digit CIP codes, e.g., Engineering (14), 
 # Psychology (42), and Business (52).
@@ -260,14 +260,14 @@ Ohland, Matthew. 2023. *MIDFIELD, 2004–2023*.
   : Initialize FYE proxies for imputing missing data
 - [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
   : Order multiway categories
+- [`pre_or_post_bacc()`](https://midfieldr.github.io/midfieldr/reference/pre_or_post_bacc.md)
+  : Label terms as pre- or post-baccalaureate
 - [`rm_redundant_cols()`](https://midfieldr.github.io/midfieldr/reference/rm_redundant_cols.md)
   : Remove redundant columns
 - [`select_basic_cols()`](https://midfieldr.github.io/midfieldr/reference/select_basic_cols.md)
   : Choose columns of student records
 - [`timely_term()`](https://midfieldr.github.io/midfieldr/reference/timely_term.md)
   : Determine timely completion terms
-- [`undergrad_term_id()`](https://midfieldr.github.io/midfieldr/reference/undergrad_term_id.md)
-  : Identify undergraduate terms
 
 ## Utility
 

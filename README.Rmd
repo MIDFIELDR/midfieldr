@@ -45,9 +45,8 @@ midfieldr is an R package that supplies tools for working with longitudinal unde
 - `filter_programs()`        `r filter_programs_one_line`
 - `initialize_fye_proxies()` `r initialize_fye_proxies_one_line`
 - `order_multiway()`         `r order_multiway_one_line`
+- `pre_or_post_bacc()`              `r pre_or_post_bacc_one_line`
 - `timely_term()`            `r timely_term_one_line`
-- `undergrad_term_id()`      `r undergrad_term_id_one_line`
- 
  
 ## Installation
 
@@ -104,19 +103,19 @@ course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
 # Distinguish undergraduate and post-baccalaureate terms
-term <- undergrad_term_id(term, midf_table = degree)
-course <- undergrad_term_id(course, midf_table = degree)
-degree <- undergrad_term_id(degree, midf_table = degree)
+term <- pre_or_post_bacc(term, midf_table = degree)
+course <- pre_or_post_bacc(course, midf_table = degree)
+degree <- pre_or_post_bacc(degree, midf_table = degree)
 
 # Summarize term types
-term[, .N, by = "term_id"][order(-term_id)]
-course[, .N, by = "term_id"][order(-term_id)]
-degree[, .N, by = "term_id"][order(-term_id)]
+term[, .N, by = "pre_or_post"][order(-pre_or_post)]
+course[, .N, by = "pre_or_post"][order(-pre_or_post)]
+degree[, .N, by = "pre_or_post"][order(-pre_or_post)]
 
 # Retain undergraduate terms
-term <- term[term_id == "undergrad"]
-course <- course[term_id == "undergrad"]
-degree <- degree[term_id == "undergrad"]
+term <- term[pre_or_post == "pre-bacc"]
+course <- course[pre_or_post == "pre-bacc"]
+degree <- degree[pre_or_post == "pre-bacc"]
 
 # Obtain 6-digit CIP codes, e.g., Engineering (14), 
 # Psychology (42), and Business (52).
