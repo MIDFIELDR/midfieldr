@@ -1,52 +1,16 @@
 # Programs
 
 In the US, instructional programs are encoded by 6-digit numbers curated
-by the US Department of Education. The US standard encoding format is a
+by the US Department of Education. The standard encoding format is a
 two-digit number followed by a period, followed by a four-digit number,
-for example, 14.0102. MIDFIELD uses the same numerals, but omits the
-period, i.e., 140102, and stores the variable as a character string.
+for example, 14.0102.
 
-This article in the MIDFIELD workflow:
+MIDFIELD encodes programs using the same 6 digits without the period,
+e.g., 140102, recorded as character strings under the `cip6` variable in
+the relevant data tables. As strings, any leading zeros are preserved,
+e.g., 010101, 030101, etc.
 
-1.  Planning\
-2.  Initial processing
-    - Data sufficiency\
-    - Degree seeking\
-    - Identify programs
-3.  Blocs\
-4.  Groupings\
-5.  Metrics\
-6.  Displays
-
-## Definitions
-
-- program:
-
-  US academic field of study. Can be used to indicate a specialty within
-  a field or a collection of fields within a Department, College, or
-  University. Programs are denoted by the *Classification of
-  Instructional Programs* (CIP), a taxonomy of academic programs curated
-  by the US Department of Education ([NCES 2010](#ref-NCES:2010)).
-
-- CIP:
-
-  *Classification of Instructional Programs*, a taxonomy of academic
-  programs curated by the US Department of Education ([NCES
-  2010](#ref-NCES:2010)). The 2010 codes are included with midfieldr in
-  the data set `cip`.
-
-- `cip6`:
-
-  Character variable in the `term` and `degree` data tables of program
-  observations. Values are 6-digit CIP codes.
-
-## Method
-
-We search the `cip` data set included with midfieldr using a variety of
-techniques to obtain the set of 6-digit CIP codes for the programs under
-study. We assign custom program names to codes or groups of codes.
-
-## Taxonomy
+## Introduction
 
 Academic programs have three levels of codes and names:
 
@@ -60,69 +24,50 @@ corresponding to an academic department), and a collection of
 disciplines are represented by one or more 2-digit codes (roughly
 corresponding to an academic college).
 
-For example, Geotechnical Engineering (140802) is a specialty in Civil
-Engineering (1408) which is a department in the college of Engineering
+For example, Geotechnical Engineering (140802) is a specialty of Civil
+Engineering (1408) which is a department in a College of Engineering
 (14).
 
-To illustrate the taxonomy in a little more detail, we show in the table
-the programs assigned to the 2-digit code 41, “Science Technologies,
-Technicians”. This 2-digit grouping is subdivided into 5 groups at the
-4-digit level (codes 4100–4199) which are further subdivided into 9
-programs at the 6-digit level (codes 410000–419999).
+To illustrate the taxonomy in a little more detail, the table shows all
+programs under CIP 41 *Science Technologies, Technicians*, subdivided
+into (5) programs at the 4-digit level and (9) programs at the 6-digit
+level. Some 4-digit codes include only (1) 6-digit code, e.g., 4100 and
+4101, while others include more than one, e.g., 4102 and 4103.
 
-| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
+| cip2 | cip2name | cip4 | cip4name | cip6 | cip6name |
 |----|----|----|----|----|----|
-| Science Technologies, Technicians, General | 410000 | Science Technologies, Technicians, General | 4100 | Science Technologies, Technicians | 41 |
-| Biology Technician, Biotechnology Laboratory Technician | 410101 | Biology Technician, Biotechnology Laboratory Technician | 4101 |  ↓ | 41 |
-| Industrial Radiologic Technology, Technician | 410204 | Nuclear and Industrial Radiologic Technologies, Technicians | 4102 |  ↓ | 41 |
-| Nuclear, Nuclear Power Technology, Technician | 410205 |  ↓ | 4102 |  ↓ | 41 |
-| Nuclear and Industrial Radiologic Technologies, Technicians, Other | 410299 |  ↓ | 4102 |  ↓ | 41 |
-| Chemical Technology, Technician | 410301 | Physical Science Technologies, Technicians | 4103 |  ↓ | 41 |
-| Chemical Process Technology | 410303 |  ↓ | 4103 |  ↓ | 41 |
-| Physical Science Technologies, Technicians, Other | 410399 |  ↓ | 4103 |  ↓ | 41 |
-| Science Technologies, Technicians, Other | 419999 | Science Technologies, Technicians, Other | 4199 |  ↓ | 41 |
+| 41 | Science Technologies, Technicians | 4100 | Science Technologies, Technicians, General | 410000 | Science Technologies, Technicians, General |
+| 41 |  ↓ | 4101 | Biology Technician, Biotechnology Laboratory Technician | 410101 | Biology Technician, Biotechnology Laboratory Technician |
+| 41 |  ↓ | 4102 | Nuclear and Industrial Radiologic Technologies, Technicians | 410204 | Industrial Radiologic Technology, Technician |
+| 41 |  ↓ | 4102 |  ↓ | 410205 | Nuclear, Nuclear Power Technology, Technician |
+| 41 |  ↓ | 4102 |  ↓ | 410299 | Nuclear and Industrial Radiologic Technologies, Technicians, Other |
+| 41 |  ↓ | 4103 | Physical Science Technologies, Technicians | 410301 | Chemical Technology, Technician |
+| 41 |  ↓ | 4103 |  ↓ | 410303 | Chemical Process Technology |
+| 41 |  ↓ | 4103 |  ↓ | 410399 | Physical Science Technologies, Technicians, Other |
+| 41 |  ↓ | 4199 | Science Technologies, Technicians, Other | 419999 | Science Technologies, Technicians, Other |
 
-Table 1. CIP taxonomy {.table .gt_table
+Table 1. Example of CIP taxonomy {.table .gt_table
 quarto-disable-processing="false" quarto-bootstrap="false"}
 
-A 2-digit program can include anywhere from four 4-digit programs (e.g.,
-code 24 Liberal Arts and Sciences, General Studies and Humanities) to
-238 4-digit programs (e.g., code 51 Health Professions and Related
-Clinical Sciences).
+The number of programs represented by 2-digit codes vary over a wide
+range, for example,
 
-And 4-digit programs include anywhere from one 6-digit program (e.g.,
-code 4100 above) to 37 6-digit programs (e.g., code 1313 Education).
+- CIP 14 *Engineering* comprises (40) 4-digit codes and (54) 6-digit
+  codes
+- CIP 24 *Liberal Arts and Sciences, General Studies and Humanities*
+  comprise (1) 4-digit code and (4) 6-digit codes
+- CIP 51 *Health Professions and Related Clinical Sciences*
+  comprise (35) 4-digit codes and (238) 6-digit codes
 
-Unfortunately, some disciplines can comprise more than one 4-digit code.
-For example, the programs that comprise the broad discipline of
-Industrial and Systems Engineering encompass four distinct 4-digit
-codes: 1427 Systems Engineering, 1435 Industrial Engineering, 1436
-Manufacturing Engineering, and 1437 Operations Research. Hence the
-importance of being able to search all CIP data for programs of
-interest.
+## Data
 
-## Load data
-
-*Start.*   If you are writing your own script to follow along, we use
-these packages in this article:
+The dataset `cip` that loads with midfieldr contains program names and
+codes at the 6-digit, 4-digit, and 2-digit level.
 
 ``` r
 
-library(midfieldr)
-library(data.table)
-```
-
-*Loads with midfieldr.*   Prepared data, adapted from ([NCES
-2010](#ref-NCES:2010)). The data dictionary is documented in
-[`?cip`](https://midfieldr.github.io/midfieldr/reference/cip.md).
-
-- `cip`
-
-## Inspect the `cip` data
-
-First glance.
-
-``` r
+library("midfieldr")
+library("data.table")
 
 # Loads with midfieldr
 cip
@@ -156,15 +101,19 @@ cip
 ```
 
 All variables in `cip` are character strings, which protects the leading
-zeros of some CIP codes.
+zeros of CIP codes when present.
 
 ``` r
 
-# Names and class of the CIP variables
-cip[, lapply(.SD, class)]
-#>     cip6name      cip6  cip4name      cip4  cip2name      cip2
-#>       <char>    <char>    <char>    <char>    <char>    <char>
-#> 1: character character character character character character
+# 2-digit codes with leading zeros
+cip[cip2 %like% "^0", .(cip2, cip2name)] |> unique()
+#>      cip2                                                  cip2name
+#>    <char>                                                    <char>
+#> 1:     01 Agriculture, Agricultural Operations and Related Sciences
+#> 2:     03                        Natural Resources and Conservation
+#> 3:     04                         Architecture and Related Services
+#> 4:     05       Area, Ethnic, Cultural and Gender and Group Studies
+#> 5:     09           Communications, Journalism and Related Programs
 ```
 
 The number of unique programs.
@@ -172,11 +121,8 @@ The number of unique programs.
 ``` r
 
 # 2-digit level
-sort(unique(cip$cip2))
-#>  [1] "01" "03" "04" "05" "09" "10" "11" "12" "13" "14" "15" "16" "19" "22" "23"
-#> [16] "24" "25" "26" "27" "28" "29" "30" "31" "32" "33" "34" "35" "36" "37" "38"
-#> [31] "39" "40" "41" "42" "43" "44" "45" "46" "47" "48" "49" "50" "51" "52" "54"
-#> [46] "99"
+length(unique(cip$cip2))
+#> [1] 46
 
 # 4-digit level
 length(unique(cip$cip4))
@@ -232,55 +178,50 @@ sample(cip[, cip6name], 10)
 #> [10] "Sports and Exercise"
 ```
 
-## `filter_programs()`
+## How to search for programs
 
-Subset the `cip` data frame, retaining rows that match or partially
-match a vector of character strings.
+### `filter_programs()`
 
-*Arguments.*
-
-- **`dframe`**   Data frame of CIP program names and codes to be subset.
-
-- **`pattern`**   Character vector of search text for retaining rows,
-  not case-sensitive.
-
-- **`negate`**   Logical (default FALSE). If TRUE, returns rows that do
-  not match the search pattern.
-
-*Equivalent usage.*   The following implementations yield identical
-results,
+*Helps in finding 6-digit program codes.*
 
 ``` r
 
-# Arguments named
+# usage
+filter_programs(dframe, # cip or equivalent
+  pattern,              # search pattern
+  ...,                  # subsequent arguments referable only by name
+  negate = NULL         # default FALSE
+)
+```
+
+The first argument is usually `cip` or a subset of `cip`. The output is
+a data frame with rows that contain matches or partial matches to the
+search pattern. The forward pipe operator `|>` can be used if desired.
+Here, we use
+[`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
+to compare the results of equivalent statements.
+
+``` r
+
+# equivalent statements
 x <- filter_programs(dframe = cip, pattern = c("engineering"))
-
-# Arguments unnamed
 y <- filter_programs(cip, "engineering")
-
-# Using a chain
 z <- cip |> filter_programs("engineering")
 
-# Demonstrate equivalence
+# equivalent results
 check_equiv_frames(x, y)
 #> [1] TRUE
-# Demonstrate equivalence
 check_equiv_frames(x, z)
 #> [1] TRUE
 ```
 
-*Output.*   Subset of `cip` with rows matching elements of `pattern`.
-Additional subsetting if optional arguments specified. Examples follow.
-
-## Using a keyword search
-
-Filtering the CIP data for all programs containing the word
-“engineering” yields 119 observations.
+The `negate` argument, if true, drops rows that contain the search
+terms.
 
 ``` r
 
-# Filter basics
-filter_programs(cip, "engineering")
+x <- filter_programs(cip, "engineering")
+x
 #>                                                              cip6name   cip6
 #>                                                                <char> <char>
 #>   1:                                             Engineering, General 140101
@@ -308,408 +249,324 @@ filter_programs(cip, "engineering")
 #> 117:                            Military Technologies     29
 #> 118:                            Military Technologies     29
 #> 119: Health Professions and Related Clinical Sciences     51
+
+filter_programs(x, c("^15", "^29", "51"), negate = TRUE)
+#>                                                         cip6name   cip6
+#>                                                           <char> <char>
+#>  1:                                         Engineering, General 140101
+#>  2:                                              Pre-Engineering 140102
+#>  3: Aerospace, Aeronautical and Astronautical, Space Engineering 140201
+#> ---                                                                    
+#> 52:                                        Engineering Chemistry 144401
+#> 53:                           Biological, Biosystems Engineering 144501
+#> 54:                                           Engineering, Other 149999
+#>                                                  cip4name   cip4    cip2name
+#>                                                    <char> <char>      <char>
+#>  1:                                  Engineering, General   1401 Engineering
+#>  2:                                  Engineering, General   1401 Engineering
+#>  3: Aerospace, Aeronautical and Astronautical Engineering   1402 Engineering
+#> ---                                                                         
+#> 52:                                 Engineering Chemistry   1444 Engineering
+#> 53:                    Biological, Biosystems Engineering   1445 Engineering
+#> 54:                                    Engineering, Other   1499 Engineering
+#>       cip2
+#>     <char>
+#>  1:     14
+#>  2:     14
+#>  3:     14
+#> ---       
+#> 52:     14
+#> 53:     14
+#> 54:     14
 ```
 
-Suppose we want to find the CIP codes and names for all programs in
-Civil Engineering. The search is insensitive to case, so we start with
-the following code chunk.
+***Example 1***
+
+Suppose we want to determine the 6-digit codes for literature programs.
+We could start with a keyword.
 
 ``` r
 
-# Example 1 filter using keywords
-filter_programs(cip, "civil")
+pass_1 <- filter_programs(cip, "literature")
+pass_1
+#>                                             cip6name   cip6
+#>                                               <char> <char>
+#>   1:    Foreign Languages, Modern Languages, General 160000
+#>   2:      Foreign Languages and Literatures, General 160101
+#>   3:                                     Linguistics 160102
+#>  ---                                                       
+#> 103: English Language and Literature, Letters, Other 239999
+#> 104:       Theatre Literature, History and Criticism 500505
+#> 105:            Music History, Literature and Theory 500902
+#>                                                           cip4name   cip4
+#>                                                             <char> <char>
+#>   1:                  Foreign Languages, Modern Languages, General   1600
+#>   2: Linguistic, Comparative Related Language Studies and Services   1601
+#>   3: Linguistic, Comparative Related Language Studies and Services   1601
+#>  ---                                                                     
+#> 103:               English Language and Literature, Letters, Other   2399
+#> 104:                            Drama, Theatre Arts and Stagecraft   5005
+#> 105:                                                         Music   5009
+#>                                            cip2name   cip2
+#>                                              <char> <char>
+#>   1: Foreign Languages, Literatures and Linguistics     16
+#>   2: Foreign Languages, Literatures and Linguistics     16
+#>   3: Foreign Languages, Literatures and Linguistics     16
+#>  ---                                                      
+#> 103:       English Language and Literature, Letters     23
+#> 104:                     Visual and Performing Arts     50
+#> 105:                     Visual and Performing Arts     50
 ```
 
-| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
-|----|----|----|----|----|----|
-| American, United States Studies, Civilization | 050102 | Area Studies | 0501 | Area, Ethnic, Cultural and Gender and Group Studies | 05 |
-| Asian Studies, Civilization | 050103 | Area Studies | 0501 | Area, Ethnic, Cultural and Gender and Group Studies | 05 |
-| European Studies, Civilization | 050106 | Area Studies | 0501 | Area, Ethnic, Cultural and Gender and Group Studies | 05 |
-| Civil Engineering, General | 140801 | Civil Engineering | 1408 | Engineering | 14 |
-| Geotechnical Engineering | 140802 | Civil Engineering | 1408 | Engineering | 14 |
-| Structural Engineering | 140803 | Civil Engineering | 1408 | Engineering | 14 |
-| Transportation and Highway Engineering | 140804 | Civil Engineering | 1408 | Engineering | 14 |
-| Water Resources Engineering | 140805 | Civil Engineering | 1408 | Engineering | 14 |
-| Civil Engineering, Other | 140899 | Civil Engineering | 1408 | Engineering | 14 |
-| Civil Engineering Technology, Technician | 150201 | Civil Engineering Technologies, Technicians | 1502 | Engineering Technology | 15 |
-| Civil Drafting and Civil Engineering CAD, CADD | 151304 | Drafting, Design Engineering Technologies, Technicians | 1513 | Engineering Technology | 15 |
-| Multi, Interdisciplinary Studies - Ancient Studies, Civilization | 302201 | Classical and Ancient, Oriental Studies - Multi, Interdisciplinary Studies | 3022 | Muti, Interdisciplinary Studies | 30 |
-
-Table 2. Search results {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
-
-The search returns some programs with Civilization in their names as
-well as Engineering Technology. If we wanted Civil Engineering only, we
-can use a sequence of function calls, where the outcome of the one
-operation is assigned to the first argument of the next operation.
-
-The following code chunk could be read as, “Start with the default `cip`
-data frame, then keep any rows in which ‘civil’ is detected, then keep
-any rows in which ‘engineering’ is detected, then drop any rows in which
-‘technology’ is detected.” The first pass operates on `cip`, but
-successive passes do not. If used, the `cip` argument must be named.
+To refine the search further, we might first examine the highest level,
+2-digit categories.
 
 ``` r
 
-# First search
-first_pass <- filter_programs(cip, "civil")
-
-# Refine the search
-second_pass <- filter_programs(first_pass, "engineering")
-
-# Refine further
-third_pass <- filter_programs(second_pass, "technology", negate = TRUE)
+unique(pass_1[, .(cip2name, cip2)])
+#>                                          cip2name   cip2
+#>                                            <char> <char>
+#> 1: Foreign Languages, Literatures and Linguistics     16
+#> 2:       English Language and Literature, Letters     23
+#> 3:                     Visual and Performing Arts     50
 ```
 
-| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
-|----|----|----|----|----|----|
-| Civil Engineering, General | 140801 | Civil Engineering | 1408 | Engineering | 14 |
-| Geotechnical Engineering | 140802 | Civil Engineering | 1408 | Engineering | 14 |
-| Structural Engineering | 140803 | Civil Engineering | 1408 | Engineering | 14 |
-| Transportation and Highway Engineering | 140804 | Civil Engineering | 1408 | Engineering | 14 |
-| Water Resources Engineering | 140805 | Civil Engineering | 1408 | Engineering | 14 |
-| Civil Engineering, Other | 140899 | Civil Engineering | 1408 | Engineering | 14 |
-
-Table 3. Search results {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
-
-## Using a numerical code search
-
-Suppose we want to study programs relating to German culture, language,
-and literature. Using “german” for the `keep_text` value yields
+If our search is for English-language literature, we can restrict the
+search for codes that start with 23 (regular expression `"^23"`) and
+drop the 2-digit values from the working data frame.
 
 ``` r
 
-# Search on text
-filter_programs(cip, "german")
+pass_2 <- pass_1[, .(cip6name, cip6, cip4name, cip4)]
+pass_2 <- filter_programs(pass_2, "^23")
+pass_2
+#>                                            cip6name   cip6
+#>                                              <char> <char>
+#>  1:        English Language and Literature, General 230101
+#>  2:                             English Composition 230401
+#>  3:                                Creative Writing 230501
+#> ---                                                       
+#> 18:                 Child and Adolescent Literature 231405
+#> 19:                               Literature, Other 231499
+#> 20: English Language and Literature, Letters, Other 239999
+#>                                            cip4name   cip4
+#>                                              <char> <char>
+#>  1:        English Language and Literature, General   2301
+#>  2:                             English Composition   2304
+#>  3:                                Creative Writing   2305
+#> ---                                                       
+#> 18:                                      Literature   2314
+#> 19:                                      Literature   2314
+#> 20: English Language and Literature, Letters, Other   2399
 ```
 
-| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
-|----|----|----|----|----|----|
-| German Studies | 050125 | Area Studies | 0501 | Area, Ethnic, Cultural and Gender and Group Studies | 05 |
-| German Language Teacher Education | 131326 | Teacher Education and Professional Development, Specific Subject Areas | 1313 | Education | 13 |
-| Germanic Languages, Literatures and Linguistics, General | 160500 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
-| German Language and Literature | 160501 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
-| Scandinavian Languages, Literatures and Linguistics | 160502 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
-| Danish Language and Literature | 160503 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
-| Dutch, Flemish Language and Literature | 160504 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
-| Norwegian Language and Literature | 160505 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
-| Swedish Language and Literature | 160506 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
-| Germanic Languages, Literatures and Linguistics, Other | 160599 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
-
-Table 4. Search results {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
-
-From the 6-digit program names we find only two that are of interest,
-German Studies (050125) and German Language and Literature (160501). We
-use a character vector to assign these two codes to the `keep_text`
-argument.
+Searching the result on “literature.”
 
 ``` r
 
-# Search on codes
-filter_programs(cip, c("050125", "160501"))
+pass_3 <- filter_programs(pass_2, "literature")
+pass_3
+#>                                            cip6name   cip6
+#>                                              <char> <char>
+#>  1:        English Language and Literature, General 230101
+#>  2:             American Literature (United States) 230701
+#>  3:                  American Literature (Canadian) 230702
+#>  4:   English Literature (British and Commonwealth) 230801
+#>  5:                              General Literature 231401
+#>  6:             American Literature (United States) 231402
+#>  7:                  American Literature (Canadian) 231403
+#>  8:   English Literature (British and Commonwealth) 231404
+#>  9:                 Child and Adolescent Literature 231405
+#> 10:                               Literature, Other 231499
+#> 11: English Language and Literature, Letters, Other 239999
+#>                                             cip4name   cip4
+#>                                               <char> <char>
+#>  1:         English Language and Literature, General   2301
+#>  2: American Literature (United States and Canadian)   2307
+#>  3: American Literature (United States and Canadian)   2307
+#>  4:    English Literature (British and Commonwealth)   2308
+#>  5:                                       Literature   2314
+#>  6:                                       Literature   2314
+#>  7:                                       Literature   2314
+#>  8:                                       Literature   2314
+#>  9:                                       Literature   2314
+#> 10:                                       Literature   2314
+#> 11:  English Language and Literature, Letters, Other   2399
 ```
 
-| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
-|----|----|----|----|----|----|
-| German Studies | 050125 | Area Studies | 0501 | Area, Ethnic, Cultural and Gender and Group Studies | 05 |
-| German Language and Literature | 160501 | Germanic Languages, Literatures Linguistics | 1605 | Foreign Languages, Literatures and Linguistics | 16 |
-
-Table 5. Search results {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
-
-If the 6-digit codes are entered as integers, they are coerced to
-strings for the search.
+If we wanted Canadian, US, or UK literature specifically, we can search
+for those terms and retain the 6-digit names and codes only.
 
 ``` r
 
-# Search that produces an error
-filter_programs(cip, c(050125, 160501))
-#> Error in `filter_programs()`:
-#> ! Assertion on 'pattern' failed. Must be of class 'string', not 'double'.
+pass_4 <- pass_3[, .(cip6name, cip6)]
+filter_programs(pass_4, c("united", "canadian", "british"))
+#>                                         cip6name   cip6
+#>                                           <char> <char>
+#> 1:           American Literature (United States) 230701
+#> 2:                American Literature (Canadian) 230702
+#> 3: English Literature (British and Commonwealth) 230801
+#> 4:           American Literature (United States) 231402
+#> 5:                American Literature (Canadian) 231403
+#> 6: English Literature (British and Commonwealth) 231404
 ```
 
-## Using a regular expression search
-
-Specifying 4-digit codes yields a data frame all 6-digit programs
-containing the 4-digit string. We use the regular expression notation
-`^` to match the start of the line.
+Alternatively, we could select the codes themselves,
 
 ``` r
 
-# example 3 filter using regular expressions
-filter_programs(cip, c("^1410", "^1419"))
+filter_programs(pass_4, c("^2307", "^2308", "231402", "231403", "231404"))
+#>                                         cip6name   cip6
+#>                                           <char> <char>
+#> 1:           American Literature (United States) 230701
+#> 2:                American Literature (Canadian) 230702
+#> 3: English Literature (British and Commonwealth) 230801
+#> 4:           American Literature (United States) 231402
+#> 5:                American Literature (Canadian) 231403
+#> 6: English Literature (British and Commonwealth) 231404
 ```
 
-| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
-|----|----|----|----|----|----|
-| Electrical, Electronics and Communications Engineering | 141001 | Electrical, Electronics and Communications Engineering | 1410 | Engineering | 14 |
-| Laser and Optical Engineering | 141003 | Electrical, Electronics and Communications Engineering | 1410 | Engineering | 14 |
-| Telecommunications Engineering | 141004 | Electrical, Electronics and Communications Engineering | 1410 | Engineering | 14 |
-| Electrical, Electronics and Communications Engineering, Other | 141099 | Electrical, Electronics and Communications Engineering | 1410 | Engineering | 14 |
-| Mechanical Engineering | 141901 | Mechanical Engineering | 1419 | Engineering | 14 |
+***Example 2***
 
-Table 6. Search results {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
-
-The 2-digit series represent the most general groupings of related
-programs. Here, the result includes all History programs.
+Suppose we are searching for history programs. We can start, as we did
+above, with a keyword search across all 2-, 4-, and 6-digit names then
+examine the resulting top-level programs
 
 ``` r
 
-# Search on 2-digit code
-filter_programs(cip, "^54")
+pass_1 <- filter_programs(cip, "history")
+pass_1
+#>                                      cip6name   cip6
+#>                                        <char> <char>
+#>  1:       Architectural History and Criticism 040801
+#>  2:                 History Teacher Education 131328
+#>  3: Theatre Literature, History and Criticism 500505
+#> ---                                                 
+#> 12:                          Canadian History 540107
+#> 13:                          Military History 540108
+#> 14:                            History, Other 540199
+#>                                                                   cip4name
+#>                                                                     <char>
+#>  1:                                    Architectural History and Criticism
+#>  2: Teacher Education and Professional Development, Specific Subject Areas
+#>  3:                                     Drama, Theatre Arts and Stagecraft
+#> ---                                                                       
+#> 12:                                                                History
+#> 13:                                                                History
+#> 14:                                                                History
+#>       cip4                          cip2name   cip2
+#>     <char>                            <char> <char>
+#>  1:   0408 Architecture and Related Services     04
+#>  2:   1313                         Education     13
+#>  3:   5005        Visual and Performing Arts     50
+#> ---                                                
+#> 12:   5401                           History     54
+#> 13:   5401                           History     54
+#> 14:   5401                           History     54
+
+unique(pass_1[, .(cip2name, cip2)])
+#>                             cip2name   cip2
+#>                               <char> <char>
+#> 1: Architecture and Related Services     04
+#> 2:                         Education     13
+#> 3:        Visual and Performing Arts     50
+#> 4:                           History     54
 ```
 
-| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
-|----|----|----|----|----|----|
-| History, General | 540101 | History | 5401 | History | 54 |
-| American History (United States) | 540102 | History | 5401 | History | 54 |
-| European History | 540103 | History | 5401 | History | 54 |
-| History and Philosophy of Science and Technology | 540104 | History | 5401 | History | 54 |
-| Public, Applied History and Archival Administration | 540105 | History | 5401 | History | 54 |
-| Asian History | 540106 | History | 5401 | History | 54 |
-| Canadian History | 540107 | History | 5401 | History | 54 |
-| Military History | 540108 | History | 5401 | History | 54 |
-| History, Other | 540199 | History | 5401 | History | 54 |
-
-Table 7. Search results {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
-
-The series argument can include any combination of 2, 4, and 6-digit
-codes. It can also be passed to the function as a character vector.
+It appears that the 2-digit code we want is 54. In the second pass, we
+focus on the 6-digit names and codes.
 
 ``` r
 
-# Search on vector of codes
-codes_we_want <- c("^24", "^4102", "^450202")
-filter_programs(cip, codes_we_want)
+pass_2 <- pass_1[, .(cip6name, cip6)]
+pass_2 <- filter_programs(pass_2, "^54")
+pass_2
+#>                                               cip6name   cip6
+#>                                                 <char> <char>
+#> 1:                                    History, General 540101
+#> 2:                    American History (United States) 540102
+#> 3:                                    European History 540103
+#> 4:    History and Philosophy of Science and Technology 540104
+#> 5: Public, Applied History and Archival Administration 540105
+#> 6:                                       Asian History 540106
+#> 7:                                    Canadian History 540107
+#> 8:                                    Military History 540108
+#> 9:                                      History, Other 540199
 ```
 
-| cip6name | cip6 | cip4name | cip4 | cip2name | cip2 |
-|----|----|----|----|----|----|
-| Liberal Arts and Sciences, Liberal Studies | 240101 | Liberal Arts and Sciences, General Studies Humanities | 2401 | Liberal Arts and Sciences, General Studies and Humanities | 24 |
-| General Studies | 240102 | Liberal Arts and Sciences, General Studies Humanities | 2401 | Liberal Arts and Sciences, General Studies and Humanities | 24 |
-| Humanities, Humanistic Studies | 240103 | Liberal Arts and Sciences, General Studies Humanities | 2401 | Liberal Arts and Sciences, General Studies and Humanities | 24 |
-| Liberal Arts and Sciences, General Studies and Humanities, Other | 240199 | Liberal Arts and Sciences, General Studies Humanities | 2401 | Liberal Arts and Sciences, General Studies and Humanities | 24 |
-| Industrial Radiologic Technology, Technician | 410204 | Nuclear and Industrial Radiologic Technologies, Technicians | 4102 | Science Technologies, Technicians | 41 |
-| Nuclear, Nuclear Power Technology, Technician | 410205 | Nuclear and Industrial Radiologic Technologies, Technicians | 4102 | Science Technologies, Technicians | 41 |
-| Nuclear and Industrial Radiologic Technologies, Technicians, Other | 410299 | Nuclear and Industrial Radiologic Technologies, Technicians | 4102 | Science Technologies, Technicians | 41 |
-| Physical Anthropology | 450202 | Anthropology | 4502 | Social Sciences | 45 |
-
-Table 8. Search results {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
-
-## CIP data from another source
-
-If you use a CIP data set from another source, it must have the same
-structure as `cip`: six character columns named as follows,
+Assuming the programs we want are a subset of those shown, we can use
+the `negate` argument to drop selected programs by their ending string
+(e.g., regular expression `01$`).
 
 ``` r
 
-# Name and class of variables (columns) in cip
-unlist(lapply(cip, FUN = class))
-#>    cip6name        cip6    cip4name        cip4    cip2name        cip2 
-#> "character" "character" "character" "character" "character" "character"
+pass_3 <- filter_programs(pass_2, 
+                          c("01$", "04$", "05$", "08$", "99$"), 
+                          negate = TRUE)
+pass_3
+#>                            cip6name   cip6
+#>                              <char> <char>
+#> 1: American History (United States) 540102
+#> 2:                 European History 540103
+#> 3:                    Asian History 540106
+#> 4:                 Canadian History 540107
 ```
 
-## Assigning program names
+***Example 3***
 
-Programs in MIDFIELD data sets are encoded by 6-digit CIP codes. As
-we’ve shown, multiple 6-digit codes can be considered specialties within
-a larger program with a 4-digit code or even a set of distinct 4-digit
-codes. Thus the program names in `cip` are generally inadequate for
-grouping and summarizing. User-defined program names are nearly always
-required.
+Illustrating details.
+[`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md)
+is a midfieldr utility.
 
-> *Most studies require deliberate assignment of user-defined program
-> names to CIP codes or groups of CIP codes.*
-
-Here we demonstrate the creation of a data frame with all 6-digit CIP
-codes in a study plus their user-defined names.
-
-By searching `cip`, we can find that the 4-digit codes for the four
-engineering programs are: Civil (1408), Electrical (1410), Mechanical
-(1419), and Industrial/Systems (1427, 1435, 1436, and 1437).
-
-We obtain their 6-digit CIP codes. The 4-digit names are appropriate
-here. Our task is to create a variable with custom program names.
+1.  The first two arguments do not have to be named.
 
 ``` r
 
-# Four engineering programs
-four_programs <- filter_programs(cip, c("^1408", "^1410", "^1419", "^1427", "^1435", "^1436", "^1437"))
+# equivalent statements
+x <- filter_programs(dframe = cip, pattern = "^14")
+y <- filter_programs(cip, "^14")
 
-# Retain the needed columns
-four_programs <- four_programs[, .(cip6, cip4name)]
-four_programs
-#>       cip6                                               cip4name
-#>     <char>                                                 <char>
-#>  1: 140801                                      Civil Engineering
-#>  2: 140802                                      Civil Engineering
-#>  3: 140803                                      Civil Engineering
-#>  4: 140804                                      Civil Engineering
-#>  5: 140805                                      Civil Engineering
-#>  6: 140899                                      Civil Engineering
-#>  7: 141001 Electrical, Electronics and Communications Engineering
-#>  8: 141003 Electrical, Electronics and Communications Engineering
-#>  9: 141004 Electrical, Electronics and Communications Engineering
-#> 10: 141099 Electrical, Electronics and Communications Engineering
-#> 11: 141901                                 Mechanical Engineering
-#> 12: 142701                                    Systems Engineering
-#> 13: 143501                                 Industrial Engineering
-#> 14: 143601                              Manufacturing Engineering
-#> 15: 143701                                    Operations Research
-```
-
-To make the assignments clear, our approach here will be to assign a new
-`program` column with NA values, then edit the new column values.
-
-``` r
-
-# Assign a new column
-four_programs[, program := NA_character_]
-four_programs
-#>       cip6                                               cip4name program
-#>     <char>                                                 <char>  <char>
-#>  1: 140801                                      Civil Engineering    <NA>
-#>  2: 140802                                      Civil Engineering    <NA>
-#>  3: 140803                                      Civil Engineering    <NA>
-#>  4: 140804                                      Civil Engineering    <NA>
-#>  5: 140805                                      Civil Engineering    <NA>
-#>  6: 140899                                      Civil Engineering    <NA>
-#>  7: 141001 Electrical, Electronics and Communications Engineering    <NA>
-#>  8: 141003 Electrical, Electronics and Communications Engineering    <NA>
-#>  9: 141004 Electrical, Electronics and Communications Engineering    <NA>
-#> 10: 141099 Electrical, Electronics and Communications Engineering    <NA>
-#> 11: 141901                                 Mechanical Engineering    <NA>
-#> 12: 142701                                    Systems Engineering    <NA>
-#> 13: 143501                                 Industrial Engineering    <NA>
-#> 14: 143601                              Manufacturing Engineering    <NA>
-#> 15: 143701                                    Operations Research    <NA>
-```
-
-### 1. Use `cip4name %ilike%` to recode one value
-
-The `%like%` function is essentially a wrapper function around the base
-R [`grepl()`](https://rdrr.io/r/base/grep.html) function. The `%ilike%`
-version is case-insensitive. You can view the help page by running (the
-back-ticks facilitate a help search for terms starting with a symbol):
-
-``` r
-
-# Run in Console
-? `%like%`
-```
-
-In this approach, we search for one distinctive term only. We’re using
-abbreviations for compact output.
-
-``` r
-
-# Recode program using the 4-digit name
-four_programs[cip4name %ilike% "electrical", program := "EE"]
-four_programs
-#>       cip6                                               cip4name program
-#>     <char>                                                 <char>  <char>
-#>  1: 140801                                      Civil Engineering    <NA>
-#>  2: 140802                                      Civil Engineering    <NA>
-#>  3: 140803                                      Civil Engineering    <NA>
-#>  4: 140804                                      Civil Engineering    <NA>
-#>  5: 140805                                      Civil Engineering    <NA>
-#>  6: 140899                                      Civil Engineering    <NA>
-#>  7: 141001 Electrical, Electronics and Communications Engineering      EE
-#>  8: 141003 Electrical, Electronics and Communications Engineering      EE
-#>  9: 141004 Electrical, Electronics and Communications Engineering      EE
-#> 10: 141099 Electrical, Electronics and Communications Engineering      EE
-#> 11: 141901                                 Mechanical Engineering    <NA>
-#> 12: 142701                                    Systems Engineering    <NA>
-#> 13: 143501                                 Industrial Engineering    <NA>
-#> 14: 143601                              Manufacturing Engineering    <NA>
-#> 15: 143701                                    Operations Research    <NA>
-```
-
-### 2. Use `cip6 %like%` to recode one value
-
-In our second approach, we use the `%like%` function again, but apply it
-to a CIP code. Here we use the regular expression `^1408` meaning
-“starts with 1408.”
-
-``` r
-
-# Recode program using the 4-digit code
-four_programs[cip6 %like% "^1408", program := "CE"]
-four_programs
-#>       cip6                                               cip4name program
-#>     <char>                                                 <char>  <char>
-#>  1: 140801                                      Civil Engineering      CE
-#>  2: 140802                                      Civil Engineering      CE
-#>  3: 140803                                      Civil Engineering      CE
-#>  4: 140804                                      Civil Engineering      CE
-#>  5: 140805                                      Civil Engineering      CE
-#>  6: 140899                                      Civil Engineering      CE
-#>  7: 141001 Electrical, Electronics and Communications Engineering      EE
-#>  8: 141003 Electrical, Electronics and Communications Engineering      EE
-#>  9: 141004 Electrical, Electronics and Communications Engineering      EE
-#> 10: 141099 Electrical, Electronics and Communications Engineering      EE
-#> 11: 141901                                 Mechanical Engineering    <NA>
-#> 12: 142701                                    Systems Engineering    <NA>
-#> 13: 143501                                 Industrial Engineering    <NA>
-#> 14: 143601                              Manufacturing Engineering    <NA>
-#> 15: 143701                                    Operations Research    <NA>
-```
-
-### 3. Use `program := fcase()` to edit all values
-
-In this approach, we use the data.table function
-[`fcase()`](https://rdrr.io/pkg/data.table/man/fcase.html), an
-implementation of the SQL CASE WHEN statement. The data.table function
-`%chin%` is like `%in%`, but for character vectors.
-
-``` r
-
-# Recode all program values
-four_programs[, program := fcase(
-  cip6 %like% "^1408", "CE",
-  cip6 %like% "^1410", "EE",
-  cip6 %like% "^1419", "ME",
-  cip6 %chin% c("142701", "143501", "143601", "143701"), "ISE"
-)]
-four_programs <- four_programs[, .(cip6, program)]
-four_programs
-#>       cip6 program
-#>     <char>  <char>
-#>  1: 140801      CE
-#>  2: 140802      CE
-#>  3: 140803      CE
-#>  4: 140804      CE
-#>  5: 140805      CE
-#>  6: 140899      CE
-#>  7: 141001      EE
-#>  8: 141003      EE
-#>  9: 141004      EE
-#> 10: 141099      EE
-#> 11: 141901      ME
-#> 12: 142701     ISE
-#> 13: 143501     ISE
-#> 14: 143601     ISE
-#> 15: 143701     ISE
-```
-
-*Verify prepared data.*   `study_programs`, included with midfieldr,
-contains the case study information developed above. Here we verify that
-the two data frames have the same content.
-
-``` r
-
-# Demonstrate equivalence
-check_equiv_frames(four_programs, study_programs)
+# equivalent results
+check_equiv_frames(x, y)
 #> [1] TRUE
 ```
 
-## References
+2.  Search expressions must be strings.
 
-NCES. 2010. *IPEDS Classification of Instructional Programs (CIP)*.
-National Center for Education Statistics.
-<https://nces.ed.gov/ipeds/cipcode/>.
+``` r
+
+# incorrect
+catch_error(
+  filter_programs(cip, 050125)
+)
+#> Error: Assertion on 'pattern' failed. Must be of class 'string', not 'double'.
+
+# correct
+filter_programs(cip, "050125")
+#>          cip6name   cip6     cip4name   cip4
+#>            <char> <char>       <char> <char>
+#> 1: German Studies 050125 Area Studies   0501
+#>                                               cip2name   cip2
+#>                                                 <char> <char>
+#> 1: Area, Ethnic, Cultural and Gender and Group Studies     05
+```
+
+3.  The `negate` argument, if used, must be named.
+
+``` r
+
+# incorrect
+catch_error(
+  filter_programs(cip, "050125", FALSE)
+)
+#> Error: Arguments after ... must be named, as in arg = val. unexpected arguments: 'FALSE'
+
+# correct
+filter_programs(cip, "050125", negate = FALSE)
+#>          cip6name   cip6     cip4name   cip4
+#>            <char> <char>       <char> <char>
+#> 1: German Studies 050125 Area Studies   0501
+#>                                               cip2name   cip2
+#>                                                 <char> <char>
+#> 1: Area, Ethnic, Cultural and Gender and Group Studies     05
+```

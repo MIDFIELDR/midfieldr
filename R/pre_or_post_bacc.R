@@ -4,11 +4,11 @@
 #'
 #' `r pre_or_post_bacc_one_line` `r add_cols_support_finding`
 #'
-#' The dividing event between pre- and post-baccalaureate terms is the student's 
-#' first bachelor's degree. Post-baccalaureate records are usually dropped as a 
-#' step in constructing baseline records for further analysis. The data frame 
-#' for the principal argument is the `term, course,` or `degree` data table 
-#' with all columns. Can be applied however to any data frame containing the 
+#' The dividing event between pre- and post-baccalaureate terms is the student's
+#' first bachelor's degree. Post-baccalaureate records are usually dropped as a
+#' step in constructing baseline records for further analysis. The data frame
+#' for the principal argument is the `term, course,` or `degree` data table
+#' with all columns. Can be applied however to any data frame containing the
 #' required variables.
 #'
 #' `r redundant_cols("bacc_term")`
@@ -24,7 +24,7 @@
 #'   - `bacc_term` Character. Term of a student's first
 #'      baccalaureate, encoded `YYYYT` or, if no degree recorded, `NA.`
 #'      Joined from the `term_degree` variable in `midf_table.`
-#'   - `pre_or_post` Character. Term label. Possible values are "pre-bacc" 
+#'   - `pre_or_post` Character. Term label. Possible values are "pre-bacc"
 #'      (pre-baccalaureate/undergraduate) and "post-bacc."
 #' @example man/examples/exa_pre_or_post_bacc.R
 #' @export

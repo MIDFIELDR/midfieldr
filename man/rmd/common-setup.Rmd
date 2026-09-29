@@ -1,7 +1,9 @@
+
+
 ```{r child-common-setup}
 #| include: false
 
-# code chunks
+# ---------- code chunks
 knitr::opts_chunk$set(fig.width = 8,
                       out.width = "100%",
                       collapse  = TRUE, 
@@ -12,7 +14,17 @@ knitr::opts_chunk$set(fig.width = 8,
                       tidy      = FALSE, 
                       echo      = TRUE)
 
-# inline numbers with comma separators
+
+
+# ---------- backups that reset at common wrap-up
+oldseed <- NULL
+if (exists(".Random.seed")) oldseed <- .Random.seed
+
+my_options <- options()
+
+
+
+# ---------- format inline large numbers with comma separators
 knitr::knit_hooks$set(inline = function(x) {
     if (!is.numeric(x)) {
         x
@@ -23,25 +35,19 @@ knitr::knit_hooks$set(inline = function(x) {
     }
 })
 
-# backup existing random number seed
-oldseed <- NULL
-if (exists(".Random.seed")) oldseed <- .Random.seed
 
-# if Nrows equal to or less than this N, print all rows
-options(datatable.print.nrows = 6) 
 
-# if Nrows > N above, print this N rows
-options(datatable.print.topn = 3)
-
-# class of each column
-options(datatable.print.class = TRUE)
-
-# backup options, reset on closing
-my_options <- options()
+# ---------- data.table display
+options(
+    datatable.print.nrows = 6,   # print all rows up to this N
+    datatable.print.topn  = 3,   # otherwise this N top/bottom
+    datatable.print.class = TRUE # print class of variable
+) 
 
 
 
-# ---------- consistent function description
+# ---------- reusable function descriptions, one-liners
+#            duplicated in R/roxygen.R
 
 completion_status_one_line <- 
     "Identifies students completing a program in a timely manner."
@@ -57,4 +63,7 @@ timely_term_one_line <-
     "Determines the latest term by which program completion would be considered timely."
 pre_or_post_bacc_one_line <- 
     "Distinguishes between pre- and post-baccalaureate terms."
+
+
+
 ```

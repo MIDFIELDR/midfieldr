@@ -64,7 +64,7 @@ data(student, term, degree)
 We copy the tables, giving them new names (suffix `_source`) and new
 locations in memory. We can then use the original names without
 inadvertently updating the source tables “by reference” ([*Reference
-Semantics* 2026](#ref-reference-semantics:2026)).
+Semantics*, 2026](#ref-reference-semantics:2026)).
 
 ``` r
 
@@ -998,7 +998,7 @@ DT
 We want to separate the \small N column into two columns—one for the
 number of graduates and the other for the number of ever enrolled. This
 operation is known by a number of different names, e.g., pivot,
-crosstab, unstack, spread, or widen ([Mount and Zumel
+crosstab, unstack, spread, or widen ([Mount & Zumel,
 2019](#ref-Mount+Zumel:2019:fluid-data)).
 
 The data.table package uses
@@ -1330,7 +1330,7 @@ To use
 want the data in its original block-record form with one value column
 (stickiness). With one quantitative variable for every combination of
 the levels of two categorical variables (program and people), these are
-*multiway data* ([Cleveland 1993](#ref-Cleveland:1993)). How one orders
+*multiway data* ([Cleveland, 1993](#ref-Cleveland:1993)). How one orders
 the categorical variables is critical for visualizing effects.
 
 [`order_multiway()`](https://midfieldr.github.io/midfieldr/reference/order_multiway.md)
@@ -1436,11 +1436,11 @@ about people or programs.
 
 ## References
 
-Cleveland, William S. 1993. *Visualizing Data*. Hobart Press.
+Cleveland, W. S. (1993). *Visualizing Data*. Hobart Press.
 
-Mount, John, and Nina Zumel. 2019. *Coordinatized data: A fluid data
+Mount, J., & Zumel, N. (2019). *Coordinatized data: A fluid data
 specification*. Win Vector LLC.
-[http://winvector.github.io/FluidData/RowsAndColumns.html](http://winvector.github.io/FluidData/RowsAndColumns.md).
+[http://winvector.github.io/FluidData/RowsAndColumns.html](http://winvector.github.io/FluidData/RowsAndColumns.md)
 
-*Reference Semantics*. 2026.
-<https://r-datatable.com/articles/datatable-reference-semantics.html>.
+*Reference semantics*. (2026).
+<https://r-datatable.com/articles/datatable-reference-semantics.html>

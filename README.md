@@ -1,6 +1,4 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # midfieldr <img src="man/figures/logo.png" align="right" height="125K">
 
 <!-- badges: start -->
@@ -13,11 +11,12 @@ check](https://github.com/MIDFIELDR/midfieldr/actions/workflows/R-CMD-check.yaml
 
 ## Overview
 
-midfieldr is an R package that supplies tools for working with
-longitudinal undergraduate records from the MIDFIELD database ([Ohland
-2023](#ref-ohland:midfield:2023)) or similarly structured data tables.
-These tools help you develop credible populations, subset records to
-calculate quantitative metrics, and prepare results for dissemination.
+midfieldr is an R package with tools for working with longitudinal
+undergraduate records from the MIDFIELD database ([Ohland & Long,
+2016](#ref-Ohland+Long:2016)) or similarly structured data tables
+([ASEE, 2023](#ref-ATLAS:2023)). These tools help you develop credible
+populations, subset records to calculate quantitative metrics, and
+prepare results for dissemination.
 
 - `completion_status()` Identifies students completing a program in a
   timely manner.
@@ -32,6 +31,8 @@ calculate quantitative metrics, and prepare results for dissemination.
   terms.
 - `timely_term()` Determines the latest term by which program completion
   would be considered timely.
+
+<!-- `one-line` descriptions above are in man/rmd/common-setup.Rmd -->
 
 ## Installation
 
@@ -52,19 +53,19 @@ install.packages("midfielddata",
 ## Usage
 
 Data that load with midfieldr include `cip` for program codes and small
-samples of the four data tables (prefix `toy_`) for terse examples.
+samples of the four data tables (`toy_*`) for terse examples.
 
 ``` r
 library("midfieldr")
 library("data.table")
 
-# Assign preferred names to example tables
+# assign default names to toy tables
 student <- copy(toy_student)
 term <- copy(toy_term)
 course <- copy(toy_course)
 degree <- copy(toy_degree)
 
-# Pull IDs of degree-seeking students
+# pull IDs of degree-seeking students
 DT <- student[, .(mcid)]
 DT
 #>                mcid
@@ -77,11 +78,11 @@ DT
 #> 350: MCID3112869843
 #> 351: MCID3112885339
 
-# Determine data sufficiency
-DT <- timely_term(DT, midf_table = term)
-DT <- data_sufficiency(DT, midf_table = term)
+# determine data sufficiency
+DT <- timely_term(DT)
+DT <- data_sufficiency(DT)
 
-# Summarize data sufficiency
+# summarize data sufficiency
 DT[, .N, by = "sufficiency"][order(-N)]
 #>    sufficiency     N
 #>         <char> <int>
@@ -89,7 +90,7 @@ DT[, .N, by = "sufficiency"][order(-N)]
 #> 2:  fail-upper    99
 #> 3:  fail-lower    12
 
-# Subset to obtain baseline population
+# subset to obtain baseline population
 population <- DT[sufficiency == "satisfied", .(mcid)]
 population
 #>                mcid
@@ -102,18 +103,18 @@ population
 #> 239: MCID3112593368
 #> 240: MCID3112617577
 
-# Inner join to filter records to match the population
+# inner join to filter records to match the population
 student <- population[student, on = "mcid", nomatch = NULL]
 term <- population[term, on = "mcid", nomatch = NULL]
 course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-# Distinguish undergraduate and post-baccalaureate terms
-term <- pre_or_post_bacc(term, midf_table = degree)
-course <- pre_or_post_bacc(course, midf_table = degree)
-degree <- pre_or_post_bacc(degree, midf_table = degree)
+# distinguish undergraduate and post-baccalaureate terms
+term <- pre_or_post_bacc(term)
+course <- pre_or_post_bacc(course)
+degree <- pre_or_post_bacc(degree)
 
-# Summarize term types
+# summarize term types
 term[, .N, by = "pre_or_post"][order(-pre_or_post)]
 #>    pre_or_post     N
 #>         <char> <int>
@@ -130,17 +131,16 @@ degree[, .N, by = "pre_or_post"][order(-pre_or_post)]
 #> 1:    pre-bacc   169
 #> 2:   post-bacc     1
 
-# Retain undergraduate terms
+# retain undergraduate terms
 term <- term[pre_or_post == "pre-bacc"]
 course <- course[pre_or_post == "pre-bacc"]
 degree <- degree[pre_or_post == "pre-bacc"]
 
-# Obtain 6-digit CIP codes, e.g., Engineering (14), 
-# Psychology (42), and Business (52).
+# obtain 6-digit CIP codes of 3 programs
 programs <- filter_programs(cip, c("^14", "^42", "^52"))
 programs <- programs[, .(cip6name, cip6)]
 
-# Construct the programs table
+# construct the programs table
 programs[, program := fcase(
   cip6 %like% "^14", "Engineering",
   cip6 %like% "^42", "Psychology",
@@ -158,11 +158,11 @@ programs
 #> 174: 522101    Business
 #> 175: 529999    Business
 
-# Determine completion status
-DT <- timely_term(population, midf_table = term)
-DT <- completion_status(DT, midf_table = degree)
+# determine completion status
+DT <- timely_term(population)
+DT <- completion_status(DT)
 
-# Summarize completion status
+# summarize completion status
 DT[, .N, by = "completion"][order(-N)]
 #>    completion     N
 #>        <char> <int>
@@ -170,12 +170,22 @@ DT[, .N, by = "completion"][order(-N)]
 #> 2:       <NA>    71
 #> 3:       late     8
 
-# Filter for timely graduates
-DT <- unique(DT[completion == "timely", .(mcid)])
+# filter for timely graduates
+DT <- DT[completion == "timely", .(mcid)]
+DT
+#>                mcid
+#>              <char>
+#>   1: MCID3111213539
+#>   2: MCID3111213856
+#>   3: MCID3111254225
+#>  ---               
+#> 159: MCID3112587501
+#> 160: MCID3112592592
+#> 161: MCID3112593368
 
-# Join degree CIP codes
-degree_codes <- degree[, .(mcid, cip6)]
-DT <- degree_codes[DT, on = "mcid"]
+# join degree CIP codes
+degree_cip6 <- degree[, .(mcid, cip6)]
+DT <- degree_cip6[DT, on = "mcid"]
 DT
 #>                mcid   cip6
 #>              <char> <char>
@@ -187,9 +197,9 @@ DT
 #> 160: MCID3112592592 520201
 #> 161: MCID3112593368 090101
 
-# Inner join to filter graduates by program
-program_labels <- programs[, .(cip6, program)]
-DT <- program_labels[DT, on = "cip6", nomatch = NULL]
+# inner join to filter by our program selection
+programs <- programs[, .(cip6, program)]
+DT <- programs[DT, on = "cip6", nomatch = NULL]
 DT <- DT[, .(mcid, program, cip6 = NULL)]
 DT
 #>               mcid     program
@@ -202,7 +212,7 @@ DT
 #> 54: MCID3112587501  Psychology
 #> 55: MCID3112592592    Business
 
-# Join demographics
+# join demographics
 demographics <- student[, .(mcid, sex)]
 DT <- demographics[DT, on = "mcid"]
 DT
@@ -216,9 +226,8 @@ DT
 #> 54: MCID3112587501 Female  Psychology
 #> 55: MCID3112592592   Male    Business
 
-# Group and summarize timely graduates
-DT <- DT[, .(grad = .N), by = c("sex", "program")]
-DT[order(sex, program)]
+# group and summarize timely graduates
+DT[, .(grad = .N), by = c("sex", "program")][order(sex, program)]
 #>       sex     program  grad
 #>    <char>      <char> <int>
 #> 1: Female    Business     8
@@ -236,12 +245,25 @@ National Science Foundation through grant numbers 1545667 and 2142087.
 
 ## References
 
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent"
+data-entry-spacing="0" data-line-spacing="2">
 
-<div id="ref-ohland:midfield:2023" class="csl-entry">
+<div id="ref-ATLAS:2023" class="csl-entry">
 
-Ohland, Matthew. 2023. *MIDFIELD, 2004–2023*.
-<https://midfield.online/>.
+ASEE. (2023). *<span class="nocase">ATLAS: Academic Trajectory and
+Longitudinal Attainment System</span>*. American Society for Engineering
+Education.
+<https://ira.asee.org/atlas-academic-trajectory-and-longitudinal-attainment-system/>
+
+</div>
+
+<div id="ref-Ohland+Long:2016" class="csl-entry">
+
+Ohland, M. W., & Long, R. A. (2016). <span class="nocase">The
+Multiple-Institution Database for Investigating Engineering Longitudinal
+Development: An experiential case study of data sharing and
+reuse</span>. *Advances in Engineering Education*, *5*(2), 398–404.
+<http://advances.asee.org/wp-content/uploads/vol05/issue02/Papers/AEE-18-Ohland.pdf>
 
 </div>
 

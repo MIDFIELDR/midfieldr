@@ -1,13 +1,11 @@
 # R code used for documentation
 
-param_dots <- "Not used for passing values; forces subsequent arguments to be
-        referable only by name."
+add_cols_support_finding <- "Adds columns to the data frame that support the
+        finding."
+
+add_new_cols <- "New columns are added unless they are redundant (see Details)."
 
 dframe <- "Data frame or data frame extension (e.g., data.table or tibble)"
-
-midfield_x <- function(x) {
-  paste("`", x, "`", "data frame")
-}
 
 keep_class_rm_groups_rm_keys <- "Data frame class is preserved. Groups and keys
         are not preserved."
@@ -15,7 +13,12 @@ keep_class_rm_groups_rm_keys <- "Data frame class is preserved. Groups and keys
 keep_row_order_rm_NA_rm_duplic_rows <- "Row order is preserved. Rows with `NA` values in any
         of the required variables are removed. Duplicated rows are removed."
 
-add_new_cols <- "New columns are added unless they are redundant (see Details)."
+midfield_x <- function(x) {
+  paste("`", x, "`", "data frame")
+}
+
+param_dots <- "Not used for passing values; forces subsequent arguments to be
+        referable only by name."
 
 redundant_cols <- function(x) {
   paste0(
@@ -31,10 +34,8 @@ redundant_cols <- function(x) {
 
 
 # -------- Short descriptions that start the help pages.
-#          Text copies the one-liners in common-setup.Rmd used by Rmd files.
+# -------- duplicated in common-setup.Rmd used by Rmd files.
 
-add_cols_support_finding <- "Adds columns to the data frame that support the
-        finding."
 completion_status_one_line <- "Identifies students completing a program in a
         timely manner."
 data_sufficiency_one_line <- "Identifies records to exclude due to
@@ -44,10 +45,11 @@ initialize_fye_proxies_one_line <- "Conditions data for imputing starting
         majors of First-Year Engineering (FYE) students."
 order_multiway_one_line <- "Conditions multiway data for Cleveland multiway
         charts."
+pre_or_post_bacc_one_line <- "Distinguishes between
+        pre- and post-baccalaureate terms."
 timely_term_one_line <- "Determines the latest term by which program
         completion would be considered timely."
-pre_or_post_bacc_one_line <- "Distinguishes between 
-        pre- and post-baccalaureate terms."
+
 
 
 # ---------- Variable names used in data.R

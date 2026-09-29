@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">midfieldr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9043</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3.9044</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,6 +43,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/art-020-data-sufficiency.html">Data sufficiency</a></li>
+    <li><a class="dropdown-item" href="../articles/art-040-programs.html">Programs</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -74,9 +75,10 @@
 
     
     
-<p>The requirement that an institution’s data range brackets a student’s
-entry term and timely completion term for the student to be included in
-a research population.</p>
+<p><em>Data sufficiency</em> describes the requirement that an
+institution’s data range brackets a student’s entry term and timely
+completion term for the student to be included in a research
+population.</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -125,7 +127,7 @@ Figure 1: Upper limit data sufficiency.
 </p>
 </div>
 <dl>
-<dt>Student A</dt>
+<dt><em>Student A</em></dt>
 <dd>
 <p>Student A enters in Fall 1988 with a timely completion (TC) term of
 Spring 1994. In both of the following cases, the data sufficiency
@@ -144,7 +146,7 @@ term with respect to their “level” at entry, that is, entering as a
 first-year student, second-year student, etc.</p></li>
 </ul>
 <dl>
-<dt>Student B</dt>
+<dt><em>Student B</em></dt>
 <dd>
 <p>Student B enters in Fall 1993 with a TC term of Spring 1998, two
 years beyond the range of the data. We have several possible cases,</p>
@@ -182,13 +184,13 @@ Figure 2: Lower limit data sufficiency.
 </p>
 </div>
 <dl>
-<dt>Student A</dt>
+<dt><em>Student A</em></dt>
 <dd>
 <p>Like Student A in Figure 1, they enter the dataset in a term
 following the data lower limit and are included in the research
 population.</p>
 </dd>
-<dt>Student C</dt>
+<dt><em>Student C</em></dt>
 <dd>
 <p>Student C enters the institution before the lower limit of the data
 range (a “continuing” student) or they enter the institution at the
@@ -209,7 +211,7 @@ distinguish them from continuing students. Having to exclude C-1
 inherently excludes C-2 as well.</p></li>
 </ul>
 <dl>
-<dt>Student D</dt>
+<dt><em>Student D</em></dt>
 <dd>
 <p>Student D enters the institution at the same time as continuing
 student C but leaves the database before the data lower limit term.</p>
@@ -240,9 +242,8 @@ interpret the results.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://midfieldr.github.io/midfielddata/" class="external-link">"midfielddata"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://r-datatable.com" class="external-link">"data.table"</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># setup</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span><span class="op">)</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<span><span class="co"># load data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">student</span>, <span class="va">term</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="timely_term">
 <code>timely_term()</code><a class="anchor" aria-label="anchor" href="#timely_term"></a>
@@ -250,15 +251,21 @@ interpret the results.</p>
 <p><em>Determines the latest term by which program completion would be
 considered timely.</em></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">dframe</span>,  <span class="co"># requires mcid</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">dframe</span>, <span class="co"># requires mcid</span></span>
 <span>  midf_table <span class="op">=</span> <span class="va">term</span>, <span class="co"># requires mcid, term, level</span></span>
-<span>  <span class="va">span</span>,              <span class="co"># default 6</span></span>
-<span>  <span class="va">sched_span</span>         <span class="co"># default 4</span></span>
-<span><span class="op">)</span> </span></code></pre></div>
+<span>  <span class="va">span</span>, <span class="co"># default 6</span></span>
+<span>  <span class="va">sched_span</span> <span class="co"># default 4</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>In the examples, we use the default span of 6 years based on 150% of
 the default scheduled span of 4 years.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># setup</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">student</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># apply</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/timely_term.html">timely_term</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># view</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">adj_span</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                  mcid entry_term    entry_level adj_span timely_term</span></span>
 <span><span class="co">#&gt;                &lt;char&gt;     &lt;char&gt;         &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
@@ -269,9 +276,7 @@ the default scheduled span of 4 years.</p>
 <span><span class="co">#&gt; 97553: MCID3111858641      20013  03 Third-year        4       20051</span></span>
 <span><span class="co">#&gt; 97554: MCID3111860641      20013  03 Third-year        4       20051</span></span>
 <span><span class="co">#&gt; 97555: MCID3111602161      19991 04 Fourth-year        3       20013</span></span></code></pre></div>
-<div class="section level4">
-<h4 id="example-1">Example 1<a class="anchor" aria-label="anchor" href="#example-1"></a>
-</h4>
+<p><strong><em>Example 1</em></strong></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3111142225"</span><span class="op">]</span></span>
 <span><span class="co">#&gt;              mcid entry_term   entry_level adj_span timely_term</span></span>
@@ -284,24 +289,19 @@ the default scheduled span of 4 years.</p>
 Counting Fall 88 through Spring 89 as the first year, the five
 subsequent years end in Spring 1990, 91, 92, 93, 94, yielding a timely
 completion term of Spring 1994 (encoded <code>19933</code>).</p>
-</div>
-<div class="section level4">
-<h4 id="example-2">Example 2<a class="anchor" aria-label="anchor" href="#example-2"></a>
-</h4>
+<p><strong><em>Example 2</em></strong></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3111860641"</span><span class="op">]</span></span>
 <span><span class="co">#&gt;              mcid entry_term   entry_level adj_span timely_term</span></span>
 <span><span class="co">#&gt;            &lt;char&gt;     &lt;char&gt;        &lt;char&gt;    &lt;num&gt;      &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1: MCID3111860641      20013 03 Third-year        4       20051</span></span></code></pre></div>
 <p><em>Input values:</em> The student’s entry term is Spring 2002
-(encoded <code>20013</code>) and their entry level is
-<code>03 Third-year</code> from which we infer they have completed two
-years of their program.</p>
+(<code>20013</code>) and their entry level is <code>03 Third-year</code>
+from which we infer they have completed two years of their program.</p>
 <p><em>Output values:</em> Adjusted span is 4 years. Counting Spring 02
 through Fall 02 as the first year, the three subsequent years end in
-Fall 2003, 04, and 05, yielding a timely completion term of Fall 2005
-(encoded <code>20051</code>).</p>
-</div>
+Fall 2003, 04, and 05, yielding a timely completion term of Fall
+2005.</p>
 </div>
 <div class="section level3">
 <h3 id="data_sufficiency">
@@ -310,8 +310,8 @@ Fall 2003, 04, and 05, yielding a timely completion term of Fall 2005
 <p><em>Identifies records to exclude due to insufficient data.</em></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/data_sufficiency.html">data_sufficiency</a></span><span class="op">(</span><span class="va">dframe</span>, <span class="co"># requires mcid, entry_term, timely_term</span></span>
-<span>  midf_table <span class="op">=</span> <span class="va">term</span>      <span class="co"># requires mcid, term, institution</span></span>
-<span><span class="op">)</span> </span></code></pre></div>
+<span>  midf_table <span class="op">=</span> <span class="va">term</span> <span class="co"># requires mcid, term, institution</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>We select the required columns in the input to reduce clutter in the
 output.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -319,7 +319,9 @@ output.</p>
 <span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="va">DT</span><span class="op">[</span>, <span class="fu">.</span><span class="op">(</span><span class="va">mcid</span>, <span class="va">entry_term</span>, <span class="va">timely_term</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># apply</span></span>
-<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_sufficiency.html">data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span>, <span class="va">term</span><span class="op">)</span></span>
+<span><span class="va">DT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_sufficiency.html">data_sufficiency</a></span><span class="op">(</span><span class="va">DT</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># view</span></span>
 <span><span class="va">DT</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">sufficiency</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                  mcid entry_term timely_term  data_range sufficiency</span></span>
 <span><span class="co">#&gt;                &lt;char&gt;     &lt;char&gt;      &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
@@ -330,9 +332,7 @@ output.</p>
 <span><span class="co">#&gt; 97553: MCID3112785480      20071       20123 19901-20154   satisfied</span></span>
 <span><span class="co">#&gt; 97554: MCID3112800920      20101       20153 19881-20181   satisfied</span></span>
 <span><span class="co">#&gt; 97555: MCID3112870009      19951       20003 19881-20181   satisfied</span></span></code></pre></div>
-<div class="section level4">
-<h4 id="example-3">Example 3<a class="anchor" aria-label="anchor" href="#example-3"></a>
-</h4>
+<p><strong><em>Example 3</em></strong></p>
 <p>Exemplifies “Student A” in Figure 1 or Figure 2.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3112785480"</span><span class="op">]</span></span>
@@ -340,30 +340,24 @@ output.</p>
 <span><span class="co">#&gt;            &lt;char&gt;     &lt;char&gt;      &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1: MCID3112785480      20071       20123 19901-20154   satisfied</span></span></code></pre></div>
 <p><em>Input values:</em> Entry term of Fall 2007; timely completion
-term of Spring 2013; institution data range of Fall 1990 through Summer
-2015.</p>
+term of Spring 2013 (<code>20123</code>); institution data range of Fall
+1990 through Summer 2016 (<code>20154</code>).</p>
 <p><em>Output values:</em> Data sufficiency is satisfied. Data range
 lower limit is before the entry term; upper limit is after the timely
 completion term.</p>
-</div>
-<div class="section level4">
-<h4 id="example-4">Example 4<a class="anchor" aria-label="anchor" href="#example-4"></a>
-</h4>
+<p><strong><em>Example 4</em></strong></p>
 <p>Exemplifies “Student B” in Figure 1.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3111170322"</span><span class="op">]</span></span>
 <span><span class="co">#&gt;              mcid entry_term timely_term  data_range sufficiency</span></span>
 <span><span class="co">#&gt;            &lt;char&gt;     &lt;char&gt;      &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1: MCID3111170322      20133       20191 19881-20181  fail-upper</span></span></code></pre></div>
-<p><em>Input values:</em> Entry term of Spring 2013; timely completion
-term of Fall 2019; institution data range of Fall 1988 through Fall
-2018.</p>
+<p><em>Input values:</em> Entry term of Spring 2014
+(<code>20133</code>); timely completion term of Fall 2019; institution
+data range of Fall 1988 through Fall 2018.</p>
 <p><em>Output values:</em> Data sufficiency fails at the upper limit of
 the data range. Timely completion term is after the upper limit.</p>
-</div>
-<div class="section level4">
-<h4 id="example-5">Example 5<a class="anchor" aria-label="anchor" href="#example-5"></a>
-</h4>
+<p><strong><em>Example 5</em></strong></p>
 <p>Exemplifies “Student C” in Figure 2.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DT</span><span class="op">[</span><span class="va">mcid</span> <span class="op">==</span> <span class="st">"MCID3112056754"</span><span class="op">]</span></span>
@@ -371,18 +365,10 @@ the data range. Timely completion term is after the upper limit.</p>
 <span><span class="co">#&gt;            &lt;char&gt;     &lt;char&gt;      &lt;char&gt;      &lt;char&gt;      &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1: MCID3112056754      19881       19933 19881-20096  fail-lower</span></span></code></pre></div>
 <p><em>Input values:</em> Entry term of Fall 1988; timely completion
-term of Spring 1993; institution data range of Fall 1988 through Summer
-2009</p>
+term of Spring 1994 (<code>19933</code>); institution data range of Fall
+1988 through Summer 2010 (<code>20096</code>).</p>
 <p><em>Output values:</em> Data sufficiency fails at the lower limit of
 the data range. Entry term and lower limit are identical.</p>
-</div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h2>
-<div id="refs">
-
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

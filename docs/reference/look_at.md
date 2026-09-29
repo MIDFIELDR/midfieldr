@@ -24,7 +24,7 @@ Does not return anything. The side effect is to output to the terminal.
 ``` r
 # data frames
 look_at(cip)
-#> Classes 'data.table' and 'data.frame':   1582 obs. of  6 variables:
+#> Classes ‘data.table’ and 'data.frame':   1582 obs. of  6 variables:
 #>  $ cip6name: chr  "Agriculture, General" "Agricultural Business and Managemen"..
 #>  $ cip6    : chr  "010000" "010101" "010102" "010103" ...
 #>  $ cip4name: chr  "Agriculture, General" "Agricultural Business and Managemen"..
@@ -32,7 +32,7 @@ look_at(cip)
 #>  $ cip2name: chr  "Agriculture, Agricultural Operations and Related Sciences""..
 #>  $ cip2    : chr  "01" "01" "01" "01" ...
 look_at(toy_degree)
-#> Classes 'data.table' and 'data.frame':   193 obs. of  5 variables:
+#> Classes ‘data.table’ and 'data.frame':   193 obs. of  5 variables:
 #>  $ mcid       : chr  "MCID3111169601" "MCID3111169729" "MCID3111213539" "MCID"..
 #>  $ term_degree: chr  "19903" "19901" "19923" "19911" ...
 #>  $ cip6       : chr  "520201" "520201" "030103" "261399" ...

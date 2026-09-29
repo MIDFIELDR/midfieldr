@@ -1,0 +1,347 @@
+---
+title: "Programs"
+format:
+  gfm:
+    html-table-processing: none
+csl: ../../inst/information-science-and-technology.csl
+bibliography: ../../inst/REFERENCES.bib
+link-citations: true
+---
+
+```{r setup}
+#| include: false
+
+# for any figures generated in the article
+knitr::opts_chunk$set(fig.path = "figures/art-040-")
+
+# for any "child" arguments in r-code-chunks
+library("rprojroot")
+path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
+
+library("midfieldr")
+library("data.table")
+```
+
+```{r child = paste0(path_to_rmd, "/common-setup.Rmd")}
+```
+
+In the US, instructional programs are encoded by 6-digit numbers curated by the US Department of Education. The standard encoding format is a two-digit number followed by a period, followed by a four-digit number, for example, 14.0102. 
+
+MIDFIELD encodes programs using the same 6 digits without the period, e.g., 140102, recorded as character strings under the  `cip6` variable in the relevant data tables. As strings, any leading zeros are preserved, e.g., 010101, 030101, etc. 
+
+## Introduction
+
+Academic programs have three levels of codes and names:
+
+- 6-digit code, a specific program
+- 4-digit code, a group of 6-digit programs of comparable content 
+- 2-digit code, a grouping of 4-digit groups of related content 
+
+Specialties within a discipline are encoded at the 6-digit level, the discipline itself is represented by one or more 4-digit codes (roughly  corresponding to an academic department), and a collection of disciplines  are represented by one or more 2-digit codes (roughly corresponding to an academic college).  
+
+For example, Geotechnical Engineering (140802) is a specialty of Civil Engineering (1408) which is a department in a College of Engineering (14). 
+
+
+```{r}
+#| echo: false
+df <- filter_programs(cip, c("^51", "^14", "^24", "^41"))
+
+# N 6-digit codes
+df <- unique(df[, .(cip2name, cip2, cip4, cip6)])
+ncip6_51 <- nrow(df[cip2 == "51"])
+ncip6_14 <- nrow(df[cip2 == "14"])
+ncip6_24 <- nrow(df[cip2 == "24"])
+ncip6_41 <- nrow(df[cip2 == "41"])
+
+# N 4-digit codes
+df <- unique(df[, .(cip2name, cip2, cip4)])
+ncip4_51 <- nrow(df[cip2 == "51"])
+ncip4_14 <- nrow(df[cip2 == "14"])
+ncip4_24 <- nrow(df[cip2 == "24"])
+ncip4_41 <- nrow(df[cip2 == "41"])
+
+# 2-digit names
+df <- unique(df[, .(cip2name, cip2)])
+name51 <- df[cip2 == "51", cip2name]
+name14 <- df[cip2 == "14", cip2name]
+name24 <- df[cip2 == "24", cip2name]
+name41 <- df[cip2 == "41", cip2name]
+```
+
+To illustrate the taxonomy in a little more detail, the table shows all programs under CIP 41 *`r name41`*, subdivided into (`r ncip4_41`) programs at the 4-digit level and (`r ncip6_41`) programs at the 6-digit level. Some 4-digit codes include only (1) 6-digit code, e.g., 4100 and 4101, while others include more than one, e.g., 4102 and 4103. 
+
+```{r}
+#| echo: false
+library(gt)
+x <- filter_programs(cip, "^41")
+x[2:9, cip2name := "\U2003\U02193"]
+x[c(4, 5, 7, 8), cip4name := "\U2003\U02193"]
+setcolorder(x, c("cip2", "cip2name", "cip4", "cip4name", "cip6", "cip6name"))
+x |>
+  gt() |>
+  tab_caption("Table 1. Example of CIP taxonomy") |>
+  tab_options(table.font.size = "small") |>
+  opt_stylize(style = 1, color = "gray") |>
+  tab_style(
+    style = list(cell_fill(color = "#c7eae5")),
+    locations = cells_column_labels(columns = everything())
+  )
+```
+
+
+The number of programs represented by 2-digit codes vary over a wide range, for example, 
+
+- CIP 14 *`r name14`* comprises (`r ncip4_14`) 4-digit codes and (`r ncip6_14`) 6-digit codes
+- CIP 24 *`r name24`* comprise (`r ncip4_24`) 4-digit code and (`r ncip6_24`) 6-digit codes
+- CIP 51 *`r name51`* comprise (`r ncip4_51`) 4-digit codes and (`r ncip6_51`) 6-digit codes
+
+
+
+
+
+
+
+
+
+
+
+## Data
+
+The dataset `cip` that loads with midfieldr contains program names and codes at the 6-digit, 4-digit, and 2-digit level.
+
+```{r}
+library("midfieldr")
+library("data.table")
+
+# Loads with midfieldr
+cip
+```
+
+All variables in `cip` are character strings, which protects the leading zeros of CIP codes when present. 
+
+```{r}
+# 2-digit codes with leading zeros
+cip[cip2 %like% "^0", .(cip2, cip2name)] |> unique()
+```
+
+The number of unique programs.
+
+```{r}
+# 2-digit level
+length(unique(cip$cip2))
+
+# 4-digit level
+length(unique(cip$cip4))
+
+# 6-digit level
+length(unique(cip$cip6))
+```
+
+A sample of program names uses a random number generator, so your result will differ from that shown. 
+
+```{r}
+#| echo: false
+# seed is reset in common closing
+set.seed(20210613)
+```
+
+```{r}
+# 2-digit name sample
+sample(cip[, cip2name], 10)
+
+# 4-digit name sample
+sample(cip[, cip4name], 10)
+
+# 6-digit name sample
+sample(cip[, cip6name], 10)
+```
+
+
+
+
+## How to search for programs
+
+### `filter_programs()`
+
+*`r filter_programs_one_line`*
+
+```{r}
+#| eval: false
+# usage
+filter_programs(dframe, # cip or equivalent
+  pattern,              # search pattern
+  ...,                  # subsequent arguments referable only by name
+  negate = NULL         # default FALSE
+)
+```
+
+The first argument is usually `cip` or a subset of `cip`. The output is a data frame with rows that contain matches or partial matches to the search pattern.  The forward pipe operator `|>` can be used if desired. Here, we use `check_equiv_frames()` to compare the results of equivalent statements.  
+
+```{r}
+# equivalent statements
+x <- filter_programs(dframe = cip, pattern = c("engineering"))
+y <- filter_programs(cip, "engineering")
+z <- cip |> filter_programs("engineering")
+
+# equivalent results
+check_equiv_frames(x, y)
+check_equiv_frames(x, z)
+```
+
+The `negate` argument, if true, drops rows that contain the search terms.
+
+```{r}
+x <- filter_programs(cip, "engineering")
+x
+
+filter_programs(x, c("^15", "^29", "51"), negate = TRUE)
+```
+
+
+
+***Example 1***
+
+```{r}
+#| echo: false
+options(datatable.print.nrows = 12)
+```
+
+Suppose we want to determine the 6-digit codes for literature programs. We could start with a keyword.
+
+```{r}
+pass_1 <- filter_programs(cip, "literature")
+pass_1
+```
+
+To refine the search further, we might first examine the highest level, 2-digit categories. 
+
+```{r}
+unique(pass_1[, .(cip2name, cip2)])
+```
+
+If our search is for English-language literature, we can restrict the search for codes that start with 23 (regular expression `"^23"`) and drop the 2-digit values from the working data frame. 
+
+```{r}
+pass_2 <- pass_1[, .(cip6name, cip6, cip4name, cip4)]
+pass_2 <- filter_programs(pass_2, "^23")
+pass_2
+```
+
+Searching the result on "literature."
+
+```{r}
+pass_3 <- filter_programs(pass_2, "literature")
+pass_3
+```
+
+If we wanted Canadian, US, or UK literature specifically, we can search for those terms and retain the 6-digit names and codes only. 
+
+```{r}
+pass_4 <- pass_3[, .(cip6name, cip6)]
+filter_programs(pass_4, c("united", "canadian", "british"))
+```
+
+Alternatively, we could select the codes themselves, 
+
+```{r}
+filter_programs(pass_4, c("^2307", "^2308", "231402", "231403", "231404"))
+```
+
+
+
+
+***Example 2***
+
+Suppose we are searching for history programs. We can start, as we did above, with a keyword search across all 2-, 4-, and 6-digit names then examine the resulting top-level programs 
+
+```{r}
+pass_1 <- filter_programs(cip, "history")
+pass_1
+
+unique(pass_1[, .(cip2name, cip2)])
+```
+
+It appears that the 2-digit code we want is 54. In the second pass, we focus on the 6-digit names and codes. 
+
+```{r}
+pass_2 <- pass_1[, .(cip6name, cip6)]
+pass_2 <- filter_programs(pass_2, "^54")
+pass_2
+```
+
+Assuming the programs we want are a subset of those shown, we can use the `negate` argument to drop selected programs by their ending string (e.g., regular expression `01$`).
+
+```{r}
+pass_3 <- filter_programs(pass_2, 
+                          c("01$", "04$", "05$", "08$", "99$"), 
+                          negate = TRUE)
+pass_3
+```
+
+
+***Example 3***
+
+Illustrating details. `catch_error()` is a midfieldr utility.
+
+1. The first two arguments do not have to be named.
+
+```{r}
+# equivalent statements
+x <- filter_programs(dframe = cip, pattern = "^14")
+y <- filter_programs(cip, "^14")
+
+# equivalent results
+check_equiv_frames(x, y)
+```
+
+2. Search expressions must be strings.
+
+```{r}
+# incorrect
+catch_error(
+  filter_programs(cip, 050125)
+)
+
+# correct
+filter_programs(cip, "050125")
+```
+
+3. The `negate` argument, if used, must be named.
+
+```{r}
+# incorrect
+catch_error(
+  filter_programs(cip, "050125", FALSE)
+)
+
+# correct
+filter_programs(cip, "050125", negate = FALSE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r child = paste0(path_to_rmd, "/common-wrap-no-ref.Rmd")}
+```

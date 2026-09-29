@@ -117,7 +117,7 @@ select_basic_cols(degree)
 ### *CIP data*
 
 The US Classification of Instructional Programs (CIP) is a taxonomy of
-fields of study ([NCES 2010](#ref-NCES:2010)). The dataset `cip` that
+fields of study ([NCES, 2010](#ref-NCES:2010)). The dataset `cip` that
 loads with midfieldr contains program names and codes at the 2-digit,
 4-digit, and 6-digit level.
 
@@ -168,11 +168,11 @@ span is the *timely completion term.*
 ``` r
 
 # usage
-timely_term(dframe,  # requires mcid
+timely_term(dframe, # requires mcid
   midf_table = term, # requires mcid, term, level
-  span,              # default 6
-  sched_span         # default 4
-) 
+  span, # default 6
+  sched_span # default 4
+)
 ```
 
 The data frame is returned with the following variables added:
@@ -236,8 +236,8 @@ entry and timely completion terms.
 
 # usage
 data_sufficiency(dframe, # requires mcid, entry_term, timely_term
-  midf_table = term      # requires mcid, term, institution
-) 
+  midf_table = term # requires mcid, term, institution
+)
 ```
 
 The data frame is returned with the following variables added:
@@ -300,9 +300,9 @@ from the data tables.
 ``` r
 
 # usage
-pre_or_post_bacc(dframe,  # requires mcid & term, term_course, or term_degree
-  midf_table = degree      # requires mcid, term_degree
-) 
+pre_or_post_bacc(dframe, # requires mcid & term, term_course, or term_degree
+  midf_table = degree # requires mcid, term_degree
+)
 ```
 
 The data frame is returned with the following variables added:
@@ -403,9 +403,10 @@ search strings.
 ``` r
 
 # usage
-filter_programs(dframe, # cip or equivalent
-  pattern,              # search string
-  negate                # default FALSE
+filter_programs(
+  dframe, # cip or equivalent
+  pattern, # search string
+  negate # default FALSE
 )
 ```
 
@@ -768,6 +769,6 @@ See the relevant help page for more information.
 
 ## References
 
-NCES. 2010. *IPEDS Classification of Instructional Programs (CIP)*.
+NCES. (2010). *IPEDS Classification of Instructional Programs (CIP)*.
 National Center for Education Statistics.
-<https://nces.ed.gov/ipeds/cipcode/>.
+<https://nces.ed.gov/ipeds/cipcode/>

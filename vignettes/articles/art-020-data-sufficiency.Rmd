@@ -3,6 +3,7 @@ title: "Data sufficiency"
 format:
   gfm:
     html-table-processing: none
+csl: ../../inst/information-science-and-technology.csl
 bibliography: ../../inst/REFERENCES.bib
 link-citations: true
 ---
@@ -16,17 +17,15 @@ knitr::opts_chunk$set(fig.path = "figures/art-020-")
 # for any "child" arguments in r-code-chunks
 library("rprojroot")
 path_to_rmd <- find_root_file("man", "rmd", criterion = has_file("DESCRIPTION"))
+
+library("ggplot2")
 ```
 
 ```{r child = paste0(path_to_rmd, "/common-setup.Rmd")}
 ```
 
-```{r}
-#| include: false
-library("ggplot2")
-```
+*Data sufficiency* describes the requirement that an institution's data range brackets a student's entry term and timely completion term for the student to be included in a research population. 
 
-The requirement that an institution's data range brackets a student's entry term and timely completion term for the student to be included in a research population. 
 
 
 ## Introduction 
@@ -41,8 +40,6 @@ The *data* having a *sufficient* number of terms is the necessary and sufficient
 
 
 ## Rationale
-
-
 
 ### *Upper-limit data sufficiency*
 
@@ -166,7 +163,7 @@ ggplot() +
   )
 ```
 
-Student A
+*Student A*
 
 :   Student A enters in Fall 1988 with a timely completion (TC) term of Spring 1994. In both of the following cases, the data sufficiency criteria are satisfied and the students are included in the research population. 
 
@@ -174,7 +171,7 @@ Student A
 
 -   A-2: Transfer student, and we know their first term in a MIDFIELD institution. We have no knowledge of how much time was spent accumulating their pre-MIDFIELD credit hours, but we can estimate a TC term with respect to their "level" at entry, that is, entering as a first-year student, second-year student, etc. 
 
-Student B
+*Student B*
 
 :   Student B enters in Fall 1993 with a TC term of Spring 1998, two years beyond the range of the data. We have several possible cases,
 
@@ -285,11 +282,11 @@ ggplot() +
   )
 ```
 
-Student A
+*Student A*
 
 :   Like Student A in Figure 1, they enter the dataset in a term following the data lower limit and are included in the research population. 
 
-Student C
+*Student C*
 
 :   Student C enters the institution before the lower limit of the data range (a "continuing" student) or they enter the institution at the lower limit precisely.
 
@@ -297,7 +294,7 @@ Student C
 
 -   C-2: If student C is not continuing, that is, their first time entry to a MIDFIELD institution is at the lower data limit (here, 1986), we would include them in a study if we could. Unfortunately, we cannot distinguish them from continuing students. Having to exclude C-1 inherently excludes C-2 as well.
 
-Student D
+*Student D*
 
 :   Student D enters the institution at the same time as continuing student C but leaves the database before the data lower limit term.
 
@@ -319,9 +316,8 @@ library("midfieldr")
 library("midfielddata")
 library("data.table")
 
-# setup
+# load data
 data(student, term)
-DT <- student[, .(mcid)]
 ```
 
 
@@ -332,23 +328,29 @@ DT <- student[, .(mcid)]
 
 ```{r}
 #| eval: false
-timely_term(dframe,  # requires mcid
+timely_term(dframe, # requires mcid
   midf_table = term, # requires mcid, term, level
-  span,              # default 6
-  sched_span         # default 4
-) 
+  span, # default 6
+  sched_span # default 4
+)
 ```
 
 In the examples, we use the default span of 6 years based on 150% of the default scheduled span of 4 years.
 
 ```{r}
-DT <- timely_term(DT, term)
+# setup
+DT <- student[, .(mcid)]
+
+# apply
+DT <- timely_term(DT)
+
+# view
 DT[order(-adj_span)]
 ```
 
 
 
-#### Example 1
+***Example 1***
 
 ```{r}
 DT[mcid == "MCID3111142225"]
@@ -356,20 +358,19 @@ DT[mcid == "MCID3111142225"]
 
 *Input values:* The student's entry term is Fall 1988 (encoded `19881`) and their entry level is `01 First-year.`
 
-
 *Output values:* Adjusted span is the default 6 years. Counting Fall 88 through Spring 89 as the first year, the five subsequent years end in Spring 1990, 91, 92, 93, 94, yielding a timely completion term of Spring 1994 (encoded `19933`).
 
 
 
-#### Example 2
+***Example 2***
 
 ```{r}
 DT[mcid == "MCID3111860641"]
 ```
 
-*Input values:* The student's entry term is Spring 2002 (encoded `20013`) and their entry level is `03 Third-year` from which we infer they have completed two years of their program. 
+*Input values:* The student's entry term is Spring 2002 (`20013`) and their entry level is `03 Third-year` from which we infer they have completed two years of their program. 
 
-*Output values:* Adjusted span is 4 years. Counting Spring 02 through Fall 02 as the first year, the three subsequent years end in Fall 2003, 04, and 05, yielding a timely completion term of Fall 2005 (encoded `20051`).
+*Output values:* Adjusted span is 4 years. Counting Spring 02 through Fall 02 as the first year, the three subsequent years end in Fall 2003, 04, and 05, yielding a timely completion term of Fall 2005.
 
 
 
@@ -380,8 +381,8 @@ DT[mcid == "MCID3111860641"]
 ```{r}
 #| eval: false
 data_sufficiency(dframe, # requires mcid, entry_term, timely_term
-  midf_table = term      # requires mcid, term, institution
-) 
+  midf_table = term # requires mcid, term, institution
+)
 ```
 
 We select the required columns in the input to reduce clutter in the output. 
@@ -391,13 +392,15 @@ We select the required columns in the input to reduce clutter in the output.
 DT <- DT[, .(mcid, entry_term, timely_term)]
 
 # apply
-DT <- data_sufficiency(DT, term)
+DT <- data_sufficiency(DT)
+
+# view
 DT[order(sufficiency)]
 ```
 
 
 
-#### Example 3 
+***Example 3*** 
 
 Exemplifies "Student A" in Figure 1 or Figure 2. 
 
@@ -405,13 +408,13 @@ Exemplifies "Student A" in Figure 1 or Figure 2.
 DT[mcid == "MCID3112785480"]
 ```
 
-*Input values:* Entry term of Fall 2007; timely completion term of Spring 2013; institution data range of Fall 1990  through Summer 2015.
+*Input values:* Entry term of Fall 2007; timely completion term of Spring 2013 (`20123`); institution data range of Fall 1990  through Summer 2016 (`20154`).
 
 *Output values:* Data sufficiency is satisfied. Data range lower limit is before the entry term; upper limit is after the timely completion term. 
 
 
 
-#### Example 4 
+***Example 4*** 
 
 Exemplifies "Student B" in Figure 1. 
 
@@ -419,13 +422,13 @@ Exemplifies "Student B" in Figure 1.
 DT[mcid == "MCID3111170322"]
 ```
 
-*Input values:* Entry term of Spring 2013; timely completion term of Fall 2019; institution data range of Fall 1988  through Fall 2018.
+*Input values:* Entry term of Spring 2014 (`20133`); timely completion term of Fall 2019; institution data range of Fall 1988 through Fall 2018.
 
 *Output values:* Data sufficiency fails at the upper limit of the data range. Timely completion term is after the upper limit. 
 
 
 
-#### Example 5  
+***Example 5***
 
 Exemplifies "Student C" in Figure 2. 
 
@@ -433,9 +436,16 @@ Exemplifies "Student C" in Figure 2.
 DT[mcid == "MCID3112056754"]
 ```
 
-*Input values:* Entry term of Fall 1988; timely completion term of Spring 1993; institution data range of Fall 1988  through Summer 2009
+*Input values:* Entry term of Fall 1988; timely completion term of Spring 1994 (`19933`); institution data range of Fall 1988  through Summer 2010 (`20096`).
 
 *Output values:* Data sufficiency fails at the lower limit of the data range. Entry term and lower limit are identical. 
 
-```{r child = paste0(path_to_rmd, "/common-closing.Rmd")}
+
+
+
+
+
+
+
+```{r child = paste0(path_to_rmd, "/common-wrap-no-ref.Rmd")}
 ```

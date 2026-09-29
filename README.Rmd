@@ -1,10 +1,9 @@
 ---
 output: github_document
+csl: inst/information-science-and-technology.csl
 bibliography: inst/REFERENCES.bib
 link-citations: true
 ---
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r child = "man/rmd/common-setup.Rmd"}
 ```
@@ -13,11 +12,6 @@ link-citations: true
 #| include: false
 # code chunks
 knitr::opts_chunk$set(fig.path = "man/figures/README-")
-
-options(
-  datatable.print.topn = 3,
-  datatable.print.nrows = 6
-)
 ```
 
 # midfieldr <img src="man/figures/logo.png" align="right" height="125K">
@@ -33,20 +27,18 @@ options(
 
 ## Overview
 
-```{r}
-#| echo: false
-# see the common-setup.Rmd file for r-chunk phrases below
-```
-
-midfieldr is an R package that supplies tools for working with longitudinal undergraduate records from the MIDFIELD database [@ohland:midfield:2023] or similarly structured data tables. These tools help you develop credible populations, subset records to calculate quantitative metrics, and prepare results for dissemination. 
+midfieldr is an R package with tools for working with longitudinal undergraduate records from the MIDFIELD database [@Ohland+Long:2016] or similarly structured data tables [@ATLAS:2023]. These tools help you develop credible populations, subset records to calculate quantitative metrics, and prepare results for dissemination. 
 
 - `completion_status()`      `r completion_status_one_line`
 - `data_sufficiency()`       `r data_sufficiency_one_line`
 - `filter_programs()`        `r filter_programs_one_line`
 - `initialize_fye_proxies()` `r initialize_fye_proxies_one_line`
 - `order_multiway()`         `r order_multiway_one_line`
-- `pre_or_post_bacc()`              `r pre_or_post_bacc_one_line`
+- `pre_or_post_bacc()`       `r pre_or_post_bacc_one_line`
 - `timely_term()`            `r timely_term_one_line`
+
+<!-- `one-line` descriptions above are in man/rmd/common-setup.Rmd -->
+
  
 ## Installation
 
@@ -69,60 +61,59 @@ install.packages("midfielddata",
 
 ## Usage
 
-Data that load with midfieldr include `cip` for program codes and small samples of the four data tables (prefix `toy_`) for terse examples.
+Data that load with midfieldr include `cip` for program codes and small samples of the four data tables (`toy_*`) for terse examples.
 
 ```{r}
 library("midfieldr")
 library("data.table")
 
-# Assign preferred names to example tables
+# assign default names to toy tables
 student <- copy(toy_student)
 term <- copy(toy_term)
 course <- copy(toy_course)
 degree <- copy(toy_degree)
 
-# Pull IDs of degree-seeking students
+# pull IDs of degree-seeking students
 DT <- student[, .(mcid)]
 DT
 
-# Determine data sufficiency
-DT <- timely_term(DT, midf_table = term)
-DT <- data_sufficiency(DT, midf_table = term)
+# determine data sufficiency
+DT <- timely_term(DT)
+DT <- data_sufficiency(DT)
 
-# Summarize data sufficiency
+# summarize data sufficiency
 DT[, .N, by = "sufficiency"][order(-N)]
 
-# Subset to obtain baseline population
+# subset to obtain baseline population
 population <- DT[sufficiency == "satisfied", .(mcid)]
 population
 
-# Inner join to filter records to match the population
+# inner join to filter records to match the population
 student <- population[student, on = "mcid", nomatch = NULL]
 term <- population[term, on = "mcid", nomatch = NULL]
 course <- population[course, on = "mcid", nomatch = NULL]
 degree <- population[degree, on = "mcid", nomatch = NULL]
 
-# Distinguish undergraduate and post-baccalaureate terms
-term <- pre_or_post_bacc(term, midf_table = degree)
-course <- pre_or_post_bacc(course, midf_table = degree)
-degree <- pre_or_post_bacc(degree, midf_table = degree)
+# distinguish undergraduate and post-baccalaureate terms
+term <- pre_or_post_bacc(term)
+course <- pre_or_post_bacc(course)
+degree <- pre_or_post_bacc(degree)
 
-# Summarize term types
+# summarize term types
 term[, .N, by = "pre_or_post"][order(-pre_or_post)]
 course[, .N, by = "pre_or_post"][order(-pre_or_post)]
 degree[, .N, by = "pre_or_post"][order(-pre_or_post)]
 
-# Retain undergraduate terms
+# retain undergraduate terms
 term <- term[pre_or_post == "pre-bacc"]
 course <- course[pre_or_post == "pre-bacc"]
 degree <- degree[pre_or_post == "pre-bacc"]
 
-# Obtain 6-digit CIP codes, e.g., Engineering (14), 
-# Psychology (42), and Business (52).
+# obtain 6-digit CIP codes of 3 programs
 programs <- filter_programs(cip, c("^14", "^42", "^52"))
 programs <- programs[, .(cip6name, cip6)]
 
-# Construct the programs table
+# construct the programs table
 programs[, program := fcase(
   cip6 %like% "^14", "Engineering",
   cip6 %like% "^42", "Psychology",
@@ -131,44 +122,43 @@ programs[, program := fcase(
 programs <- programs[, .(cip6, program)]
 programs
 
-# Determine completion status
-DT <- timely_term(population, midf_table = term)
-DT <- completion_status(DT, midf_table = degree)
+# determine completion status
+DT <- timely_term(population)
+DT <- completion_status(DT)
 
-# Summarize completion status
+# summarize completion status
 DT[, .N, by = "completion"][order(-N)]
 
-# Filter for timely graduates
-DT <- unique(DT[completion == "timely", .(mcid)])
-
-# Join degree CIP codes
-degree_codes <- degree[, .(mcid, cip6)]
-DT <- degree_codes[DT, on = "mcid"]
+# filter for timely graduates
+DT <- DT[completion == "timely", .(mcid)]
 DT
 
-# Inner join to filter graduates by program
-program_labels <- programs[, .(cip6, program)]
-DT <- program_labels[DT, on = "cip6", nomatch = NULL]
+# join degree CIP codes
+degree_cip6 <- degree[, .(mcid, cip6)]
+DT <- degree_cip6[DT, on = "mcid"]
+DT
+
+# inner join to filter by our program selection
+programs <- programs[, .(cip6, program)]
+DT <- programs[DT, on = "cip6", nomatch = NULL]
 DT <- DT[, .(mcid, program, cip6 = NULL)]
 DT
 
-# Join demographics
+# join demographics
 demographics <- student[, .(mcid, sex)]
 DT <- demographics[DT, on = "mcid"]
 DT
 
-# Group and summarize timely graduates
-DT <- DT[, .(grad = .N), by = c("sex", "program")]
-DT[order(sex, program)]
+# group and summarize timely graduates
+DT[, .(grad = .N), by = c("sex", "program")][order(sex, program)]
 ```
 
 ## Acknowledgments
 
-```{r child = "man/rmd/note-nsf-grant.Rmd", eval = TRUE}
+The development of midfieldr and midfielddata was supported by the US National Science Foundation through grant numbers 1545667 and 2142087.
+
+
+
+
+```{r child = "man/rmd/common-wrap.Rmd", eval = TRUE}
 ```
-
-```{r child = "man/rmd/common-closing.Rmd", eval = TRUE}
-```
-
-
-
