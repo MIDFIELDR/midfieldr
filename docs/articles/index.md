@@ -9,4 +9,6 @@
 - [Data
   sufficiency](https://midfieldr.github.io/midfieldr/articles/art-020-data-sufficiency.md):
 - [Programs](https://midfieldr.github.io/midfieldr/articles/art-040-programs.md):
+- [Updating CIP
+  data](https://midfieldr.github.io/midfieldr/articles/art-041-updating-cip-data.md):
 - [midfieldr](https://midfieldr.github.io/midfieldr/articles/midfieldr.md):

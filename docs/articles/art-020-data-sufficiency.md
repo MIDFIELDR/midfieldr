@@ -42,7 +42,7 @@ data is available from 1986 to 1996.
 
 Figure 1: Upper limit data sufficiency.
 
-- *Student A*:
+- Student A:
 
   Student A enters in Fall 1988 with a timely completion (TC) term of
   Spring 1994. In both of the following cases, the data sufficiency
@@ -63,7 +63,7 @@ Figure 1: Upper limit data sufficiency.
 
 &nbsp;
 
-- *Student B*:
+- Student B:
 
   Student B enters in Fall 1993 with a TC term of Spring 1998, two years
   beyond the range of the data. We have several possible cases,
@@ -101,12 +101,12 @@ three scenarios described below.
 
 Figure 2: Lower limit data sufficiency.
 
-- *Student A*:
+- Student A:
 
   Like Student A in Figure 1, they enter the dataset in a term following
   the data lower limit and are included in the research population.
 
-- *Student C*:
+- Student C:
 
   Student C enters the institution before the lower limit of the data
   range (a “continuing” student) or they enter the institution at the
@@ -129,7 +129,7 @@ Figure 2: Lower limit data sufficiency.
 
 &nbsp;
 
-- *Student D*:
+- Student D:
 
   Student D enters the institution at the same time as continuing
   student C but leaves the database before the data lower limit term.

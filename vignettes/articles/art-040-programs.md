@@ -1,5 +1,6 @@
 # Programs
 
+
 In the US, instructional programs are encoded by 6-digit numbers curated
 by the US Department of Education. The standard encoding format is a
 two-digit number followed by a period, followed by a four-digit number,
@@ -34,20 +35,472 @@ into (5) programs at the 4-digit level and (9) programs at the 6-digit
 level. Some 4-digit codes include only (1) 6-digit code, e.g., 4100 and
 4101, while others include more than one, e.g., 4102 and 4103.
 
-| cip2 | cip2name | cip4 | cip4name | cip6 | cip6name |
-|----|----|----|----|----|----|
-| 41 | Science Technologies, Technicians | 4100 | Science Technologies, Technicians, General | 410000 | Science Technologies, Technicians, General |
-| 41 |  ↓ | 4101 | Biology Technician, Biotechnology Laboratory Technician | 410101 | Biology Technician, Biotechnology Laboratory Technician |
-| 41 |  ↓ | 4102 | Nuclear and Industrial Radiologic Technologies, Technicians | 410204 | Industrial Radiologic Technology, Technician |
-| 41 |  ↓ | 4102 |  ↓ | 410205 | Nuclear, Nuclear Power Technology, Technician |
-| 41 |  ↓ | 4102 |  ↓ | 410299 | Nuclear and Industrial Radiologic Technologies, Technicians, Other |
-| 41 |  ↓ | 4103 | Physical Science Technologies, Technicians | 410301 | Chemical Technology, Technician |
-| 41 |  ↓ | 4103 |  ↓ | 410303 | Chemical Process Technology |
-| 41 |  ↓ | 4103 |  ↓ | 410399 | Physical Science Technologies, Technicians, Other |
-| 41 |  ↓ | 4199 | Science Technologies, Technicians, Other | 419999 | Science Technologies, Technicians, Other |
-
-Table 1. Example of CIP taxonomy {.table .gt_table
-quarto-disable-processing="false" quarto-bootstrap="false"}
+<div id="wfxnrfzykz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wfxnrfzykz table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+&#10;#wfxnrfzykz thead, #wfxnrfzykz tbody, #wfxnrfzykz tfoot, #wfxnrfzykz tr, #wfxnrfzykz td, #wfxnrfzykz th {
+  border-style: none;
+}
+&#10;#wfxnrfzykz p {
+  margin: 0;
+  padding: 0;
+}
+&#10;#wfxnrfzykz .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: small;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #000000;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #000000;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+&#10;#wfxnrfzykz .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+&#10;#wfxnrfzykz .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+&#10;#wfxnrfzykz .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+&#10;#wfxnrfzykz .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+&#10;#wfxnrfzykz .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+}
+&#10;#wfxnrfzykz .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+&#10;#wfxnrfzykz .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+&#10;#wfxnrfzykz .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+&#10;#wfxnrfzykz .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+&#10;#wfxnrfzykz .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+&#10;#wfxnrfzykz .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+&#10;#wfxnrfzykz .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+&#10;#wfxnrfzykz .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+&#10;#wfxnrfzykz .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  vertical-align: middle;
+}
+&#10;#wfxnrfzykz .gt_from_md > :first-child {
+  margin-top: 0;
+}
+&#10;#wfxnrfzykz .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+&#10;#wfxnrfzykz .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: none;
+  border-top-width: 1px;
+  border-top-color: #D5D5D5;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D5D5D5;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D5D5D5;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+&#10;#wfxnrfzykz .gt_stub {
+  color: #FFFFFF;
+  background-color: #5F5F5F;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #5F5F5F;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#wfxnrfzykz .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+&#10;#wfxnrfzykz .gt_row_group_first td {
+  border-top-width: 2px;
+}
+&#10;#wfxnrfzykz .gt_row_group_first th {
+  border-top-width: 2px;
+}
+&#10;#wfxnrfzykz .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#wfxnrfzykz .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #5F5F5F;
+}
+&#10;#wfxnrfzykz .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+&#10;#wfxnrfzykz .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+}
+&#10;#wfxnrfzykz .gt_grand_summary_row {
+  color: #333333;
+  background-color: #D5D5D5;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#wfxnrfzykz .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #5F5F5F;
+}
+&#10;#wfxnrfzykz .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #5F5F5F;
+}
+&#10;#wfxnrfzykz .gt_striped {
+  background-color: #F4F4F4;
+}
+&#10;#wfxnrfzykz .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+}
+&#10;#wfxnrfzykz .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+&#10;#wfxnrfzykz .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#wfxnrfzykz .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+&#10;#wfxnrfzykz .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+&#10;#wfxnrfzykz .gt_left {
+  text-align: left;
+}
+&#10;#wfxnrfzykz .gt_center {
+  text-align: center;
+}
+&#10;#wfxnrfzykz .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+&#10;#wfxnrfzykz .gt_font_normal {
+  font-weight: normal;
+}
+&#10;#wfxnrfzykz .gt_font_bold {
+  font-weight: bold;
+}
+&#10;#wfxnrfzykz .gt_font_italic {
+  font-style: italic;
+}
+&#10;#wfxnrfzykz .gt_super {
+  font-size: 65%;
+}
+&#10;#wfxnrfzykz .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+&#10;#wfxnrfzykz .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+&#10;#wfxnrfzykz .gt_indent_1 {
+  text-indent: 5px;
+}
+&#10;#wfxnrfzykz .gt_indent_2 {
+  text-indent: 10px;
+}
+&#10;#wfxnrfzykz .gt_indent_3 {
+  text-indent: 15px;
+}
+&#10;#wfxnrfzykz .gt_indent_4 {
+  text-indent: 20px;
+}
+&#10;#wfxnrfzykz .gt_indent_5 {
+  text-indent: 25px;
+}
+&#10;#wfxnrfzykz .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+&#10;#wfxnrfzykz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <caption>Table 1. Example of CIP taxonomy</caption>
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="cip2">cip2</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="cip2name">cip2name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="cip4">cip4</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="cip4name">cip4name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="cip6">cip6</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="background-color: #C7EAE5;" scope="col" id="cip6name">cip6name</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="cip2" class="gt_row gt_right">41</td>
+<td headers="cip2name" class="gt_row gt_left">Science Technologies, Technicians</td>
+<td headers="cip4" class="gt_row gt_right">4100</td>
+<td headers="cip4name" class="gt_row gt_left">Science Technologies, Technicians, General</td>
+<td headers="cip6" class="gt_row gt_right">410000</td>
+<td headers="cip6name" class="gt_row gt_left">Science Technologies, Technicians, General</td></tr>
+    <tr><td headers="cip2" class="gt_row gt_right gt_striped">41</td>
+<td headers="cip2name" class="gt_row gt_left gt_striped"> ↓</td>
+<td headers="cip4" class="gt_row gt_right gt_striped">4101</td>
+<td headers="cip4name" class="gt_row gt_left gt_striped">Biology Technician, Biotechnology Laboratory Technician</td>
+<td headers="cip6" class="gt_row gt_right gt_striped">410101</td>
+<td headers="cip6name" class="gt_row gt_left gt_striped">Biology Technician, Biotechnology Laboratory Technician</td></tr>
+    <tr><td headers="cip2" class="gt_row gt_right">41</td>
+<td headers="cip2name" class="gt_row gt_left"> ↓</td>
+<td headers="cip4" class="gt_row gt_right">4102</td>
+<td headers="cip4name" class="gt_row gt_left">Nuclear and Industrial Radiologic Technologies, Technicians</td>
+<td headers="cip6" class="gt_row gt_right">410204</td>
+<td headers="cip6name" class="gt_row gt_left">Industrial Radiologic Technology, Technician</td></tr>
+    <tr><td headers="cip2" class="gt_row gt_right gt_striped">41</td>
+<td headers="cip2name" class="gt_row gt_left gt_striped"> ↓</td>
+<td headers="cip4" class="gt_row gt_right gt_striped">4102</td>
+<td headers="cip4name" class="gt_row gt_left gt_striped"> ↓</td>
+<td headers="cip6" class="gt_row gt_right gt_striped">410205</td>
+<td headers="cip6name" class="gt_row gt_left gt_striped">Nuclear, Nuclear Power Technology, Technician</td></tr>
+    <tr><td headers="cip2" class="gt_row gt_right">41</td>
+<td headers="cip2name" class="gt_row gt_left"> ↓</td>
+<td headers="cip4" class="gt_row gt_right">4102</td>
+<td headers="cip4name" class="gt_row gt_left"> ↓</td>
+<td headers="cip6" class="gt_row gt_right">410299</td>
+<td headers="cip6name" class="gt_row gt_left">Nuclear and Industrial Radiologic Technologies, Technicians, Other</td></tr>
+    <tr><td headers="cip2" class="gt_row gt_right gt_striped">41</td>
+<td headers="cip2name" class="gt_row gt_left gt_striped"> ↓</td>
+<td headers="cip4" class="gt_row gt_right gt_striped">4103</td>
+<td headers="cip4name" class="gt_row gt_left gt_striped">Physical Science Technologies, Technicians</td>
+<td headers="cip6" class="gt_row gt_right gt_striped">410301</td>
+<td headers="cip6name" class="gt_row gt_left gt_striped">Chemical Technology, Technician</td></tr>
+    <tr><td headers="cip2" class="gt_row gt_right">41</td>
+<td headers="cip2name" class="gt_row gt_left"> ↓</td>
+<td headers="cip4" class="gt_row gt_right">4103</td>
+<td headers="cip4name" class="gt_row gt_left"> ↓</td>
+<td headers="cip6" class="gt_row gt_right">410303</td>
+<td headers="cip6name" class="gt_row gt_left">Chemical Process Technology</td></tr>
+    <tr><td headers="cip2" class="gt_row gt_right gt_striped">41</td>
+<td headers="cip2name" class="gt_row gt_left gt_striped"> ↓</td>
+<td headers="cip4" class="gt_row gt_right gt_striped">4103</td>
+<td headers="cip4name" class="gt_row gt_left gt_striped"> ↓</td>
+<td headers="cip6" class="gt_row gt_right gt_striped">410399</td>
+<td headers="cip6name" class="gt_row gt_left gt_striped">Physical Science Technologies, Technicians, Other</td></tr>
+    <tr><td headers="cip2" class="gt_row gt_right">41</td>
+<td headers="cip2name" class="gt_row gt_left"> ↓</td>
+<td headers="cip4" class="gt_row gt_right">4199</td>
+<td headers="cip4name" class="gt_row gt_left">Science Technologies, Technicians, Other</td>
+<td headers="cip6" class="gt_row gt_right">419999</td>
+<td headers="cip6name" class="gt_row gt_left">Science Technologies, Technicians, Other</td></tr>
+  </tbody>
+  &#10;</table>
+</div>
 
 The number of programs represented by 2-digit codes vary over a wide
 range, for example,
@@ -65,7 +518,6 @@ The dataset `cip` that loads with midfieldr contains program names and
 codes at the 6-digit, 4-digit, and 2-digit level.
 
 ``` r
-
 library("midfieldr")
 library("data.table")
 
@@ -104,7 +556,6 @@ All variables in `cip` are character strings, which protects the leading
 zeros of CIP codes when present.
 
 ``` r
-
 # 2-digit codes with leading zeros
 cip[cip2 %like% "^0", .(cip2, cip2name)] |> unique()
 #>      cip2                                                  cip2name
@@ -119,7 +570,6 @@ cip[cip2 %like% "^0", .(cip2, cip2name)] |> unique()
 The number of unique programs.
 
 ``` r
-
 # 2-digit level
 length(unique(cip$cip2))
 #> [1] 46
@@ -137,7 +587,6 @@ A sample of program names uses a random number generator, so your result
 will differ from that shown.
 
 ``` r
-
 # 2-digit name sample
 sample(cip[, cip2name], 10)
 #>  [1] "Education"                                                   
@@ -185,7 +634,6 @@ sample(cip[, cip6name], 10)
 *Helps in finding 6-digit program codes.*
 
 ``` r
-
 # usage
 filter_programs(dframe, # cip or equivalent
   pattern,              # search pattern
@@ -197,12 +645,10 @@ filter_programs(dframe, # cip or equivalent
 The first argument is usually `cip` or a subset of `cip`. The output is
 a data frame with rows that contain matches or partial matches to the
 search pattern. The forward pipe operator `|>` can be used if desired.
-Here, we use
-[`check_equiv_frames()`](https://winvector.github.io/wrapr//reference/check_equiv_frames.html)
-to compare the results of equivalent statements.
+Here, we use `check_equiv_frames()` to compare the results of equivalent
+statements.
 
 ``` r
-
 # equivalent statements
 x <- filter_programs(dframe = cip, pattern = c("engineering"))
 y <- filter_programs(cip, "engineering")
@@ -219,7 +665,6 @@ The `negate` argument, if true, drops rows that contain the search
 terms.
 
 ``` r
-
 x <- filter_programs(cip, "engineering")
 x
 #>                                                              cip6name   cip6
@@ -288,7 +733,6 @@ Suppose we want to determine the 6-digit codes for literature programs.
 We could start with a keyword.
 
 ``` r
-
 pass_1 <- filter_programs(cip, "literature")
 pass_1
 #>                                             cip6name   cip6
@@ -324,7 +768,6 @@ To refine the search further, we might first examine the highest level,
 2-digit categories.
 
 ``` r
-
 unique(pass_1[, .(cip2name, cip2)])
 #>                                          cip2name   cip2
 #>                                            <char> <char>
@@ -338,7 +781,6 @@ search for codes that start with 23 (regular expression `"^23"`) and
 drop the 2-digit values from the working data frame.
 
 ``` r
-
 pass_2 <- pass_1[, .(cip6name, cip6, cip4name, cip4)]
 pass_2 <- filter_programs(pass_2, "^23")
 pass_2
@@ -365,7 +807,6 @@ pass_2
 Searching the result on “literature.”
 
 ``` r
-
 pass_3 <- filter_programs(pass_2, "literature")
 pass_3
 #>                                            cip6name   cip6
@@ -400,7 +841,6 @@ If we wanted Canadian, US, or UK literature specifically, we can search
 for those terms and retain the 6-digit names and codes only.
 
 ``` r
-
 pass_4 <- pass_3[, .(cip6name, cip6)]
 filter_programs(pass_4, c("united", "canadian", "british"))
 #>                                         cip6name   cip6
@@ -416,7 +856,6 @@ filter_programs(pass_4, c("united", "canadian", "british"))
 Alternatively, we could select the codes themselves,
 
 ``` r
-
 filter_programs(pass_4, c("^2307", "^2308", "231402", "231403", "231404"))
 #>                                         cip6name   cip6
 #>                                           <char> <char>
@@ -435,7 +874,6 @@ above, with a keyword search across all 2-, 4-, and 6-digit names then
 examine the resulting top-level programs
 
 ``` r
-
 pass_1 <- filter_programs(cip, "history")
 pass_1
 #>                                      cip6name   cip6
@@ -479,7 +917,6 @@ It appears that the 2-digit code we want is 54. In the second pass, we
 focus on the 6-digit names and codes.
 
 ``` r
-
 pass_2 <- pass_1[, .(cip6name, cip6)]
 pass_2 <- filter_programs(pass_2, "^54")
 pass_2
@@ -501,7 +938,6 @@ the `negate` argument to drop selected programs by their ending string
 (e.g., regular expression `01$`).
 
 ``` r
-
 pass_3 <- filter_programs(pass_2, 
                           c("01$", "04$", "05$", "08$", "99$"), 
                           negate = TRUE)
@@ -516,14 +952,11 @@ pass_3
 
 **Example 3**
 
-Illustrating details.
-[`catch_error()`](https://midfieldr.github.io/midfieldr/reference/catch_error.md)
-is a midfieldr utility.
+Illustrating details. `catch_error()` is a midfieldr utility.
 
 1.  Search expressions must be strings.
 
 ``` r
-
 # incorrect
 catch_error(
   filter_programs(cip, 050125)
@@ -543,7 +976,6 @@ filter_programs(cip, "050125")
 2.  The first two arguments do not have to be named.
 
 ``` r
-
 # equivalent statements
 x <- filter_programs(dframe = cip, pattern = "^14")
 y <- filter_programs(cip, "^14")
@@ -556,7 +988,6 @@ check_equiv_frames(x, y)
 3.  The `negate` argument, if used, must be named.
 
 ``` r
-
 # incorrect
 catch_error(
   filter_programs(pass_2, 

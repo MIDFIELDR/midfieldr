@@ -159,7 +159,7 @@ sample(cip[, cip6name], 10)
 
 
 
-## How to search for programs
+## How to search
 
 ### `filter_programs()`
 
@@ -197,9 +197,9 @@ x
 filter_programs(x, c("^15", "^29", "51"), negate = TRUE)
 ```
 
+## Examples
 
-
-***Example 1***
+**Example 1**
 
 ```{r}
 #| echo: false
@@ -250,7 +250,7 @@ filter_programs(pass_4, c("^2307", "^2308", "231402", "231403", "231404"))
 
 
 
-***Example 2***
+**Example 2**
 
 Suppose we are searching for history programs. We can start, as we did above, with a keyword search across all 2-, 4-, and 6-digit names then examine the resulting top-level programs 
 
@@ -279,22 +279,11 @@ pass_3
 ```
 
 
-***Example 3***
+**Example 3**
 
 Illustrating details. `catch_error()` is a midfieldr utility.
 
-1. The first two arguments do not have to be named.
-
-```{r}
-# equivalent statements
-x <- filter_programs(dframe = cip, pattern = "^14")
-y <- filter_programs(cip, "^14")
-
-# equivalent results
-check_equiv_frames(x, y)
-```
-
-2. Search expressions must be strings.
+1. Search expressions must be strings.
 
 ```{r}
 # incorrect
@@ -306,16 +295,32 @@ catch_error(
 filter_programs(cip, "050125")
 ```
 
+2. The first two arguments do not have to be named.
+
+```{r}
+# equivalent statements
+x <- filter_programs(dframe = cip, pattern = "^14")
+y <- filter_programs(cip, "^14")
+
+# equivalent results
+check_equiv_frames(x, y)
+```
+
 3. The `negate` argument, if used, must be named.
 
 ```{r}
 # incorrect
 catch_error(
-  filter_programs(cip, "050125", FALSE)
+  filter_programs(pass_2, 
+                  c("01$", "04$", "05$", "08$", "99$"), 
+                  TRUE)
+  
 )
 
 # correct
-filter_programs(cip, "050125", negate = FALSE)
+filter_programs(pass_2, 
+                c("01$", "04$", "05$", "08$", "99$"), 
+                negate = TRUE)
 ```
 
 
