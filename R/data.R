@@ -318,3 +318,26 @@
 #'  `r var_stick`
 #' }
 "case_results"
+
+
+# -------------------------------------------------------------------
+
+#' Case-study outcome by ID and grouping variables
+#'
+#' Data table of student IDs, program, race/ethnicity, sex, and bloc 
+#' (graduates or ever-enrolled)  of the case study (Civil, Electrical, 
+#' Industrial/Systems, and Mechanical Engineering) just prior to grouping and 
+#' summarizing to develop the stickiness metric.  
+#'
+#' @usage case_blocs
+#' @family case-study-data
+#'
+#' @format `data.table` with 8868 rows and 4 columns:
+#' \describe{
+#'  `r var_mcid`
+#'  \item{`people`}{Character. Merged values of race/ethnicity and sex.}
+#'  \item{`program`}{Character. Abbreviation of the case-study program name.}
+#'  \item{`bloc`}{Character. Distinguish between program graduates and those 
+#'        ever enrolled in the programs.}
+#' }
+"case_blocs"

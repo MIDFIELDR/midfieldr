@@ -22,4 +22,5 @@ population_baseline
 ## See also
 
 Other case-study-data:
+[`case_blocs`](https://midfieldr.github.io/midfieldr/reference/case_blocs.md),
 [`case_results`](https://midfieldr.github.io/midfieldr/reference/case_results.md)

@@ -37,6 +37,7 @@ timely completion.
 }
 \seealso{
 Other case-study-data:
+\code{\link{case_blocs}},
 \code{\link{population_baseline}}
 }
 \concept{case-study-data}

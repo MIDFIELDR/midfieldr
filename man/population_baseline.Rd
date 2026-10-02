@@ -21,6 +21,7 @@ illustrated in the package articles.
 }
 \seealso{
 Other case-study-data:
+\code{\link{case_blocs}},
 \code{\link{case_results}}
 }
 \concept{case-study-data}

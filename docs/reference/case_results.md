@@ -48,4 +48,5 @@ undergraduate terms, and timely completion.
 ## See also
 
 Other case-study-data:
+[`case_blocs`](https://midfieldr.github.io/midfieldr/reference/case_blocs.md),
 [`population_baseline`](https://midfieldr.github.io/midfieldr/reference/population_baseline.md)

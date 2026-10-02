@@ -57,6 +57,8 @@
   : ACT-SAT conversion scale
 - [`population_baseline`](https://midfieldr.github.io/midfieldr/reference/population_baseline.md)
   : Baseline population to start a typical analysis
+- [`case_blocs`](https://midfieldr.github.io/midfieldr/reference/case_blocs.md)
+  : Case-study outcome by ID and grouping variables
 - [`case_results`](https://midfieldr.github.io/midfieldr/reference/case_results.md)
   : Case-study results
 
